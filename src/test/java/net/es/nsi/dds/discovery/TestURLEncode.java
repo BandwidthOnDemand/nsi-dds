@@ -7,7 +7,7 @@ package net.es.nsi.dds.discovery;
 import java.io.File;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import net.es.nsi.dds.discovery.actors.DdsActorSystem;
+import net.es.nsi.dds.actors.DdsActorSystem;
 import net.es.nsi.dds.spring.SpringContext;
 import org.junit.Test;
 import static org.junit.Assert.*;

@@ -7,7 +7,7 @@
 
     <bean id="restClient" class="net.es.nsi.dds.jersey.RestClient" scope="singleton" />
  
-    <bean id="agoleManifestReader" class="net.es.nsi.dds.discovery.agole.AgoleManifestReader" scope="prototype" lazy-init="true">
+    <bean id="agoleManifestReader" class="net.es.nsi.dds.agole.AgoleManifestReader" scope="prototype" lazy-init="true">
         <constructor-arg index="0" ref="restClient"/>
     </bean>
 </beans>

@@ -4,7 +4,7 @@
  */
 package net.es.nsi.dds.jersey;
 
-import net.es.nsi.dds.discovery.api.DiscoveryService;
+import net.es.nsi.dds.api.DiscoveryService;
 import net.es.nsi.dds.management.api.ManagementService;
 import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;

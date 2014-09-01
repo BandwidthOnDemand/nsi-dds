@@ -18,14 +18,14 @@ import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.config.ConfigurationManager;
-import net.es.nsi.dds.management.logs.PceErrors;
-import net.es.nsi.dds.management.logs.PceLogger;
+import net.es.nsi.dds.management.logs.DdsErrors;
+import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.management.jaxb.LogEnumType;
 import net.es.nsi.dds.management.jaxb.LogListType;
 import net.es.nsi.dds.management.jaxb.LogType;
 import net.es.nsi.dds.management.jaxb.StatusType;
 import net.es.nsi.dds.management.jaxb.ObjectFactory;
-import net.es.nsi.dds.discovery.provider.DiscoveryProvider;
+import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.schema.XmlUtilities;
 import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 @Path("/management")
 public class ManagementService {
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private final PceLogger pceLogger = PceLogger.getLogger();
+    private final DdsLogger pceLogger = DdsLogger.getLogger();
     private final ObjectFactory managementFactory = new ObjectFactory();
 
     /**
@@ -103,7 +103,7 @@ public class ManagementService {
         if (type != null && !type.isEmpty()) {
             if (!LogEnumType.LOG.value().equalsIgnoreCase(type) &&
                     !LogEnumType.ERROR.value().equalsIgnoreCase(type)) {
-                LogType error = pceLogger.error(PceErrors.MANAGEMENT_BAD_REQUEST, type, "Invalid log type");
+                LogType error = pceLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, type, "Invalid log type");
                 return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
             }
 
@@ -113,7 +113,7 @@ public class ManagementService {
                     codeInt = Integer.parseInt(code);
                 }
                 catch (NumberFormatException ne) {
-                    LogType error = pceLogger.error(PceErrors.MANAGEMENT_BAD_REQUEST, type, "Invalid code value");
+                    LogType error = pceLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, type, "Invalid code value");
                     return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
                 }
             }
@@ -129,7 +129,7 @@ public class ManagementService {
             }
         }
         else if (code != null && !code.isEmpty()) {
-            LogType error = pceLogger.error(PceErrors.MANAGEMENT_BAD_REQUEST, code, "Code query parameter must be paired with a type parameter");
+            LogType error = pceLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, code, "Code query parameter must be paired with a type parameter");
             return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
         }
 
@@ -195,14 +195,14 @@ public class ManagementService {
         // Verify we have the service Id from the request path.  Not sure if
         // this would ever happen.
         if (id == null || id.isEmpty()) {
-            LogType error = pceLogger.error(PceErrors.MANAGEMENT_BAD_REQUEST, id, "Log identifier must be specified in path");
+            LogType error = pceLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, id, "Log identifier must be specified in path");
             return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
         }
 
         // Try to locate the requested Network.
         LogType result = pceLogger.getLog(id);
         if (result == null) {
-            LogType error = pceLogger.error(PceErrors.MANAGEMENT_RESOURCE_NOT_FOUND, id);
+            LogType error = pceLogger.error(DdsErrors.MANAGEMENT_RESOURCE_NOT_FOUND, id);
             return Response.status(Response.Status.NOT_FOUND).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
         }
 

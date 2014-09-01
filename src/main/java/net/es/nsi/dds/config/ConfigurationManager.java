@@ -1,7 +1,7 @@
 package net.es.nsi.dds.config;
 
 import net.es.nsi.dds.spring.SpringContext;
-import net.es.nsi.dds.discovery.provider.DiscoveryProvider;
+import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.server.PCEServer;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.slf4j.LoggerFactory;
