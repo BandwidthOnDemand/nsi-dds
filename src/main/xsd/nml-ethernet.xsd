@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://schemas.ogf.org/nml/2014/01/ethernet"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://schemas.ogf.org/nml/2014/01/ethernet"
+    elementFormDefault="qualified">
+    
+    <!-- Defines the allowable Ethernet labeltype values. -->
+    <xs:simpleType name="LabelTypes">
+        <xs:restriction  base="xs:string">
+            <xs:enumeration  value="http://schemas.ogf.org/nml/2014/01/ethernet#vid"/>
+            <xs:enumeration  value="http://schemas.ogf.org/nml/2014/01/ethernet#stag"/>
+            <xs:enumeration  value="http://schemas.ogf.org/nml/2014/01/ethernet#ctag"/>
+            <xs:enumeration  value="http://schemas.ogf.org/nml/2014/01/ethernet#btag"/>
+            <xs:enumeration  value="http://schemas.ogf.org/nml/2014/01/ethernet#isid"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="LabelType">
+        <xs:simpleContent>
+            <xs:extension  base="xs:string">
+                <xs:attribute  name="labeltype"  type="tns:LabelTypes"  use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:element name="label"  type="tns:LabelType"/>
+    
+    <xs:element name="capacity" type="xs:long" />
+    
+    <xs:element name="mtu" type="xs:int" />
+</xs:schema>

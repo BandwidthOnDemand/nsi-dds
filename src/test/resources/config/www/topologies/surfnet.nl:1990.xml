@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nsi:NSA xmlns:vc="urn:ietf:params:xml:ns:vcard-4.0" xmlns:nsi="http://schemas.ogf.org/nsi/2013/09/topology#" xmlns:nml="http://schemas.ogf.org/nml/2013/05/base#"
+    version="2013-11-04T17:13:19.825+01:00" id="urn:ogf:network:surfnet.nl:1990:nsa:bod">
+    <nml:Location id="urn:ogf:network:surfnet.nl:1990:nsa:bod:location">
+        <nml:lat>52.356701</nml:lat>
+        <nml:long>4.954585</nml:long>
+    </nml:Location>
+    <nsi:Service id="urn:ogf:network:surfnet.nl:1990:nsa:bod:connection-service">
+        <nsi:link>https://bod.surfnet.nl//nsi/v2/provider</nsi:link>
+        <nsi:type>application/vnd.org.ogf.nsi.cs.v2+soap</nsi:type>
+        <nsi:Relation type="http://schemas.ogf.org/nsi/2013/09/topology#providedBy">
+            <nsi:NSA id="urn:ogf:network:surfnet.nl:1990:nsa:bod"/>
+        </nsi:Relation>
+    </nsi:Service>
+    <nsi:Relation type="http://schemas.ogf.org/nsi/2013/09/topology#adminContact">
+        <vc:fn>
+            <vc:text>Administrator</vc:text>
+        </vc:fn>
+        <vc:n>
+            <vc:surname>Trompert</vc:surname>
+            <vc:given>Hans</vc:given>
+        </vc:n>
+        <vc:org>
+            <vc:text>SURFnet, http://www.surf.nl</vc:text>
+        </vc:org>
+    </nsi:Relation>
+    <nml:Topology id="urn:ogf:network:surfnet.nl:1990:topology:surfnet6:production">
+        <nml:name>SURFnet6 production</nml:name>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:7">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:7:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:7:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2590">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2590:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2590:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2593">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2593:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2593:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2601">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2601:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2601:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2624">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2624:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2624:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:9">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:9:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:9:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2674">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2674:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2674:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2677">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2677:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2677:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2683">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2683:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2683:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2706">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2706:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2706:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2722">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2722:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2722:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2868">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2868:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2868:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2916">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2916:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2916:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2881">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2881:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2881:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2883">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2883:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2883:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3354">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3354:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3354:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3375">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3375:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3375:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3388">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3388:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3388:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3399">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3399:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3399:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3764">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3764:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3764:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3767">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3767:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3767:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3919">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3919:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3919:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:4705">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:4705:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:4705:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5573">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5573:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5573:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5586">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5586:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5586:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5614">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5614:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5614:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:7626">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:7626:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:7626:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:10657">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:10657:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:10657:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:netherlight:a-gole:1">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:netherlight:a-gole:1:in"/>
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:netherlight:a-gole:1:out"/>
+        </nml:BidirectionalPort>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:7:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:7:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2590:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2590:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2593:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2593:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2601:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2601:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2624:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2624:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:9:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:9:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2674:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2674:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2677:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2677:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2683:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2683:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2706:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2706:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2722:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2722:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2868:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2868:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2916:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2916:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2881:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2881:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2883:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:2883:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3354:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3354:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3375:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3375:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3388:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3388:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3399:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3399:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3764:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3764:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3767:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3767:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3919:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:3919:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:4705:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:4705:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5573:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5573:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5586:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5586:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5614:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:5614:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:7626:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:7626:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:10657:out"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:10657:in"/>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:netherlight:a-gole:1:out">
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:surfnet:1:in"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:port:surfnet6:production:netherlight:a-gole:1:in">
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:surfnet:1:out"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+    </nml:Topology>
+</nsi:NSA>

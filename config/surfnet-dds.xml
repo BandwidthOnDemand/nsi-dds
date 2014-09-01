@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    This is the NSI Document Discovery Service v1.0 configuration file.
+    
+    The following XML elements are supported in this configuration file:
+    
+    nsaId - The NSA identifier of the local NSA assocated with this DDS
+            instance.  This value will be used to determine which documents
+            in the DDS document space are associated with the /local URL
+            query.
+            
+    documents - The local directory the DDS will monitor for document file
+                content to auto load into the DDS document space.  This
+                directory is checked for new content every auditInterval.
+                
+    cache - The local directory used to store discovered documents that
+            will be reloaded after a restart of the DDS.  One reloaded an
+            audit occurs to refresh any documents with new versions available.
+            
+    auditInterval - The interval (in seconds) the DDS will audit all peer DDS
+                    servers, Gof3 NSA and topology documents, or A-GOLE
+                    topology.
+                    
+    expiryInterval - The number of seconds the DDS will maintain a document
+                     after the document's lifetime has been reached.
+
+    actorPool - The number of actors to instantiate per discovery type (DDS,
+                Gof3, A-GOLE).
+                
+    baseURL - The base URL of the local DDS service that will be used when
+              registering with peer DDS services.  Is only needed if a peerURL
+              type of "application/vnd.ogf.nsi.dds.v1+xml" is configured.
+              
+    peerURL - Lists peer data sources for the DDS service to utilize for
+              document discovery.  The following type of peerURL are supported:
+              
+              application/vnd.ogf.nsi.dds.v1+xml - A peer DDS server.
+              application/vnd.ogf.nsi.nsa.v1+xml - A Gof3 NSA.
+              application/vnd.ogf.nsi.topology.v1+xml - The Automated GOLE topology discovery.
+-->
+<tns:discovery xmlns:tns="http://schemas.es.net/nsi/2014/03/pce/discovery/configuration"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- we need to set this to the uPA's NSA ID so that the local networks are discovered correctly -->
+    <nsaId>urn:ogf:network:surfnet.nl:1990:nsa:bod7</nsaId>
+    <documents>config/documents</documents>
+    <cache>config/cache</cache>
+    <auditInterval>1800</auditInterval>
+    <expiryInterval>600</expiryInterval>
+    <actorPool>10</actorPool>
+    <baseURL>http://localhost:8400/discovery</baseURL>
+    <!--
+	<peerURL type="application/vnd.ogf.nsi.dds.v1+xml">http://localhost:8400/discovery</peerURL>
+    -->
+
+    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://bod2.surfnet.nl/nsa-discovery</peerURL>
+    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://nsi.nordu.net:9443/NSI/discovery.xml</peerURL>
+    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://62.217.127.133:8080/nsi_discovery_geant.xml</peerURL>
+
+    <!--
+    	<peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://62.217.124.244:8080/nsi_discovery_geant_all.xml</peerURL>
+    -->
+    <!--
+	<peerURL type="application/vnd.ogf.nsi.topology.v1+xml">https://raw.github.com/jeroenh/AutoGOLE-Topologies/master/master.xml</peerURL>
+    -->
+</tns:discovery>

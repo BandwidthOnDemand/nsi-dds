@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://schemas.es.net/nsi/2013/07/management/types"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://schemas.es.net/nsi/2013/07/management/types">
+    
+    <!-- OAM relatated elements and types. -->
+    <xsd:element name="status"  type="tns:StatusType" />
+    
+    <xsd:complexType name="StatusType">
+        <xsd:sequence>
+            <xsd:element name="status"              type="tns:TopologyStatusType" />
+            <xsd:element name="auditInterval"       type="xsd:long" />
+            <xsd:element name="lastAudit"           type="xsd:dateTime" />
+            <xsd:element name="lastAuditDuration"   type="xsd:long" minOccurs="0" />
+            <xsd:element name="lastSuccessfulAudit" type="xsd:dateTime" minOccurs="0" />
+            <xsd:element name="lastDiscovered"      type="xsd:dateTime" minOccurs="0" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="TopologyStatusType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration  value="Error"/>
+            <xsd:enumeration  value="Initializing"/>
+            <xsd:enumeration  value="Auditing"/>
+            <xsd:enumeration  value="Completed"/>
+            <xsd:enumeration  value="PartiallyCompleted" />
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:element name="timers"  type="tns:TimerListType" />
+    
+    <xsd:complexType name="TimerListType">
+        <xsd:sequence>
+            <xsd:element name="timer" type="tns:TimerType" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:element name="timer"   type="tns:TimerType" />
+    
+    <xsd:complexType name="TimerType">
+        <xsd:sequence>
+            <xsd:element name="timerInterval" type="xsd:long" />
+            <xsd:element name="timerStatus"   type="tns:TimerStatusType" />
+            <xsd:element name="nextExecution" type="xsd:dateTime" minOccurs="0" />
+        </xsd:sequence>
+        <xsd:attribute name="id"   type="xsd:anyURI" />
+        <xsd:attribute name="href" type="xsd:anyURI" />
+    </xsd:complexType>
+    
+    <xsd:element name="timerStatus"   type="tns:TimerStatusType" />
+    
+    <xsd:simpleType name="TimerStatusType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration  value="Unknown"/>
+            <xsd:enumeration  value="Scheduled"/>
+            <xsd:enumeration  value="Running"/>
+            <xsd:enumeration  value="Haulted"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <!-- Log elements and type definitions. -->
+    <xsd:element name="logs"    type="tns:LogListType" />
+    
+    <xsd:complexType name="LogListType">
+        <xsd:sequence>
+            <xsd:element ref="tns:log" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:element name="log"     type="tns:LogType" />
+    
+    <xsd:complexType name="LogType">
+        <xsd:sequence>
+            <xsd:element name="code"        type="xsd:int" />
+            <xsd:element name="label"       type="xsd:string" />
+            <xsd:element name="description" type="xsd:string" />
+            <xsd:element name="resource"    type="xsd:anyURI" />
+        </xsd:sequence>
+        <xsd:attribute name="id"   type="xsd:string" use="required" />
+        <xsd:attribute name="type" type="tns:LogEnumType" use="required" />
+        <xsd:attribute name="href" type="xsd:anyURI" use="required" />
+        <xsd:attribute name="audit" type="xsd:dateTime" use="optional" />
+        <xsd:attribute name="date" type="xsd:dateTime" use="required" />
+    </xsd:complexType>
+    
+    <xsd:simpleType name="LogEnumType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration  value="Log"/>
+            <xsd:enumeration  value="Error"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

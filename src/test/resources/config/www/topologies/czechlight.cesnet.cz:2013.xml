@@ -1,0 +1,53 @@
+<nsi:NSA xmlns:nml="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nsi="http://schemas.ogf.org/nsi/2013/09/topology#" id="urn:ogf:network:czechlight.cesnet.cz:2013:nsa"
+    version="2013-11-06T11:49:45.370507">
+    <nsi:Service id="urn:ogf:network:czechlight.cesnet.cz:2013:nsa-cs">
+        <nsi:link>http://opennsa.cesnet.cz:9080/NSI/services/CS2</nsi:link>
+        <nsi:type>application/vnd.org.ogf.nsi.cs.v2+soap</nsi:type>
+    </nsi:Service>
+    <nml:Topology id="urn:ogf:network:czechlight.cesnet.cz:2013:topology">
+        <nml:name>czechlight.cesnet.cz:2013</nml:name>
+        <nml:BidirectionalPort id="urn:ogf:network:czechlight.cesnet.cz:2013:brno">
+            <nml:name>brno</nml:name>
+            <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:brno-in"/>
+            <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:brno-out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:czechlight.cesnet.cz:2013:pinger">
+            <nml:name>pinger</nml:name>
+            <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:pinger-in"/>
+            <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:pinger-out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:czechlight.cesnet.cz:2013:netherlight">
+            <nml:name>netherlight</nml:name>
+            <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:netherlight-in"/>
+            <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:netherlight-out"/>
+        </nml:BidirectionalPort>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:brno-in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1790</nml:LabelGroup>
+            </nml:PortGroup>
+            <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:pinger-in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1790</nml:LabelGroup>
+            </nml:PortGroup>
+            <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:netherlight-in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1790</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:czechlight:1:out"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:brno-out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1790</nml:LabelGroup>
+            </nml:PortGroup>
+            <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:pinger-out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1790</nml:LabelGroup>
+            </nml:PortGroup>
+            <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:netherlight-out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1790</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:czechlight:1:in"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+    </nml:Topology>
+</nsi:NSA>

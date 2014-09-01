@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nsi:NSA xmlns:vc="urn:ietf:params:xml:ns:vcard-4.0" xmlns:nsi="http://schemas.ogf.org/nsi/2013/09/topology#" xmlns:nml="http://schemas.ogf.org/nml/2013/05/base#"
+    version="2013-10-02T09:09:02.143+02:00" id="urn:ogf:network:netherlight.net:2013:nsa:bod">
+    <nml:Location id="urn:ogf:network:netherlight.net:2013:nsa:bod:location">
+        <nml:lat>52.356701</nml:lat>
+        <nml:long>4.954585</nml:long>
+    </nml:Location>
+    <nsi:Service id="urn:ogf:network:netherlight.net:2013:nsa:bod:connection-service">
+        <nsi:link>https://bod.netherlight.net//nsi/v2/provider</nsi:link>
+        <nsi:type>application/vnd.org.ogf.nsi.cs.v2+soap</nsi:type>
+        <nsi:Relation type="http://schemas.ogf.org/nsi/2013/09/topology#providedBy">
+            <nsi:NSA id="urn:ogf:network:netherlight.net:2013:nsa:bod"/>
+        </nsi:Relation>
+    </nsi:Service>
+    <nsi:Relation type="http://schemas.ogf.org/nsi/2013/09/topology#adminContact">
+        <vc:fn>
+            <vc:text>Administrator</vc:text>
+        </vc:fn>
+        <vc:n>
+            <vc:surname>Trompert</vc:surname>
+            <vc:given>Hans</vc:given>
+        </vc:n>
+        <vc:org>
+            <vc:text>SURFnet, http://www.surf.nl</vc:text>
+        </vc:org>
+    </nsi:Relation>
+    <nml:Topology id="urn:ogf:network:netherlight.net:2013:topology:a-gole:testbed">
+        <nml:name>NetherLight A-GOLE test bed</nml:name>
+        <nml:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:241">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:241:in"/>
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:241:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:282">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:282:in"/>
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:282:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:232">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:232:in"/>
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:232:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:526">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:526:in"/>
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:526:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:czechlight:1">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:czechlight:1:in"/>
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:czechlight:1:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:nordu.net:1">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:nordu.net:1:in"/>
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:nordu.net:1:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:starlight:1">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:starlight:1:in"/>
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:starlight:1:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:uva:1">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:uva:1:in"/>
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:uva:1:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:geant:1">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:geant:1:in"/>
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:geant:1:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:manlan:1">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:manlan:1:in"/>
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:manlan:1:out"/>
+        </nml:BidirectionalPort>
+        <nml:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:pionier:1">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:pionier:1:in"/>
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:pionier:1:out"/>
+        </nml:BidirectionalPort>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:241:out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</nml:LabelGroup>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:241:in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</nml:LabelGroup>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:282:out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1784</nml:LabelGroup>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:282:in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1784</nml:LabelGroup>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:232:out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</nml:LabelGroup>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:232:in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</nml:LabelGroup>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:526:out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1784</nml:LabelGroup>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:526:in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1784</nml:LabelGroup>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:czechlight:1:out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:port:a-gole:testbed:netherlight:1:in"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:czechlight:1:in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:port:a-gole:testbed:netherlight:1:out"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:nordu.net:1:out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:nordu.net:2013:netherlight-in"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:nordu.net:1:in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:nordu.net:2013:netherlight-out"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:starlight:1:out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:icair.org:2013:netherlight-in"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:starlight:1:in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:icair.org:2013:netherlight-out"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:uva:1:out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:uvalight.net:2013:netherlight-in"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:uva:1:in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:uvalight.net:2013:netherlight-out"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:geant:1:out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:geant.net:2013:netherlight-geant"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:geant:1:in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:geant.net:2013:geant-netherlight"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:manlan:1:out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:manlan.internet2.edu:2013:netherlight:in"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:manlan:1:in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:manlan.internet2.edu:2013:netherlight:out"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:pionier:1:out">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1780-1783</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:pionier.net.pl:2013:netherlight-pionier"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+        <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+            <nml:PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:pionier:1:in">
+                <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1780-1783</nml:LabelGroup>
+                <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                    <nml:PortGroup id="urn:ogf:network:pionier.net.pl:2013:pionier-netherlight"/>
+                </nml:Relation>
+            </nml:PortGroup>
+        </nml:Relation>
+    </nml:Topology>
+</nsi:NSA>

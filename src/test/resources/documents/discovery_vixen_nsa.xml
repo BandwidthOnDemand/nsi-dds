@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:document xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xmlns:tns="http://schemas.ogf.org/nsi/2014/02/discovery/types"
+    id="urn:ogf:network:example.com:2013:nsa:vixen"
+    version="2014-04-01T18:13:51.0Z"
+    expires="2014-05-04T18:13:51.0Z">
+    <nsa>urn:ogf:network:example.com:2013:nsa:vixen</nsa>
+    <type>vnd.ogf.nsi.nsa.v1+xml</type>
+    <content>
+        <tns:nsa xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:xcard="urn:ietf:params:xml:ns:vcard-4.0"
+                xmlns:tns="http://schemas.ogf.org/nsi/2014/02/discovery/nsa"
+                id="urn:ogf:network:example.com:2013:nsa:vixen"
+                version="2014-01-04T18:13:51.0Z"
+                expires="2016-12-04T18:13:51.0Z">
+            <name>Example NSA</name>
+            <softwareVersion>ExampleNsa-Version-1.0</softwareVersion>
+            <startTime>2014-01-01T18:13:51.0Z</startTime>
+            <adminContact>
+                <xcard:vcard>
+                    <xcard:uid><xcard:uri>http://www.example.com/santa.claus/santa.asc</xcard:uri></xcard:uid>
+                    <xcard:prodid><xcard:text>OGF Example Maker // EN</xcard:text></xcard:prodid>
+                    <xcard:rev><xcard:timestamp>20080424T195243Z</xcard:timestamp></xcard:rev>
+                    <xcard:kind><xcard:text>individual</xcard:text></xcard:kind>
+                    <xcard:fn><xcard:text>Saint Nicholas</xcard:text></xcard:fn>
+                    <xcard:n>
+                        <xcard:surname>Claus</xcard:surname>
+                        <xcard:given>Santa</xcard:given>
+                        <xcard:suffix>Saint</xcard:suffix>
+                    </xcard:n>
+                    <xcard:tel><xcard:text>+1 555-555-5555</xcard:text></xcard:tel>
+                    <xcard:email><xcard:text>santa.claus@theworkshop.example.com</xcard:text></xcard:email>
+                </xcard:vcard>
+            </adminContact>
+            <location>
+                <name>Santa's Workshop</name>
+                <longitude>0.0000</longitude>
+                <latitude>90.0000</latitude>
+                <altitude>10</altitude>       
+                <address>
+                    <xcard:pobox></xcard:pobox>
+                    <xcard:ext></xcard:ext>
+                    <xcard:street>1 Top of the world boulevard</xcard:street>
+                    <xcard:locality>Polar Ice Flows</xcard:locality>
+                    <xcard:region>The North Pole</xcard:region>
+                    <xcard:code>CA</xcard:code>
+                    <xcard:country>Canada</xcard:country>
+                </address>
+            </location>
+            <networkId>urn:ogf:network:example.com:2013:network:theworkshop</networkId>
+            <networkId>urn:ogf:network:example.com:2013:network:candycaneforest</networkId>
+            <interface>
+                <type>application/vnd.ogf.nsi.dds.v1+xml</type>
+                <href>https://nsa.example.com/discovery</href>
+                <describedBy>https://nsa.example.com/discovery/wadl</describedBy>
+            </interface>
+            <interface>
+                <type>application/vnd.ogf.nsi.topology.v1+xml</type>
+                <href>https://nsa.example.com/topology.xml</href>
+            </interface>
+            <interface>
+                <type>application/vnd.ogf.nsi.cs.v2.provider+soap</type>
+                <href>https://nsa.example.com/connectionProvider</href>
+                <describedBy>https://nsa.example.com/connectionProvider/wsdl</describedBy>
+            </interface>
+            <interface>
+                <type>application/vnd.ogf.nsi.cs.v2.requester+soap</type>
+                <href>https://nsa.example.com/connectionRequester</href>
+                <describedBy>https://nsa.example.com/connectionRequester/wsdl</describedBy>
+            </interface>
+            <feature type="org.ogf.nsi.cs.v2.role.aggregator"/>
+            <feature type="org.ogf.nsi.cs.v2.role.uPA"/>
+            <feature type="org.ogf.nsi.cs.v2.commitTimeout">120</feature>
+            <peersWith>urn:ogf:network:example.com:2013:nsa:dasher</peersWith>
+            <peersWith>urn:ogf:network:example.com:2013:nsa:dancer</peersWith>
+            <peersWith>urn:ogf:network:example.com:2013:nsa:prancer</peersWith>
+        </tns:nsa>
+    </content>
+</tns:document>
+
