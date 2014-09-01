@@ -29,7 +29,6 @@ java -Xmx1536m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true  \
         -Djavax.net.ssl.keyStorePassword=$PASSWORD \
         -Djavax.net.ssl.trustStore=$TRUSTSTORE \
         -Djavax.net.ssl.trustStorePassword=$PASSWORD \
-	-jar target/pce.jar \
-	-topologyConfigFile config/topology-dds.xml \
+	-jar target/dds.jar \
 	-ddsConfigFile config/dds.xml \
 	$*

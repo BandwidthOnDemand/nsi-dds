@@ -20,9 +20,7 @@ import org.springframework.context.ApplicationContext;
 public class TestURLEncode {
     private static final String CONFIG_PATH = "configPath";
     private final static String CONFIG_DIR = "src/test/resources/config/";
-    private static final String DEFAULT_TOPOLOGY_FILE = CONFIG_DIR + "topology-dds.xml";
     private static final String DEFAULT_DDS_FILE = CONFIG_DIR + "dds.xml";
-    private static final String TOPOLOGY_CONFIG_FILE_ARGNAME = "topologyConfigFile";
     private static final String DDS_CONFIG_FILE_ARGNAME = "ddsConfigFile";
 
     private static final String beanConfig = new StringBuilder(CONFIG_DIR).append("beans.xml").toString().replace("/", File.separator);
@@ -32,8 +30,6 @@ public class TestURLEncode {
 
         System.setProperty(CONFIG_PATH, CONFIG_DIR);
         System.setProperty(DDS_CONFIG_FILE_ARGNAME, DEFAULT_DDS_FILE);
-        System.setProperty(TOPOLOGY_CONFIG_FILE_ARGNAME, DEFAULT_TOPOLOGY_FILE);
-
         String url = "application/vnd.ogf.nsi.topology.v2+xml";
         System.out.println(url);
         url = URLEncoder.encode(url, "UTF-8");
