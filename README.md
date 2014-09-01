@@ -53,7 +53,7 @@ Configuration of the imbedded HTTP server is controlled through the `nsi-pce/con
 {
     "pce": {
         "url": "http://localhost:8400/",
-        "packageName": "net.es.nsi.pce",
+        "packageName": "net.es.nsi.dds",
         "staticPath": "config/www/",
         "wwwPath": "/www"
     }

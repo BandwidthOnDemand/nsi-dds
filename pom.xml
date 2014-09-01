@@ -268,7 +268,7 @@
                     <execution>
                         <id>PCE</id>
                         <configuration>
-                            <mainClass>net.es.nsi.pce.server.Main</mainClass>
+                            <mainClass>net.es.nsi.dds.server.Main</mainClass>
                             <classifier>onejar</classifier>
                             <filename>dds.jar</filename>
                         </configuration>

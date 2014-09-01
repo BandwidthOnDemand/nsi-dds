@@ -95,7 +95,7 @@
   <!-- OpenDRAC Limits -->
   <!-- =============== -->
 
-  <logger name="net.es.nsi.pce">
+  <logger name="net.es.nsi.dds">
     <level value="DEBUG" />
   </logger>
 
