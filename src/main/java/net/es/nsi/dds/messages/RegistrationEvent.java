@@ -4,7 +4,6 @@
  */
 package net.es.nsi.dds.messages;
 
-import net.es.nsi.dds.messages.RemoteSubscription;
 import java.io.Serializable;
 
 /**
@@ -13,12 +12,12 @@ import java.io.Serializable;
  */
 public class RegistrationEvent implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
     public enum Event { Audit, Register, Update, Delete };
 
     private Event event;
-    private RemoteSubscription subscription;
-    
+    private String url;
+
     /**
      * @return the event
      */
@@ -32,18 +31,18 @@ public class RegistrationEvent implements Serializable {
     public void setEvent(Event event) {
         this.event = event;
     }
-    
+
     /**
-     * @return the subscription
+     * @return the url
      */
-    public RemoteSubscription getSubscription() {
-        return subscription;
+    public String getUrl() {
+        return url;
     }
 
     /**
-     * @param subscription the subscription to set
+     * @param url the url to set
      */
-    public void setSubscription(RemoteSubscription subscription) {
-        this.subscription = subscription;
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

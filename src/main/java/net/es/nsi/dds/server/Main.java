@@ -113,7 +113,7 @@ public class Main {
                 @Override
                 public void run() {
                     log.info("Shutting down PCE...");
-                    PCEServer.getInstance().shutdown();
+                    DdsServer.getInstance().shutdown();
                     log.info("...Shutdown complete.");
                     Main.setKeepRunning(false);
                 }

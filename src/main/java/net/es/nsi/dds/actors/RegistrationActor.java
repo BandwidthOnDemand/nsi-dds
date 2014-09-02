@@ -88,8 +88,7 @@ public class RegistrationActor extends UntypedActor {
     }
 
     private void register(RegistrationEvent event) {
-        final RemoteSubscription remoteSubscription = event.getSubscription();
-        final String remoteDdsURL = remoteSubscription.getDdsURL();
+        final String remoteDdsURL = event.getUrl();
 
         // We will register for all events on all documents.
         FilterCriteriaType criteria = factory.createFilterCriteriaType();
@@ -140,6 +139,8 @@ public class RegistrationActor extends UntypedActor {
 
         log.debug("RegistrationActor.register: created subscription " + newSubscription.getId() + ", href=" + newSubscription.getHref() + ", lastModified=" + response.getLastModified());
 
+        RemoteSubscription remoteSubscription = new RemoteSubscription();
+        remoteSubscription.setDdsURL(remoteDdsURL);
         remoteSubscription.setSubscription(newSubscription);
         if (response.getLastModified() == null) {
             // We should have gotten a valid lastModified date back.  Fake one
@@ -152,6 +153,7 @@ public class RegistrationActor extends UntypedActor {
             remoteSubscription.setLastModified(response.getLastModified());
         }
 
+        remoteSubscription.getLastAudit().setTime(System.currentTimeMillis());
         remoteSubscriptionCache.add(remoteSubscription);
 
         response.close();
@@ -213,7 +215,8 @@ public class RegistrationActor extends UntypedActor {
         // First we retrieve the remote subscription to see if it is still
         // valid.  If it is not then we register again, otherwise we leave it
         // alone for now.
-        RemoteSubscription remoteSubscription = remoteSubscriptionCache.get(event.getSubscription().getDdsURL());
+        RemoteSubscription remoteSubscription = remoteSubscriptionCache.get(event.getUrl());
+        remoteSubscription.getLastAudit().setTime(System.currentTimeMillis());
         String remoteSubscriptionURL = remoteSubscription.getSubscription().getHref();
 
         // Check to see if the remote subscription URL is absolute or relative.
@@ -267,13 +270,13 @@ public class RegistrationActor extends UntypedActor {
                 log.error("RegistrationActor.update: id=" + error.getId() + ", label=" + error.getLabel() + ", resource=" + error.getResource() + ", description=" + error.getDescription());
             }
         }
-        //client.close();
+
         response.close();
+        //client.close();
     }
 
     private void delete(RegistrationEvent event) {
-
-        RemoteSubscription subscription = event.getSubscription();
+        RemoteSubscription subscription = remoteSubscriptionCache.get(event.getUrl());
         if (deleteSubscription(subscription.getDdsURL(), subscription.getSubscription().getHref())) {
             remoteSubscriptionCache.remove(subscription.getDdsURL());
         }

@@ -110,11 +110,9 @@ public class RegistrationRouter extends UntypedActor {
 
         for (PeerURLType url : discoveryURL) {
             if (url.getType().equalsIgnoreCase(NsiConstants.NSI_DDS_V1_XML)) {
-                RemoteSubscription sub = new RemoteSubscription();
-                sub.setDdsURL(url.getValue());
                 RegistrationEvent regEvent = new RegistrationEvent();
                 regEvent.setEvent(RegistrationEvent.Event.Register);
-                regEvent.setSubscription(sub);
+                regEvent.setUrl(url.getValue());
                 router.route(regEvent, getSelf());
             }
         }
@@ -134,18 +132,16 @@ public class RegistrationRouter extends UntypedActor {
             RemoteSubscription sub = remoteSubscriptionCache.get(url.getValue());
             if (sub == null) {
                 // We have not seen this before.
-                sub = new RemoteSubscription();
-                sub.setDdsURL(url.getValue());
                 RegistrationEvent regEvent = new RegistrationEvent();
                 regEvent.setEvent(RegistrationEvent.Event.Register);
-                regEvent.setSubscription(sub);
+                regEvent.setUrl(url.getValue());
                 router.route(regEvent, getSelf());
             }
             else {
                 // We have seen this URL before.
                 RegistrationEvent regEvent = new RegistrationEvent();
                 regEvent.setEvent(RegistrationEvent.Event.Update);
-                regEvent.setSubscription(sub);
+                regEvent.setUrl(url.getValue());
                 router.route(regEvent, getSelf());
 
                 // Remove from the existing list as processed.
@@ -160,7 +156,7 @@ public class RegistrationRouter extends UntypedActor {
             if (sub != null) { // Should always be true unless modified while we are processing.
                 RegistrationEvent regEvent = new RegistrationEvent();
                 regEvent.setEvent(RegistrationEvent.Event.Delete);
-                regEvent.setSubscription(sub);
+                regEvent.setUrl(url);
                 router.route(regEvent, getSelf());
             }
         }
@@ -172,7 +168,7 @@ public class RegistrationRouter extends UntypedActor {
             if (sub != null) { // Should always be true unless modified while we are processing.
                 RegistrationEvent regEvent = new RegistrationEvent();
                 regEvent.setEvent(RegistrationEvent.Event.Delete);
-                regEvent.setSubscription(sub);
+                regEvent.setUrl(url);
                 router.route(regEvent, getSelf());
             }
         }

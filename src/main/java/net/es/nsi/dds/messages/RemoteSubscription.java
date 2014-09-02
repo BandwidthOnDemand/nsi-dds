@@ -17,6 +17,7 @@ public class RemoteSubscription implements Serializable {
 
     private String ddsURL;
     private Date lastModified = new Date(0);
+    private Date lastAudit = new Date(0);
     private SubscriptionType subscription;
 
     /**
@@ -59,6 +60,20 @@ public class RemoteSubscription implements Serializable {
      */
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }
+
+    /**
+     * @return the lastAudit
+     */
+    public Date getLastAudit() {
+        return lastAudit;
+    }
+
+    /**
+     * @param lastAudit the lastAudit to set
+     */
+    public void setLastAudit(Date lastAudit) {
+        this.lastAudit = lastAudit;
     }
 
 }

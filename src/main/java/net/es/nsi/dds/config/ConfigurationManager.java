@@ -2,7 +2,7 @@ package net.es.nsi.dds.config;
 
 import net.es.nsi.dds.spring.SpringContext;
 import net.es.nsi.dds.provider.DiscoveryProvider;
-import net.es.nsi.dds.server.PCEServer;
+import net.es.nsi.dds.server.DdsServer;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -38,7 +38,7 @@ import org.springframework.context.ApplicationContext;
 public enum ConfigurationManager {
     INSTANCE;
 
-    private static PCEServer pceServer;
+    private static DdsServer ddsServer;
     private static DiscoveryProvider discoveryProvider;
     private static ApplicationContext context;
 
@@ -87,8 +87,8 @@ public enum ConfigurationManager {
             context = sc.initContext(beanConfig);
 
             // Get references to the spring controlled beans.
-            pceServer = (PCEServer) context.getBean("pceServer");
-            pceServer.start();
+            ddsServer = (DdsServer) context.getBean("ddsServer");
+            ddsServer.start();
 
             // Start the discovery process.
             discoveryProvider = (DiscoveryProvider) context.getBean("discoveryProvider");
@@ -104,10 +104,10 @@ public enum ConfigurationManager {
     }
 
     /**
-     * @return the pceServer
+     * @return the ddsServer
      */
-    public PCEServer getPceServer() {
-        return pceServer;
+    public DdsServer getPceServer() {
+        return ddsServer;
     }
 
     /**
@@ -119,7 +119,7 @@ public enum ConfigurationManager {
 
     public void shutdown() {
         discoveryProvider.shutdown();
-        pceServer.shutdown();
+        ddsServer.shutdown();
         initialized = false;
     }
 }

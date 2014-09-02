@@ -13,7 +13,7 @@
         <property name="filename" value="#{ systemProperties['configPath'] }http.json"/>
     </bean>
 
-    <bean id="pceServer" class="net.es.nsi.dds.server.PCEServer" scope="singleton">
+    <bean id="ddsServer" class="net.es.nsi.dds.server.DdsServer" scope="singleton">
         <constructor-arg index="0" ref="httpConfigProvider"/>
     </bean>
 
@@ -97,7 +97,7 @@
         <property name="poolSize" value="5"/>
     </bean>
 
-    <bean id="ddsActorController" class="net.es.nsi.dds.actors.DdsActorController" init-method="init" scope="singleton" depends-on="remoteSubscriptionCache, pceServer">
+    <bean id="ddsActorController" class="net.es.nsi.dds.actors.DdsActorController" init-method="init" scope="singleton" depends-on="remoteSubscriptionCache, ddsServer">
         <constructor-arg index="0" ref="ddsActorSystem"/>
         <constructor-arg index="1" ref="discoveryConfiguration"/>
         <constructor-arg index="2">
@@ -113,7 +113,7 @@
         </constructor-arg>
     </bean>
 
-    <bean id="discoveryProvider" class="net.es.nsi.dds.provider.DdsProvider" init-method="init" scope="singleton" depends-on="pceServer">
+    <bean id="discoveryProvider" class="net.es.nsi.dds.provider.DdsProvider" init-method="init" scope="singleton" depends-on="ddsServer">
         <constructor-arg index="0" ref="discoveryConfiguration"/>
         <constructor-arg index="1" ref="documentCache"/>
         <constructor-arg index="2" ref="documentRepository"/>

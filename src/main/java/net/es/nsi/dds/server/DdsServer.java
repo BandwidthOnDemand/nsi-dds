@@ -12,19 +12,19 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PCEServer {
+public class DdsServer {
     public static final String PCE_SERVER_CONFIG_NAME = "pce";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private HttpConfig config;
     private HttpServer server = null;
 
-    public PCEServer(HttpConfigProvider provider) {
+    public DdsServer(HttpConfigProvider provider) {
         this.config = provider.getConfig(PCE_SERVER_CONFIG_NAME);
     }
 
-    public static PCEServer getInstance() {
-        PCEServer pceProvider = SpringApplicationContext.getBean("pceServer", PCEServer.class);
+    public static DdsServer getInstance() {
+        DdsServer pceProvider = SpringApplicationContext.getBean("ddsServer", DdsServer.class);
         return pceProvider;
     }
 
@@ -32,7 +32,7 @@ public class PCEServer {
         synchronized(this) {
             if (server == null) {
                 try {
-                    log.debug("PCEServer.start: Starting Grizzly on " + config.getUrl() + " for resources " + config.getPackageName());
+                    log.debug("DDSServer.start: Starting Grizzly on " + config.getUrl() + " for resources " + config.getPackageName());
                     server = GrizzlyHttpServerFactory.createHttpServer(URI.create(config.getUrl()), RestServer.getConfig(config.getPackageName()), false);
 
                     if (config.getStaticPath() != null && !config.getStaticPath().isEmpty()) {
@@ -42,10 +42,10 @@ public class PCEServer {
 
                     server.start();
                     while (!server.isStarted()) {
-                        log.debug("PCEServer.start: Waiting for Grizzly to start ...");
+                        log.debug("DDSServer.start: Waiting for Grizzly to start ...");
                         Thread.sleep(1000);
                     }
-                    log.debug("PCEServer.start: Started Grizzly.");
+                    log.debug("DDSServer.start: Started Grizzly.");
                 } catch (IOException ex) {
                     log.error("Could not start HTTP server.", ex);
                     throw ex;
@@ -54,7 +54,7 @@ public class PCEServer {
                 }
             }
             else {
-                log.error("PCEServer.start: Grizzly already started.");
+                log.error("DDSServer.start: Grizzly already started.");
                 throw new IllegalStateException();
             }
         }
@@ -64,12 +64,12 @@ public class PCEServer {
 
         synchronized(this) {
             if (server != null) {
-                log.debug("PCEServer.stop: Stopping Grizzly.");
+                log.debug("DDSServer.stop: Stopping Grizzly.");
                 server.shutdownNow();
                 server = null;
             }
             else {
-                log.error("PCEServer.stop: Grizzly not started.");
+                log.error("DDSServer.stop: Grizzly not started.");
                 throw new IllegalStateException();
             }
         }
