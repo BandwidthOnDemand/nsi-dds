@@ -2,7 +2,7 @@ package net.es.nsi.dds.actors;
 
 import net.es.nsi.dds.dao.RemoteSubscriptionCache;
 import net.es.nsi.dds.messages.RegistrationEvent;
-import net.es.nsi.dds.messages.RemoteSubscription;
+import net.es.nsi.dds.dao.RemoteSubscription;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.Terminated;

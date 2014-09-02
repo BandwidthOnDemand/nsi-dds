@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.es.nsi.dds.messages;
+package net.es.nsi.dds.dao;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -16,9 +16,12 @@ public class RemoteSubscription implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String ddsURL;
+    private SubscriptionType subscription;
+
+    private Date created = new Date(0);
     private Date lastModified = new Date(0);
     private Date lastAudit = new Date(0);
-    private SubscriptionType subscription;
+    private Date lastSuccessfulAudit = new Date(0);
 
     /**
      * @return the ddsURL
@@ -48,32 +51,44 @@ public class RemoteSubscription implements Serializable {
         this.subscription = subscription;
     }
 
+    public void setCreated(Date date) {
+        created.setTime(date.getTime());
+        lastModified.setTime(date.getTime());
+        lastAudit.setTime(date.getTime());
+        lastSuccessfulAudit.setTime(date.getTime());
+    }
+
+    public void setLastSuccessfulAudit(Date date) {
+        lastAudit.setTime(date.getTime());
+        lastSuccessfulAudit.setTime(date.getTime());
+    }
+
+    public void setLastAudit(Date date) {
+        lastAudit.setTime(date.getTime());
+    }
+
     /**
      * @return the lastModified
      */
     public Date getLastModified() {
-        return lastModified;
+        return new Date(lastModified.getTime());
     }
 
     /**
      * @param lastModified the lastModified to set
      */
     public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
+        this.lastModified.setTime(lastModified.getTime());
     }
 
     /**
      * @return the lastAudit
      */
     public Date getLastAudit() {
-        return lastAudit;
+        return new Date(lastAudit.getTime());
     }
 
-    /**
-     * @param lastAudit the lastAudit to set
-     */
-    public void setLastAudit(Date lastAudit) {
-        this.lastAudit = lastAudit;
+    public Date getLastSuccessfulAduit() {
+        return new Date(lastSuccessfulAudit.getTime());
     }
-
 }

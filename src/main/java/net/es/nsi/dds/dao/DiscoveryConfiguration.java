@@ -64,7 +64,7 @@ public class DiscoveryConfiguration {
     public synchronized void load() throws IllegalArgumentException, JAXBException, IOException, NullPointerException {
         // Make sure the condifuration file is set.
         if (getFilename() == null || getFilename().isEmpty()) {
-            pceLogger.errorAudit(DdsErrors.DISCOVERY_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
+            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
             throw new IllegalArgumentException();
         }
 
@@ -73,7 +73,7 @@ public class DiscoveryConfiguration {
             file = new File(getFilename());
         }
         catch (NullPointerException ex) {
-            pceLogger.errorAudit(DdsErrors.DISCOVERY_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
+            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
             throw ex;
         }
 
@@ -90,23 +90,23 @@ public class DiscoveryConfiguration {
             config = DiscoveryParser.getInstance().parse(getFilename());
         }
         catch (IOException io) {
-            pceLogger.errorAudit(DdsErrors.DISCOVERY_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
+            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
             throw io;
         }
         catch (JAXBException jaxb) {
-            pceLogger.errorAudit(DdsErrors.DISCOVERY_CONFIGURATION_INVALID_XML, "filename", getFilename());
+            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_XML, "filename", getFilename());
             throw jaxb;
         }
 
         if (config.getNsaId() == null || config.getNsaId().isEmpty()) {
-            pceLogger.errorAudit(DdsErrors.DISCOVERY_CONFIGURATION_INVALID_PARAMETER, "nsaId", config.getNsaId());
+            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "nsaId", config.getNsaId());
             throw new FileNotFoundException("Invalid nsaId: " + config.getNsaId());
         }
 
         setNsaId(config.getNsaId());
 
         if (config.getBaseURL() == null || config.getBaseURL().isEmpty()) {
-            pceLogger.errorAudit(DdsErrors.DISCOVERY_CONFIGURATION_INVALID_PARAMETER, "baseURL", config.getBaseURL());
+            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "baseURL", config.getBaseURL());
             throw new FileNotFoundException("Invalid baseURL: " + config.getBaseURL());
         }
 
@@ -128,28 +128,28 @@ public class DiscoveryConfiguration {
         }
 
         if (config.getAuditInterval() < MIN_AUDIT_INTERVAL || config.getAuditInterval() > MAX_AUDIT_INTERVAL) {
-            pceLogger.errorAudit(DdsErrors.DISCOVERY_CONFIGURATION_INVALID_PARAMETER, "auditInterval", Long.toString(config.getAuditInterval()));
+            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "auditInterval", Long.toString(config.getAuditInterval()));
             setAuditInterval(DEFAULT_AUDIT_INTERVAL);
         }
 
         setAuditInterval(config.getAuditInterval());
 
         if (config.getExpiryInterval() < EXPIRE_INTERVAL_MIN || config.getExpiryInterval() > EXPIRE_INTERVAL_MAX) {
-            pceLogger.errorAudit(DdsErrors.DISCOVERY_CONFIGURATION_INVALID_PARAMETER, "expiryInterval", Long.toString(config.getExpiryInterval()));
+            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "expiryInterval", Long.toString(config.getExpiryInterval()));
             setExpiryInterval(EXPIRE_INTERVAL_DEFAULT);
         }
 
         setExpiryInterval(config.getExpiryInterval());
 
         if (config.getActorPool() < ACTORPOOL_MIN_SIZE || config.getActorPool() > ACTORPOOL_MAX_SIZE) {
-            pceLogger.errorAudit(DdsErrors.DISCOVERY_CONFIGURATION_INVALID_PARAMETER, "actorPool", Integer.toString(config.getActorPool()));
+            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "actorPool", Integer.toString(config.getActorPool()));
             setActorPool(ACTORPOOL_DEFAULT_SIZE);
         }
 
         setActorPool(config.getActorPool());
 
         if (config.getBaseURL() == null || config.getBaseURL().isEmpty()) {
-            pceLogger.errorAudit(DdsErrors.DISCOVERY_CONFIGURATION_INVALID_PARAMETER, "baseURL=" + config.getBaseURL());
+            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "baseURL=" + config.getBaseURL());
             throw new FileNotFoundException("Invalid base URL: " + config.getBaseURL());
         }
 

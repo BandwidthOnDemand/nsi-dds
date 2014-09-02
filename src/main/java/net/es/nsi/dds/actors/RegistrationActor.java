@@ -6,7 +6,7 @@ package net.es.nsi.dds.actors;
 
 import net.es.nsi.dds.dao.RemoteSubscriptionCache;
 import net.es.nsi.dds.messages.RegistrationEvent;
-import net.es.nsi.dds.messages.RemoteSubscription;
+import net.es.nsi.dds.dao.RemoteSubscription;
 import akka.actor.UntypedActor;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,6 +28,9 @@ import net.es.nsi.dds.api.jaxb.SubscriptionRequestType;
 import net.es.nsi.dds.api.jaxb.SubscriptionType;
 import net.es.nsi.dds.util.UrlHelper;
 import net.es.nsi.dds.jersey.RestClient;
+import net.es.nsi.dds.management.logs.DdsErrors;
+import net.es.nsi.dds.management.logs.DdsLogger;
+import net.es.nsi.dds.management.logs.DdsLogs;
 import net.es.nsi.dds.schema.NsiConstants;
 import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
@@ -41,6 +44,8 @@ public class RegistrationActor extends UntypedActor {
     private static final String NOTIFICATIONS_URL = "notifications";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
+    private final DdsLogger logger = DdsLogger.getLogger();
+
     private final ObjectFactory factory = new ObjectFactory();
     private DiscoveryConfiguration discoveryConfiguration;
     private RemoteSubscriptionCache remoteSubscriptionCache;
@@ -87,6 +92,11 @@ public class RegistrationActor extends UntypedActor {
         return url.toExternalForm();
     }
 
+    /**
+     * Create a new subscription on the specified remote DDS service.
+     *
+     * @param event
+     */
     private void register(RegistrationEvent event) {
         final String remoteDdsURL = event.getUrl();
 
@@ -104,13 +114,14 @@ public class RegistrationActor extends UntypedActor {
         }
         catch (MalformedURLException mx) {
             log.error("RegistrationActor.register: failed to get my notification callback URL, failing registration for " + remoteDdsURL, mx);
+            logger.error(DdsErrors.DDS_CONFIGURATION_INVALID_LOCAL_DDS_URL, remoteDdsURL);
             return;
         }
 
         Client client = restClient.get();
-
         WebTarget webTarget = client.target(remoteDdsURL).path("subscriptions");
         JAXBElement<SubscriptionRequestType> jaxb = factory.createSubscriptionRequest(request);
+
         Response response;
         try {
             log.debug("RegistrationActor: registering with remote DDS " + remoteDdsURL);
@@ -118,6 +129,7 @@ public class RegistrationActor extends UntypedActor {
         }
         catch (Exception ex) {
             log.error("RegistrationActor.register: endpoint " + remoteDdsURL, ex);
+            logger.error(DdsErrors.DDS_SUBSCRIPTION_ADD_FAILED, remoteDdsURL);
             //client.close();
             return;
         }
@@ -125,10 +137,16 @@ public class RegistrationActor extends UntypedActor {
         // If this failed then we log the issue and do not save the subscription information.
         if (response.getStatus() != Response.Status.CREATED.getStatusCode()) {
             log.error("RegistrationActor.register: failed to create subscription " + remoteDdsURL + ", result = " + response.getStatusInfo().getReasonPhrase());
+
             ErrorType error = response.readEntity(ErrorType.class);
             if (error != null) {
-                log.error("RegistrationActor.register: id=" + error.getId() + ", label=" + error.getLabel() + ", resource=" + error.getResource() + ", description=" + error.getDescription());
+                log.error("RegistrationActor.register: Error id=" + error.getId() + ", label=" + error.getLabel() + ", resource=" + error.getResource() + ", description=" + error.getDescription());
+                logger.error(DdsErrors.DDS_SUBSCRIPTION_ADD_FAILED_DETAILED, remoteDdsURL, error.getId());
             }
+            else {
+                logger.error(DdsErrors.DDS_SUBSCRIPTION_ADD_FAILED_DETAILED, remoteDdsURL, response.getStatusInfo().getReasonPhrase());
+            }
+
             response.close();
             //client.close();
             return;
@@ -136,8 +154,7 @@ public class RegistrationActor extends UntypedActor {
 
         // Looks like we were successful so save the subscription information.
         SubscriptionType newSubscription = response.readEntity(SubscriptionType.class);
-
-        log.debug("RegistrationActor.register: created subscription " + newSubscription.getId() + ", href=" + newSubscription.getHref() + ", lastModified=" + response.getLastModified());
+        logger.log(DdsLogs.DDS_SUBSCRIPTION_CREATED, remoteDdsURL, newSubscription.getHref());
 
         RemoteSubscription remoteSubscription = new RemoteSubscription();
         remoteSubscription.setDdsURL(remoteDdsURL);
@@ -147,13 +164,12 @@ public class RegistrationActor extends UntypedActor {
             // until we have worked out all the failure cases.  This will open
             // a small window of inaccuracy.
             log.error("RegistrationActor.register: invalid LastModified header for id=" + newSubscription.getId() + ", href=" + newSubscription.getHref());
-            remoteSubscription.setLastModified(new Date((System.currentTimeMillis() / 1000) * 1000 ));
+            remoteSubscription.setCreated(new Date((System.currentTimeMillis() / 1000) * 1000 ));
         }
         else {
-            remoteSubscription.setLastModified(response.getLastModified());
+            remoteSubscription.setCreated(response.getLastModified());
         }
 
-        remoteSubscription.getLastAudit().setTime(System.currentTimeMillis());
         remoteSubscriptionCache.add(remoteSubscription);
 
         response.close();
@@ -170,11 +186,11 @@ public class RegistrationActor extends UntypedActor {
         WebTarget webTarget = client.target(remoteDdsURL).path("subscriptions").queryParam("requesterId", discoveryConfiguration.getNsaId());
         Response response;
         try {
-            log.debug("deleteOldSubscriptions: querying subscriptions on remote DDS " + remoteDdsURL);
             response = webTarget.request(NsiConstants.NSI_DDS_V1_XML).get();
         }
         catch (Exception ex) {
-            log.error("deleteOldSubscriptions: failed for endpoint " + remoteDdsURL, ex);
+            log.error("GET failed for " + webTarget.getUri().toASCIIString(), ex);
+            logger.error(DdsErrors.DDS_SUBSCRIPTION_GET_FAILED, webTarget.getUri().toASCIIString());
             //client.close();
             return;
         }
@@ -182,10 +198,13 @@ public class RegistrationActor extends UntypedActor {
         // If this failed then we log the issue hope for the best.  Duplicate
         // notification are not an issue.
         if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-            log.error("deleteOldSubscriptions: failed to retrieve list of subscriptions " + remoteDdsURL + ", result = " + response.getStatusInfo().getReasonPhrase());
+            log.error("Failed to retrieve list of subscriptions " + remoteDdsURL + ", result = " + response.getStatusInfo().getReasonPhrase());
             ErrorType error = response.readEntity(ErrorType.class);
             if (error != null) {
-                log.error("deleteOldSubscriptions: id=" + error.getId() + ", label=" + error.getLabel() + ", resource=" + error.getResource() + ", description=" + error.getDescription());
+                logger.error(DdsErrors.DDS_SUBSCRIPTION_GET_FAILED_DETAILED, webTarget.getUri().toASCIIString(), error.getId());
+            }
+            else {
+                logger.error(DdsErrors.DDS_SUBSCRIPTION_GET_FAILED_DETAILED, webTarget.getUri().toASCIIString(), response.getStatusInfo().getReasonPhrase());
             }
             response.close();
             //client.close();
@@ -203,7 +222,7 @@ public class RegistrationActor extends UntypedActor {
         for (SubscriptionType subscription : subscriptions.getSubscription()) {
             if (!id.equalsIgnoreCase(subscription.getId())) {
                 // Found one we need to remove.
-                log.debug("deleteOldSubscriptions: found stale subscription " + subscription.getHref() + " on DDS " + remoteDdsURL);
+                log.debug("deleteOldSubscriptions: found stale subscription " + subscription.getHref() + " on DDS " + webTarget.getUri().toASCIIString());
                 deleteSubscription(remoteDdsURL, subscription.getHref());
             }
         }
@@ -216,7 +235,6 @@ public class RegistrationActor extends UntypedActor {
         // valid.  If it is not then we register again, otherwise we leave it
         // alone for now.
         RemoteSubscription remoteSubscription = remoteSubscriptionCache.get(event.getUrl());
-        remoteSubscription.getLastAudit().setTime(System.currentTimeMillis());
         String remoteSubscriptionURL = remoteSubscription.getSubscription().getHref();
 
         // Check to see if the remote subscription URL is absolute or relative.
@@ -228,51 +246,59 @@ public class RegistrationActor extends UntypedActor {
             webTarget = client.target(remoteSubscription.getDdsURL()).path(remoteSubscriptionURL);
         }
 
+        String absoluteURL = webTarget.getUri().toASCIIString();
+
+        // Read the remote subscription to determine existanxe and last update time.
+        remoteSubscription.setLastAudit(new Date());
         Response response = null;
         try {
-            log.debug("RegistrationActor.update: getting subscription " + webTarget.getUri().toASCIIString() + ", lastModified=" + remoteSubscription.getLastModified());
+            log.debug("RegistrationActor.update: getting subscription " + absoluteURL + ", lastModified=" + remoteSubscription.getLastModified());
             response = webTarget.request(NsiConstants.NSI_DDS_V1_XML).header("If-Modified-Since", DateUtils.formatDate(remoteSubscription.getLastModified(), DateUtils.PATTERN_RFC1123)).get();
         }
         catch (Exception ex) {
-            log.error("RegistrationActor.update: failed to update subscription " + remoteSubscriptionURL, ex);
-            if (response != null) {
-                response.close();
-            }
-            //client.close();
+            log.error("GET failed for " + absoluteURL, ex);
+            logger.error(DdsErrors.DDS_SUBSCRIPTION_GET_FAILED, absoluteURL);
             return;
         }
 
+        // We found the subscription and it was not updated.
         if (response.getStatus() == Response.Status.NOT_MODIFIED.getStatusCode()) {
             // The subscription exists and has not been modified.
-            log.debug("RegistrationActor.update: subscription " + webTarget.getUri().toASCIIString() + " exists (not modified).");
+            log.debug("RegistrationActor.update: subscription " + absoluteURL + " exists (not modified).");
+            remoteSubscription.setLastSuccessfulAudit(new Date());
         }
+        // We found the subscription and it was updated.
         else if (response.getStatus() == Response.Status.OK.getStatusCode()) {
             // The subscription exists but was modified since our last query.
             // Save the new version even though we should have know about it.
             remoteSubscription.setLastModified(response.getLastModified());
+            remoteSubscription.setLastSuccessfulAudit(new Date());
             SubscriptionType update = response.readEntity(SubscriptionType.class);
             remoteSubscription.setSubscription(update);
-            log.debug("RegistrationActor.update: subscription " + webTarget.getUri().toASCIIString() + " exists (modified).");
+            logger.log(DdsLogs.DDS_SUBSCRIPTION_UPDATE_DETECTED, absoluteURL, response.getLastModified().toString());
         }
+        // We did not find the subscription so will need to create a new one.
         else if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
             // Looks like our subscription was removed. We need to add it back in.
-            log.debug("RegistrationActor.update: subscription " + webTarget.getUri().toASCIIString() + " does not exists and will be recreated.");
+            logger.error(DdsErrors.DDS_SUBSCRIPTION_NOT_FOUND, absoluteURL);
 
             // Remove the stored subscription since a new one will be created.
             remoteSubscriptionCache.remove(remoteSubscription.getDdsURL());
             register(event);
         }
+        // An unexpected error has occured.
         else {
             // Some other error we cannot handle at the moment.
-            log.error("RegistrationActor.update: failed to update subscription " + webTarget.getUri().toASCIIString() + ", result = " + response.getStatusInfo().getReasonPhrase());
             ErrorType error = response.readEntity(ErrorType.class);
             if (error != null) {
-                log.error("RegistrationActor.update: id=" + error.getId() + ", label=" + error.getLabel() + ", resource=" + error.getResource() + ", description=" + error.getDescription());
+                logger.error(DdsErrors.DDS_SUBSCRIPTION_GET_FAILED_DETAILED, absoluteURL, error.getId());
+            }
+            else {
+                logger.error(DdsErrors.DDS_SUBSCRIPTION_GET_FAILED_DETAILED, absoluteURL, response.getStatusInfo().getReasonPhrase());
             }
         }
 
         response.close();
-        //client.close();
     }
 
     private void delete(RegistrationEvent event) {
@@ -294,41 +320,40 @@ public class RegistrationActor extends UntypedActor {
             webTarget = client.target(remoteDdsURL).path(remoteSubscriptionURL);
         }
 
+        String absoluteURL = webTarget.getUri().toASCIIString();
+
         Response response = null;
         try {
             response = webTarget.request(NsiConstants.NSI_DDS_V1_XML).delete();
         }
         catch (Exception ex) {
-            log.error("RegistrationActor.delete: failed to delete subscription " + remoteDdsURL, ex);
-            //client.close();
-            if (response != null) {
-                response.close();
-            }
+            log.error("Failed to delete subscription " + absoluteURL, ex);
+            logger.error(DdsErrors.DDS_SUBSCRIPTION_DELETE_FAILED, absoluteURL);
             return false;
         }
 
         if (response.getStatus() == Response.Status.NO_CONTENT.getStatusCode()) {
             // Successfully deleted the subscription.
-            log.debug("RegistrationActor.delete: deleted " + remoteSubscriptionURL);
+            logger.log(DdsLogs.DDS_SUBSCRIPTION_DELETED, absoluteURL);
         }
         else if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
-            log.error("RegistrationActor.delete: subscription did not exist " + remoteSubscriptionURL);
+            logger.error(DdsErrors.DDS_SUBSCRIPTION_DELETE_FAILED_DETAILED, absoluteURL, response.getStatusInfo().getReasonPhrase());
         }
         else {
-            log.error("RegistrationActor.delete: failed to delete subscription " + webTarget.getUri().toASCIIString() + ", result = " + response.getStatusInfo().getReasonPhrase());
+            log.error("RegistrationActor.delete: failed to delete subscription " + absoluteURL + ", result = " + response.getStatusInfo().getReasonPhrase());
             ErrorType error = response.readEntity(ErrorType.class);
             if (error != null) {
-                log.error("RegistrationActor.delete: id=" + error.getId() + ", label=" + error.getLabel() + ", resource=" + error.getResource() + ", description=" + error.getDescription());
+                logger.error(DdsErrors.DDS_SUBSCRIPTION_DELETE_FAILED_DETAILED, absoluteURL, error.getId());
+            }
+            else {
+                logger.error(DdsErrors.DDS_SUBSCRIPTION_DELETE_FAILED_DETAILED, absoluteURL, response.getStatusInfo().getReasonPhrase());
             }
 
             response.close();
-            //client.close();
             return false;
         }
 
         response.close();
-        //client.close();
-
         return true;
     }
 }

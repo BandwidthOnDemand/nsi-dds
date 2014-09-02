@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import net.es.nsi.dds.spring.SpringApplicationContext;
-import net.es.nsi.dds.messages.RemoteSubscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
