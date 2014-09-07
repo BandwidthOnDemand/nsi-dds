@@ -20,6 +20,12 @@ import net.es.nsi.dds.provider.InvalidVersionException;
 public class Exceptions {
     private static ObjectFactory factory = new ObjectFactory();
 
+    public static WebApplicationException internalServerErrorException(String resource, String parameter) {
+        ErrorType error = DiscoveryError.getErrorType(DiscoveryError.INTERNAL_SERVER_ERROR, resource, parameter);
+        Response ex = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new GenericEntity<JAXBElement<ErrorType>>(factory.createError(error)){}).build();
+        return new WebApplicationException(ex);
+    }
+
     public static WebApplicationException missingParameterException(String resource, String parameter) {
         ErrorType error = DiscoveryError.getErrorType(DiscoveryError.MISSING_PARAMETER, resource, parameter);
         Response ex = Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<ErrorType>>(factory.createError(error)){}).build();

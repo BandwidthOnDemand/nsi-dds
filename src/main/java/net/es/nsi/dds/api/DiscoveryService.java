@@ -322,6 +322,25 @@ public class DiscoveryService {
         return Response.created(URI.create(document.getDocument().getHref())).header("Last-Modified", date).entity(new GenericEntity<JAXBElement<DocumentType>>(jaxb){}).build();
     }
 
+    @DELETE
+    @Path("/documents/{nsa}/{type}/{id}")
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_JSON, NsiConstants.NSI_DDS_V1_XML })
+    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_JSON, NsiConstants.NSI_DDS_V1_XML })
+    public Response deleteDocument(
+            @PathParam("nsa") String nsa,
+            @PathParam("type") String type,
+            @PathParam("id") String id) throws WebApplicationException {
+
+        DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
+
+        Document document;
+        document = discoveryProvider.deleteDocument(nsa, type, id);
+
+        String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
+        JAXBElement<DocumentType> jaxb = factory.createDocument(document.getDocument());
+        return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<DocumentType>>(jaxb){}).build();
+    }
+
     @POST
     @Path("/local")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_JSON, NsiConstants.NSI_DDS_V1_XML })

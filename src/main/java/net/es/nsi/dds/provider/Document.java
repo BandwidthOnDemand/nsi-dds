@@ -33,9 +33,9 @@ public class Document implements Serializable {
     public Document(DocumentType document, String baseURL) throws WebApplicationException {
         this.id = documentId(document.getNsa(), document.getType(), document.getId());
         this.document = document;
-        this.document.setNsa(this.document.getNsa().trim());
-        this.document.setType(this.document.getType().trim());
-        this.document.setId(this.document.getId().trim());
+        this.document.setNsa(document.getNsa().trim());
+        this.document.setType(document.getType().trim());
+        this.document.setId(document.getId().trim());
         this.document.setHref(getDocumentURL(baseURL));
 
         lastDiscovered = new Date();

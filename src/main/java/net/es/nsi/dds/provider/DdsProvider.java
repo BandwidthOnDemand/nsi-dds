@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.xml.bind.JAXBException;
+import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.dao.DiscoveryParser;
@@ -317,7 +318,10 @@ public class DdsProvider implements DiscoveryProvider {
             documentCache.put(document.getId(), document);
 
             if (context == Source.LOCAL) {
-                documentRepository.put(document.getId(), document);
+                // Make a new copy of the document meta data to hold the
+                // repository file name.
+                Document repo = new Document(request, configReader.getBaseURL());
+                documentRepository.put(repo.getId(), repo);
             }
         }
         catch (JAXBException | IOException ex) {
@@ -333,12 +337,74 @@ public class DdsProvider implements DiscoveryProvider {
         return document;
     }
 
+    /**
+     * Delete a document from the DDS document space.  The document is deleted
+     * from the local repository if stored locally, and a document update is
+     * propagated with and expiry time of now.
+     *
+     * @param nsa
+     * @param type
+     * @param id
+     * @return
+     * @throws WebApplicationException
+     */
+    @Override
+    public Document deleteDocument(String nsa, String type, String id) throws WebApplicationException {
+        // See if we already have a document under this id.
+        String documentId = Document.documentId(nsa, type, id);
+
+        log.debug("deleteDocument: documentId=" + documentId);
+
+        Document document = documentCache.get(documentId);
+        if (document == null) {
+            throw Exceptions.doesNotExistException(DiscoveryError.DOCUMENT_DOES_NOT_EXIST, "document", documentId);
+        }
+
+        // See if this document is store in the local repository and remove it.
+        documentRepository.remove(documentId);
+
+        // Create a new document for the update.
+        DocumentType expiredDoc = factory.createDocumentType();
+        try {
+            XMLGregorianCalendar currentDate = XmlUtilities.longToXMLGregorianCalendar(System.currentTimeMillis());
+            expiredDoc.setVersion(currentDate);
+            expiredDoc.setExpires(currentDate);
+        }
+        catch (DatatypeConfigurationException ex) {
+            throw Exceptions.internalServerErrorException("XMLGregorianCalendar", ex.getMessage());
+        }
+        expiredDoc.setContent(document.getDocument().getContent());
+        expiredDoc.setHref(document.getDocument().getHref());
+        expiredDoc.setId(document.getDocument().getId());
+        expiredDoc.setNsa(document.getDocument().getNsa());
+        expiredDoc.setSignature(document.getDocument().getSignature());
+        expiredDoc.setType(document.getDocument().getType());
+
+        Document newDoc = new Document(expiredDoc, configReader.getBaseURL());
+
+        try {
+            documentCache.update(documentId, newDoc);
+        }
+        catch (JAXBException jaxb) {
+            log.error("deleteDocument: Failed to generate document XML, documentId=" + documentId, jaxb);
+        }
+        catch (IOException io) {
+            log.error("deleteDocument: Failed to write document to cache, documentId=" + documentId, io);
+        }
+
+        // Route a update document event.
+        DocumentEvent de = new DocumentEvent();
+        de.setEvent(DocumentEventType.UPDATED);
+        de.setDocument(newDoc);
+        ddsActorController.sendNotification(de);
+
+        return newDoc;
+    }
+
     @Override
     public Document updateDocument(String nsa, String type, String id, DocumentType request, Source context) throws WebApplicationException, InvalidVersionException {
         // Create a document identifier to look up in our documet table.
         String documentId = Document.documentId(nsa, type, id);
-
-        log.debug("updateDocument: documentId=" + documentId);
 
         // See if we have a document under this id.
         Document document = documentCache.get(documentId);
@@ -346,8 +412,6 @@ public class DdsProvider implements DiscoveryProvider {
             String error = DiscoveryError.getErrorString(DiscoveryError.DOCUMENT_DOES_NOT_EXIST, "document", documentId);
             throw new NotFoundException(error);
         }
-
-        log.debug("updateDocument: found documentId=" + documentId);
 
         // Validate basic fields.
         if (request.getNsa() == null || request.getNsa().isEmpty() || !request.getNsa().equalsIgnoreCase(document.getDocument().getNsa())) {
@@ -380,15 +444,14 @@ public class DdsProvider implements DiscoveryProvider {
             throw Exceptions.invalidVersionException(DiscoveryError.DOCUMENT_VERSION, request.getId(), request.getVersion(), document.getDocument().getVersion());
         }
 
-        log.debug("updateDocument: received update is good=" + documentId);
-
         Document newDoc = new Document(request, configReader.getBaseURL());
         newDoc.setLastDiscovered(new Date());
         try {
             documentCache.update(documentId, newDoc);
 
             if (context == Source.LOCAL) {
-                documentRepository.update(documentId, newDoc);
+                Document repo = new Document(request, configReader.getBaseURL());
+                documentRepository.update(repo.getId(), repo);
             }
         }
         catch (JAXBException jaxb) {
@@ -397,6 +460,8 @@ public class DdsProvider implements DiscoveryProvider {
         catch (IOException io) {
             log.error("updateDocument: Failed to write document to cache, documentId=" + documentId, io);
         }
+
+        log.debug("updateDocument: updated documentId=" + documentId);
 
         // Route a update document event.
         DocumentEvent de = new DocumentEvent();
