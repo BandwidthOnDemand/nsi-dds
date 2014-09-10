@@ -369,9 +369,9 @@ public class DiscoveryTest {
         assertNotNull(notifications);
         notifications = TestServer.INSTANCE.pollDiscoveryNotification();
         while (notifications != null) {
-            System.out.println("Notification: providerId=" + notifications.getProviderId() + ", subscriptionId=" + notifications.getId() );
+            System.out.println("hNotification: providerId=" + notifications.getProviderId() + ", subscriptionId=" + notifications.getId() );
             for (NotificationType notification : notifications.getNotification()) {
-                System.out.println("Notification: event=" + notification.getEvent() + ", documentId=" + notification.getDocument().getId());
+                System.out.println("hNotification: event=" + notification.getEvent() + ", documentId=" + notification.getDocument().getId());
             }
             notifications = TestServer.INSTANCE.pollDiscoveryNotification();
         }
@@ -391,9 +391,9 @@ public class DiscoveryTest {
         assertNotNull(notifications);
         notifications = TestServer.INSTANCE.pollDiscoveryNotification();
         while (notifications != null) {
-            System.out.println("Notification: providerId=" + notifications.getProviderId() + ", subscriptionId=" + notifications.getId() );
+            System.out.println("hNotification: providerId=" + notifications.getProviderId() + ", subscriptionId=" + notifications.getId() );
             for (NotificationType notification : notifications.getNotification()) {
-                System.out.println("Notification: event=" + notification.getEvent() + ", documentId=" + notification.getDocument().getId());
+                System.out.println("hNotification: event=" + notification.getEvent() + ", documentId=" + notification.getDocument().getId());
             }
             notifications = TestServer.INSTANCE.pollDiscoveryNotification();
         }

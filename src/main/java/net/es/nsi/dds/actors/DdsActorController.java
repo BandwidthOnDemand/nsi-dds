@@ -11,14 +11,12 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.dao.DiscoveryConfiguration;
 import net.es.nsi.dds.messages.StartMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import scala.concurrent.duration.Duration;
 import static net.es.nsi.dds.spring.SpringExtension.SpringExtProvider;
 import org.springframework.context.ApplicationContextAware;
 
@@ -28,26 +26,26 @@ import org.springframework.context.ApplicationContextAware;
  */
 public class DdsActorController implements ApplicationContextAware {
     private final Logger log = LoggerFactory.getLogger(getClass());
-    
+
     // Configuration reader.
     private DdsActorSystem ddsActorSystem;
     private DiscoveryConfiguration configReader;
     private List<ActorEntry> actorEntries;
     private ApplicationContext applicationContext;
-    
+
     private List<ActorRef> startList = new ArrayList<>();
-    
+
     public DdsActorController(DdsActorSystem ddsActorSystem, DiscoveryConfiguration configReader, ActorEntry... entries) {
         this.ddsActorSystem = ddsActorSystem;
         this.configReader = configReader;
         this.actorEntries = Arrays.asList(entries);
     }
-    
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
-    
+
     public void init() throws IllegalArgumentException, JAXBException, FileNotFoundException {
         /*ClassLoader myClassLoader = ClassLoader.getSystemClassLoader();
         try {
@@ -60,10 +58,10 @@ public class DdsActorController implements ApplicationContextAware {
         // int poolSize, long interval) which are configured via Spring.
         int poolSize = configReader.getActorPool();
         long interval = configReader.getAuditInterval();
-        
+
         ActorSystem actorSystem = ddsActorSystem.getActorSystem();
         SpringExtProvider.get(actorSystem).initialize(applicationContext);
-        
+
         // Initialize the injectes actors.
         ActorRef actor;
         for (ActorEntry entry : actorEntries) {
@@ -77,26 +75,26 @@ public class DdsActorController implements ApplicationContextAware {
             }
         }
     }
-    
+
     public ActorSystem getActorSystem() {
         return ddsActorSystem.getActorSystem();
     }
-    
+
     public DiscoveryConfiguration getConfigReader() {
         return configReader;
     }
-    
+
     public Cancellable scheduleNotification(Object message, long delay) {
         NotificationRouter notificationRouter = (NotificationRouter) applicationContext.getBean("notificationRouter");
         Cancellable scheduleOnce = notificationRouter.scheduleNotification(message, delay);
         return scheduleOnce;
     }
-    
+
     public void sendNotification(Object message) {
         NotificationRouter notificationRouter = (NotificationRouter) applicationContext.getBean("notificationRouter");
         notificationRouter.sendNotification(message);
     }
-    
+
     public void start() {
         log.info("DdsActorController: Starting discovery process...");
         StartMsg msg = new StartMsg();

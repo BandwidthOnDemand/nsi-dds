@@ -17,10 +17,10 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.dao.DiscoveryConfiguration;
-import net.es.nsi.dds.dao.DiscoveryParser;
 import net.es.nsi.dds.api.jaxb.NotificationListType;
 import net.es.nsi.dds.api.jaxb.NotificationType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
+import net.es.nsi.dds.dao.DiscoveryParser;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.jersey.RestClient;
@@ -93,10 +93,9 @@ public class NotificationActor extends UntypedActor {
             final WebTarget webTarget = client.target(callback);
             JAXBElement<NotificationListType> jaxb = factory.createNotifications(list);
             String mediaType = notification.getSubscription().getEncoding();
-            //String jaxbToString = DiscoveryParser.getInstance().jaxbToString(jaxb);
-            //log.debug("Notification to send:\n" + jaxbToString);
 
             try {
+                log.debug("NotificationActor: sending to " + notification.getSubscription().getSubscription().getCallback());
                 Response response = webTarget.request(mediaType)
                     .post(Entity.entity(new GenericEntity<JAXBElement<NotificationListType>>(jaxb) {}, mediaType));
 
@@ -116,6 +115,11 @@ public class NotificationActor extends UntypedActor {
                 log.error("NotificationActor: failed notification " + list.getId() + " to client " + callback, ex);
                 DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
                 discoveryProvider.deleteSubscription(notification.getSubscription().getId());
+            }
+            catch (Exception ex) {
+                String jaxbToString = DiscoveryParser.getInstance().jaxbToString(jaxb);
+                log.error("Notification failed to send:\n" + jaxbToString + "\n", ex);
+                throw ex;
             }
 
             //client.close();

@@ -445,7 +445,6 @@ public class DdsProvider implements DiscoveryProvider {
         }
 
         Document newDoc = new Document(request, configReader.getBaseURL());
-        newDoc.setLastDiscovered(new Date());
         try {
             documentCache.update(documentId, newDoc);
 
