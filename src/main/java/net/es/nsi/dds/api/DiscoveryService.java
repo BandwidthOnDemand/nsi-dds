@@ -228,8 +228,7 @@ public class DiscoveryService {
             lastDiscovered = DateUtils.parseDate(ifModifiedSince);
         }
 
-        Collection<Document> documents;
-        documents = discoveryProvider.getDocumentsByNsa(nsa.trim(), type, id, lastDiscovered);
+        Collection<Document> documents = discoveryProvider.getDocumentsByNsa(nsa.trim(), type, id, lastDiscovered);
 
         Date discovered = new Date(0);
         DocumentListType results = factory.createDocumentListType();
@@ -366,14 +365,11 @@ public class DiscoveryService {
             lastDiscovered = DateUtils.parseDate(ifModifiedSince);
         }
 
-        Collection<Document> documents;
-        documents = discoveryProvider.getLocalDocuments(type, id, lastDiscovered);
+        Collection<Document> documents = discoveryProvider.getLocalDocuments(type, id, lastDiscovered);
 
         Date discovered = new Date(0);
         DocumentListType results = factory.createDocumentListType();
         if (documents.size() > 0) {
-            // Only the document meta data is required and not the document
-            // contents.
             for (Document document : documents) {
                 if (discovered.before(document.getLastDiscovered())) {
                     discovered = document.getLastDiscovered();

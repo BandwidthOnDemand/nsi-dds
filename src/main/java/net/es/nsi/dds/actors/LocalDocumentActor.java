@@ -35,6 +35,7 @@ public class LocalDocumentActor extends UntypedActor {
             return;
         }
 
+        DdsProvider.getInstance().loadDocuments();
         ddsActorSystem.getActorSystem().scheduler().scheduleOnce(Duration.create(getInterval(), TimeUnit.SECONDS), this.getSelf(), message, ddsActorSystem.getActorSystem().dispatcher(), null);
     }
 

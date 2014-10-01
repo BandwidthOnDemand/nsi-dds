@@ -266,7 +266,7 @@
                 <version>1.4.4</version>
                 <executions>
                     <execution>
-                        <id>PCE</id>
+                        <id>DDS</id>
                         <configuration>
                             <mainClass>net.es.nsi.dds.server.Main</mainClass>
                             <classifier>onejar</classifier>

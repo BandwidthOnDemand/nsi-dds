@@ -594,7 +594,33 @@ public class DdsProvider implements DiscoveryProvider {
 
     @Override
     public Collection<Document> getLocalDocuments(String type, String id, Date lastDiscovered) throws IllegalArgumentException {
-        return getDocumentsByNsa(getConfigReader().getNsaId(), type, id, lastDiscovered);
+        String nsaId = getConfigReader().getNsaId();
+
+        // Seed the results.
+        Collection<Document> results = documentCache.values();
+
+        // This is the primary search value.  Make sure it is present.
+        if (nsaId != null && !nsaId.isEmpty()) {
+            results = getDocumentsByNsa(nsaId, results);
+        }
+        else {
+            throw Exceptions.illegalArgumentException(DiscoveryError.MISSING_PARAMETER, "document", "nsa");
+        }
+
+        // The rest are additional filters.
+        if (lastDiscovered != null) {
+            results = getDocumentsByDate(lastDiscovered, results);
+        }
+
+        if (type != null && !type.isEmpty()) {
+            results = getDocumentsByType(type, results);
+        }
+
+        if (id != null && !id.isEmpty()) {
+            results = getDocumentsById(id, results);
+        }
+
+        return results;
     }
 
     @Override
