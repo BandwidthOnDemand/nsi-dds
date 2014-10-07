@@ -659,7 +659,7 @@ public class DiscoveryService {
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
         if (notifications != null) {
-            log.debug("notifications: provider=" + notifications.getProviderId() + ", subscriptionId=" + notifications.getId() + ", href=" + notifications.getHref() + ", discovered=" + notifications.getDiscovered());
+            log.debug("notifications: provider=" + notifications.getProviderId() + ", subscriptionId=" + notifications.getId() + ", href=" + notifications.getHref());
             for (NotificationType notification : notifications.getNotification()) {
                 log.debug("notifications: processing notification event=" + notification.getEvent() + ", documentId=" + notification.getDocument().getId());
                 try {

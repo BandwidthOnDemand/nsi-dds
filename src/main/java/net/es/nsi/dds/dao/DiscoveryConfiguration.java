@@ -18,7 +18,7 @@ import net.es.nsi.dds.spring.SpringApplicationContext;
  * @author hacksaw
  */
 public class DiscoveryConfiguration {
-    private final DdsLogger pceLogger = DdsLogger.getLogger();
+    private final DdsLogger ddsLogger = DdsLogger.getLogger();
 
     public static final long MAX_AUDIT_INTERVAL = 86400L; // 24 hours in seconds
     public static final long DEFAULT_AUDIT_INTERVAL = 1200L; // 20 minutes in seconds
@@ -32,6 +32,14 @@ public class DiscoveryConfiguration {
     public static final int ACTORPOOL_DEFAULT_SIZE = 20;
     public static final int ACTORPOOL_MIN_SIZE = 5;
 
+    public static final int NOTIFICATIONSIZE_MAX_SIZE = 40;
+    public static final int NOTIFICATIONSIZE_DEFAULT_SIZE = 10;
+    public static final int NOTIFICATIONSIZE_MIN_SIZE = 5;
+
+    public static final int PAGESIZE_MAX_SIZE = 100;
+    public static final int PAGESIZE_DEFAULT_SIZE = 50;
+    public static final int PAGESIZE_MIN_SIZE = 5;
+
     private String filename = null;
 
     private long lastModified = 0;
@@ -43,6 +51,8 @@ public class DiscoveryConfiguration {
     private long auditInterval = DEFAULT_AUDIT_INTERVAL;
     private long expiryInterval = EXPIRE_INTERVAL_DEFAULT;
     private int actorPool = ACTORPOOL_DEFAULT_SIZE;
+    private int notificationSize;
+    private int pageSize;
     private Set<PeerURLType> discoveryURL = new HashSet<>();
 
     public static DiscoveryConfiguration getInstance() {
@@ -64,7 +74,7 @@ public class DiscoveryConfiguration {
     public synchronized void load() throws IllegalArgumentException, JAXBException, IOException, NullPointerException {
         // Make sure the condifuration file is set.
         if (getFilename() == null || getFilename().isEmpty()) {
-            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
+            ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
             throw new IllegalArgumentException();
         }
 
@@ -73,7 +83,7 @@ public class DiscoveryConfiguration {
             file = new File(getFilename());
         }
         catch (NullPointerException ex) {
-            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
+            ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
             throw ex;
         }
 
@@ -90,23 +100,23 @@ public class DiscoveryConfiguration {
             config = DiscoveryParser.getInstance().parse(getFilename());
         }
         catch (IOException io) {
-            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
+            ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
             throw io;
         }
         catch (JAXBException jaxb) {
-            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_XML, "filename", getFilename());
+            ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_XML, "filename", getFilename());
             throw jaxb;
         }
 
         if (config.getNsaId() == null || config.getNsaId().isEmpty()) {
-            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "nsaId", config.getNsaId());
+            ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "nsaId", config.getNsaId());
             throw new FileNotFoundException("Invalid nsaId: " + config.getNsaId());
         }
 
         setNsaId(config.getNsaId());
 
         if (config.getBaseURL() == null || config.getBaseURL().isEmpty()) {
-            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "baseURL", config.getBaseURL());
+            ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "baseURL", config.getBaseURL());
             throw new FileNotFoundException("Invalid baseURL: " + config.getBaseURL());
         }
 
@@ -128,29 +138,44 @@ public class DiscoveryConfiguration {
         }
 
         if (config.getAuditInterval() < MIN_AUDIT_INTERVAL || config.getAuditInterval() > MAX_AUDIT_INTERVAL) {
-            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "auditInterval", Long.toString(config.getAuditInterval()));
+            ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "auditInterval", Long.toString(config.getAuditInterval()));
             setAuditInterval(DEFAULT_AUDIT_INTERVAL);
         }
 
         setAuditInterval(config.getAuditInterval());
 
         if (config.getExpiryInterval() < EXPIRE_INTERVAL_MIN || config.getExpiryInterval() > EXPIRE_INTERVAL_MAX) {
-            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "expiryInterval", Long.toString(config.getExpiryInterval()));
+            ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "expiryInterval", Long.toString(config.getExpiryInterval()));
             setExpiryInterval(EXPIRE_INTERVAL_DEFAULT);
         }
 
         setExpiryInterval(config.getExpiryInterval());
 
         if (config.getActorPool() < ACTORPOOL_MIN_SIZE || config.getActorPool() > ACTORPOOL_MAX_SIZE) {
-            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "actorPool", Integer.toString(config.getActorPool()));
+            ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "actorPool", Integer.toString(config.getActorPool()));
             setActorPool(ACTORPOOL_DEFAULT_SIZE);
         }
 
         setActorPool(config.getActorPool());
 
         if (config.getBaseURL() == null || config.getBaseURL().isEmpty()) {
-            pceLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "baseURL=" + config.getBaseURL());
+            ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "baseURL=" + config.getBaseURL());
             throw new FileNotFoundException("Invalid base URL: " + config.getBaseURL());
+        }
+
+        if (config.getNotificationSize() < NOTIFICATIONSIZE_MIN_SIZE ||
+                config.getNotificationSize() > NOTIFICATIONSIZE_MAX_SIZE) {
+            setNotificationSize(NOTIFICATIONSIZE_DEFAULT_SIZE);
+        }
+        else {
+            setNotificationSize(config.getNotificationSize());
+        }
+
+        if (config.getPageSize() < PAGESIZE_MIN_SIZE || config.getPageSize() > PAGESIZE_MAX_SIZE) {
+            setPageSize(PAGESIZE_DEFAULT_SIZE);
+        }
+        else {
+            setPageSize(config.getPageSize());
         }
 
         for (PeerURLType url : config.getPeerURL()) {
@@ -301,5 +326,33 @@ public class DiscoveryConfiguration {
      */
     public void setRepository(String repository) {
         this.repository = repository;
+    }
+
+    /**
+     * @return the notificationSize
+     */
+    public int getNotificationSize() {
+        return notificationSize;
+    }
+
+    /**
+     * @param notificationSize the notificationSize to set
+     */
+    public void setNotificationSize(int notificationSize) {
+        this.notificationSize = notificationSize;
+    }
+
+    /**
+     * @return the pageSize
+     */
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    /**
+     * @param pageSize the pageSize to set
+     */
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
     }
 }

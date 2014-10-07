@@ -19,6 +19,8 @@
             <xsd:element name="expiryInterval" type="xsd:long"/>
             <xsd:element name="actorPool" type="xsd:int"/>
             <xsd:element name="baseURL" type="xsd:anyURI"/>
+            <xsd:element name="notificationSize" type="xsd:int" default="10" />
+            <xsd:element name="pageSize" type="xsd:int" default="50" />
             <xsd:element name="peerURL" type="tns:PeerURLType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>

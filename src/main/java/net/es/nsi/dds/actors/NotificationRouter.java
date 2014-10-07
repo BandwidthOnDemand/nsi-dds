@@ -36,7 +36,6 @@ import scala.concurrent.duration.Duration;
  * @author hacksaw
  */
 public class NotificationRouter extends UntypedActor {
-
     private final Logger log = LoggerFactory.getLogger(getClass());
     private DdsActorSystem ddsActorSystem;
     private DiscoveryConfiguration discoveryConfiguration;
@@ -105,7 +104,7 @@ public class NotificationRouter extends UntypedActor {
         // related to this subscription.  Only send if there is no pending
         // subscription event.
         for (Subscription subscription : subscriptions) {
-            log.debug("routeDocumentEvent: subscription=" + subscription.getId() + ", endpoint=" + subscription.getSubscription().getCallback());
+            log.debug("routeDocumentEvent: id=" + de.getDocument().getId() + ", subscription=" + subscription.getId() + ", endpoint=" + subscription.getSubscription().getCallback());
             if (subscription.getAction() == null) {
                 Notification notification = new Notification();
                 notification.setEvent(de.getEvent());
@@ -124,16 +123,27 @@ public class NotificationRouter extends UntypedActor {
         Collection<Document> documents = documentCache.values();
 
         // Clean up our trigger event.
-        log.debug("routeSubscriptionEvent: event=" + se.getEvent() + ", action=" + se.getSubscription().getAction().isCancelled());
+        log.debug("routeSubscriptionEvent: event=" + se.getEvent() + ", documents=" + documents.size() + ", size=" + discoveryConfiguration.getNotificationSize() + ", action=" + se.getSubscription().getAction().isCancelled());
         se.getSubscription().setAction(null);
 
-        // We need to sent the list of matching documents to the callback
-        // related to this subscription.
-        Notification notification = new Notification();
-        notification.setEvent(DocumentEventType.ALL);
-        notification.setSubscription(se.getSubscription());
-        notification.setDocuments(documents);
-        router.route(notification, getSender());
+        // Send documents in chunks of 10.
+        Object[] toArray = documents.toArray();
+        int current = 0;
+        while (current < toArray.length) {
+            // We need to sent the list of matching documents to the callback
+            // related to this subscription.
+            Notification notification = new Notification();
+            notification.setEvent(DocumentEventType.ALL);
+            notification.setSubscription(se.getSubscription());
+            ArrayList<Document> docs = new ArrayList<>();
+            for (int i = 0; i < discoveryConfiguration.getNotificationSize()
+                    && current < toArray.length; i++) {
+                docs.add((Document) toArray[current]);
+                current++;
+            }
+            notification.setDocuments(docs);
+            router.route(notification, getSender());
+        }
     }
 
     /**

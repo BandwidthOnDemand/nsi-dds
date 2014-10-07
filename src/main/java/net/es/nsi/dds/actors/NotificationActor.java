@@ -55,8 +55,6 @@ public class NotificationActor extends UntypedActor {
             log.debug("NotificationActor: notificationId=" + notification.getSubscription().getId());
 
             NotificationListType list = factory.createNotificationListType();
-
-            Date lastDiscovered = new Date(0);
             for (Document document : notification.getDocuments()) {
                 log.debug("NotificationActor: documentId=" + document.getDocument().getId());
                 NotificationType notify = factory.createNotificationType();
@@ -65,10 +63,6 @@ public class NotificationActor extends UntypedActor {
                 try {
                     XMLGregorianCalendar discovered = XmlUtilities.longToXMLGregorianCalendar(document.getLastDiscovered().getTime());
                     notify.setDiscovered(discovered);
-
-                    if (lastDiscovered.before(document.getLastDiscovered())) {
-                        lastDiscovered = document.getLastDiscovered();
-                    }
                 }
                 catch (Exception ex) {
                     log.error("NotificationActor: discovered date conversion failed", ex);
@@ -79,23 +73,16 @@ public class NotificationActor extends UntypedActor {
             list.setId(notification.getSubscription().getId());
             list.setHref(notification.getSubscription().getSubscription().getHref());
             list.setProviderId(discoveryConfiguration.getNsaId());
-            try {
-                XMLGregorianCalendar discovered = XmlUtilities.longToXMLGregorianCalendar(lastDiscovered.getTime());
-                list.setDiscovered(discovered);
-            }
-            catch (Exception ex) {
-                log.error("NotificationActor: discovered date conversion failed", ex);
-            }
-
             String callback = notification.getSubscription().getSubscription().getCallback();
             Client client = restClient.get();
 
             final WebTarget webTarget = client.target(callback);
             JAXBElement<NotificationListType> jaxb = factory.createNotifications(list);
             String mediaType = notification.getSubscription().getEncoding();
+            //String jaxbToString = DiscoveryParser.getInstance().jaxbToString(jaxb);
+            //log.debug("Notification to send:\n" + jaxbToString);
 
             try {
-                log.debug("NotificationActor: sending to " + notification.getSubscription().getSubscription().getCallback());
                 Response response = webTarget.request(mediaType)
                     .post(Entity.entity(new GenericEntity<JAXBElement<NotificationListType>>(jaxb) {}, mediaType));
 
@@ -116,13 +103,6 @@ public class NotificationActor extends UntypedActor {
                 DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
                 discoveryProvider.deleteSubscription(notification.getSubscription().getId());
             }
-            catch (Exception ex) {
-                String jaxbToString = DiscoveryParser.getInstance().jaxbToString(jaxb);
-                log.error("Notification failed to send:\n" + jaxbToString + "\n", ex);
-                throw ex;
-            }
-
-            //client.close();
         } else {
             unhandled(msg);
         }
