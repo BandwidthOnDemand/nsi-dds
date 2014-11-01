@@ -542,8 +542,6 @@ public class DdsProvider implements DiscoveryProvider {
         // Seed the results.
         Collection<Document> results = documentCache.values();
 
-        log.debug("getDocumentsByNsaAndType: " + results.size());
-
         // This is the primary search value.  Make sure it is present.
         if (nsa == null || nsa.isEmpty()) {
             throw Exceptions.illegalArgumentException(DiscoveryError.MISSING_PARAMETER, "document", "nsa");

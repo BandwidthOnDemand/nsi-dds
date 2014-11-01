@@ -1,6 +1,6 @@
 {
     "pce": {
-        "url": "http://localhost:8400/",
+        "url": "http://localhost:8401/",
         "packageName": "net.es.nsi.dds",
         "staticPath": "config/www/",
         "wwwPath": "/www"
