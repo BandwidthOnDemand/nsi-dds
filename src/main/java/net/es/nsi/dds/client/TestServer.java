@@ -19,19 +19,19 @@ public enum TestServer {
     private static HttpServer server = null;
     private static ConcurrentLinkedQueue<NotificationListType> notificationQueue = new ConcurrentLinkedQueue<>();
 
-    public boolean pushDiscoveryNotification(NotificationListType notify) {
+    public boolean pushDdsNotification(NotificationListType notify) {
         return notificationQueue.add(notify);
     }
 
-    public NotificationListType popDiscoveryNotification() {
+    public NotificationListType popDdsNotification() {
         return notificationQueue.remove();
     }
 
-    public NotificationListType peekDiscoveryNotification() {
+    public NotificationListType peekDdsNotification() {
         return notificationQueue.peek();
     }
 
-    public NotificationListType pollDiscoveryNotification() {
+    public NotificationListType pollDdsNotification() {
         return notificationQueue.poll();
     }
 
@@ -76,7 +76,7 @@ public enum TestServer {
 
         return new ResourceConfig()
                 .packages(packageName)
-                .register(DiscoveryNotificationCallback.class) // Remove this if packages gets fixed.
+                .register(DdsNotificationCallback.class) // Remove this if packages gets fixed.
                 .register(new MoxyXmlFeature())
                 .register(new MoxyJsonFeature())
                 .register(new LoggingFilter(java.util.logging.Logger.getGlobal(), true))

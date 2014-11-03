@@ -47,9 +47,9 @@
     <auditInterval>300</auditInterval>
     <expiryInterval>600</expiryInterval>
     <actorPool>10</actorPool>
-    <baseURL>http://localhost:8400/discovery</baseURL>
+    <baseURL>http://localhost:8400/dds</baseURL>
     <!--
-    <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">http://localhost:8400/discovery</peerURL>
+    <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">http://localhost:8400/dds</peerURL>
     <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://bod.acc.dlp.surfnet.nl/nsa-discovery</peerURL>
     <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://nsi-dev.nordu.net:9443/NSI/discovery.xml</peerURL>
     <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://62.217.124.244:8080/nsi_discovery_geant.xml</peerURL>

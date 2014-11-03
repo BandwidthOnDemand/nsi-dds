@@ -23,7 +23,7 @@ public class Main {
         { setUrl("http://localhost:9800/"); setPackageName("net.es.nsi.dds.client"); }
     };
 
-    private final static String callbackURL = testServer.getUrl() + "discovery";
+    private final static String callbackURL = testServer.getUrl() + "dds";
 
     private final static ObjectFactory factory = new ObjectFactory();
     @SuppressWarnings({"ResultOfMethodCallIgnored"})
@@ -32,7 +32,7 @@ public class Main {
         RestClient.configureClient(clientConfig);
         Client client = ClientBuilder.newClient(clientConfig);
 
-        WebTarget webGet = client.target("http://localhost:8400/discovery");
+        WebTarget webGet = client.target("http://localhost:8400/dds");
         Response response = webGet.request(MediaType.APPLICATION_JSON).get();
 
         System.out.println("Get result " + response.getStatus());

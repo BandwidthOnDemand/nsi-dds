@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.client;
 
 import javax.ws.rs.Consumes;
@@ -18,19 +14,19 @@ import net.es.nsi.dds.schema.NsiConstants;
  *
  * @author hacksaw
  */
-@Path("/discovery/")
-public class DiscoveryNotificationCallback {
+@Path("/dds/")
+public class DdsNotificationCallback {
 
     @POST
     @Path("/callback")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_JSON, NsiConstants.NSI_DDS_V1_XML })
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_JSON, NsiConstants.NSI_DDS_V1_XML })
     public Response notification(NotificationListType notify) {
-        System.out.println("DiscoveryNotificationCallback: id=" + notify.getId() + ", href=" + notify.getHref() + ", providerId=" + notify.getProviderId());
+        System.out.println("DdsNotificationCallback: id=" + notify.getId() + ", href=" + notify.getHref() + ", providerId=" + notify.getProviderId());
         for (NotificationType notification : notify.getNotification()) {
-            System.out.println("DiscoveryNotificationCallback: event=" + notification.getEvent().value() + ", documentId=" + notification.getDocument().getId());
+            System.out.println("DdsNotificationCallback: event=" + notification.getEvent().value() + ", documentId=" + notification.getDocument().getId());
         }
-        TestServer.INSTANCE.pushDiscoveryNotification(notify);
+        TestServer.INSTANCE.pushDdsNotification(notify);
         return Response.accepted().build();
     }
 }

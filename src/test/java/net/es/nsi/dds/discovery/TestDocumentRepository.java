@@ -57,7 +57,7 @@ public class TestDocumentRepository {
 
         testConfig = new TestConfig();
         target = testConfig.getTarget();
-        discovery = target.path("discovery");
+        discovery = target.path("dds");
 
         try {
             // Load a copy of the test DDS configuration and clear the document

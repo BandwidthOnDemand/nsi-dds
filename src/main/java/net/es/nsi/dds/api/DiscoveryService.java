@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author hacksaw
  */
-@Path("/discovery")
+@Path("/dds")
 public class DiscoveryService {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final ObjectFactory factory = new ObjectFactory();

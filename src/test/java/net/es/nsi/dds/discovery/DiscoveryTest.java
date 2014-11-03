@@ -56,7 +56,7 @@ public class DiscoveryTest {
 
     private final static String DDS_CONFIGURATION = "src/test/resources/config/dds.xml";
     private final static String DOCUMENT_DIR = "src/test/resources/documents/";
-    private final static String callbackURL = testServer.getUrl() + "discovery/callback";
+    private final static String callbackURL = testServer.getUrl() + "dds/callback";
     private final static ObjectFactory factory = new ObjectFactory();
     private static DiscoveryConfiguration ddsConfig;
     private static TestConfig testConfig;
@@ -86,7 +86,7 @@ public class DiscoveryTest {
 
         testConfig = new TestConfig();
         target = testConfig.getTarget();
-        discovery = target.path("discovery");
+        discovery = target.path("dds");
         System.out.println("*************************************** DiscoveryTest oneTimeSetUp done ***********************************");
     }
 
@@ -359,21 +359,21 @@ public class DiscoveryTest {
 
         // Now we wait for the initial notifications to arrive.
         int count = 0;
-        NotificationListType notifications = TestServer.INSTANCE.peekDiscoveryNotification();
+        NotificationListType notifications = TestServer.INSTANCE.peekDdsNotification();
         while(notifications == null && count < 30) {
             count++;
             Thread.sleep(1000);
-            notifications = TestServer.INSTANCE.peekDiscoveryNotification();
+            notifications = TestServer.INSTANCE.peekDdsNotification();
         }
 
         assertNotNull(notifications);
-        notifications = TestServer.INSTANCE.pollDiscoveryNotification();
+        notifications = TestServer.INSTANCE.pollDdsNotification();
         while (notifications != null) {
             System.out.println("hNotification: providerId=" + notifications.getProviderId() + ", subscriptionId=" + notifications.getId() );
             for (NotificationType notification : notifications.getNotification()) {
                 System.out.println("hNotification: event=" + notification.getEvent() + ", documentId=" + notification.getDocument().getId());
             }
-            notifications = TestServer.INSTANCE.pollDiscoveryNotification();
+            notifications = TestServer.INSTANCE.pollDdsNotification();
         }
 
         // Now send a document update.
@@ -381,21 +381,21 @@ public class DiscoveryTest {
 
         // Now we wait for the update notifications to arrive.
         count = 0;
-        notifications = TestServer.INSTANCE.peekDiscoveryNotification();
+        notifications = TestServer.INSTANCE.peekDdsNotification();
         while(notifications == null && count < 30) {
             count++;
             Thread.sleep(1000);
-            notifications = TestServer.INSTANCE.peekDiscoveryNotification();
+            notifications = TestServer.INSTANCE.peekDdsNotification();
         }
 
         assertNotNull(notifications);
-        notifications = TestServer.INSTANCE.pollDiscoveryNotification();
+        notifications = TestServer.INSTANCE.pollDdsNotification();
         while (notifications != null) {
             System.out.println("hNotification: providerId=" + notifications.getProviderId() + ", subscriptionId=" + notifications.getId() );
             for (NotificationType notification : notifications.getNotification()) {
                 System.out.println("hNotification: event=" + notification.getEvent() + ", documentId=" + notification.getDocument().getId());
             }
-            notifications = TestServer.INSTANCE.pollDiscoveryNotification();
+            notifications = TestServer.INSTANCE.pollDdsNotification();
         }
 
         response = testConfig.getClient().target(result.getHref()).request(MediaType.APPLICATION_XML).delete();
