@@ -128,17 +128,17 @@ public class XmlUtilities {
 
         // We will grab all XML files from the target directory.
         File[] listOfFiles = folder.listFiles();
-
-        String file;
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()) {
-                file = listOfFiles[i].getAbsolutePath();
-                if (file.endsWith(".xml") || file.endsWith(".xml")) {
-                    results.add(file);
+        if (listOfFiles != null) {
+            String file;
+            for (int i = 0; i < listOfFiles.length; i++) {
+                if (listOfFiles[i].isFile()) {
+                    file = listOfFiles[i].getAbsolutePath();
+                    if (file.endsWith(".xml") || file.endsWith(".xml")) {
+                        results.add(file);
+                    }
                 }
             }
         }
-
         return results;
     }
 }
