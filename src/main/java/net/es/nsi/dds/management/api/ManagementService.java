@@ -39,39 +39,9 @@ import org.slf4j.LoggerFactory;
 @Path("/management")
 public class ManagementService {
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private final DdsLogger pceLogger = DdsLogger.getLogger();
+    private final DdsLogger ddsLogger = DdsLogger.getLogger();
     private final ObjectFactory managementFactory = new ObjectFactory();
 
-    /**
-     * Returns the current topology audit status.
-     *
-     * @return Current topology audit status.
-     * @throws Exception If there was an internal error.
-     */
-    /*@GET
-    @Path("/status/topology")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "application/vnd.net.es.pce.v1+json", "application/vnd.net.es.pce.v1+xml" })
-    public Response getTopologyAuditStatus() throws Exception {
-        // Get a reference to topology provider and get the NSI Topology model.
-        DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
-
-        // Create and populate the status element to return in response.
-        StatusType status = managementFactory.createStatusType();
-        ProviderStatus providerStatus = discoveryProvider.getProviderStatus();
-        status.setStatus(providerStatus.getStatus());
-        status.setAuditInterval(discoveryProvider.getAuditInterval());
-        status.setLastAudit(XmlUtilities.longToXMLGregorianCalendar(providerStatus.getLastAudit()));
-        status.setLastSuccessfulAudit(XmlUtilities.longToXMLGregorianCalendar(providerStatus.getLastSuccessfulAudit()));
-        status.setLastDiscovered(XmlUtilities.longToXMLGregorianCalendar(providerStatus.getLastDiscovered()));
-
-        if (providerStatus.getLastAuditDuration() != -1) {
-            status.setLastAuditDuration(providerStatus.getLastAuditDuration() / 1000);
-        }
-
-        String date = DateUtils.formatDate(new Date(providerStatus.getLastAudit()), DateUtils.PATTERN_RFC1123);
-        return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<StatusType>>(managementFactory.createStatus(status)) {}).build();
-    }
-*/
     /**
      * Retrieve a list of logs matching the specified criteria.  All parameters
      * are optional.
@@ -86,7 +56,7 @@ public class ManagementService {
      */
     @GET
     @Path("/logs")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "application/vnd.net.es.pce.v1+json", "application/vnd.net.es.pce.v1+xml" })
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "application/vnd.net.es.dds.v1+json", "application/vnd.net.es.dds.v1+xml" })
     public Response getLogs(@HeaderParam("If-Modified-Since") String ifModifiedSince,
             @QueryParam("type") String type, /* One of "Log" or "Error". */
             @QueryParam("code") String code, /* Will convert to an integer. */
@@ -95,7 +65,7 @@ public class ManagementService {
 
         // Get the overall topology provider status.
         LogListType topologylogs = managementFactory.createLogListType();
-        Collection<LogType> logs = pceLogger.getLogs();
+        Collection<LogType> logs = ddsLogger.getLogs();
         topologylogs.getLog().addAll(logs);
 
         // TODO: Linear searches through thousands of logs will get slow.  Fix
@@ -103,7 +73,7 @@ public class ManagementService {
         if (type != null && !type.isEmpty()) {
             if (!LogEnumType.LOG.value().equalsIgnoreCase(type) &&
                     !LogEnumType.ERROR.value().equalsIgnoreCase(type)) {
-                LogType error = pceLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, type, "Invalid log type");
+                LogType error = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, type, "Invalid log type");
                 return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
             }
 
@@ -113,7 +83,7 @@ public class ManagementService {
                     codeInt = Integer.parseInt(code);
                 }
                 catch (NumberFormatException ne) {
-                    LogType error = pceLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, type, "Invalid code value");
+                    LogType error = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, type, "Invalid code value");
                     return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
                 }
             }
@@ -129,7 +99,7 @@ public class ManagementService {
             }
         }
         else if (code != null && !code.isEmpty()) {
-            LogType error = pceLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, code, "Code query parameter must be paired with a type parameter");
+            LogType error = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, code, "Code query parameter must be paired with a type parameter");
             return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
         }
 
@@ -154,7 +124,7 @@ public class ManagementService {
             }
         }
 
-        String date = DateUtils.formatDate(new Date(pceLogger.getLastlogTime()), DateUtils.PATTERN_RFC1123);
+        String date = DateUtils.formatDate(new Date(ddsLogger.getLastlogTime()), DateUtils.PATTERN_RFC1123);
 
         // Now filter by the If-Modified-Since header.
         if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
@@ -188,21 +158,21 @@ public class ManagementService {
      */
     @GET
     @Path("/logs/{id}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "application/vnd.net.es.pce.v1+json", "application/vnd.net.es.pce.v1+xml" })
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "application/vnd.net.es.dds.v1+json", "application/vnd.net.es.dds.v1+xml" })
     public Response getLog(
             @PathParam("id") String id) throws Exception {
 
         // Verify we have the service Id from the request path.  Not sure if
         // this would ever happen.
         if (id == null || id.isEmpty()) {
-            LogType error = pceLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, id, "Log identifier must be specified in path");
+            LogType error = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, id, "Log identifier must be specified in path");
             return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
         }
 
         // Try to locate the requested Network.
-        LogType result = pceLogger.getLog(id);
+        LogType result = ddsLogger.getLog(id);
         if (result == null) {
-            LogType error = pceLogger.error(DdsErrors.MANAGEMENT_RESOURCE_NOT_FOUND, id);
+            LogType error = ddsLogger.error(DdsErrors.MANAGEMENT_RESOURCE_NOT_FOUND, id);
             return Response.status(Response.Status.NOT_FOUND).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
         }
 

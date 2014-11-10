@@ -6,7 +6,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.api.jaxb.ErrorType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
-import net.es.nsi.dds.dao.DiscoveryParser;
+import net.es.nsi.dds.dao.DdsParser;
 
 /**
  * Defines the error values for the PCE logging system.
@@ -79,7 +79,7 @@ public enum DiscoveryError {
         ErrorType error;
         try {
             @SuppressWarnings("unchecked")
-            JAXBElement<ErrorType> errorElement = (JAXBElement<ErrorType>) DiscoveryParser.getInstance().stringToJaxb(xml);
+            JAXBElement<ErrorType> errorElement = (JAXBElement<ErrorType>) DdsParser.getInstance().stringToJaxb(xml);
             error = errorElement.getValue();
         }
         catch (JAXBException ex) {
@@ -92,13 +92,13 @@ public enum DiscoveryError {
     public static String getErrorString(DiscoveryError error, String resource, String info) {
         ErrorType fp = getErrorType(error, resource, info);
         JAXBElement<ErrorType> errorElement = factory.createError(fp);
-        String xml = DiscoveryParser.getInstance().jaxbToString(errorElement);
+        String xml = DdsParser.getInstance().jaxbToString(errorElement);
         return xml;
     }
 
     public static String getErrorString(ErrorType error) {
         JAXBElement<ErrorType> errorElement = factory.createError(error);
-        String xml = DiscoveryParser.getInstance().jaxbToString(errorElement);
+        String xml = DdsParser.getInstance().jaxbToString(errorElement);
         return xml;
     }
 

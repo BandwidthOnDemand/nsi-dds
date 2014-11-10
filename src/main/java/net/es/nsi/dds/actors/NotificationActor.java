@@ -16,11 +16,11 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.config.ConfigurationManager;
-import net.es.nsi.dds.dao.DiscoveryConfiguration;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.api.jaxb.NotificationListType;
 import net.es.nsi.dds.api.jaxb.NotificationType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
-import net.es.nsi.dds.dao.DiscoveryParser;
+import net.es.nsi.dds.dao.DdsParser;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.jersey.RestClient;
@@ -36,10 +36,10 @@ public class NotificationActor extends UntypedActor {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final ObjectFactory factory = new ObjectFactory();
-    private final DiscoveryConfiguration discoveryConfiguration;
+    private final DdsConfiguration discoveryConfiguration;
     private final RestClient restClient;
 
-    public NotificationActor(DiscoveryConfiguration discoveryConfiguration, RestClient restClient) {
+    public NotificationActor(DdsConfiguration discoveryConfiguration, RestClient restClient) {
         this.discoveryConfiguration = discoveryConfiguration;
         this.restClient = restClient;
     }

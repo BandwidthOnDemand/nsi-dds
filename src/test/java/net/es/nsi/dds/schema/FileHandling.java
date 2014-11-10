@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.api.jaxb.DocumentType;
-import net.es.nsi.dds.dao.DiscoveryParser;
+import net.es.nsi.dds.dao.DdsParser;
 
 /**
  *
@@ -38,7 +38,7 @@ public class FileHandling {
             System.out.println("cacheReadWrite: filename " + filename);
             DocumentType document;
             try {
-                document = DiscoveryParser.getInstance().readDocument(filename);
+                document = DdsParser.getInstance().readDocument(filename);
                 if (document == null) {
                     System.err.println("cacheReadWrite: Loaded empty document from " + filename);
                     continue;
@@ -57,7 +57,7 @@ public class FileHandling {
             System.out.println("cacheReadWrite: adding new file " + newFile);
         
             try {
-                DiscoveryParser.getInstance().writeDocument(newFile, document);
+                DdsParser.getInstance().writeDocument(newFile, document);
             }
             catch (JAXBException | IOException ex) {
                 System.err.println("cacheReadWrite: Failed to write file " + newFile);

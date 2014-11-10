@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema targetNamespace="http://schemas.es.net/nsi/2014/03/pce/discovery/configuration"
+<xsd:schema targetNamespace="http://schemas.es.net/nsi/2014/03/dds/configuration"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:tns="http://schemas.es.net/nsi/2014/03/pce/discovery/configuration">
+    xmlns:tns="http://schemas.es.net/nsi/2014/03/dds/configuration">
 
-    <xsd:element name="discovery" type="tns:DiscoveryConfigurationType" />
+    <xsd:element name="dds" type="tns:DdsConfigurationType" />
 
-    <xsd:complexType name="DiscoveryConfigurationType">
+    <xsd:complexType name="DdsConfigurationType">
         <xsd:annotation>
             <xsd:documentation xml:lang="en">
             </xsd:documentation>

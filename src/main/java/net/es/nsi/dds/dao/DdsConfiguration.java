@@ -7,8 +7,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.bind.JAXBException;
+import net.es.nsi.dds.api.jaxb.DdsConfigurationType;
 import net.es.nsi.dds.api.jaxb.PeerURLType;
-import net.es.nsi.dds.api.jaxb.DiscoveryConfigurationType;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.spring.SpringApplicationContext;
@@ -17,7 +17,7 @@ import net.es.nsi.dds.spring.SpringApplicationContext;
  *
  * @author hacksaw
  */
-public class DiscoveryConfiguration {
+public class DdsConfiguration {
     private final DdsLogger ddsLogger = DdsLogger.getLogger();
 
     public static final long MAX_AUDIT_INTERVAL = 86400L; // 24 hours in seconds
@@ -55,8 +55,8 @@ public class DiscoveryConfiguration {
     private int pageSize;
     private Set<PeerURLType> discoveryURL = new HashSet<>();
 
-    public static DiscoveryConfiguration getInstance() {
-        DiscoveryConfiguration configurationReader = SpringApplicationContext.getBean("discoveryConfiguration", DiscoveryConfiguration.class);
+    public static DdsConfiguration getInstance() {
+        DdsConfiguration configurationReader = SpringApplicationContext.getBean("ddsConfiguration", DdsConfiguration.class);
         return configurationReader;
     }
 
@@ -94,10 +94,10 @@ public class DiscoveryConfiguration {
             return;
         }
 
-        DiscoveryConfigurationType config;
+        DdsConfigurationType config;
 
         try {
-            config = DiscoveryParser.getInstance().parse(getFilename());
+            config = DdsParser.getInstance().parse(getFilename());
         }
         catch (IOException io) {
             ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());

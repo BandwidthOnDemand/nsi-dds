@@ -6,7 +6,7 @@ package net.es.nsi.dds.dao;
 
 import net.es.nsi.dds.dao.DocumentCache;
 import net.es.nsi.dds.dao.RepositoryProfile;
-import net.es.nsi.dds.dao.DiscoveryConfiguration;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.dao.DdsProfile;
 import net.es.nsi.dds.dao.CacheProfile;
 import java.io.FileNotFoundException;
@@ -24,11 +24,11 @@ import java.net.URLDecoder;
  * @author hacksaw
  */
 public class TestDocumentCache {
-    private DiscoveryConfiguration config;
+    private DdsConfiguration config;
 
     @Before
     public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException, IOException {
-        config = new DiscoveryConfiguration();
+        config = new DdsConfiguration();
         config.setFilename("src/test/resources/config/dds.xml");
         config.load();
         System.out.println("Configured nsaId=" + config.getNsaId());

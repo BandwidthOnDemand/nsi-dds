@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DdsServer {
-    public static final String PCE_SERVER_CONFIG_NAME = "pce";
+    public static final String PCE_SERVER_CONFIG_NAME = "dds";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private HttpConfig config;
@@ -24,8 +24,8 @@ public class DdsServer {
     }
 
     public static DdsServer getInstance() {
-        DdsServer pceProvider = SpringApplicationContext.getBean("ddsServer", DdsServer.class);
-        return pceProvider;
+        DdsServer ddsProvider = SpringApplicationContext.getBean("ddsServer", DdsServer.class);
+        return ddsProvider;
     }
 
     public void start() throws IllegalStateException, IOException {

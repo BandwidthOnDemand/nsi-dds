@@ -23,7 +23,7 @@
     <param name="MaxFileSize" value="250MB" />
     <param name="MaxBackupIndex" value="20"/>
     <param name="encoding" value="UTF-8" />
-    <param name="File" value="${basedir}/var/log/nsi-pce.err.log" />
+    <param name="File" value="${basedir}/var/log/nsi-dds.err.log" />
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d %-5p [%t] (%C:%L) - %m%n" />
     </layout>
@@ -41,7 +41,7 @@
     <param name="MaxFileSize" value="250MB" />
     <param name="MaxBackupIndex" value="20"/>
     <param name="encoding" value="UTF-8" />
-    <param name="File" value="${basedir}/var/log/nsi-pce.info.log" />
+    <param name="File" value="${basedir}/var/log/nsi-dds.info.log" />
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d %-5p [%t] (%C:%L) - %m%n" />
     </layout>
@@ -50,7 +50,7 @@
       <param name="levelMax" value="ERROR" />
     </filter>
   </appender>
-  
+
   <!-- ============================== -->
   <!-- Append messages to log file -->
   <!-- ============================== -->
@@ -58,7 +58,7 @@
     <param name="MaxFileSize" value="250MB" />
     <param name="MaxBackupIndex" value="20"/>
     <param name="encoding" value="UTF-8" />
-    <param name="File" value="${basedir}/var/log/nsi-pce.debug.log" />
+    <param name="File" value="${basedir}/var/log/nsi-dds.debug.log" />
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d %-5p [%t] (%C:%L) - %m%n" />
     </layout>
@@ -78,15 +78,15 @@
   <logger name="org.eclipse">
     <level value="DEBUG" />
   </logger>
-  
+
   <logger name="org.apache">
     <level value="DEBUG" />
   </logger>
-  
+
   <logger name="org.glassfish.jersey">
     <level value="DEBUG" />
   </logger>
-  
+
   <logger name="org.hibernate">
     <level value="WARN" />
   </logger>

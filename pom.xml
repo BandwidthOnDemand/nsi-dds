@@ -235,7 +235,7 @@
                     </goals>
                     <configuration>
                         <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
-                        <schemaFiles>pce-management.xsd</schemaFiles>
+                        <schemaFiles>dds-management.xsd</schemaFiles>
                         <packageName>net.es.nsi.dds.management.jaxb</packageName>
                         <staleFile>${project.build.directory}/jaxb2/.mgntXjcStaleFlag</staleFile>
                         <clearOutputDir>false</clearOutputDir>
@@ -285,10 +285,8 @@
                 <version>2.16</version>
                 <configuration>
                     <argLine>-Xmx1024m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true</argLine>
-                    <argLine>-Djersey.config.test.container.port=8400</argLine>
+                    <argLine>-Djersey.config.test.container.port=8401</argLine>
                     <argLine>-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true</argLine>
-                    <argLine>-Djavax.net.ssl.trustStore=config/nsi-pce-truststore</argLine>
-                    <argLine>-Djavax.net.ssl.trustStorePassword=changeit</argLine>
                 </configuration>
             </plugin>
 

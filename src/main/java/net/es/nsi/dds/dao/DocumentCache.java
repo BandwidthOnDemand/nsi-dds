@@ -176,7 +176,7 @@ public class DocumentCache {
             log.info("load: loading " + filename);
             DocumentType document;
             try {
-                document = DiscoveryParser.getInstance().readDocument(filename);
+                document = DdsParser.getInstance().readDocument(filename);
                 if (document == null) {
                     log.error("load: Loaded empty document from " + filename);
                     deleteFile(filename);
@@ -308,7 +308,7 @@ public class DocumentCache {
                 filename = Paths.get(cachePath, UUID.randomUUID().toString() + ".xml").toString();
             }
             doc.setFilename(filename);
-            DiscoveryParser.getInstance().writeDocument(doc.getFilename(), doc.getDocument());
+            DdsParser.getInstance().writeDocument(doc.getFilename(), doc.getDocument());
         }
     }
 

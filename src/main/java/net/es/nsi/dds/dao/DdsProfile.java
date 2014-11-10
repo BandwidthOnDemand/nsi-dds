@@ -10,15 +10,15 @@ package net.es.nsi.dds.dao;
  */
 public abstract class DdsProfile {
     // The holder of our configuration.
-    private DiscoveryConfiguration configReader;
+    private DdsConfiguration configReader;
 
-    public DdsProfile(DiscoveryConfiguration configReader) {
+    public DdsProfile(DdsConfiguration configReader) {
         this.configReader = configReader;
     }
 
     public abstract String getDirectory();
 
-    public DiscoveryConfiguration getConfiguration() {
+    public DdsConfiguration getConfiguration() {
         return configReader;
     }
 

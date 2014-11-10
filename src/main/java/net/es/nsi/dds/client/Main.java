@@ -32,7 +32,7 @@ public class Main {
         RestClient.configureClient(clientConfig);
         Client client = ClientBuilder.newClient(clientConfig);
 
-        WebTarget webGet = client.target("http://localhost:8400/dds");
+        WebTarget webGet = client.target("http://localhost:8401/dds");
         Response response = webGet.request(MediaType.APPLICATION_JSON).get();
 
         System.out.println("Get result " + response.getStatus());

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import net.es.nsi.dds.dao.DiscoveryConfiguration;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.api.jaxb.PeerURLType;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.schema.NsiConstants;
@@ -32,7 +32,7 @@ public class RegistrationRouter extends UntypedActor {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private DdsActorSystem ddsActorSystem;
-    private DiscoveryConfiguration discoveryConfiguration;
+    private DdsConfiguration discoveryConfiguration;
     private int poolSize;
     private long interval;
     private Router router;
@@ -40,7 +40,7 @@ public class RegistrationRouter extends UntypedActor {
     private RemoteSubscriptionCache remoteSubscriptionCache;
 
     public RegistrationRouter(DdsActorSystem ddsActorSystem,
-            DiscoveryConfiguration discoveryConfiguration,
+            DdsConfiguration discoveryConfiguration,
             RemoteSubscriptionCache remoteSubscriptionCache) {
         this.ddsActorSystem = ddsActorSystem;
         this.discoveryConfiguration = discoveryConfiguration;

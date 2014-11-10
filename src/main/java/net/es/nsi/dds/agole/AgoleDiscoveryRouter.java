@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 import javax.ws.rs.NotFoundException;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.actors.DdsActorSystem;
-import net.es.nsi.dds.dao.DiscoveryConfiguration;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.api.jaxb.PeerURLType;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.schema.NsiConstants;
@@ -50,12 +50,12 @@ public class AgoleDiscoveryRouter extends UntypedActor {
 
     private TopologyManifest manifest;
 
-    private DiscoveryConfiguration discoveryConfiguration;
+    private DdsConfiguration discoveryConfiguration;
     private AgoleManifestReader manifestReader;
 
     private boolean isConfigured = false;
 
-    public AgoleDiscoveryRouter(DdsActorSystem ddsActorSystem, DiscoveryConfiguration discoveryConfiguration, AgoleManifestReader manifestReader) {
+    public AgoleDiscoveryRouter(DdsActorSystem ddsActorSystem, DdsConfiguration discoveryConfiguration, AgoleManifestReader manifestReader) {
         this.ddsActorSystem = ddsActorSystem;
         this.discoveryConfiguration = discoveryConfiguration;
         this.manifestReader = manifestReader;

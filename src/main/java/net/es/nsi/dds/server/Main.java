@@ -27,7 +27,7 @@ public class Main {
     private static final String DEFAULT_DDS_FILE = CONFIG_DEFAULT_PATH + "dds.xml";
     public static final String DDS_CONFIG_FILE_ARGNAME = "ddsConfigFile";
 
-    public static final String PCE_SERVER_CONFIG_NAME = "pce";
+    public static final String PCE_SERVER_CONFIG_NAME = "dds";
 
     // Keep running PCE while true.
     private static boolean keepRunning = true;
@@ -79,7 +79,7 @@ public class Main {
         } catch (ParseException e) {
             System.err.println("You did not provide the correct arguments, see usage below.");
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("java -jar pce.jar  [-c <configDir>] [-ddsConfigFile <filename>]", options);
+            formatter.printHelp("java -jar dds.jar  [-c <configDir>] [-ddsConfigFile <filename>]", options);
             System.exit(1);
             return;
         }

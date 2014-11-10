@@ -19,16 +19,16 @@
 
     <bean id="restClient" class="net.es.nsi.dds.jersey.RestClient" scope="singleton" />
 
-    <bean id="discoveryConfiguration" class="net.es.nsi.dds.dao.DiscoveryConfiguration" init-method="load" scope="singleton">
+    <bean id="ddsConfiguration" class="net.es.nsi.dds.dao.DdsConfiguration" init-method="load" scope="singleton">
         <property name="filename" value="#{ systemProperties['ddsConfigFile'] }"/>
     </bean>
 
     <bean id="cacheProfile" class="net.es.nsi.dds.dao.CacheProfile" scope="singleton">
-        <constructor-arg index="0" ref="discoveryConfiguration"/>
+        <constructor-arg index="0" ref="ddsConfiguration"/>
     </bean>
 
     <bean id="repositoryProfile" class="net.es.nsi.dds.dao.RepositoryProfile" scope="singleton">
-        <constructor-arg index="0" ref="discoveryConfiguration"/>
+        <constructor-arg index="0" ref="ddsConfiguration"/>
     </bean>
 
     <bean id="documentCache" class="net.es.nsi.dds.dao.DocumentCache" init-method="load" scope="singleton">
@@ -49,7 +49,7 @@
 
     <bean id="localDocumentActor" class="net.es.nsi.dds.actors.LocalDocumentActor" scope="singleton" lazy-init="true">
         <constructor-arg index="0" ref="ddsActorSystem"/>
-        <constructor-arg index="1" ref="discoveryConfiguration"/>
+        <constructor-arg index="1" ref="ddsConfiguration"/>
         <property name="interval" value="300"/>
     </bean>
 
@@ -61,13 +61,13 @@
 
     <bean id="configurationActor" class="net.es.nsi.dds.actors.ConfigurationActor" scope="singleton" lazy-init="true">
         <constructor-arg index="0" ref="ddsActorSystem"/>
-        <constructor-arg index="1" ref="discoveryConfiguration"/>
+        <constructor-arg index="1" ref="ddsConfiguration"/>
         <property name="interval" value="300"/>
     </bean>
 
     <bean id="agoleDiscoveryRouter" class="net.es.nsi.dds.agole.AgoleDiscoveryRouter" scope="singleton" lazy-init="true">
         <constructor-arg index="0" ref="ddsActorSystem"/>
-        <constructor-arg index="1" ref="discoveryConfiguration"/>
+        <constructor-arg index="1" ref="ddsConfiguration"/>
         <constructor-arg index="2" ref="agoleManifestReader"/>
         <property name="poolSize" value="10"/>
         <property name="interval" value="600"/>
@@ -75,14 +75,14 @@
 
     <bean id="gof3DiscoveryRouter" class="net.es.nsi.dds.gangofthree.Gof3DiscoveryRouter" scope="singleton" lazy-init="true">
         <constructor-arg index="0" ref="ddsActorSystem"/>
-        <constructor-arg index="1" ref="discoveryConfiguration"/>
+        <constructor-arg index="1" ref="ddsConfiguration"/>
         <property name="poolSize" value="5"/>
         <property name="interval" value="1200"/>
     </bean>
 
     <bean id="registrationRouter" class="net.es.nsi.dds.actors.RegistrationRouter" scope="singleton" lazy-init="true">
         <constructor-arg index="0" ref="ddsActorSystem"/>
-        <constructor-arg index="1" ref="discoveryConfiguration"/>
+        <constructor-arg index="1" ref="ddsConfiguration"/>
         <constructor-arg index="2" ref="remoteSubscriptionCache"/>
         <property name="poolSize" value="5"/>
         <property name="interval" value="600"/>
@@ -90,7 +90,7 @@
 
     <bean id="notificationRouter" class="net.es.nsi.dds.actors.NotificationRouter" scope="singleton" lazy-init="true">
         <constructor-arg index="0" ref="ddsActorSystem"/>
-        <constructor-arg index="1" ref="discoveryConfiguration"/>
+        <constructor-arg index="1" ref="ddsConfiguration"/>
         <constructor-arg index="2" ref="discoveryProvider"/>
         <constructor-arg index="3" ref="documentCache"/>
         <constructor-arg index="4" ref="restClient"/>
@@ -99,7 +99,7 @@
 
     <bean id="ddsActorController" class="net.es.nsi.dds.actors.DdsActorController" init-method="init" scope="singleton" depends-on="remoteSubscriptionCache, ddsServer">
         <constructor-arg index="0" ref="ddsActorSystem"/>
-        <constructor-arg index="1" ref="discoveryConfiguration"/>
+        <constructor-arg index="1" ref="ddsConfiguration"/>
         <constructor-arg index="2">
             <list>
                 <bean class="net.es.nsi.dds.actors.ActorEntry"><property name="actor" value="configurationActor" /><property name="start" value="false" /></bean>
@@ -114,7 +114,7 @@
     </bean>
 
     <bean id="discoveryProvider" class="net.es.nsi.dds.provider.DdsProvider" init-method="init" scope="singleton" depends-on="ddsServer">
-        <constructor-arg index="0" ref="discoveryConfiguration"/>
+        <constructor-arg index="0" ref="ddsConfiguration"/>
         <constructor-arg index="1" ref="documentCache"/>
         <constructor-arg index="2" ref="documentRepository"/>
         <constructor-arg index="3" ref="ddsActorController"/>

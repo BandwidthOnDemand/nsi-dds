@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    This is the NSI Document Discovery Service v1.0 configuration file.
+    This is the NSI Document Distribution Service v1.0 configuration file.
 
     The following XML elements are supported in this configuration file:
 
@@ -38,7 +38,7 @@
               application/vnd.ogf.nsi.nsa.v1+xml - A Gof3 NSA.
               application/vnd.ogf.nsi.topology.v1+xml - The Automated GOLE topology discovery.
 -->
-<tns:discovery xmlns:tns="http://schemas.es.net/nsi/2014/03/pce/discovery/configuration"
+<tns:dds xmlns:tns="http://schemas.es.net/nsi/2014/03/dds/configuration"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <!-- we need to set this to the uPA's NSA ID so that the local networks are discovered correctly -->
     <nsaId>urn:ogf:network:surfnet.nl:1990:nsa:bod7</nsaId>
@@ -69,5 +69,5 @@
     <!--
         <peerURL type="application/vnd.ogf.nsi.topology.v1+xml">https://raw.github.com/jeroenh/AutoGOLE-Topologies/master/master.xml</peerURL>
     -->
-</tns:discovery>
+</tns:dds>
 

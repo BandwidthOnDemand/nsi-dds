@@ -8,7 +8,7 @@ package net.es.nsi.dds.dao;
  */
 public class RepositoryProfile extends DdsProfile {
 
-    public RepositoryProfile(DiscoveryConfiguration configReader) {
+    public RepositoryProfile(DdsConfiguration configReader) {
         super(configReader);
     }
 

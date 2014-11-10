@@ -17,8 +17,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.client.TestServer;
 import net.es.nsi.dds.config.http.HttpConfig;
-import net.es.nsi.dds.dao.DiscoveryConfiguration;
-import net.es.nsi.dds.dao.DiscoveryParser;
+import net.es.nsi.dds.dao.DdsConfiguration;
+import net.es.nsi.dds.dao.DdsParser;
 import net.es.nsi.dds.api.jaxb.DocumentType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.test.TestConfig;
@@ -39,14 +39,14 @@ public class TestDocumentRepository {
 
     private final static HttpConfig testServer = new HttpConfig() {
         {
-            setUrl("http://localhost:8401/");
+            setUrl("http://localhost:8402/");
             setPackageName("net.es.nsi.dds.client");
         }
     };
 
     private final static String DOCUMENT_DIR = "src/test/resources/documents/";
     private final static ObjectFactory factory = new ObjectFactory();
-    private static DiscoveryConfiguration ddsConfig;
+    private static DdsConfiguration ddsConfig;
     private static TestConfig testConfig;
     private static WebTarget target;
     private static WebTarget discovery;
@@ -62,7 +62,7 @@ public class TestDocumentRepository {
         try {
             // Load a copy of the test DDS configuration and clear the document
             // repository for this test.
-            ddsConfig = new DiscoveryConfiguration();
+            ddsConfig = new DdsConfiguration();
             ddsConfig.setFilename(TestConfig.DEFAULT_DDS_FILE);
             ddsConfig.load();
             File directory = new File(ddsConfig.getRepository());
@@ -105,7 +105,7 @@ public class TestDocumentRepository {
         // For each document file in the document directory load into discovery service.
         List<String> identifiers = new ArrayList<>();
         for (String file : FileUtilities.getXmlFileList(DOCUMENT_DIR)) {
-            DocumentType document = DiscoveryParser.getInstance().readDocument(file);
+            DocumentType document = DdsParser.getInstance().readDocument(file);
             JAXBElement<DocumentType> jaxbRequest = factory.createDocument(document);
             Response response = discovery.path("documents").request(MediaType.APPLICATION_XML).post(Entity.entity(new GenericEntity<JAXBElement<DocumentType>>(jaxbRequest) {}, MediaType.APPLICATION_XML));
             if (Response.Status.CREATED.getStatusCode() != response.getStatus() &&
@@ -124,7 +124,7 @@ public class TestDocumentRepository {
     private boolean verifyAddResults(List<String> identifiers) throws JAXBException, IOException, NullPointerException {
         List<String> repository = new ArrayList<>();
         for (String file : FileUtilities.getXmlFileList(ddsConfig.getRepository())) {
-            DocumentType document = DiscoveryParser.getInstance().readDocument(file);
+            DocumentType document = DdsParser.getInstance().readDocument(file);
             repository.add(document.getId());
             log.debug("verifyAddResults: repo=" + document.getId());
         }

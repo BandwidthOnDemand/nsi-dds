@@ -9,7 +9,7 @@ import akka.actor.UntypedActor;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import javax.xml.bind.JAXBException;
-import net.es.nsi.dds.dao.DiscoveryConfiguration;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.concurrent.duration.Duration;
@@ -22,10 +22,10 @@ public class ConfigurationActor extends UntypedActor {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private DdsActorSystem ddsActorSystem;
-    private DiscoveryConfiguration discoveryConfiguration;
+    private DdsConfiguration discoveryConfiguration;
     private long interval;
 
-    public ConfigurationActor(DdsActorSystem ddsActorSystem, DiscoveryConfiguration discoveryConfiguration) {
+    public ConfigurationActor(DdsActorSystem ddsActorSystem, DdsConfiguration discoveryConfiguration) {
         this.ddsActorSystem = ddsActorSystem;
         this.discoveryConfiguration = discoveryConfiguration;
     }

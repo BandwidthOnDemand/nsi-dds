@@ -43,7 +43,7 @@ public class TestConfig {
         RestClient.configureClient(clientConfig);
         client = ClientBuilder.newClient(clientConfig);
 
-        target = client.target(ConfigurationManager.INSTANCE.getPceServer().getUrl());
+        target = client.target(ConfigurationManager.INSTANCE.getDdsServer().getUrl());
     }
 
     public void shutdown() {

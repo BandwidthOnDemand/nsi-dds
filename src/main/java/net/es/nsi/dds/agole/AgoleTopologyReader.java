@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.es.nsi.dds.jersey.RestClient;
 import net.es.nsi.dds.api.jaxb.NmlNSAType;
-import net.es.nsi.dds.dao.DiscoveryParser;
+import net.es.nsi.dds.dao.DdsParser;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
@@ -100,7 +100,7 @@ public class AgoleTopologyReader {
         log.debug("readNsaTopology: input message " + xml);
 
         // Parse the NSA topology.
-        NmlNSAType topology = DiscoveryParser.getInstance().parseNsaFromString(xml);
+        NmlNSAType topology = DdsParser.getInstance().parseNsaFromString(xml);
 
         // We should never get this - an exception should be thrown.
         if (topology == null) {

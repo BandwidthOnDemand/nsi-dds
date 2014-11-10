@@ -33,8 +33,8 @@ import net.es.nsi.dds.api.jaxb.NsaType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.api.jaxb.SubscriptionRequestType;
 import net.es.nsi.dds.api.jaxb.SubscriptionType;
-import net.es.nsi.dds.dao.DiscoveryConfiguration;
-import net.es.nsi.dds.dao.DiscoveryParser;
+import net.es.nsi.dds.dao.DdsConfiguration;
+import net.es.nsi.dds.dao.DdsParser;
 import net.es.nsi.dds.schema.NsiConstants;
 import net.es.nsi.dds.schema.XmlUtilities;
 import net.es.nsi.dds.test.TestConfig;
@@ -49,7 +49,7 @@ public class DiscoveryTest {
 
     private final static HttpConfig testServer = new HttpConfig() {
         {
-            setUrl("http://localhost:8401/");
+            setUrl("http://localhost:8402/");
             setPackageName("net.es.nsi.dds.client");
         }
     };
@@ -58,7 +58,7 @@ public class DiscoveryTest {
     private final static String DOCUMENT_DIR = "src/test/resources/documents/";
     private final static String callbackURL = testServer.getUrl() + "dds/callback";
     private final static ObjectFactory factory = new ObjectFactory();
-    private static DiscoveryConfiguration ddsConfig;
+    private static DdsConfiguration ddsConfig;
     private static TestConfig testConfig;
     private static WebTarget target;
     private static WebTarget discovery;
@@ -70,7 +70,7 @@ public class DiscoveryTest {
         try {
             // Load a copy of the test DDS configuration and clear the document
             // repository for this test.
-            ddsConfig = new DiscoveryConfiguration();
+            ddsConfig = new DdsConfiguration();
             ddsConfig.setFilename(DDS_CONFIGURATION);
             ddsConfig.load();
             File directory = new File(ddsConfig.getRepository());
@@ -114,7 +114,7 @@ public class DiscoveryTest {
         System.out.println("************************** Running aLoadDocuments test ********************************");
         // For each document file in the document directory load into discovery service.
         for (String file : FileUtilities.getXmlFileList(DOCUMENT_DIR)) {
-            DocumentType document = DiscoveryParser.getInstance().readDocument(file);
+            DocumentType document = DdsParser.getInstance().readDocument(file);
             JAXBElement<DocumentType> jaxbRequest = factory.createDocument(document);
             Response response = discovery.path("documents").request(MediaType.APPLICATION_XML).post(Entity.entity(new GenericEntity<JAXBElement<DocumentType>>(jaxbRequest) {}, MediaType.APPLICATION_XML));
             if (Response.Status.CREATED.getStatusCode() != response.getStatus() &&
@@ -248,8 +248,8 @@ public class DiscoveryTest {
         assertNotNull(documents);
 
         for (DocumentType document : documents.getDocument()) {
-            System.out.println("Local NSA Id compare: localId=" + DiscoveryConfiguration.getInstance().getNsaId() + ", document="+ document.getNsa());
-            assertEquals(document.getNsa(), DiscoveryConfiguration.getInstance().getNsaId());
+            System.out.println("Local NSA Id compare: localId=" + DdsConfiguration.getInstance().getNsaId() + ", document="+ document.getNsa());
+            assertEquals(document.getNsa(), DdsConfiguration.getInstance().getNsaId());
 
             response = discovery.path("local").path(URLEncoder.encode(document.getType(), "UTF-8")).request(MediaType.APPLICATION_XML).get();
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -269,7 +269,7 @@ public class DiscoveryTest {
         System.out.println("************************** Running fUpdateDocuments test ********************************");
         // For each document file in the document directory load into discovery service.
         for (String file : FileUtilities.getXmlFileList(DOCUMENT_DIR)) {
-            DocumentType document = DiscoveryParser.getInstance().readDocument(file);
+            DocumentType document = DdsParser.getInstance().readDocument(file);
             XMLGregorianCalendar currentTime = XmlUtilities.xmlGregorianCalendar();
             XMLGregorianCalendar future = XmlUtilities.longToXMLGregorianCalendar(System.currentTimeMillis() + 360000);
             document.setExpires(future);

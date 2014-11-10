@@ -106,7 +106,7 @@ public enum ConfigurationManager {
     /**
      * @return the ddsServer
      */
-    public DdsServer getPceServer() {
+    public DdsServer getDdsServer() {
         return ddsServer;
     }
 

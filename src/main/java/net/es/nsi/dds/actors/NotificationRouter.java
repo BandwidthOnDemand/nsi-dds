@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import net.es.nsi.dds.dao.DiscoveryConfiguration;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.api.jaxb.DocumentEventType;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
@@ -38,7 +38,7 @@ import scala.concurrent.duration.Duration;
 public class NotificationRouter extends UntypedActor {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private DdsActorSystem ddsActorSystem;
-    private DiscoveryConfiguration discoveryConfiguration;
+    private DdsConfiguration discoveryConfiguration;
     private DiscoveryProvider discoveryProvider;
     private DocumentCache documentCache;
     private RestClient restClient;
@@ -46,7 +46,7 @@ public class NotificationRouter extends UntypedActor {
     private Router router;
 
     public NotificationRouter(DdsActorSystem ddsActorSystem,
-            DiscoveryConfiguration discoveryConfiguration,
+            DdsConfiguration discoveryConfiguration,
             DiscoveryProvider discoveryProvider,
             DocumentCache documentCache,
             RestClient restClient) {

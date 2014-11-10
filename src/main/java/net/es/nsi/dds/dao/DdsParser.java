@@ -12,7 +12,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import net.es.nsi.dds.api.jaxb.DiscoveryConfigurationType;
+import net.es.nsi.dds.api.jaxb.DdsConfigurationType;
 import net.es.nsi.dds.api.jaxb.DocumentType;
 import net.es.nsi.dds.api.jaxb.NmlNSAType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author hacksaw
  */
-public class DiscoveryParser {
+public class DdsParser {
     // Get a logger just in case we encounter a problem.
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final ObjectFactory factory = new ObjectFactory();
@@ -39,7 +39,7 @@ public class DiscoveryParser {
      * Private constructor loads the JAXB context once and prevents
      * instantiation from other classes.
      */
-    private DiscoveryParser() {
+    private DdsParser() {
         try {
             // Load a JAXB context for the NML NSAType parser.
             jaxbContext = JAXBContext.newInstance("net.es.nsi.dds.api.jaxb", net.es.nsi.dds.api.jaxb.ObjectFactory.class.getClassLoader());
@@ -53,8 +53,8 @@ public class DiscoveryParser {
      * An internal static class that invokes our private constructor on object
      * creation.
      */
-    private static class DiscoveryParserHolder {
-        public static final DiscoveryParser INSTANCE = new DiscoveryParser();
+    private static class DdsParserHolder {
+        public static final DdsParser INSTANCE = new DdsParser();
     }
 
     /**
@@ -62,12 +62,12 @@ public class DiscoveryParser {
      *
      * @return An NmlParser object of the NSAType.
      */
-    public static DiscoveryParser getInstance() {
-            return DiscoveryParserHolder.INSTANCE;
+    public static DdsParser getInstance() {
+            return DdsParserHolder.INSTANCE;
     }
 
     public void init() {
-        log.debug("DiscoveryParser: initializing...");
+        log.debug("DdsParser: initializing...");
     }
 
     /**
@@ -79,14 +79,14 @@ public class DiscoveryParser {
      * @throws FileNotFoundException If the specified file was not found.
      */
     @SuppressWarnings("unchecked")
-    public DiscoveryConfigurationType parse(String file) throws JAXBException, IOException {
+    public DdsConfigurationType parse(String file) throws JAXBException, IOException {
         // Make sure we initialized properly.
         if (jaxbContext == null) {
             throw new JAXBException("parse: Failed to load JAXB instance");
         }
 
         // Parse the specified file.
-        JAXBElement<DiscoveryConfigurationType> configurationElement;
+        JAXBElement<DdsConfigurationType> configurationElement;
 
         try {
             Object result;
@@ -94,11 +94,11 @@ public class DiscoveryParser {
                 result = jaxbContext.createUnmarshaller().unmarshal(bufferedInputStream);
             }
 
-            if (result instanceof JAXBElement<?> && ((JAXBElement<?>) result).getValue() instanceof DiscoveryConfigurationType) {
-                configurationElement = (JAXBElement<DiscoveryConfigurationType>) result;
+            if (result instanceof JAXBElement<?> && ((JAXBElement<?>) result).getValue() instanceof DdsConfigurationType) {
+                configurationElement = (JAXBElement<DdsConfigurationType>) result;
             }
             else {
-                throw new IllegalArgumentException("Expected DiscoveryConfigurationType from " + file);
+                throw new IllegalArgumentException("Expected DdsConfigurationType from " + file);
             }
         }
         catch (JAXBException | IOException ex) {

@@ -21,11 +21,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
-import net.es.nsi.dds.dao.DiscoveryParser;
+import net.es.nsi.dds.dao.DdsParser;
 import net.es.nsi.dds.actors.DdsActorController;
 import net.es.nsi.dds.api.DiscoveryError;
 import net.es.nsi.dds.api.Exceptions;
-import net.es.nsi.dds.dao.DiscoveryConfiguration;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.dao.DocumentCache;
 import net.es.nsi.dds.api.jaxb.DocumentEventType;
 import net.es.nsi.dds.api.jaxb.DocumentType;
@@ -51,7 +51,7 @@ public class DdsProvider implements DiscoveryProvider {
     private final ObjectFactory factory = new ObjectFactory();
 
     // Configuration reader.
-    private DiscoveryConfiguration configReader;
+    private DdsConfiguration configReader;
 
     // In-memory document cache.
     private DocumentCache documentCache;
@@ -65,7 +65,7 @@ public class DdsProvider implements DiscoveryProvider {
     // In-memory subscription cache indexed by subscriptionId.
     private Map<String, Subscription> subscriptions = new ConcurrentHashMap<>();
 
-    public DdsProvider(DiscoveryConfiguration configuration, DocumentCache documentCache, DocumentCache documentRepository, DdsActorController ddsActorController) {
+    public DdsProvider(DdsConfiguration configuration, DocumentCache documentCache, DocumentCache documentRepository, DdsActorController ddsActorController) {
         this.configReader = configuration;
         this.documentCache = documentCache;
         this.documentRepository = documentRepository;
@@ -695,14 +695,14 @@ public class DdsProvider implements DiscoveryProvider {
     /**
      * @return the configReader
      */
-    public DiscoveryConfiguration getConfigReader() {
+    public DdsConfiguration getConfigReader() {
         return configReader;
     }
 
     /**
      * @param configReader the configReader to set
      */
-    public void setConfigReader(DiscoveryConfiguration configReader) {
+    public void setConfigReader(DdsConfiguration configReader) {
         this.configReader = configReader;
     }
 
@@ -717,7 +717,7 @@ public class DdsProvider implements DiscoveryProvider {
         for (String filename : xmlFilenames) {
             DocumentType document;
             try {
-                document = DiscoveryParser.getInstance().readDocument(filename);
+                document = DdsParser.getInstance().readDocument(filename);
                 if (document == null) {
                     log.error("loadDocuments: Loaded empty document from " + filename);
                     continue;

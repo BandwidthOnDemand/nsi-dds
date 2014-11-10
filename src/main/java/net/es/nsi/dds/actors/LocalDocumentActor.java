@@ -3,7 +3,7 @@ package net.es.nsi.dds.actors;
 import net.es.nsi.dds.messages.TimerMsg;
 import akka.actor.UntypedActor;
 import java.util.concurrent.TimeUnit;
-import net.es.nsi.dds.dao.DiscoveryConfiguration;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.provider.DdsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +19,10 @@ public class LocalDocumentActor extends UntypedActor {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final DdsActorSystem ddsActorSystem;
-    private final DiscoveryConfiguration discoveryConfiguration;
+    private final DdsConfiguration discoveryConfiguration;
     private long interval;
 
-    public LocalDocumentActor(DdsActorSystem ddsActorSystem, DiscoveryConfiguration discoveryConfiguration) {
+    public LocalDocumentActor(DdsActorSystem ddsActorSystem, DdsConfiguration discoveryConfiguration) {
         this.ddsActorSystem = ddsActorSystem;
         this.discoveryConfiguration = discoveryConfiguration;
     }

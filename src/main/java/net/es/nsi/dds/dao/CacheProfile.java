@@ -8,7 +8,7 @@ package net.es.nsi.dds.dao;
  */
 public class CacheProfile extends DdsProfile {
 
-    public CacheProfile(DiscoveryConfiguration configReader) {
+    public CacheProfile(DdsConfiguration configReader) {
         super(configReader);
     }
 

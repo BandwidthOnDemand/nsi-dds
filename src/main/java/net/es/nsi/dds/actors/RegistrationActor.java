@@ -17,7 +17,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
-import net.es.nsi.dds.dao.DiscoveryConfiguration;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.api.jaxb.DocumentEventType;
 import net.es.nsi.dds.api.jaxb.ErrorType;
 import net.es.nsi.dds.api.jaxb.FilterCriteriaType;
@@ -47,11 +47,11 @@ public class RegistrationActor extends UntypedActor {
     private final DdsLogger logger = DdsLogger.getLogger();
 
     private final ObjectFactory factory = new ObjectFactory();
-    private DiscoveryConfiguration discoveryConfiguration;
+    private DdsConfiguration discoveryConfiguration;
     private RemoteSubscriptionCache remoteSubscriptionCache;
     private RestClient restClient;
 
-    public RegistrationActor(DiscoveryConfiguration discoveryConfiguration) {
+    public RegistrationActor(DdsConfiguration discoveryConfiguration) {
         this.discoveryConfiguration = discoveryConfiguration;
         this.remoteSubscriptionCache = RemoteSubscriptionCache.getInstance();
         this.restClient = RestClient.getInstance();

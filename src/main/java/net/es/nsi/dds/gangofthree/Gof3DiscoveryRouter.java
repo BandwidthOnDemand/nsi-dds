@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import net.es.nsi.dds.dao.DiscoveryConfiguration;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.api.jaxb.PeerURLType;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.schema.NsiConstants;
@@ -37,13 +37,13 @@ public class Gof3DiscoveryRouter extends UntypedActor {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private DdsActorSystem ddsActorSystem;
-    private DiscoveryConfiguration discoveryConfiguration;
+    private DdsConfiguration discoveryConfiguration;
     private int poolSize;
     private long interval;
     private Router router;
     private Map<String, Gof3DiscoveryMsg> discovery = new ConcurrentHashMap<>();
 
-    public Gof3DiscoveryRouter(DdsActorSystem ddsActorSystem, DiscoveryConfiguration discoveryConfiguration) {
+    public Gof3DiscoveryRouter(DdsActorSystem ddsActorSystem, DdsConfiguration discoveryConfiguration) {
         this.ddsActorSystem = ddsActorSystem;
         this.discoveryConfiguration = discoveryConfiguration;
     }

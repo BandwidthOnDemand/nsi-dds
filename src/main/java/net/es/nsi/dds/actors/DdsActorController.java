@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.JAXBException;
-import net.es.nsi.dds.dao.DiscoveryConfiguration;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.messages.StartMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +29,13 @@ public class DdsActorController implements ApplicationContextAware {
 
     // Configuration reader.
     private DdsActorSystem ddsActorSystem;
-    private DiscoveryConfiguration configReader;
+    private DdsConfiguration configReader;
     private List<ActorEntry> actorEntries;
     private ApplicationContext applicationContext;
 
     private List<ActorRef> startList = new ArrayList<>();
 
-    public DdsActorController(DdsActorSystem ddsActorSystem, DiscoveryConfiguration configReader, ActorEntry... entries) {
+    public DdsActorController(DdsActorSystem ddsActorSystem, DdsConfiguration configReader, ActorEntry... entries) {
         this.ddsActorSystem = ddsActorSystem;
         this.configReader = configReader;
         this.actorEntries = Arrays.asList(entries);
@@ -80,7 +80,7 @@ public class DdsActorController implements ApplicationContextAware {
         return ddsActorSystem.getActorSystem();
     }
 
-    public DiscoveryConfiguration getConfigReader() {
+    public DdsConfiguration getConfigReader() {
         return configReader;
     }
 
