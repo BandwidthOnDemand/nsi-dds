@@ -6,7 +6,6 @@ package net.es.nsi.dds.actors;
 
 import net.es.nsi.dds.messages.Notification;
 import akka.actor.UntypedActor;
-import java.util.Date;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -20,7 +19,6 @@ import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.api.jaxb.NotificationListType;
 import net.es.nsi.dds.api.jaxb.NotificationType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
-import net.es.nsi.dds.dao.DdsParser;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.jersey.RestClient;

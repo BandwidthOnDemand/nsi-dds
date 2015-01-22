@@ -40,6 +40,7 @@ public class Gof3DiscoveryRouter extends UntypedActor {
     private DdsConfiguration discoveryConfiguration;
     private int poolSize;
     private long interval;
+    private long refresh;
     private Router router;
     private Map<String, Gof3DiscoveryMsg> discovery = new ConcurrentHashMap<>();
 
@@ -75,7 +76,7 @@ public class Gof3DiscoveryRouter extends UntypedActor {
         }
         else if (msg instanceof Gof3DiscoveryMsg) {
             Gof3DiscoveryMsg incoming = (Gof3DiscoveryMsg) msg;
-            
+
             log.debug("onReceive: discovery update for nsaId=" + incoming.getNsaId());
 
             discovery.put(incoming.getNsaURL(), incoming);
@@ -92,7 +93,7 @@ public class Gof3DiscoveryRouter extends UntypedActor {
             unhandled(msg);
         }
     }
-    
+
     private void routeTimerEvent() {
         Set<PeerURLType> discoveryURL = discoveryConfiguration.getDiscoveryURL();
         Set<String> notSent = new HashSet<>(discovery.keySet());
@@ -101,19 +102,31 @@ public class Gof3DiscoveryRouter extends UntypedActor {
             if (!url.getType().equalsIgnoreCase(NsiConstants.NSI_NSA_V1)) {
                 continue;
             }
-            
+
             log.debug("routeTimerEvent: url=" + url.getValue());
-            
+
             Gof3DiscoveryMsg msg = discovery.get(url.getValue());
             if (msg == null) {
                 msg = new Gof3DiscoveryMsg();
                 msg.setNsaURL(url.getValue());
             }
 
+            if (msg.getInteration() < refresh) {
+                msg.setInteration(msg.getInteration() + 1);
+            }
+            else {
+                msg.setNsaLastModifiedTime(0L);
+                for (String top : msg.getTopologyURL()) {
+                    msg.setTopologyLastModified(top, new Long(0L));
+                }
+
+                msg.setInteration(0);
+            }
+
             router.route(msg, getSelf());
             notSent.remove(msg.getNsaURL());
         }
-        
+
         // Clean up the entries no longer in the configuration.
         for (String url : notSent) {
             log.debug("routeTimerEvent: entry no longer needed, url=" + url);
@@ -147,5 +160,19 @@ public class Gof3DiscoveryRouter extends UntypedActor {
      */
     public void setInterval(long interval) {
         this.interval = interval;
+    }
+
+    /**
+     * @return the refresh
+     */
+    public long getRefresh() {
+        return refresh;
+    }
+
+    /**
+     * @param refresh the refresh to set
+     */
+    public void setRefresh(long refresh) {
+        this.refresh = refresh;
     }
 }

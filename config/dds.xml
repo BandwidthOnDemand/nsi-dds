@@ -56,18 +56,15 @@
 -->
 
     <!-- SURFnet configuration for discovery on production network. -->
-    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://bod2.surfnet.nl/nsa-discovery</peerURL>
-    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://nsi.nordu.net:9443/NSI/discovery.xml</peerURL>
-    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://62.217.127.133:8080/nsi_discovery_geant.xml</peerURL>
+    <!-- <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://bod2.surfnet.nl/nsa-discovery</peerURL> -->
+    <!-- <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://nsi.nordu.net:9443/NSI/discovery.xml</peerURL> -->
+    <!-- <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://62.217.124.244:8080/nsi_discovery_geant.xml</peerURL> -->
 
     <!-- ESnet configuration for GEANT as a gateway to Europe. -->
-    <!--
-        <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://62.217.124.244:8080/nsi_discovery_geant_all.xml</peerURL>
-    -->
+    <!-- <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://62.217.124.244:8080/nsi_discovery_geant_all.xml</peerURL> -->
+    <!-- <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://idc.cipo.rnp.br/rnp-nsa.xml</peerURL> -->
 
     <!-- Old AutoGOLE github discovery mechanism. -->
-    <!--
-        <peerURL type="application/vnd.ogf.nsi.topology.v1+xml">https://raw.github.com/jeroenh/AutoGOLE-Topologies/master/master.xml</peerURL>
-    -->
+    <!--<peerURL type="application/vnd.ogf.nsi.topology.v1+xml">https://raw.github.com/jeroenh/AutoGOLE-Topologies/master/master.xml</peerURL>-->
 </tns:dds>
 

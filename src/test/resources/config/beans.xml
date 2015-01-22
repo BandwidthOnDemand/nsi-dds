@@ -78,6 +78,7 @@
         <constructor-arg index="1" ref="ddsConfiguration"/>
         <property name="poolSize" value="5"/>
         <property name="interval" value="1200"/>
+        <property name="refresh" value="10"/>
     </bean>
 
     <bean id="registrationRouter" class="net.es.nsi.dds.actors.RegistrationRouter" scope="singleton" lazy-init="true">

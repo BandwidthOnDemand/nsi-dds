@@ -246,7 +246,7 @@ public class DdsProvider implements DiscoveryProvider {
     }
 
     @Override
-    public void processNotification(NotificationType notification) {
+    public void processNotification(NotificationType notification) throws WebApplicationException {
         log.debug("processNotification: event=" + notification.getEvent() + ", discovered=" + notification.getDiscovered());
 
         // TODO: We discard the event type and discovered time, however, the
@@ -283,6 +283,8 @@ public class DdsProvider implements DiscoveryProvider {
 
     @Override
     public Document addDocument(DocumentType request, Source context) throws WebApplicationException {
+        log.debug("addDocument: " + request.getId());
+
         // Create and populate our internal document.
         Document document = new Document(request, configReader.getBaseURL());
 

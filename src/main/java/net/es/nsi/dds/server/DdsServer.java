@@ -7,6 +7,7 @@ import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.config.http.HttpConfigProvider;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class DdsServer {
     public static final String PCE_SERVER_CONFIG_NAME = "dds";
+    private static final int FileCacheSecondsMaxAge = 3600;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private HttpConfig config;
@@ -34,10 +36,12 @@ public class DdsServer {
                 try {
                     log.debug("DDSServer.start: Starting Grizzly on " + config.getUrl() + " for resources " + config.getPackageName());
                     server = GrizzlyHttpServerFactory.createHttpServer(URI.create(config.getUrl()), RestServer.getConfig(config.getPackageName()), false);
+                    NetworkListener listener = server.getListener("grizzly");
 
                     if (config.getStaticPath() != null && !config.getStaticPath().isEmpty()) {
                         StaticHttpHandler staticHttpHandler = new StaticHttpHandler(config.getStaticPath());
                         server.getServerConfiguration().addHttpHandler(staticHttpHandler, config.getWwwPath());
+                        listener.getFileCache().setSecondsMaxAge(FileCacheSecondsMaxAge);
                     }
 
                     server.start();

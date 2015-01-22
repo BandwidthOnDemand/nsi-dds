@@ -16,11 +16,9 @@ import java.util.Set;
  */
 public class Gof3DiscoveryMsg implements Serializable {
     private static final long serialVersionUID = 1L;
-
+    private long interation = 0;
     private String nsaURL;
-    // private String topologyURL;
     private long nsaLastModifiedTime = 0;
-    // private long topologyLastModifiedTime = 0;
     private String nsaId;
     private Map<String, Long> topology = new HashMap<>(); // key = topologyURL, Long == topologyLastModifiedTime
 
@@ -40,6 +38,10 @@ public class Gof3DiscoveryMsg implements Serializable {
 
     public void addTopology(String topologyURL, Long topologyLastModifiedTime) {
         this.topology.put(topologyURL, topologyLastModifiedTime);
+    }
+
+    public void clearTopology() {
+        this.topology.clear();
     }
 
     public Set<String> getTopologyURL() {
@@ -88,5 +90,19 @@ public class Gof3DiscoveryMsg implements Serializable {
      */
     public void setNsaId(String nsaId) {
         this.nsaId = nsaId;
+    }
+
+    /**
+     * @return the interation
+     */
+    public long getInteration() {
+        return interation;
+    }
+
+    /**
+     * @param interation the interation to set
+     */
+    public void setInteration(long interation) {
+        this.interation = interation;
     }
 }
