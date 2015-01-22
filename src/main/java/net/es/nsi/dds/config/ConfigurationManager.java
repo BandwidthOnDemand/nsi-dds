@@ -67,11 +67,8 @@ public enum ConfigurationManager {
      */
     public synchronized void initialize(String configPath) throws Exception {
         if (!isInitialized()) {
-            // Build paths for configuration files.
-            String log4jConfig = new StringBuilder(configPath).append("log4j.xml").toString();
-
             // Load and watch the log4j configuration file for changes.
-            DOMConfigurator.configureAndWatch(log4jConfig, 45 * 1000);
+            DOMConfigurator.configureAndWatch(getLog4jConfig(configPath), 45 * 1000);
 
             final org.slf4j.Logger log = LoggerFactory.getLogger(ConfigurationManager.class);
 
@@ -97,6 +94,14 @@ public enum ConfigurationManager {
             setInitialized(true);
             log.info("Loaded configuration from: " + configPath);
         }
+    }
+
+     private String getLog4jConfig(String configPath) {
+        String log4jConfig = System.getProperty("log4j.configuration");
+        if (log4jConfig == null) {
+            log4jConfig = configPath + "log4j.xml";
+        }
+        return log4jConfig;
     }
 
     public ApplicationContext getApplicationContext() {
