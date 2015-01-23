@@ -7,6 +7,5 @@ nsi-pce.iml
 .idea
 *.iml
 config/cache/*.xml
-/src/test/resources/config/cache/
 /src/test/resources/config/repository/
 *.swp

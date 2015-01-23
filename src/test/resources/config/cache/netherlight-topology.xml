@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns5:document xmlns:ns2="http://schemas.ogf.org/nml/2013/05/base#"
+        xmlns:ns3="http://schemas.ogf.org/nsi/2013/09/topology#"
+        xmlns:ns4="urn:ietf:params:xml:ns:vcard-4.0"
+        xmlns:ns5="http://schemas.ogf.org/nsi/2014/02/discovery/types"
+        xmlns:ns6="http://schemas.ogf.org/nsi/2013/12/services/definition"
+        xmlns:ns7="http://nordu.net/namespaces/2013/12/gnsbod"
+        xmlns:ns8="http://schemas.es.net/nsi/2014/03/pce/discovery/configuration"
+        xmlns:ns9="http://schemas.ogf.org/nsi/2014/02/discovery/nsa" 
+    id="urn:ogf:network:netherlight.net:2013:testbed"
+    href="/documents/urn%3Aogf%3Anetwork%3Anetherlight.net%3A2013%3Ansa%3Abod/vnd.ogf.nsi.topology.v2%2Bxml/urn%3Aogf%3Anetwork%3Anetherlight.net%3A2013%3Atestbed"
+    version="2014-03-12T11:40:53+01:00" expires="2016-04-27T12:34:35.133-04:00">
+    <nsa>urn:ogf:network:netherlight.net:2013:nsa:bod</nsa>
+    <type>vnd.ogf.nsi.topology.v2+xml</type>
+    <content>
+        <ns2:Topology id="urn:ogf:network:netherlight.net:2013:testbed" version="2014-03-12T11:40:53+01:00">
+            <ns2:name>NetherLight A-GOLE test bed</ns2:name>
+            <ns2:Lifetime/>
+            <ns2:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:testbed:232">
+                <ns2:name>dlp01 VLAN 1799</ns2:name>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:232:out"/>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:232:in"/>
+            </ns2:BidirectionalPort>
+            <ns2:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:testbed:241">
+                <ns2:name>port 18 no-equipement</ns2:name>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:241:out"/>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:241:in"/>
+            </ns2:BidirectionalPort>
+            <ns2:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:testbed:282">
+                <ns2:name>A-GOLE video streaming demo (dlp01 VLAN 1784)</ns2:name>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:282:out"/>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:282:in"/>
+            </ns2:BidirectionalPort>
+            <ns2:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:testbed:526">
+                <ns2:name>UvA host port (0/6 of F25)</ns2:name>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:526:out"/>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:526:in"/>
+            </ns2:BidirectionalPort>
+            <ns2:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:testbed:2514">
+                <ns2:name>dlp01 VLAN 1790</ns2:name>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:2514:out"/>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:2514:in"/>
+            </ns2:BidirectionalPort>
+            <ns2:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:testbed:3263">
+                <ns2:name>A-GOLE ping test (dlp01 VLAN 1783)</ns2:name>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:3263:out"/>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:3263:in"/>
+            </ns2:BidirectionalPort>
+            <ns2:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:testbed:manlan:1">
+                <ns2:name>MANLAN via OME13</ns2:name>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:manlan:1:out"/>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:manlan:1:in"/>
+            </ns2:BidirectionalPort>
+            <ns2:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:testbed:nordu.net:1">
+                <ns2:name>NORDUnet</ns2:name>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:nordu.net:1:out"/>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:nordu.net:1:in"/>
+            </ns2:BidirectionalPort>
+            <ns2:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:testbed:starlight:1">
+                <ns2:name>ICair (formerly StarLight/StarTap)</ns2:name>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:starlight:1:out"/>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:starlight:1:in"/>
+            </ns2:BidirectionalPort>
+            <ns2:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:testbed:uva:1">
+                <ns2:name>UvALight</ns2:name>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:uva:1:out"/>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:uva:1:in"/>
+            </ns2:BidirectionalPort>
+            <ns2:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:testbed:geant:1">
+                <ns2:name>Geant (via PIONIER data plane)</ns2:name>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:geant:1:out"/>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:geant:1:in"/>
+            </ns2:BidirectionalPort>
+            <ns2:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:testbed:czechlight:1">
+                <ns2:name>CzechLight</ns2:name>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:czechlight:1:out"/>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:czechlight:1:in"/>
+            </ns2:BidirectionalPort>
+            <ns2:BidirectionalPort id="urn:ogf:network:netherlight.net:2013:testbed:pionier:1">
+                <ns2:name>PIONIER (temporarily via  4T-1-1-3)</ns2:name>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:pionier:1:out"/>
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:pionier:1:in"/>
+            </ns2:BidirectionalPort>
+            
+            <!-- NSI CS Services offered by this Network. -->
+            <ns6:serviceDefinition id="urn:ogf:network:netherlight.net:2013:ServiceDefinition:EVTS.A-GOLE">
+                <name>GLIF Automated GOLE Ethernet VLAN Transfer Service</name>
+                <serviceType>http://services.ogf.org/nsi/2013/07/definitions/EVTS.A-GOLE</serviceType>
+            </ns6:serviceDefinition>
+
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:232:out">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</ns2:LabelGroup>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:232:in">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</ns2:LabelGroup>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:241:out">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</ns2:LabelGroup>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:241:in">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</ns2:LabelGroup>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:282:out">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1784</ns2:LabelGroup>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:282:in">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1784</ns2:LabelGroup>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:526:out">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1784</ns2:LabelGroup>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:526:in">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1784</ns2:LabelGroup>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:2514:out">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1790</ns2:LabelGroup>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:2514:in">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1790</ns2:LabelGroup>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:3263:out">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1783</ns2:LabelGroup>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:3263:in">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1783</ns2:LabelGroup>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:manlan:1:out">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:manlan.internet2.edu:2013:netherlight:in"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:manlan:1:in">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:manlan.internet2.edu:2013:netherlight:out"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:nordu.net:1:out">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1782,1785-1799</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:nordu.net:2013:netherlight-in"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:nordu.net:1:in">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1782,1785-1799</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:nordu.net:2013:netherlight-out"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:starlight:1:out">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:icair.org:2013:netherlight-in"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:starlight:1:in">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:icair.org:2013:netherlight-out"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:uva:1:out">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:uvalight.net:2013:netherlight-in"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:uva:1:in">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:uvalight.net:2013:netherlight-out"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:geant:1:out">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:geant.net:2013:topology:port-to-nether-in"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:geant:1:in">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:geant.net:2013:topology:port-to-nether-out"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:czechlight:1:out">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:netherlight-in"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:czechlight:1:in">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:czechlight.cesnet.cz:2013:netherlight-out"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:pionier:1:out">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1780-1783</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:pionier.net.pl:2013:netherlight-pionier"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:pionier:1:in">
+                    <ns2:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1780-1783</ns2:LabelGroup>
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                        <ns2:PortGroup id="urn:ogf:network:pionier.net.pl:2013:pionier-netherlight"/>
+                    </ns2:Relation>
+                </ns2:PortGroup>
+            </ns2:Relation>
+            
+            <!-- We define a hasService relationship to hold our definitions of
+             NSI Service Domains and Adaptations. -->
+            <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasService">
+                <ns2:SwitchingService id="urn:ogf:network:netherlight.net:2013:ServiceDomain:a-gole:testbed:A-GOLE-EVTS"
+                    encoding="http://schemas.ogf.org/nml/2013/05/ethernet"
+                    labelSwapping = "true"
+                    labelType="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">
+                    
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:232:in"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:241:in"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:282:in"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:526:in"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:2514:in"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:3263:in"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:manlan:1:in"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:nordu.net:1:in"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:starlight:1:in"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:uva:1:in"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:geant:1:in"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:czechlight:1:in"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:pionier:1:in"/>
+                    </ns2:Relation>
+                    
+                    <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:232:out"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:241:out"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:282:out"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:526:out"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:2514:out"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:3263:out"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:manlan:1:out"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:nordu.net:1:out"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:starlight:1:out"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:uva:1:out"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:geant:1:out"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:czechlight:1:out"/>
+                        <ns2:PortGroup id="urn:ogf:network:netherlight.net:2013:testbed:pionier:1:out"/>
+                    </ns2:Relation>
+                    
+                    <!-- NSI CS Services supported by this Service Domain. -->
+                    <ns6:serviceDefinition id="urn:ogf:network:netherlight.net:2013:ServiceDefinition:EVTS.A-GOLE" />
+                </ns2:SwitchingService>
+            </ns2:Relation>
+        </ns2:Topology>
+    </content>
+</ns5:document>
