@@ -102,15 +102,19 @@ public class Gof3DiscoveryActor extends UntypedActor {
             log.debug("discoverNSA: response status " + response.getStatus());
 
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                // We have a document to process.
-                NsaType nsa = null;
-                try (ChunkedInput<NsaType> chunkedInput = response.readEntity(new GenericType<ChunkedInput<NsaType>>() {})) {
-                    NsaType chunk;
+                // Read the NSA description into a string buffer to avoid parsing
+                // errors on goofy characters.
+                StringBuilder result = new StringBuilder();
+                try (ChunkedInput<String> chunkedInput = response.readEntity(new GenericType<ChunkedInput<String>>() {})) {
+                    String chunk;
                     while ((chunk = chunkedInput.read()) != null) {
-                        nsa = chunk;
+                        result.append(chunk);
                     }
                 }
+                // Now parse the string into an NML Topology object.
+                NsaType nsa = NmlParser.getInstance().parseNsaFromString(result.toString());
 
+                // We have a document to process.
                 if (nsa == null) {
                     // Clear the topology URL and lastModified dates for this
                     // error.
@@ -202,7 +206,8 @@ public class Gof3DiscoveryActor extends UntypedActor {
             log.debug("discoverNSA: response status " + response.getStatus());
 
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-                // Read the
+                // Read the NML topology into a string buffer to avoid parsing
+                // errors on goofy characters.
                 StringBuilder result = new StringBuilder();
                 try (ChunkedInput<String> chunkedInput = response.readEntity(new GenericType<ChunkedInput<String>>() {})) {
                     String chunk;
@@ -211,8 +216,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
                     }
                 }
 
-                log.debug(result.toString());
-
+                // Now parse the string into an NML Topology object.
                 NmlTopologyType nml = NmlParser.getInstance().parseTopologyFromString(result.toString());
 
                 if (nml != null) {

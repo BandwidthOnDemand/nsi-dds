@@ -8,8 +8,8 @@ import java.io.StringReader;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import net.es.nsi.dds.api.jaxb.NmlNSAType;
 import net.es.nsi.dds.api.jaxb.NmlTopologyType;
+import net.es.nsi.dds.api.jaxb.NsaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,20 +73,32 @@ public class NmlParser {
      * @throws FileNotFoundException If the specified file was not found.
      */
     @SuppressWarnings("unchecked")
-    public NmlNSAType parseNSAFromFile(String file) throws JAXBException, IOException {
+    public NsaType parseNsaFromFile(String file) throws JAXBException, IOException {
         // Make sure we initialized properly.
         if (jaxbContextNSA == null) {
             throw new JAXBException("NmlParser: Failed to load JAXB instance");
         }
 
         // Parse the specified file.
-        JAXBElement<NmlNSAType> nsaElement;
+        NsaType nsaElement = null;
         try (FileInputStream fileInputStream = new FileInputStream(file); BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream)) {
-            nsaElement = (JAXBElement<NmlNSAType>) jaxbContextNSA.createUnmarshaller().unmarshal(bufferedInputStream);
+            Object unmarshal = jaxbContextNSA.createUnmarshaller().unmarshal(bufferedInputStream);
+            if (unmarshal instanceof JAXBElement<?>) {
+                JAXBElement<?> jaxb = (JAXBElement<?>) unmarshal;
+                if (jaxb.getDeclaredType() == NsaType.class) {
+                    nsaElement = (NsaType) jaxb.getValue();
+                }
+                else {
+                    throw new JAXBException("parseNSAFromFile: Expected NsaType but found " + jaxb.getDeclaredType());
+                }
+            }
+            else {
+                throw new JAXBException("parseNSAFromFile: Expected JAXBElement<?> but found " + unmarshal.getClass());
+            }
         }
 
         // Return the NSAType object.
-        return nsaElement.getValue();
+        return nsaElement;
     }
 
     /**
@@ -121,19 +133,30 @@ public class NmlParser {
      * @throws JAXBException If the XML contained in the string is not valid.
      * @throws JAXBException If the XML is not well formed.
      */
-    public NmlNSAType parseNsaFromString(String xml) throws JAXBException {
+    public NsaType parseNsaFromString(String xml) throws JAXBException {
         // Make sure we initialized properly.
         if (jaxbContextNSA == null) {
             throw new JAXBException("NmlParser: Failed to load JAXB NSA instance");
         }
 
         // Parse the specified XML string.
-        StringReader reader = new StringReader(xml);
-
-        @SuppressWarnings("unchecked")
-        JAXBElement<NmlNSAType> nsaElement = (JAXBElement<NmlNSAType>) jaxbContextNSA.createUnmarshaller().unmarshal(reader);
-
+        NsaType nsaElement = null;
+        try (StringReader reader = new StringReader(xml)) {
+            Object unmarshal = jaxbContextNSA.createUnmarshaller().unmarshal(reader);
+            if (unmarshal instanceof JAXBElement<?>) {
+                JAXBElement<?> jaxb = (JAXBElement<?>) unmarshal;
+                if (jaxb.getDeclaredType() == NsaType.class) {
+                    nsaElement = (NsaType) jaxb.getValue();
+                }
+                else {
+                    throw new JAXBException("parseNSAFromString: Expected NsaType but found " + jaxb.getDeclaredType());
+                }
+            }
+            else {
+                throw new JAXBException("parseNSAFromString: Expected JAXBElement<?> but found " + unmarshal.getClass());
+            }
+        }
         // Return the NSAType object.
-        return nsaElement.getValue();
+        return nsaElement;
     }
 }
