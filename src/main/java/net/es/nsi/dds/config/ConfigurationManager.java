@@ -123,8 +123,13 @@ public enum ConfigurationManager {
     }
 
     public void shutdown() {
-        discoveryProvider.shutdown();
-        ddsServer.shutdown();
+        if (discoveryProvider != null) {
+            discoveryProvider.shutdown();
+        }
+
+        if (ddsServer != null) {
+            ddsServer.shutdown();
+        }
         initialized = false;
     }
 }

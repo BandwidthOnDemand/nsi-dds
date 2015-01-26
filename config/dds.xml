@@ -49,6 +49,7 @@
     <expiryInterval>600</expiryInterval>
     <actorPool>10</actorPool>
     <baseURL>http://localhost:8401/dds</baseURL>
+    <notificationSize>5</notificationSize>
 
 <!-- DDS service interfaces.
     <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://nsi-aggr-west.es.net/discovery</peerURL>
