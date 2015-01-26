@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @author hacksaw
  */
 public class AgoleDiscoveryActor extends UntypedActor {
-   
+
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final ObjectFactory factory = new ObjectFactory();
 
@@ -49,30 +49,30 @@ public class AgoleDiscoveryActor extends UntypedActor {
     public void onReceive(Object msg) {
         if (msg instanceof AgoleDiscoveryMsg) {
             AgoleDiscoveryMsg message = (AgoleDiscoveryMsg) msg;
-            
+
             // Read the NML topology document.
             if (discoverTopology(message) == false) {
                 // No update so return.
                 return;
             }
-            
+
             // Send an updated discovery message back to the router.
             getSender().tell(message, getSelf());
         } else {
             unhandled(msg);
         }
     }
- 
+
     private boolean discoverTopology(AgoleDiscoveryMsg message) {
         String id = message.getId();
         String url = message.getTopologyURL();
 
         log.debug("discover: topology id=" + id + ", url=" + url);
-        
+
         if (url == null || url.isEmpty()) {
             return false;
         }
-        
+
         AgoleTopologyReader topologyReader = new AgoleTopologyReader(id, url, message.getTopologyLastModifiedTime());
         NmlNSAType nsa;
         try {
@@ -81,12 +81,12 @@ public class AgoleDiscoveryActor extends UntypedActor {
             log.error("discoverTopology: failed to read topology for id=" + id + ", url=" + url, ex);
             return false;
         }
-        
+
         if (nsa == null) {
             log.debug("discoverTopology: Topology document not modified for id=" + id + ", url=" + url);
             return false;
         }
-        
+
         XMLGregorianCalendar lastDiscovered;
         try {
             lastDiscovered = XmlUtilities.xmlGregorianCalendar();
@@ -94,7 +94,7 @@ public class AgoleDiscoveryActor extends UntypedActor {
             log.error("discoverTopology: Failed to create a lastDiscovered value, id=" + nsa.getId(), ex);
             return false;
         }
-        
+
         // We need to create both the NSA Discovery and Topology documents from
         // the contents of this single document.
         NsaType nsaDocument = parseNsa(nsa);
@@ -118,11 +118,11 @@ public class AgoleDiscoveryActor extends UntypedActor {
         }
 
         // Now we retrieve the associated topology document.
-        log.debug("discoverTopology: existing.");
-        
+        log.debug("discoverTopology: exiting.");
+
         return true;
     }
-    
+
     private boolean addNsaDocument(NsaType nsa, XMLGregorianCalendar discovered) {
         // Now we add the NSA document into the DDS.
         DocumentType document = factory.createDocumentType();
@@ -135,7 +135,7 @@ public class AgoleDiscoveryActor extends UntypedActor {
         // We need the version of the document.
         XMLGregorianCalendar version = nsa.getVersion();
         if (version == null || !version.isValid()) {
-            
+
         }
         else {
             document.setVersion(version);
@@ -163,20 +163,20 @@ public class AgoleDiscoveryActor extends UntypedActor {
         AnyType any = factory.createAnyType();
         any.getAny().add(factory.createNsa(nsa));
         document.setContent(any);
-        
+
         // Try to add the document as a notification of document change.
         NotificationType notify = factory.createNotificationType();
         notify.setEvent(DocumentEventType.ALL);
         notify.setDiscovered(discovered);
         notify.setDocument(document);
-        
+
         DdsProvider.getInstance().processNotification(notify);
-        
+
         return true;
     }
-    
+
     private boolean addTopologyDocument(NmlTopologyType topology, XMLGregorianCalendar discovered, String nsaId) {
-        
+
         // Now we add the NSA document into the DDS.
         DocumentType document = factory.createDocumentType();
 
@@ -214,18 +214,18 @@ public class AgoleDiscoveryActor extends UntypedActor {
         AnyType any = factory.createAnyType();
         any.getAny().add(factory.createTopology(topology));
         document.setContent(any);
-        
+
         // Try to add the document as a notification of document change.
         NotificationType notify = factory.createNotificationType();
         notify.setEvent(DocumentEventType.ALL);
         notify.setDiscovered(discovered);
         notify.setDocument(document);
-        
+
         DdsProvider.getInstance().processNotification(notify);
-        
+
         return true;
     }
-    
+
     private NsaType parseNsa(NmlNSAType nsa) {
         // We need to create both the NSA Discovery and Topology documents from
         // the contents of this single document.
@@ -236,7 +236,7 @@ public class AgoleDiscoveryActor extends UntypedActor {
         if (nsa.getLifetime() != null) {
             nsaDocument.setExpires(nsa.getLifetime().getEnd());
         }
-        
+
         NmlLocationType location = nsa.getLocation();
         if (location != null) {
             LocationType loc = factory.createLocationType();
@@ -247,15 +247,15 @@ public class AgoleDiscoveryActor extends UntypedActor {
             loc.setUnlocode(location.getUnlocode());
             nsaDocument.setLocation(loc);
         }
-        
+
         // Add the uPA NSA feature.
         FeatureType upa = factory.createFeatureType();
         upa.setType(NsiConstants.NSI_CS_UPA);
         List<FeatureType> feature = nsaDocument.getFeature();
         feature.add(upa);
-        
+
         //nsaDocument.setAdminContact(null);
-        
+
         // Parse the NML peersWith relationship.
         try {
             nsaDocument.getPeersWith().addAll(parsePeersWith(nsa.getRelation()));
@@ -264,7 +264,7 @@ public class AgoleDiscoveryActor extends UntypedActor {
             // Ignore the error for now.
             log.error("discoverTopology: failed to add NML peersWith relationship.", ex);
         }
-        
+
         // Parse the NML Service element into an interface element.
         try {
             nsaDocument.getInterface().addAll(parseService(nsa.getService()));
@@ -273,16 +273,16 @@ public class AgoleDiscoveryActor extends UntypedActor {
             // Ignore the error for now.
             log.error("discoverTopology: failed to add NML Service.", ex);
         }
-        
+
         // We pull the networkId out of the <Topology> elements.
         List<String> networkId = nsaDocument.getNetworkId();
         for (NmlTopologyType topology : nsa.getTopology()) {
             networkId.add(topology.getId().trim());
         }
-        
+
         return nsaDocument;
     }
-    
+
     private Collection<NmlTopologyType> parseTopology(NmlNSAType nmlNsa, NsaType nsaDocument) {
         List<NmlTopologyType> topologies = nmlNsa.getTopology();
         for (NmlTopologyType topology : topologies) {
@@ -307,7 +307,7 @@ public class AgoleDiscoveryActor extends UntypedActor {
                 }
             }
         }
-        
+
         return peersWith;
     }
 
@@ -319,7 +319,7 @@ public class AgoleDiscoveryActor extends UntypedActor {
             aInterface.setType(NsiConstants.NSI_CS_PROVIDER_V2);
             interfaceList.add(aInterface);
         }
-        
+
         return interfaceList;
     }
 }

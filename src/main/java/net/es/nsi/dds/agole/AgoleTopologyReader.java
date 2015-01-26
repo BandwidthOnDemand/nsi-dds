@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.es.nsi.dds.jersey.RestClient;
@@ -12,6 +13,7 @@ import net.es.nsi.dds.api.jaxb.NmlNSAType;
 import net.es.nsi.dds.dao.DdsParser;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import org.apache.http.client.utils.DateUtils;
+import org.glassfish.jersey.client.ChunkedInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,13 +96,17 @@ public class AgoleTopologyReader {
 
         // Now we want the NML XML document.  We have to read this as a string
         // because GitHub is returning incorrect media type (text/plain).
-        String xml = response.readEntity(String.class);
+        StringBuilder result = new StringBuilder();
+        try (ChunkedInput<String> chunkedInput = response.readEntity(new GenericType<ChunkedInput<String>>() {})) {
+            String chunk;
+            while ((chunk = chunkedInput.read()) != null) {
+                result.append(chunk);
+            }
+        }
         response.close();
 
-        log.debug("readNsaTopology: input message " + xml);
-
         // Parse the NSA topology.
-        NmlNSAType topology = DdsParser.getInstance().parseNsaFromString(xml);
+        NmlNSAType topology = DdsParser.getInstance().parseNsaFromString(result.toString());
 
         // We should never get this - an exception should be thrown.
         if (topology == null) {
