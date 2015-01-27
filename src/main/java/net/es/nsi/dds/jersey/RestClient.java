@@ -47,8 +47,8 @@ public class RestClient {
         ClientConfig clientConfig = new ClientConfig();
 
         // Values are in milliseconds
-        clientConfig.property(ClientProperties.READ_TIMEOUT, 2000);
-        clientConfig.property(ClientProperties.CONNECT_TIMEOUT, 1000);
+        //clientConfig.property(ClientProperties.READ_TIMEOUT, 2000);
+        //clientConfig.property(ClientProperties.CONNECT_TIMEOUT, 1000);
 
         // We want to use the Apache connector for chunk POST support.
         clientConfig.connectorProvider(new ApacheConnectorProvider());
