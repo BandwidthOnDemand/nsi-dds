@@ -62,6 +62,18 @@
             <version>${jersey.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.glassfish.jersey.connectors</groupId>
+            <artifactId>jersey-apache-connector</artifactId>
+            <version>2.15</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.6</version>
+        </dependency>
+
         <!-- SLF and Log4j for logging infrestructure. -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -167,13 +179,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>17.0</version>
-        </dependency>
-
-        <!-- For HTTP header utilities. -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.3-beta2</version>
         </dependency>
 
         <dependency>

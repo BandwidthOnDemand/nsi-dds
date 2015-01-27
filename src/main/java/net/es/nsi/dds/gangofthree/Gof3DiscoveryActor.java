@@ -46,8 +46,8 @@ public class Gof3DiscoveryActor extends UntypedActor {
 
     @Override
     public void preStart() {
-        clientConfig = new ClientConfig();
-        RestClient.configureClient(clientConfig);
+        clientConfig = RestClient.configureClient();
+
     }
 
     @Override

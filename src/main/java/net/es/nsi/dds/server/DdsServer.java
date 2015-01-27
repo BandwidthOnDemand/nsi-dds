@@ -38,9 +38,6 @@ public class DdsServer {
                     server = GrizzlyHttpServerFactory.createHttpServer(URI.create(config.getUrl()), RestServer.getConfig(config.getPackageName()), false);
                     NetworkListener listener = server.getListener("grizzly");
 
-                    log.debug("DDSServer.start: max post " + server.getServerConfiguration().getMaxPostSize());
-                    log.debug("DDSServer.start: max buffered post " + server.getServerConfiguration().getMaxBufferedPostSize());
-
                     if (config.getStaticPath() != null && !config.getStaticPath().isEmpty()) {
                         StaticHttpHandler staticHttpHandler = new StaticHttpHandler(config.getStaticPath());
                         server.getServerConfiguration().addHttpHandler(staticHttpHandler, config.getWwwPath());

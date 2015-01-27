@@ -34,7 +34,7 @@ public class DdsConfiguration {
 
     public static final int NOTIFICATIONSIZE_MAX_SIZE = 40;
     public static final int NOTIFICATIONSIZE_DEFAULT_SIZE = 10;
-    public static final int NOTIFICATIONSIZE_MIN_SIZE = 5;
+    public static final int NOTIFICATIONSIZE_MIN_SIZE = 1;
 
     public static final int PAGESIZE_MAX_SIZE = 100;
     public static final int PAGESIZE_DEFAULT_SIZE = 50;

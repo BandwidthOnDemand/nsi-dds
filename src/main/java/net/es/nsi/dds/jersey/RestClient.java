@@ -14,8 +14,12 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import net.es.nsi.dds.schema.NsiConstants;
 import net.es.nsi.dds.spring.SpringApplicationContext;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.eclipse.persistence.jaxb.MarshallerProperties;
+import org.glassfish.jersey.apache.connector.ApacheClientProperties;
+import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
@@ -30,8 +34,7 @@ public class RestClient {
     private final Client client;
 
     public RestClient() {
-        ClientConfig clientConfig = new ClientConfig();
-        configureClient(clientConfig);
+        ClientConfig clientConfig = configureClient();
         client = ClientBuilder.newClient(clientConfig);
     }
 
@@ -40,7 +43,21 @@ public class RestClient {
         return restClient;
     }
 
-    public static void configureClient(ClientConfig clientConfig) {
+    public static ClientConfig configureClient() {
+        ClientConfig clientConfig = new ClientConfig();
+
+        // Values are in milliseconds
+        clientConfig.property(ClientProperties.READ_TIMEOUT, 2000);
+        clientConfig.property(ClientProperties.CONNECT_TIMEOUT, 1000);
+
+        // We want to use the Apache connector for chunk POST support.
+        clientConfig.connectorProvider(new ApacheConnectorProvider());
+
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        connectionManager.setDefaultMaxPerRoute(20);
+        connectionManager.setMaxTotal(80);
+        clientConfig.property(ApacheClientProperties.CONNECTION_MANAGER, connectionManager);
+
         // Configure the JerseyTest client for communciations with PCE.
         clientConfig.register(new MoxyXmlFeature());
         clientConfig.register(new MoxyJsonFeature());
@@ -49,6 +66,8 @@ public class RestClient {
         clientConfig.property(MarshallerProperties.NAMESPACE_PREFIX_MAPPER, Utilities.getNameSpace());
         clientConfig.property(MarshallerProperties.JSON_ATTRIBUTE_PREFIX, "@");
         clientConfig.property(MarshallerProperties.JSON_NAMESPACE_SEPARATOR, '.');
+        //clientConfig.property(DefaultApacheHttpClientConfig.PROPERTY_CHUNKED_ENCODING_SIZE, 0);
+        return clientConfig;
     }
 
     public Client get() {

@@ -112,6 +112,7 @@ public class TestDocumentRepository {
                     Response.Status.CONFLICT.getStatusCode() != response.getStatus()) {
                 fail();
             }
+            response.close();
 
             identifiers.add(document.getId());
         }

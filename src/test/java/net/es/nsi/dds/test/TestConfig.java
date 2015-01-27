@@ -39,8 +39,7 @@ public class TestConfig {
             ex.printStackTrace();
         }
 
-        ClientConfig clientConfig = new ClientConfig();
-        RestClient.configureClient(clientConfig);
+        ClientConfig clientConfig = RestClient.configureClient();
         client = ClientBuilder.newClient(clientConfig);
 
         target = client.target(ConfigurationManager.INSTANCE.getDdsServer().getUrl());

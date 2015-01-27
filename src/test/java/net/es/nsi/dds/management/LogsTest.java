@@ -49,7 +49,7 @@ public class LogsTest {
             System.out.println("Chunk received...");
             finalTopology = chunk;
         }
-
+        response.close();
         assertNotNull(finalTopology);
 
         int count = 0;
@@ -59,6 +59,7 @@ public class LogsTest {
 
             LogType readLog = response.readEntity(LogType.class);
             System.out.println("Read log: " + readLog.getId());
+            response.close();
 
             // Limit the number we retrieve otherwise build will take forever.
             count++;
@@ -80,6 +81,7 @@ public class LogsTest {
             System.out.println("Chunk received...");
             finalTopology = chunk;
         }
+        response.close();
 
         assertNotNull(finalTopology);
     }
@@ -90,6 +92,7 @@ public class LogsTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
         LogListType logs = response.readEntity(LogListType.class);
+        response.close();
 
         for (LogType log : logs.getLog()) {
             response = management.path("logs").queryParam("audit", log.getAudit().toXMLFormat()).request(MediaType.APPLICATION_JSON).get();
@@ -102,6 +105,7 @@ public class LogsTest {
                 System.out.println("Chunk received...");
                 finalTopology = chunk;
             }
+            response.close();
 
             assertNotNull(finalTopology);
         }
@@ -111,11 +115,14 @@ public class LogsTest {
     public void badFilter() {
         Response response = management.path("logs").queryParam("code", "1001").request(MediaType.APPLICATION_JSON).get();
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        response.close();
 
         response = management.path("logs").queryParam("type", "POOP").request(MediaType.APPLICATION_JSON).get();
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        response.close();
 
         response = management.path("logs").path("666").request(MediaType.APPLICATION_JSON).get();
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        response.close();
     }
 }

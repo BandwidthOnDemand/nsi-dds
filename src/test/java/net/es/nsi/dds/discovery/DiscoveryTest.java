@@ -121,6 +121,7 @@ public class DiscoveryTest {
                     Response.Status.CONFLICT.getStatusCode() != response.getStatus()) {
                 fail();
             }
+            response.close();
         }
         System.out.println("************************** Done aLoadDocuments test ********************************");
     }
@@ -133,6 +134,7 @@ public class DiscoveryTest {
         // Simple ping to determine if interface is available.
         Response response = discovery.path("ping").request(MediaType.APPLICATION_JSON).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        response.close();
     }
 
     /**
@@ -154,6 +156,8 @@ public class DiscoveryTest {
             System.out.println("Chunk received...");
             documents = chunk;
         }
+        response.close();
+
         assertNotNull(documents);
 
         for (DocumentType document : documents.getDocument()) {
@@ -163,6 +167,8 @@ public class DiscoveryTest {
             response = testConfig.getClient().target(document.getHref()).request(MediaType.APPLICATION_XML).get();
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             DocumentType doc = response.readEntity(DocumentType.class);
+            response.close();
+
             assertNotNull(doc);
             assertFalse(doc.getContent().getAny().isEmpty());
 
@@ -172,7 +178,10 @@ public class DiscoveryTest {
                     .path(URLEncoder.encode(document.getType().trim(), "UTF-8"))
                     .request(MediaType.APPLICATION_XML).get();
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
             DocumentListType docList = response.readEntity(DocumentListType.class);
+            response.close();
+
             boolean found = false;
             for (DocumentType docListItem : docList.getDocument()) {
                 if (document.getNsa().equalsIgnoreCase(docListItem.getNsa()) &&
@@ -199,6 +208,7 @@ public class DiscoveryTest {
         Response response = discovery.path("documents").queryParam("summary", "true").request(MediaType.APPLICATION_XML).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         DocumentListType documents = response.readEntity(DocumentListType.class);
+        response.close();
         assertNotNull(documents);
 
         for (DocumentType document : documents.getDocument()) {
@@ -209,6 +219,8 @@ public class DiscoveryTest {
             response = testConfig.getClient().target(document.getHref()).queryParam("summary", "true").request(MediaType.APPLICATION_XML).get();
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             DocumentType doc = response.readEntity(DocumentType.class);
+            response.close();
+
             assertNotNull(doc);
             assertNull(doc.getContent());
         }
@@ -220,11 +232,14 @@ public class DiscoveryTest {
         // We want a NOT_FOUND for a nonexistent nsa resource on document path.
         Response response = discovery.path("documents").path("invalidNsaValue").request(MediaType.APPLICATION_XML).get();
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        response.close();
 
         // We want an empty result set for an invalid type on document path.
         response = discovery.path("documents").path("urn:ogf:network:czechlight.cesnet.cz:2013:nsa").path("invalidDocumentType").request(MediaType.APPLICATION_XML).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         DocumentListType documents = response.readEntity(DocumentListType.class);
+        response.close();
+
         assertNotNull(documents);
         assertTrue(documents.getDocument().isEmpty());
         System.out.println("************************** Done eDocumentNotFound test ********************************");
@@ -245,6 +260,7 @@ public class DiscoveryTest {
                 documents = chunk;
             }
         }
+        response.close();
         assertNotNull(documents);
 
         for (DocumentType document : documents.getDocument()) {
@@ -254,6 +270,8 @@ public class DiscoveryTest {
             response = discovery.path("local").path(URLEncoder.encode(document.getType(), "UTF-8")).request(MediaType.APPLICATION_XML).get();
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             DocumentListType docs = response.readEntity(DocumentListType.class);
+            response.close();
+
             assertNotNull(docs);
             response.close();
 
@@ -423,6 +441,8 @@ public class DiscoveryTest {
             }
         }
 
+        response.close();
+
         assertNotNull(documents);
         assertNotNull(documents.getDocument());
         assertFalse(documents.getDocument().isEmpty());
@@ -431,6 +451,7 @@ public class DiscoveryTest {
             System.out.println("readDocumentType: reaading document " + document.getId());
             response = testConfig.getClient().target(document.getHref()).request(NsiConstants.NSI_DDS_V1_XML).get();
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            response.close();
         }
     }
 }

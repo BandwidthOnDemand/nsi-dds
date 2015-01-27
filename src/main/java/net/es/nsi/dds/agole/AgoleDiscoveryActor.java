@@ -50,9 +50,15 @@ public class AgoleDiscoveryActor extends UntypedActor {
         if (msg instanceof AgoleDiscoveryMsg) {
             AgoleDiscoveryMsg message = (AgoleDiscoveryMsg) msg;
 
-            // Read the NML topology document.
-            if (discoverTopology(message) == false) {
-                // No update so return.
+            try {
+                // Read the NML topology document.
+                if (discoverTopology(message) == false) {
+                    // No update so return.
+                    return;
+                }
+            }
+            catch (Exception ex) {
+                log.error("onReceive: Caught exception", ex);
                 return;
             }
 

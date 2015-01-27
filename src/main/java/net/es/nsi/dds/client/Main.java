@@ -28,8 +28,7 @@ public class Main {
     private final static ObjectFactory factory = new ObjectFactory();
     @SuppressWarnings({"ResultOfMethodCallIgnored"})
     public static void main(String[] args) throws Exception {
-        ClientConfig clientConfig = new ClientConfig();
-        RestClient.configureClient(clientConfig);
+        ClientConfig clientConfig = RestClient.configureClient();
         Client client = ClientBuilder.newClient(clientConfig);
 
         WebTarget webGet = client.target("http://localhost:8401/dds");
