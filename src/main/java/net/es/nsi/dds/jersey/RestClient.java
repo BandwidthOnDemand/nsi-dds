@@ -21,6 +21,7 @@ import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.filter.LoggingFilter;
+import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
 import org.slf4j.Logger;
@@ -44,7 +45,9 @@ public class RestClient {
     }
 
     public static ClientConfig configureClient() {
-        ClientConfig clientConfig = new ClientConfig();
+        ClientConfig clientConfig = new ClientConfig(GZipEncoder.class);
+
+        clientConfig.property(ClientProperties.CHUNKED_ENCODING_SIZE, 1024);
 
         // Values are in milliseconds
         //clientConfig.property(ClientProperties.READ_TIMEOUT, 2000);
