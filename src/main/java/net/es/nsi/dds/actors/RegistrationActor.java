@@ -127,7 +127,6 @@ public class RegistrationActor extends UntypedActor {
         try {
             log.debug("RegistrationActor: registering with remote DDS " + remoteDdsURL);
             response = webTarget.request(NsiConstants.NSI_DDS_V1_XML)
-                    .accept(NsiConstants.NSI_DDS_V1_XML)
                     .header(HttpHeaders.CONTENT_ENCODING, "gzip")
                     .post(Entity.entity(new GenericEntity<JAXBElement<SubscriptionRequestType>>(jaxb) {}, NsiConstants.NSI_DDS_V1_XML));
         }

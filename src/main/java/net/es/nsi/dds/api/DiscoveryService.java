@@ -895,7 +895,9 @@ public class DiscoveryService {
     @Path("/notifications")
     @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     @Consumes({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
-    public Response notifications(InputStream request) throws WebApplicationException {
+    public Response notifications(@HeaderParam("Accept") String encoding, @HeaderParam("X-Forwarded-For") String source, InputStream request) throws WebApplicationException {
+
+        log.debug("notifications: Incoming notification from " + source + ", "+ encoding);
 
         // Parse the XML into JAXB objects.
         NotificationListType notifications;

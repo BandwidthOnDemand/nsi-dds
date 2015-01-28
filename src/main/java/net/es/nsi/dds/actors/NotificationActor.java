@@ -79,6 +79,8 @@ public class NotificationActor extends UntypedActor {
             JAXBElement<NotificationListType> jaxb = factory.createNotifications(list);
             String mediaType = notification.getSubscription().getEncoding();
 
+            log.debug("NotificationActor: sending mediaType=" + mediaType + ", subscriptionId=" + notification.getSubscription().getId() + ", callback=" + notification.getSubscription().getSubscription().getCallback());
+
             try {
                 Response response = webTarget.request(mediaType).header(HttpHeaders.CONTENT_ENCODING, "gzip")
                     .post(Entity.entity(new GenericEntity<JAXBElement<NotificationListType>>(jaxb) {}, mediaType));
@@ -95,7 +97,7 @@ public class NotificationActor extends UntypedActor {
 
                 response.close();
             }
-            catch (WebApplicationException ex) {
+            catch (Exception ex) {
                 log.error("NotificationActor: failed notification " + list.getId() + " to client " + callback, ex);
                 DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
                 discoveryProvider.deleteSubscription(notification.getSubscription().getId());

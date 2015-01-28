@@ -27,6 +27,7 @@ import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.dao.DocumentCache;
 import net.es.nsi.dds.provider.Subscription;
 import net.es.nsi.dds.jersey.RestClient;
+import net.es.nsi.dds.messages.StartMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.concurrent.duration.Duration;
@@ -89,8 +90,11 @@ public class NotificationRouter extends UntypedActor {
             getContext().watch(r);
             router = router.addRoutee(new ActorRefRoutee(r));
         }
+        else if (msg instanceof StartMsg) {
+            // We ignore these for now as we have no specific start task.
+        }
         else {
-            log.debug("NotificationRouter: unhandled event." + msg.getClass().getName());
+            log.debug("NotificationRouter: unhandled event = " + msg.getClass().getName());
             unhandled(msg);
         }
     }
