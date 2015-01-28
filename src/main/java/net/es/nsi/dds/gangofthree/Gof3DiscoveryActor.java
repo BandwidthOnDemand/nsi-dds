@@ -42,12 +42,11 @@ public class Gof3DiscoveryActor extends UntypedActor {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final ObjectFactory factory = new ObjectFactory();
-    private ClientConfig clientConfig;
+    private Client client;
 
     @Override
     public void preStart() {
-        clientConfig = RestClient.configureClient();
-
+        client = RestClient.getInstance().get();
     }
 
     @Override
@@ -79,7 +78,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
     private boolean discoverNSA(Gof3DiscoveryMsg message) {
         log.debug("discoverNSA: nsa=" + message.getNsaURL() + ", lastModifiedTime=" + new Date(message.getNsaLastModifiedTime()));
 
-        Client client = ClientBuilder.newClient(clientConfig);
+        //Client client = ClientBuilder.newClient(clientConfig);
         long time = message.getNsaLastModifiedTime();
         try {
             WebTarget nsaTarget = client.target(message.getNsaURL());
@@ -173,7 +172,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
             return false;
         }
         finally {
-            client.close();
+            //client.close();
         }
 
         message.setNsaLastModifiedTime(time);
@@ -186,7 +185,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
     private Long discoverTopology(String nsaId, String url, Long lastModifiedTime) {
         log.debug("discoverTopology: topology=" + url);
 
-        Client client = ClientBuilder.newClient(clientConfig);
+        //Client client = ClientBuilder.newClient(clientConfig);
         long time = lastModifiedTime.longValue();
         try {
             WebTarget topologyTarget = client.target(url);
@@ -253,7 +252,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
             time = 0L;
         }
         finally {
-            client.close();
+            //client.close();
         }
 
         log.debug("discoverTopology: exiting for topology=" + url + " with lastModifiedTime=" + new Date(time));
