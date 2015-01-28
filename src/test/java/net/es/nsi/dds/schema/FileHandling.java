@@ -4,7 +4,6 @@
  */
 package net.es.nsi.dds.schema;
 
-import net.es.nsi.dds.schema.XmlUtilities;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,12 +27,12 @@ public class FileHandling {
         File dir = new File(testDir);
         if (!dir.exists()) {
             if (!dir.mkdir()) {
-                throw new FileNotFoundException("Cannot create directory: " + testDir);                
-            }  
+                throw new FileNotFoundException("Cannot create directory: " + testDir);
+            }
         }
-        
+
         Collection<String> xmlFilenames = XmlUtilities.getXmlFilenames(cacheDir);
-        
+
         for (String filename : xmlFilenames) {
             System.out.println("cacheReadWrite: filename " + filename);
             DocumentType document;
@@ -51,11 +50,11 @@ public class FileHandling {
             }
 
             System.out.println("cacheReadWrite: documentId=" + document.getId());
-        
+
             String newFile = Paths.get(testDir, UUID.randomUUID().toString() + ".xml").toString();
-            
+
             System.out.println("cacheReadWrite: adding new file " + newFile);
-        
+
             try {
                 DdsParser.getInstance().writeDocument(newFile, document);
             }
@@ -65,7 +64,7 @@ public class FileHandling {
             }
         }
     }
-    
+
 
     @SuppressWarnings({"ResultOfMethodCallIgnored"})
     public static void main(String[] args) throws Exception {

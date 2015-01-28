@@ -15,6 +15,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import net.es.nsi.dds.dao.DdsConfiguration;
@@ -125,7 +126,10 @@ public class RegistrationActor extends UntypedActor {
         Response response;
         try {
             log.debug("RegistrationActor: registering with remote DDS " + remoteDdsURL);
-            response = webTarget.request(NsiConstants.NSI_DDS_V1_XML).post(Entity.entity(new GenericEntity<JAXBElement<SubscriptionRequestType>>(jaxb) {}, NsiConstants.NSI_DDS_V1_XML));
+            response = webTarget.request(NsiConstants.NSI_DDS_V1_XML)
+                    .accept(NsiConstants.NSI_DDS_V1_XML)
+                    .header(HttpHeaders.CONTENT_ENCODING, "gzip")
+                    .post(Entity.entity(new GenericEntity<JAXBElement<SubscriptionRequestType>>(jaxb) {}, NsiConstants.NSI_DDS_V1_XML));
         }
         catch (Exception ex) {
             log.error("RegistrationActor.register: endpoint " + remoteDdsURL, ex);

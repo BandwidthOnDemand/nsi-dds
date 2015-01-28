@@ -116,7 +116,7 @@ public class DiscoveryTest {
         for (String file : FileUtilities.getXmlFileList(DOCUMENT_DIR)) {
             DocumentType document = DdsParser.getInstance().readDocument(file);
             JAXBElement<DocumentType> jaxbRequest = factory.createDocument(document);
-            Response response = discovery.path("documents").request(MediaType.APPLICATION_XML).post(Entity.entity(new GenericEntity<JAXBElement<DocumentType>>(jaxbRequest) {}, MediaType.APPLICATION_XML));
+            Response response = discovery.path("documents").request(NsiConstants.NSI_DDS_V1_XML).post(Entity.entity(new GenericEntity<JAXBElement<DocumentType>>(jaxbRequest) {}, NsiConstants.NSI_DDS_V1_XML));
             if (Response.Status.CREATED.getStatusCode() != response.getStatus() &&
                     Response.Status.CONFLICT.getStatusCode() != response.getStatus()) {
                 fail();
@@ -132,7 +132,7 @@ public class DiscoveryTest {
     @Test
     public void bPing() {
         // Simple ping to determine if interface is available.
-        Response response = discovery.path("ping").request(MediaType.APPLICATION_JSON).get();
+        Response response = discovery.path("ping").request(MediaType.APPLICATION_XML).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         response.close();
     }
@@ -146,7 +146,7 @@ public class DiscoveryTest {
     public void cDocumentsFull() throws Exception {
         System.out.println("************************** Running cDocumentsFull test ********************************");
         // Get a list of all documents with full contents.
-        Response response = discovery.path("documents").request(MediaType.APPLICATION_XML).get();
+        Response response = discovery.path("documents").request(NsiConstants.NSI_DDS_V1_XML).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
         final ChunkedInput<DocumentListType> chunkedInput = response.readEntity(new GenericType<ChunkedInput<DocumentListType>>() {});
@@ -164,7 +164,7 @@ public class DiscoveryTest {
             System.out.println("cDocumentsFull: " + document.getNsa() + ", " + document.getType() + ", " + document.getId() + ", href=" + document.getHref());
             assertFalse(document.getContent().getAny().isEmpty());
 
-            response = testConfig.getClient().target(document.getHref()).request(MediaType.APPLICATION_XML).get();
+            response = testConfig.getClient().target(document.getHref()).request(NsiConstants.NSI_DDS_V1_XML).get();
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             DocumentType doc = response.readEntity(DocumentType.class);
             response.close();
@@ -176,7 +176,7 @@ public class DiscoveryTest {
             response = discovery.path("documents")
                     .path(URLEncoder.encode(document.getNsa().trim(), "UTF-8"))
                     .path(URLEncoder.encode(document.getType().trim(), "UTF-8"))
-                    .request(MediaType.APPLICATION_XML).get();
+                    .request(NsiConstants.NSI_DDS_V1_XML).get();
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
             DocumentListType docList = response.readEntity(DocumentListType.class);
@@ -205,7 +205,7 @@ public class DiscoveryTest {
     public void dDocumentsSummary() throws Exception {
         System.out.println("************************** Running dDocumentsSummary test ********************************");
         // Get a list of all documents with summary contents.
-        Response response = discovery.path("documents").queryParam("summary", "true").request(MediaType.APPLICATION_XML).get();
+        Response response = discovery.path("documents").queryParam("summary", "true").request(NsiConstants.NSI_DDS_V1_XML).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         DocumentListType documents = response.readEntity(DocumentListType.class);
         response.close();
@@ -216,7 +216,7 @@ public class DiscoveryTest {
             assertNull(document.getContent());
 
             // Read the direct href and get summary contents.
-            response = testConfig.getClient().target(document.getHref()).queryParam("summary", "true").request(MediaType.APPLICATION_XML).get();
+            response = testConfig.getClient().target(document.getHref()).queryParam("summary", "true").request(NsiConstants.NSI_DDS_V1_XML).get();
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             DocumentType doc = response.readEntity(DocumentType.class);
             response.close();
@@ -230,12 +230,12 @@ public class DiscoveryTest {
     public void eDocumentNotFound() throws Exception {
         System.out.println("************************** Running eDocumentNotFound test ********************************");
         // We want a NOT_FOUND for a nonexistent nsa resource on document path.
-        Response response = discovery.path("documents").path("invalidNsaValue").request(MediaType.APPLICATION_XML).get();
+        Response response = discovery.path("documents").path("invalidNsaValue").request(NsiConstants.NSI_DDS_V1_XML).get();
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
         response.close();
 
         // We want an empty result set for an invalid type on document path.
-        response = discovery.path("documents").path("urn:ogf:network:czechlight.cesnet.cz:2013:nsa").path("invalidDocumentType").request(MediaType.APPLICATION_XML).get();
+        response = discovery.path("documents").path("urn:ogf:network:czechlight.cesnet.cz:2013:nsa").path("invalidDocumentType").request(NsiConstants.NSI_DDS_V1_XML).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         DocumentListType documents = response.readEntity(DocumentListType.class);
         response.close();
@@ -249,7 +249,7 @@ public class DiscoveryTest {
     public void fLocalDocuments() throws Exception {
         System.out.println("************************** Running fLocalDocuments test ********************************");
         // Get a list of all documents with full contents.
-        Response response = discovery.path("local").request(MediaType.APPLICATION_XML).get();
+        Response response = discovery.path("local").request(NsiConstants.NSI_DDS_V1_XML).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         DocumentListType documents;
         try (ChunkedInput<DocumentListType> chunkedInput = response.readEntity(new GenericType<ChunkedInput<DocumentListType>>() {})) {
@@ -267,7 +267,7 @@ public class DiscoveryTest {
             System.out.println("Local NSA Id compare: localId=" + DdsConfiguration.getInstance().getNsaId() + ", document="+ document.getNsa());
             assertEquals(document.getNsa(), DdsConfiguration.getInstance().getNsaId());
 
-            response = discovery.path("local").path(URLEncoder.encode(document.getType(), "UTF-8")).request(MediaType.APPLICATION_XML).get();
+            response = discovery.path("local").path(URLEncoder.encode(document.getType(), "UTF-8")).request(NsiConstants.NSI_DDS_V1_XML).get();
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             DocumentListType docs = response.readEntity(DocumentListType.class);
             response.close();
@@ -310,8 +310,8 @@ public class DiscoveryTest {
                     .path(URLEncoder.encode(document.getNsa().trim(), "UTF-8"))
                     .path(URLEncoder.encode(document.getType().trim(), "UTF-8"))
                     .path(URLEncoder.encode(document.getId().trim(), "UTF-8"))
-                    .request(MediaType.APPLICATION_XML)
-                    .put(Entity.entity(new GenericEntity<JAXBElement<DocumentType>>(jaxbRequest) {}, MediaType.APPLICATION_XML));
+                    .request(NsiConstants.NSI_DDS_V1_XML)
+                    .put(Entity.entity(new GenericEntity<JAXBElement<DocumentType>>(jaxbRequest) {}, NsiConstants.NSI_DDS_V1_XML));
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             response.close();
         }
@@ -331,20 +331,20 @@ public class DiscoveryTest {
         filter.getInclude().add(criteria);
         subscription.setFilter(filter);
         JAXBElement<SubscriptionRequestType> jaxbRequest = factory.createSubscriptionRequest(subscription);
-        Response response = discovery.path("subscriptions").request(MediaType.APPLICATION_XML).post(Entity.entity(new GenericEntity<JAXBElement<SubscriptionRequestType>>(jaxbRequest) {}, MediaType.APPLICATION_XML));
+        Response response = discovery.path("subscriptions").request(NsiConstants.NSI_DDS_V1_XML).post(Entity.entity(new GenericEntity<JAXBElement<SubscriptionRequestType>>(jaxbRequest) {}, NsiConstants.NSI_DDS_V1_XML));
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 
         SubscriptionType result = response.readEntity(SubscriptionType.class);
         String id = result.getId();
         response.close();
 
-        response = testConfig.getClient().target(result.getHref()).request(MediaType.APPLICATION_XML).get();
+        response = testConfig.getClient().target(result.getHref()).request(NsiConstants.NSI_DDS_V1_XML).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         result = response.readEntity(SubscriptionType.class);
         response.close();
         assertEquals(id, result.getId());
 
-        response = testConfig.getClient().target(result.getHref()).request(MediaType.APPLICATION_XML).delete();
+        response = testConfig.getClient().target(result.getHref()).request(NsiConstants.NSI_DDS_V1_XML).delete();
         response.close();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
@@ -365,13 +365,13 @@ public class DiscoveryTest {
         subscription.setFilter(filter);
         JAXBElement<SubscriptionRequestType> jaxbRequest = factory.createSubscriptionRequest(subscription);
 
-        Response response = discovery.path("subscriptions").request(MediaType.APPLICATION_XML).post(Entity.entity(new GenericEntity<JAXBElement<SubscriptionRequestType>>(jaxbRequest) {}, MediaType.APPLICATION_XML));
+        Response response = discovery.path("subscriptions").request(NsiConstants.NSI_DDS_V1_XML).post(Entity.entity(new GenericEntity<JAXBElement<SubscriptionRequestType>>(jaxbRequest) {}, NsiConstants.NSI_DDS_V1_XML));
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 
         SubscriptionType result = response.readEntity(SubscriptionType.class);
         response.close();
 
-        response = testConfig.getClient().target(result.getHref()).request(MediaType.APPLICATION_XML).get();
+        response = testConfig.getClient().target(result.getHref()).request(NsiConstants.NSI_DDS_V1_XML).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         response.close();
 
@@ -416,7 +416,7 @@ public class DiscoveryTest {
             notifications = TestServer.INSTANCE.pollDdsNotification();
         }
 
-        response = testConfig.getClient().target(result.getHref()).request(MediaType.APPLICATION_XML).delete();
+        response = testConfig.getClient().target(result.getHref()).request(NsiConstants.NSI_DDS_V1_XML).delete();
         response.close();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         System.out.println("************************** Done hNotification test ********************************");

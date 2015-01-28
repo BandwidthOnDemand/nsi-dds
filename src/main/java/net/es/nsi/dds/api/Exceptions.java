@@ -32,6 +32,12 @@ public class Exceptions {
         return new WebApplicationException(ex);
     }
 
+    public static WebApplicationException invalidXmlException(String resource, String parameter) {
+        ErrorType error = DiscoveryError.getErrorType(DiscoveryError.MISSING_PARAMETER, resource, parameter);
+        Response ex = Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<ErrorType>>(factory.createError(error)){}).build();
+        return new WebApplicationException(ex);
+    }
+
     public static WebApplicationException illegalArgumentException(DiscoveryError errorEnum, String resource, String parameter) {
         ErrorType error = DiscoveryError.getErrorType(errorEnum, resource, parameter);
         Response ex = Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<ErrorType>>(factory.createError(error)){}).build();

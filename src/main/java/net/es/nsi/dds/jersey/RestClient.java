@@ -14,14 +14,16 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import net.es.nsi.dds.schema.NsiConstants;
 import net.es.nsi.dds.spring.SpringApplicationContext;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.eclipse.persistence.jaxb.MarshallerProperties;
+import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.RequestEntityProcessing;
 import org.glassfish.jersey.filter.LoggingFilter;
-import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
 import org.slf4j.Logger;
@@ -37,6 +39,7 @@ public class RestClient {
     public RestClient() {
         ClientConfig clientConfig = configureClient();
         client = ClientBuilder.newClient(clientConfig);
+        client.register(new GZipEncoder());
     }
 
     public static RestClient getInstance() {
@@ -45,13 +48,9 @@ public class RestClient {
     }
 
     public static ClientConfig configureClient() {
-        ClientConfig clientConfig = new ClientConfig(GZipEncoder.class);
+        ClientConfig clientConfig = new ClientConfig();
 
-        clientConfig.property(ClientProperties.CHUNKED_ENCODING_SIZE, 1024);
-
-        // Values are in milliseconds
-        //clientConfig.property(ClientProperties.READ_TIMEOUT, 2000);
-        //clientConfig.property(ClientProperties.CONNECT_TIMEOUT, 1000);
+        clientConfig.property(ClientProperties.FOLLOW_REDIRECTS, true);
 
         // We want to use the Apache connector for chunk POST support.
         clientConfig.connectorProvider(new ApacheConnectorProvider());
@@ -61,7 +60,7 @@ public class RestClient {
         connectionManager.setMaxTotal(80);
         clientConfig.property(ApacheClientProperties.CONNECTION_MANAGER, connectionManager);
 
-        // Configure the JerseyTest client for communciations with PCE.
+        clientConfig.register(GZipEncoder.class);
         clientConfig.register(new MoxyXmlFeature());
         clientConfig.register(new MoxyJsonFeature());
         clientConfig.register(new LoggingFilter(java.util.logging.Logger.getGlobal(), true));
@@ -69,7 +68,15 @@ public class RestClient {
         clientConfig.property(MarshallerProperties.NAMESPACE_PREFIX_MAPPER, Utilities.getNameSpace());
         clientConfig.property(MarshallerProperties.JSON_ATTRIBUTE_PREFIX, "@");
         clientConfig.property(MarshallerProperties.JSON_NAMESPACE_SEPARATOR, '.');
-        //clientConfig.property(DefaultApacheHttpClientConfig.PROPERTY_CHUNKED_ENCODING_SIZE, 0);
+
+        clientConfig.property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.CHUNKED);
+
+        RequestConfig reqConfig = RequestConfig.custom()
+                .setExpectContinueEnabled(true)
+                .build();
+        clientConfig.property(ApacheClientProperties.REQUEST_CONFIG, reqConfig); // jersey specific
+
+
         return clientConfig;
     }
 

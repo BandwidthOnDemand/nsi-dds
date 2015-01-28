@@ -11,6 +11,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -77,11 +78,9 @@ public class NotificationActor extends UntypedActor {
             final WebTarget webTarget = client.target(callback);
             JAXBElement<NotificationListType> jaxb = factory.createNotifications(list);
             String mediaType = notification.getSubscription().getEncoding();
-            //String jaxbToString = DiscoveryParser.getInstance().jaxbToString(jaxb);
-            //log.debug("Notification to send:\n" + jaxbToString);
 
             try {
-                Response response = webTarget.request(mediaType)
+                Response response = webTarget.request(mediaType).header(HttpHeaders.CONTENT_ENCODING, "gzip")
                     .post(Entity.entity(new GenericEntity<JAXBElement<NotificationListType>>(jaxb) {}, mediaType));
 
                 if (response.getStatus() != Response.Status.ACCEPTED.getStatusCode()) {

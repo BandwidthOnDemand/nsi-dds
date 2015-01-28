@@ -22,6 +22,7 @@ public enum DiscoveryError {
     VERSION_NOT_SUPPORTED(104, "VERSION_NOT_SUPPORTED", "The service version requested is not supported. (%s)."),
     INTERNAL_SERVER_ERROR(105, "INTERNAL_SERVER_ERROR", "There was an internal server processing error (%s)."),
     NOT_FOUND(106, "NOT_FOUND", "Requested resources was not found (%s)."),
+    INVALID_XML(107, "INVALID_XML", "Request contained invalid XML (%s)."),
 
     DOCUMENT_EXISTS(110, "DOCUMENT_EXISTS", "There is already a registered document under provided id (%s)."),
     DOCUMENT_DOES_NOT_EXIST(111, "DOCUMENT_DOES_NOT_EXIST", "The requested document does not exist (%s)."),

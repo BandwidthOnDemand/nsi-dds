@@ -1,7 +1,11 @@
 package net.es.nsi.dds.schema;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -85,14 +89,55 @@ public class XmlUtilities {
             return result;
 	}
 
-    public static JAXBElement<?> xmlToJaxb(Class<?> xmlClass, String xml) throws JAXBException {
+    public static Object xmlToJaxb(Class<?> xmlClass, String xml) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(xmlClass);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         JAXBElement<?> element;
         try (StringReader reader = new StringReader(xml)) {
             element = (JAXBElement<?>) unmarshaller.unmarshal(reader);
         }
-        return element;
+        return element.getValue();
+    }
+
+    public static Object xmlToJaxb(Class<?> xmlClass, InputStream is) throws JAXBException, IOException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(xmlClass);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        JAXBElement<?> element = (JAXBElement<?>) unmarshaller.unmarshal(getReader(is));
+        return element.getValue();
+    }
+
+    private final static int LOOKAHEAD = 1024;
+
+    private static Reader getReader(InputStream is) throws IOException {
+        Reader reader = new BufferedReader(new InputStreamReader(is));
+        char c[] = "<?".toCharArray();
+        int pos = 0;
+        reader.mark(LOOKAHEAD);
+        while (true) {
+            int value = reader.read();
+
+            // Check to see if we hit the end of the stream.
+            if (value == -1) {
+                throw new IOException("Encounter end of stream before start of XML.");
+            }
+            else if (value == c[pos]) {
+                pos++;
+            }
+            else {
+                if (pos > 0) {
+                    pos = 0;
+                }
+                reader.mark(LOOKAHEAD);
+            }
+
+            if (pos == c.length) {
+                // We found the character set we were looking for.
+                reader.reset();
+                break;
+            }
+        }
+
+        return reader;
     }
 
     public static XMLGregorianCalendar longToXMLGregorianCalendar(long time) throws DatatypeConfigurationException {
