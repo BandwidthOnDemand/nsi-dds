@@ -28,7 +28,7 @@ import net.es.nsi.dds.api.jaxb.SubscriptionListType;
 import net.es.nsi.dds.api.jaxb.SubscriptionRequestType;
 import net.es.nsi.dds.api.jaxb.SubscriptionType;
 import net.es.nsi.dds.util.UrlHelper;
-import net.es.nsi.dds.jersey.RestClient;
+import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.management.logs.DdsLogs;

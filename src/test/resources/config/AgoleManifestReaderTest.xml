@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="restClient" class="net.es.nsi.dds.jersey.RestClient" scope="singleton" />
+    <bean id="restClient" class="net.es.nsi.dds.client.RestClient" scope="singleton" />
  
     <bean id="agoleManifestReader" class="net.es.nsi.dds.agole.AgoleManifestReader" scope="prototype" lazy-init="true">
         <constructor-arg index="0" ref="restClient"/>

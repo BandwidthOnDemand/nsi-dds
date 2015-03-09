@@ -9,7 +9,7 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
-import net.es.nsi.dds.jersey.RestClient;
+import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.api.jaxb.NmlNSAType;
 import net.es.nsi.dds.dao.DdsParser;
 import net.es.nsi.dds.management.logs.DdsLogger;

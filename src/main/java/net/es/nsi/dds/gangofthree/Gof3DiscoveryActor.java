@@ -24,7 +24,7 @@ import net.es.nsi.dds.api.jaxb.NsaType;
 import net.es.nsi.dds.api.jaxb.NmlTopologyType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.provider.DdsProvider;
-import net.es.nsi.dds.jersey.RestClient;
+import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.schema.NmlParser;
 import net.es.nsi.dds.schema.NsiConstants;
 import net.es.nsi.dds.schema.XmlUtilities;

@@ -17,7 +17,9 @@
         <constructor-arg index="0" ref="httpConfigProvider"/>
     </bean>
 
-    <bean id="restClient" class="net.es.nsi.dds.jersey.RestClient" scope="singleton" />
+    <bean id="restClient" class="net.es.nsi.dds.client.RestClient" scope="singleton">
+	<constructor-arg index="0" type="boolean" value="false"/>
+    </bean>
 
     <bean id="ddsConfiguration" class="net.es.nsi.dds.dao.DdsConfiguration" init-method="load" scope="singleton">
         <property name="filename" value="#{ systemProperties['ddsConfigFile'] }"/>

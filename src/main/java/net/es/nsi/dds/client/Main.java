@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.config.http.HttpConfig;
-import net.es.nsi.dds.jersey.RestClient;
 import org.glassfish.jersey.client.ClientConfig;
 
 /**

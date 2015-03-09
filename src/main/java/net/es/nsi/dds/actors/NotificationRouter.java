@@ -26,7 +26,7 @@ import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.dao.DocumentCache;
 import net.es.nsi.dds.provider.Subscription;
-import net.es.nsi.dds.jersey.RestClient;
+import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.messages.StartMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

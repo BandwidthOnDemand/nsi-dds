@@ -22,7 +22,7 @@ import net.es.nsi.dds.api.jaxb.NotificationType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
-import net.es.nsi.dds.jersey.RestClient;
+import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.schema.XmlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

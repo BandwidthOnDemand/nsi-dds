@@ -1,58 +1,81 @@
-# NSI Path Computation Engine
+# NSI Document Distribution Service
+To do a clean install of the `nsi-dds` application we will follow these high level steps:
 
-The Network Services Interface Path Computation Engine (NSI-PCE) is a conglomeration of components from the NSI 2.0 series of specifications [OGF NSF]:
+  * Install software prerequisites.
+  * Create an application specific user.
+  * Download the `nsi-dds` source from Github.
+  * Build the `nsi-dds` application source.
+  * Install the `nsi-dds` application runtime.
+  * Configure the `nsi-dds` runtime.
+  * Configure runtime logging.
+  * Configure TLS.
+  * Install the `nsi-dds` Upstart script allowing `initd` to managed the process lifecycle.
 
-* PCE Core - provides a RESTful interface for requesting path resolution within a network of NSI Connection Service enabled domains.  It utilizes the Spring Framework to provide an infrastructure for pluggable path computation algorithms, allowing users to incorporate their own path computation algorithms into the PCE.
+## Software prerequisites
+The `nsi-dds` has a runtime dependency on Java ([Oracle-JDK](https://jdk8.java.net/download.html) or OpenJDK), with a recommended version of 1.8 or later.  If the system does not contain the correct version of Java then a supported version needs to be installed.  
 
-* NSI Topology Service – provides an NSI Topology Representation [OGF NSI-TS] compliant service with an independent RESTful interface giving access to discovered network topology.
+Maven is also required to build the `nsi-dds` module so install if not available on the system.
 
-* NSI DDS – A full implementation of the proposed NSI Document Discover Service [OGF NSI-DS] with backwards-compatible support for dynamic discovery of  both A-GOLE and Gang-of-Three (Gof3) topology.
+The current version of the `nsi-dds` needs to be fronted by a **reverse proxy** to provide front end SSL support and access control enforcement.  Although any **reverse proxy** could be used to front the `nsi-dds` application, Apache's [`httpd`](https://httpd.apache.org) has all the required features and will be the reference **reverse proxy** within documentation.  At the moment,  `httpd-2.2.15` and supporting modules has been verified against `nsi-dds`.  If the system does not contain a correct version of both `httpd` and `mod_ssl` then a supported version needs to be installed.
 
-![Image of PCE](https://raw.githubusercontent.com/BandwidthOnDemand/nsi-pce/master/images/pce.png)
+## Create an application specific user
 
-In the near future the NSI-PCE will be decoupled into two separate runtime packages, the NSI-PCE and the NSI-DDS, however, for the near future they are contained in a single runtime.
+The `nsi-dds` application should be run as a low-privilege user on the target production server. Ideally it should be run as a user created only for the purpose of running the set of software associated with the `nsi-dds` application.  For the remainder of this documentation it is assumed that we are downloading, building, and installing the `nsi-dds` software in the dedicated `safnari` user account.
 
-## Getting Started
+Create a new user and user group for the `nsi-dds` application if you have not already done so (I.e. `safnari` for installation of `nsi-safnari` application):
 
-The NSI-PCE utilizes maven as a build environment.  Once you have downloaded the `nsi-pce` project just type `maven clean install` in the project directory to build the NSI-PCE application.  The project includes a set of REST API test cases that demonstrate the use of available REST API.  To bypass running of the test suite during build include the maven skip test option `mvn install -Dmaven.test.skip=true`.
 ```
-> git clone https://github.com/BandwidthOnDemand/nsi-pce.git
-Cloning into 'nsi-pce'...
-remote: Reusing existing pack: 4508, done.
-remote: Counting objects: 11, done.
-remote: Compressing objects: 100% (10/10), done.
-remote: Total 4519 (delta 4), reused 0 (delta 0)
-Receiving objects: 100% (4519/4519), 1.16 MiB | 541.00 KiB/s, done.
-Resolving deltas: 100% (2171/2171), done.
-Checking connectivity... done.
-> cd nsi-pce
-> mvm clean install
+$ groupadd safnari
+$ useradd safnari -g safnari
+$ sudo su - safnari
 ```
 
-## Quickstart Configuration
+## Downloading the source
+It is recommended a copy of the source is directly downloaded from the repository using the `git` command so that load tagging during the build process will add the appropriate revision information to your build.  This requires a properly cloned git repository.  Downloading using alternative methods will track the major and minor build versions, but not the specific version within the source code stream.
 
-If the NSI-PCE is being used in conjunction with a collocated NSI-Safnari NSA aggregator instance, then all configuration files can remain at their defaults, except for the DDS configuration `nsi-pce/config/dds.xml` which will need to be configured with the peer NSA information.  See the section titled *"DDS configuration (dds.xml)"* for more information.
+Perform the following commands in the directory you would like to download the source (for example, `/home/safnari/src/`):
 
-Once configured, run the command `./run.sh` from within the `nsi-pce` directory.  The NSI-PCE will start up and discover the network.
+    $ git clone https://github.com/BandwidthOnDemand/nsi-dds.git
 
-## Configuring
+If the download reports successful you now have the current version of the `nsi-dds` source code.  If you are downloading `nsi-safnari` and/or `nsi-pce` software packages make sure to get compatible versions.
 
-The default runtime configuration directory for the NSI-PCE is `nsi-pce/config` but this can be changed through command line input.  There are three files that will need to be changed for a customized installation.
+## Building the source
+These instructions assume you have downloaded the `nsi-dds` software package from GitHub and placed it in a common source directory `$SRCDIR` (I.e. `/home/safnari/src/`).  We recommend the built `nsi-dds` application is installed to its own writable runtime directory since caches files are stored under the `nsi-dds/config/cache` directory .  For these instructions (and for the example scripts provided) we will assume the `nsi-dds` applicaiton will be installed into the `/home/safnari/nsi-dds` directory.
 
-* http.json
-* topology-dds.xml
-* dds.xml
+You will need to be connected to the Internet when building for the first time as `mvn` will download any needed dependencies.
 
-Alternatives to these files can also be specified on the command line.  The contents of each file will be discussed in their individual sections.
+As application user (I.e. `safnari`):
 
-### HTTP configuration (http.json)
+  * From source directory `nsi-dds` build source: `mvn clean install`.
+  * Copy configuration directory `nsi-dds/config` and `nsi-dds/target/dds.jar` to install location.
+  * Configure `nsi-dds` runtime.
+  * Copy the default DDS Upstart script from source directory `nsi-dds/scripts/nsi-dds.conf` to `/etc/init/nsi-dds.conf`.
+  * Configure `/etc/init/nsi-dds.conf` for your DDS runtime configuration.
 
-Configuration of the imbedded HTTP server is controlled through the `nsi-pce/config/http.json` file.  This file contains a simple JSON formatted list of configuration parameters:
+```
+$ cd $SRCDIR/nsi-dds
+$ mvn clean install -Dmaven.test.skip=true
+$ cp -R config target/dds.jar /home/safnari/nsi-dds
+```
+Now you are ready to configure the `nsi-dds` runtime.
+
+## Configuring the nsi-dds
+
+As application user (I.e. `safnari`):
+From source directory `nsi-dds` build source: `mvn clean install`
+Copy configuration directory `nsi-dds/config` and `nsi-dds/target/dds.jar` to install location
+Configure `nsi-dds` runtime
+Copy the default DDS Upstart script from source directory `nsi-dds/scripts/nsi-dds.conf` to `/etc/init/nsi-dds.conf`.
+Configure `/etc/init/nsi-dds.conf` for your DDS runtime configuration.
+
+Configuring the imbedded HTTP container
+
+If you need to change the address or port number for the HTTP container this can be done by editing the configuration file `config/http.json`:
 
 ```
 {
-    "pce": {
-        "url": "http://localhost:8400/",
+    "dds": {
+        "url": "http://localhost:8401/",
         "packageName": "net.es.nsi.dds",
         "staticPath": "config/www/",
         "wwwPath": "/www"
@@ -60,140 +83,151 @@ Configuration of the imbedded HTTP server is controlled through the `nsi-pce/con
 }
 ```
 
-* *url* - This is the public facing URL that applications will use to access the NSI-PCE RESTful interface.  If the NSI-PCE will only be accessed by application on localhost, then this URL can remain `http://localhost:8400/`, otherwise it will need to be changed to the public hostname.
+When using the Apache `mod_proxy` module to front end the solution we can leave these values as is and point Apache to this port for external DDS API access.
 
-* *packageName* - This is the package name of NSI-PCE module and the root from which the HTTP service will scan for available REST interfaces.  This should not be changed.
+### Configuring the DDS runtime and peer DDS servers
 
-* *staticPath* - The NSI-PCE can be used to serve static content by specifying a local directory that will contain the content to be served.  This can be helpful when testing the DDS A-GOLE or Gof3 doscovery mechanism.  In most cases you will leave this as an empty string, thereby disabling the static content feature.
 
-* *wwwPath* - The relative root path URL exposed through the NSI-PCE for static content.  In this example, the absolute URL for static content will be `http://localhost:8400/www`.  A path must be specified is the *staticPath* parameter is specified.  The relative path cannot be an empty string or the string "/".
+`vi dds.xml`
 
-### Topology source configuration (topology-dds.xml)
+    <tns:dds xmlns:tns="http://schemas.es.net/nsi/2014/03/dds/configuration"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <!-- we need to set this to the uPA's NSA ID so that the local networks are discovered correctly -->
+        <nsaId>urn:ogf:network:icair.org:2013:nsa:nsi-am-sl</nsaId>
+        <documents>config/documents</documents>
+        <cache>config/cache</cache>
+        <repository>config/repository</repository>
+        <auditInterval>1800</auditInterval>
+        <expiryInterval>600</expiryInterval>
+        <actorPool>10</actorPool>
+        <baseURL>http://nsi-am-sl.northwestern.edu/dds</baseURL>
 
-The NSI-PCE's internal topology service utilizes the NSI-DDS service (NSI Document Discovery Service v1) for collection of NSA Description and NML Topology documents from all NSA with the network.  The internal topology service is currently using the RESTful polling interface of the NSI-DDS, instead of the github manifest as supported in Topology Discovery v1.
+        <!-- DDS service interfaces. -->
+        <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://nsi-aggr-west.es.net/discovery</peerURL>
+        <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://agg.netherlight.net/dds</peerURL>
 
-The prototype NSI-DDS implementation used by the topology service is currently embedded within the NSI-PCE, but this will be moved to a separate process in the near future.  The topology source configuration is controlled through the `nsi-pce/config/topology-dds.xml` file.  This file contains a simple XML formatted list of configuration parameters:
+        <!-- Old AutoGOLE github discovery mechanism. -->
+        <peerURL type="application/vnd.ogf.nsi.topology.v1+xml">https://raw.github.com/jeroenh/AutoGOLE-Topologies/master/master.xml</peerURL>
+    </tns:dds>
 
-```
-<?xml version="1.0" encoding="UTF-8"?>
-<top:topology xmlns:top="http://schemas.es.net/nsi/2013/08/pce/topology/configuration">
-    <location>http://localhost:8400/discovery</location>
-	<auditInterval>300</auditInterval>
-    <defaultServiceType>http://services.ogf.org/nsi/2013/07/definitions/EVTS.A-GOLE</defaultServiceType>
-</top:topology>
-```
+This is the NSI Document Distribution Service v1.0 configuration file.  The following XML elements are supported in this configuration file:
 
-* *location* - The base URL of the NSI DDS service used as a document source for NSA description and NML topology documents.  This will point to the localhost endpoint associated with the imbedded instance of the DDS service (same port as NSI-PCE interface).
+  * nsaId - The NSA identifier of the local NSA assocated with this DDS instance.  This value will be used to determine which documents in the DDS document space are associated with the /local URL query.
 
-* *auditInterval* - The interval (in seconds) the PCE topology service will audit the configured DDS server for document changes.  At the moment is controls the polling interval.
+  * documents - The local directory the DDS will monitor for document file content to auto load into the DDS document space.  This directory is checked for new content every auditInterval.
 
-* *defaultServiceType* - The service type used as a default for networks not announcing a service type in NML topology.  If not present, this value will be used to create a default *ServiceDefinition* entry and *ServiceDomain* entries in the NSI topology for the discovered network.
+  * cache - The local directory used to store discovered documents that will be reloaded after a restart of the DDS.  One reloaded an audit occurs to refresh any documents with new versions available.
 
-### DDS configuration (dds.xml)
+  * auditInterval - The interval (in seconds) the DDS will audit all peer DDS servers, Gof3 NSA and topology documents, or A-GOLE topology.
 
-The NSI-PCE's internal NSI-DDS engine (NSI Document Discovery Service v1) is used for collection of NSA Description and NML Topology documents from all NSA with the network.  The DDS then makes these discovered documents available for application use thfought its RESTful API.  The NSI-PCE's internal topology services utilizes this DDS RESTful API for building a network topology view.
+  * expiryInterval - The number of seconds the DDS will maintain a document after the document's lifetime has been reached.
 
-The `nsi-pce/config/dds.xml` configuration file controls runtime configuration of the NSI-DDS discovery engine.  The following XML elements are supported in this configuration file:
-    
-```
-<?xml version="1.0" encoding="UTF-8"?>
-<tns:discovery xmlns:tns="http://schemas.es.net/nsi/2014/03/pce/discovery/configuration"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <nsaId>urn:ogf:network:surfnet.nl:1990:nsa:bod-acc</nsaId>
-    <documents>config/documents</documents>
-    <cache>config/cache</cache>
-    <auditInterval>300</auditInterval>
-    <expiryInterval>600</expiryInterval>
-    <actorPool>10</actorPool>
-    <baseURL>http://localhost:8400/discovery</baseURL>
-    <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">
-        http://dds.example.com:8400/discovery
-    </peerURL>
-    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">
-        https://nsa1.example.com/nsa-discovery
-    </peerURL>
-    <peerURL type="application/vnd.ogf.nsi.topology.v1+xml">
-        https://example.com/master/manifest.xml
-    </peerURL>
-</tns:discovery>
-```
-    
-* **nsaId** - The NSA identifier of the local NSA assocated with this DDS instance.  This value will be used to determine which documents in the DDS document space are associated with the `/local` URL query.  The NSI-PCE topology service utilizes the `/local` query to populate local NSA information. 
-            
-* **documents** - The local directory the DDS will monitor for document file content to auto load into the DDS document space.  This directory is checked for new content every auditInterval.  This element is optional.
-                
-* **cache** - The local directory used to store discovered documents that will be reloaded after a restart of the DDS.  One reloaded an audit occurs to refresh any documents with new versions available.  This element is optional.
-            
-* **auditInterval** - The interval (in seconds) the DDS will audit all peer DDS servers, Gof3 NSA and topology documents, or A-GOLE topology.
-                    
-* **expiryInterval** - The number of seconds the DDS will maintain a document after the document's lifetime has been reached.
+  * actorPool - The number of actors to instantiate per discovery type (DDS, Gof3, A-GOLE).
+  
+  * baseURL - The base URL of the local DDS service that will be used when registering with peer DDS services.  Is only needed if a peerURL type of "application/vnd.ogf.nsi.dds.v1+xml" is configured.
 
-* **actorPool** - The number of actors to instantiate per discovery type (DDS, Gof3, A-GOLE).
-                
-* **baseURL** - The base URL of the local DDS service that will be used when registering with peer DDS services.  Is only needed if a peerURL type of "application/vnd.ogf.nsi.dds.v1+xml" is configured.
-              
-* **peerURL** - Lists URL for peer data sources for the DDS service to utilize for document discovery. The following type of peerURL are supported (mixed types are supported):
+  * peerURL - Lists peer data sources for the DDS service to utilize for document discovery.  The following type of peerURL are supported:
+
+    ```
+    application/vnd.ogf.nsi.dds.v1+xml - A peer DDS server.
+    application/vnd.ogf.nsi.nsa.v1+xml - A Gof3 NSA.
+    application/vnd.ogf.nsi.topology.v1+xml - The Automated GOLE topology discovery.
+    ```
+
+### Configure logging
+By default `nsi-dds` will log under the application home directory `/home/safnari/nsi-dds`.  If you would like to change this to log under the system `/var/log` directory then we need to modify the logging properties.
+
+`vi log4j.xml`
+
+    <param name="File" value="${basedir}/var/log/nsi-dds.err.log" />
+
+This default will place in the runtime installation directory.  To put log files in `/var/log` modify each path component to something similar to:
+
+     <param name="File" value="/var/log/nsi-dds/nsi-dds.err.log" />
+
+Repeat for each of the log levels contained in the `log4j.xml` file.
+
+Now for the default Java logger:
+
+`vi logging.properties`
+
+Change:
 
 ```
-application/vnd.ogf.nsi.dds.v1+xml
+java.util.logging.FileHandler.pattern=var/log/jersey.log
 ```
 
-- A peer DDS server supporting NSI-DDS v1.  Each peer DDS server must have its own peerURL entry.
-    
-```
-application/vnd.ogf.nsi.nsa.v1+xml
-```
-
-- An NSA supporting the Gof3 discovery protocol.  Each peer NSA must have its own peerURL entry.
+To:
 
 ```
-application/vnd.ogf.nsi.topology.v1+xml
+java.util.logging.FileHandler.pattern=/var/log/nsi-dds/jersey.log
 ```
-- The Automated GOLE topology discovery v1 which utilizes a manifest file.
 
-## Running the NSI-PCE
+Make sure to create the `/var/log/nsi-dds` logging directory if configuration was changed and `chown` logging directory to ownership of application account.
 
 ```
-#!/bin/bash
-
-# resolve links - $0 may be a softlink
-PRG="$0"
-
-while [ -h "$PRG" ]; do
-  ls=`ls -ld "$PRG"`
-  link=`expr "$ls" : '.*-> \(.*\)$'`
-  if expr "$link" : '/.*' > /dev/null; then
-    PRG="$link"
-  else
-    PRG=`dirname "$PRG"`/"$link"
-  fi
-done
-
-PRGDIR=`dirname "$PRG"`
-BASEDIR=`cd "$PRGDIR" >/dev/null; pwd`
-
-java -Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true  \
-	-Dapp.home="$BASEDIR" \
-	-Dbasedir="$BASEDIR" \
-	-Djava.util.logging.config.file="$BASEDIR/config/logging.properties" \
-	-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true \
-	-Djavax.net.ssl.trustStore=config/nsi-pce-truststore \
-	-Djavax.net.ssl.trustStorePassword=changeit \
-	-jar target/pce.jar \
-	-topologyConfigFile config/topology-dds.xml \
-	-ddsConfigFile config/dds.xml \
-	$*
+$ sudo mkdir /var/log/nsi-dds
+$ sudo chown safnari.safnari /var/log/nsi-dds
 ```
-# References
 
-**[OGF NSF]** Guy Roberts, et al. “OGF Network Service Framework v2.0”, Group Working Draft (GWD), candidate Recommendation Proposed (R-P), January 28, 2014.
+## Configuring TLS
+If you are using a standard `nsi-safnari` deployment then you will want to configure TLS communications.  In this version of `nsi-dds` it is assumed you will be used TLS with the key and trust stores specified on the command line using the standard Java parameters:
 
-**[OGF NSI-CS]** Guy Roberts, et al. “OGF NSI Connection Service v2.0”, Group Working Draft (GWD), candidate Recommendation Proposed (R-P), January 12, 2014.
+```
+    -Djavax.net.ssl.trustStore=$TRUSTSTORE \
+    -Djavax.net.ssl.trustStorePassword=$PASSWORD \
+    -Djavax.net.ssl.keyStore=$KEYSTORE \
+    -Djavax.net.ssl.keyStorePassword=$PASSWORD \
+```
+ 
+ Additional configuration options will be provided in the future.
 
-**[OGF NSI-TS]** Jeroen van der Ham, GWD-R-P Network Service Interface Topology Representation, Group Working Draft (GWD), candidate Recommendations Proposed (R-P), January 2013.
+## Install upstart scripts
+If you would like `initd` to manage the process lifecycle of `nsi-dds` then you can install the provided upstart configuration file.
 
-**[OGF NSI-DS]** John MacAuley, et al. “Network Service Interface Discovery Protocol v1.0”, Group Working Draft (GWD), candidate Recommendation Proposed (R-P), February 18, 2014.
+```
+$ sudo cp $SRCDIR/nsi-dds/scripts/nsi-dds.conf /etc/init
+```
+Edit `/etc/init/nsi-dds.conf` to match your specific runtime configuration.
 
-**[OGF NSI-DS]** John MacAuley, et al. “Network Service Interface NSA Description Document v1.0”, Group Working Draft (GWD), candidate Recommendation Proposed (R-P), February 16, 2014.
 
-**[OGF NML]** OGF GFD.206: Network Markup Language Base Schema version 1, http://www.gridforum.org/documents/GFD.206.pdf
+```
+#!upstart
+
+description "nsi-dds"
+
+env USER=safnari
+env GROUP=safnari
+env HOME=/home/safnari/nsi-dds
+env PORT="8401"
+env ADDRESS="127.0.0.1"
+env TRUSTSTORE=/home/safnari/jks/truststore.jks
+env KEYSTORE=/home/safnari/jks/keystore.jks
+env PASSWORD="changeit"
+
+start on started postgresql-9.3
+stop on stopping postgresql-9.3
+
+respawn limit 10 5
+
+script
+  exec 2>>/var/log/nsi-dds/upstart.log
+  set -x
+
+[ -e /home/safnari/nsi-dds/dds.jar ]
+exec su -l -s /bin/bash -c 'exec "$0" "$@"' $USER -- /usr/bin/java \
+	-Xmx1024m -Djava.net.preferIPv4Stack=true  \
+    -Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true \
+    -Djavax.net.ssl.trustStore=$TRUSTSTORE \
+    -Djavax.net.ssl.trustStorePassword=$PASSWORD \
+    -Djavax.net.ssl.keyStore=$KEYSTORE \
+    -Djavax.net.ssl.keyStorePassword=$PASSWORD \
+    -Dapp.home="$HOME" \
+    -Dbasedir="/" \
+    -Djava.util.logging.config.file="$HOME/config/logging.properties" \
+    -jar "$HOME/dds.jar" \
+	-c "$HOME/config/" \
+    -ddsConfigFile "$HOME/config/dds.xml"
+end script
+```
+

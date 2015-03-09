@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
-import net.es.nsi.dds.jersey.RestClient;
+import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.api.jaxb.NmlNetworkObject;
 import net.es.nsi.dds.api.jaxb.NmlTopologyType;
 import net.es.nsi.dds.management.logs.DdsLogger;

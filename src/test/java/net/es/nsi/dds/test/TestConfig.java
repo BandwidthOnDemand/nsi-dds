@@ -8,7 +8,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import net.es.nsi.dds.config.ConfigurationManager;
-import net.es.nsi.dds.jersey.RestClient;
+import net.es.nsi.dds.client.RestClient;
 import org.glassfish.jersey.client.ClientConfig;
 
 /**

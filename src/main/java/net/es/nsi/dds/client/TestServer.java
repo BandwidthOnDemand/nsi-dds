@@ -7,9 +7,7 @@ import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.api.jaxb.NotificationListType;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
-import net.es.nsi.dds.jersey.JsonMoxyConfigurationContextResolver;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -78,8 +76,6 @@ public enum TestServer {
                 .packages(packageName)
                 .register(DdsNotificationCallback.class) // Remove this if packages gets fixed.
                 .register(new MoxyXmlFeature())
-                .register(new MoxyJsonFeature())
-                .register(new LoggingFilter(java.util.logging.Logger.getGlobal(), true))
-                .registerInstances(new JsonMoxyConfigurationContextResolver());
+                .register(new LoggingFilter(java.util.logging.Logger.getGlobal(), true));
     }
 }

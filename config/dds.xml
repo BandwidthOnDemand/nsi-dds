@@ -51,10 +51,9 @@
     <baseURL>http://localhost:8401/dds</baseURL>
     <notificationSize>5</notificationSize>
 
-<!-- DDS service interfaces.
-    <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://nsi-aggr-west.es.net/discovery</peerURL>
-    <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://agg.netherlight.net/dds</peerURL>
--->
+    <!-- DDS service interfaces. -->
+    <!-- <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://agg.netherlight.net/dds</peerURL> -->
+    <!-- <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://nsi-aggr-west.es.net/dds</peerURL> -->
 
     <!-- SURFnet configuration for discovery on production network. -->
     <!-- <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://bod2.surfnet.nl/nsa-discovery</peerURL> -->
