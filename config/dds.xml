@@ -17,15 +17,21 @@
             will be reloaded after a restart of the DDS.  One reloaded an
             audit occurs to refresh any documents with new versions available.
 
+    repository - The local directory where documents added to the local DDS are
+                 stored.  This is different from the cache directory in that the
+                 cache directory mirrors the state of the DDS document space,
+                 while the repository only holds those documents mastered
+                 ("owned") by this DDS server instance.
+
     auditInterval - The interval (in seconds) the DDS will audit all peer DDS
                     servers, Gof3 NSA and topology documents, or A-GOLE
-                    topology.
+                    topology. [No longer used, see beans.xml]
 
     expiryInterval - The number of seconds the DDS will maintain a document
                      after the document's lifetime has been reached.
 
     actorPool - The number of actors to instantiate per discovery type (DDS,
-                Gof3, A-GOLE).
+                Gof3, A-GOLE). [No longer used, see beans.xml]
 
     baseURL - The base URL of the local DDS service that will be used when
               registering with peer DDS services.  Is only needed if a peerURL

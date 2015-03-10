@@ -47,18 +47,6 @@ public class DdsActorController implements ApplicationContextAware {
     }
 
     public void init() throws IllegalArgumentException, JAXBException, FileNotFoundException {
-        /*ClassLoader myClassLoader = ClassLoader.getSystemClassLoader();
-        try {
-            Class<?> myClass = myClassLoader.loadClass("net.es.nsi.dds.actors.ConfigurationActor");
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DdsActorController.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-
-        // Each actor must take the parameters (DdsActorController ddsActorSystem,
-        // int poolSize, long interval) which are configured via Spring.
-        int poolSize = configReader.getActorPool();
-        long interval = configReader.getAuditInterval();
-
         ActorSystem actorSystem = ddsActorSystem.getActorSystem();
         SpringExtProvider.get(actorSystem).initialize(applicationContext);
 

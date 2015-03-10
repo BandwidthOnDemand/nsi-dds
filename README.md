@@ -7,9 +7,27 @@ To do a clean install of the `nsi-dds` application we will follow these high lev
   * Build the `nsi-dds` application source.
   * Install the `nsi-dds` application runtime.
   * Configure the `nsi-dds` runtime.
-  * Configure runtime logging.
-  * Configure TLS.
+  * Configure TLS for secure communications.
   * Install the `nsi-dds` Upstart script allowing `initd` to managed the process lifecycle.
+  * Configure Apache httpd mod_proxy as an TLS frontend.
+ 
+## Deployment options
+Currently the `nsi-dds` supports standalone communications via unprotected HTTP or protected HTTPS when fronted by Apache mod_proxy.  In a future release secure standalone communications will be supported.
+
+Here is an example deployment diagram:
+
+```
+ Address A                               Address B                               localhost (B)
+------------                           -------------                             -----------
+| Peer DDS | https://<Address A>/dds   |   httpd   | http://localhost:8401/dds   |   DDS   |
+|  Server  | ------------------------> | mod_proxy |---------------------------> |  Server |
+------------      secured              -------------       unsecured             -----------
+     ^                                                                                |
+     |                            https://<Address B>/dds                             |
+     ----------------------------------------------------------------------------------
+                                         secured
+```
+On the front-end we have Apache httpd with mod_proxy configured to terminate HTTPS on the client side, and proxy HTTP via **localhost** to a protected HTTP port on the DDS server.  The DDS server itself can be configured to communicate with HTTPS back to the peer DDS server.  The peer DDS server dictates the use of HTTP versus HTTPS, but the local DDS server will need to have Java key and trust stores configured properly for SSL communications.
 
 ## Software prerequisites
 The `nsi-dds` has a runtime dependency on Java ([Oracle-JDK](https://jdk8.java.net/download.html) or OpenJDK), with a recommended version of 1.8 or later.  If the system does not contain the correct version of Java then a supported version needs to be installed.  
@@ -60,15 +78,18 @@ $ cp -R config target/dds.jar /home/safnari/nsi-dds
 Now you are ready to configure the `nsi-dds` runtime.
 
 ## Configuring the nsi-dds
+Before begining the configuration of your `nsi-dds` instance make sure you have the following information available:
 
-As application user (I.e. `safnari`):
-From source directory `nsi-dds` build source: `mvn clean install`
-Copy configuration directory `nsi-dds/config` and `nsi-dds/target/dds.jar` to install location
-Configure `nsi-dds` runtime
-Copy the default DDS Upstart script from source directory `nsi-dds/scripts/nsi-dds.conf` to `/etc/init/nsi-dds.conf`.
-Configure `/etc/init/nsi-dds.conf` for your DDS runtime configuration.
+  * Public IP address/hostname for the `nsi-dds` server or fronting HTTP proxy.
+  * The NSA identifier that will be assigned to this `nsi-dds` instance.  This will be the same as the colocated NSA, or a unique one if this is a standalone `nsi-dds` instance.
+  * The URL of peer DDS instances.
+  * The list of URL for any legacy uPA discovery mechanisms that you want to support.
+  * Public and private keys for the `nsi-dds` server.
+  * Public certificates for peer DDS and uPA you would like to trust.
+  
+We start with configuring the imbedded HTTP container.
 
-Configuring the imbedded HTTP container
+### Configuring the imbedded HTTP container
 
 If you need to change the address or port number for the HTTP container this can be done by editing the configuration file `config/http.json`:
 
@@ -83,12 +104,12 @@ If you need to change the address or port number for the HTTP container this can
 }
 ```
 
-When using the Apache `mod_proxy` module to front end the solution we can leave these values as is and point Apache to this port for external DDS API access.
+When using the Apache `mod_proxy` module as a front end solution we can leave these values as is and point Apache to this internal port for DDS API access.  If this is a standalone instance change the URL to the specific IP address and port for `nsi-dds` access.  The address '0.0.0.0' will bind to all defined addresses including **localhost**.
 
 ### Configuring the DDS runtime and peer DDS servers
+The basic runtime configuration of the `nsi-dds` is controlled through the `config/dds.xml` configuration file, or the `config/beans.xml` file.  We first start with `config/dds.xml` file:
 
-
-`vi dds.xml`
+`vi config/dds.xml`
 
     <tns:dds xmlns:tns="http://schemas.es.net/nsi/2014/03/dds/configuration"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -110,19 +131,21 @@ When using the Apache `mod_proxy` module to front end the solution we can leave 
         <peerURL type="application/vnd.ogf.nsi.topology.v1+xml">https://raw.github.com/jeroenh/AutoGOLE-Topologies/master/master.xml</peerURL>
     </tns:dds>
 
-This is the NSI Document Distribution Service v1.0 configuration file.  The following XML elements are supported in this configuration file:
+The following XML elements are supported in this configuration file:
 
   * nsaId - The NSA identifier of the local NSA assocated with this DDS instance.  This value will be used to determine which documents in the DDS document space are associated with the /local URL query.
 
   * documents - The local directory the DDS will monitor for document file content to auto load into the DDS document space.  This directory is checked for new content every auditInterval.
 
   * cache - The local directory used to store discovered documents that will be reloaded after a restart of the DDS.  One reloaded an audit occurs to refresh any documents with new versions available.
+  
+  * repository - The local directory where documents added to the local DDS are stored.  This is different from the cache directory in that the cache directory mirrors the state of the DDS document space, while the repository only holds those documents mastered ("owned") by this DDS server instance.
 
-  * auditInterval - The interval (in seconds) the DDS will audit all peer DDS servers, Gof3 NSA and topology documents, or A-GOLE topology.
+  * auditInterval - [No longer used, see beans.xml] The interval (in seconds) the DDS will audit all peer DDS servers, Gof3 NSA and topology documents, or A-GOLE topology.
 
   * expiryInterval - The number of seconds the DDS will maintain a document after the document's lifetime has been reached.
 
-  * actorPool - The number of actors to instantiate per discovery type (DDS, Gof3, A-GOLE).
+  * actorPool - [No longer used, see beans.xml] The number of actors to instantiate per discovery type (DDS, Gof3, A-GOLE).
   
   * baseURL - The base URL of the local DDS service that will be used when registering with peer DDS services.  Is only needed if a peerURL type of "application/vnd.ogf.nsi.dds.v1+xml" is configured.
 
@@ -133,6 +156,8 @@ This is the NSI Document Distribution Service v1.0 configuration file.  The foll
     application/vnd.ogf.nsi.nsa.v1+xml - A Gof3 NSA.
     application/vnd.ogf.nsi.topology.v1+xml - The Automated GOLE topology discovery.
     ```
+
+The `config/beans.xml` file contains a number of runtime configuration values for thread pool sizes and discovery audit timers.  These values should only be changed once you have a clear understanding of the different types of discovery mechanisms and their impact on the system.
 
 ### Configure logging
 By default `nsi-dds` will log under the application home directory `/home/safnari/nsi-dds`.  If you would like to change this to log under the system `/var/log` directory then we need to modify the logging properties.
@@ -230,4 +255,6 @@ exec su -l -s /bin/bash -c 'exec "$0" "$@"' $USER -- /usr/bin/java \
     -ddsConfigFile "$HOME/config/dds.xml"
 end script
 ```
+
+## Configuring Apache httpd mod_proxy
 
