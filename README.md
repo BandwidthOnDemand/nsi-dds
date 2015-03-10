@@ -19,11 +19,11 @@ Here is an example deployment diagram:
 ```
  Address A                               Address B                               localhost (B)
 ------------                           -------------                             -----------
-| Peer DDS | https://<Address A>/dds   |   httpd   | http://localhost:8401/dds   |   DDS   |
+| Peer DDS | https://<Address B>/dds   |   httpd   | http://localhost:8401/dds   |   DDS   |
 |  Server  | ------------------------> | mod_proxy |---------------------------> |  Server |
 ------------      secured              -------------       unsecured             -----------
      ^                                                                                |
-     |                            https://<Address B>/dds                             |
+     |                            https://<Address A>/dds                             |
      ----------------------------------------------------------------------------------
                                          secured
 ```
@@ -256,5 +256,4 @@ exec su -l -s /bin/bash -c 'exec "$0" "$@"' $USER -- /usr/bin/java \
 end script
 ```
 
-## Configuring Apache httpd mod_proxy
 
