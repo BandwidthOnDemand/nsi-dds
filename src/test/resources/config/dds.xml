@@ -44,9 +44,7 @@
     <documents>src/test/resources/config/documents</documents>
     <cache>src/test/resources/config/cache</cache>
     <repository>src/test/resources/config/repository</repository>
-    <auditInterval>300</auditInterval>
     <expiryInterval>600</expiryInterval>
-    <actorPool>10</actorPool>
     <baseURL>http://localhost:8401/dds</baseURL>
     <!--
     <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">http://localhost:8401/dds</peerURL>

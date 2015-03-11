@@ -17,15 +17,8 @@
             will be reloaded after a restart of the DDS.  One reloaded an
             audit occurs to refresh any documents with new versions available.
 
-    auditInterval - The interval (in seconds) the DDS will audit all peer DDS
-                    servers, Gof3 NSA and topology documents, or A-GOLE
-                    topology.
-
     expiryInterval - The number of seconds the DDS will maintain a document
                      after the document's lifetime has been reached.
-
-    actorPool - The number of actors to instantiate per discovery type (DDS,
-                Gof3, A-GOLE).
 
     baseURL - The base URL of the local DDS service that will be used when
               registering with peer DDS services.  Is only needed if a peerURL
@@ -44,9 +37,7 @@
     <nsaId>urn:ogf:network:surfnet.nl:1990:nsa:bod7</nsaId>
     <documents>config/documents</documents>
     <cache>config/cache</cache>
-    <auditInterval>1800</auditInterval>
     <expiryInterval>600</expiryInterval>
-    <actorPool>10</actorPool>
     <baseURL>http://localhost:8401/discovery</baseURL>
     <!--
 	<peerURL type="application/vnd.ogf.nsi.dds.v1+xml">http://localhost:8400/discovery</peerURL>

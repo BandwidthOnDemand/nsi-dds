@@ -138,6 +138,7 @@
         <constructor-arg index="3" ref="documentCache"/>
         <constructor-arg index="4" ref="restClient"/>
         <property name="poolSize" value="5"/>
+        <property name="notificationSize" value="5"/>
     </bean>
 
     <!--

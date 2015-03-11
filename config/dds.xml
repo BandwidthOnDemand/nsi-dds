@@ -23,15 +23,9 @@
                  while the repository only holds those documents mastered
                  ("owned") by this DDS server instance.
 
-    auditInterval - The interval (in seconds) the DDS will audit all peer DDS
-                    servers, Gof3 NSA and topology documents, or A-GOLE
-                    topology. [No longer used, see beans.xml]
-
     expiryInterval - The number of seconds the DDS will maintain a document
-                     after the document's lifetime has been reached.
-
-    actorPool - The number of actors to instantiate per discovery type (DDS,
-                Gof3, A-GOLE). [No longer used, see beans.xml]
+                     after the document's lifetime has been reached.  Default
+                     is 24 hours.
 
     baseURL - The base URL of the local DDS service that will be used when
               registering with peer DDS services.  Is only needed if a peerURL
@@ -51,11 +45,8 @@
     <documents>config/documents</documents>
     <cache>config/cache</cache>
     <repository>config/repository</repository>
-    <auditInterval>1800</auditInterval>
     <expiryInterval>600</expiryInterval>
-    <actorPool>10</actorPool>
     <baseURL>http://localhost:8401/dds</baseURL>
-    <notificationSize>5</notificationSize>
 
     <!-- DDS service interfaces. -->
     <!-- <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://agg.netherlight.net/dds</peerURL> -->

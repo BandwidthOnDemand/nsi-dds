@@ -44,6 +44,7 @@ public class NotificationRouter extends UntypedActor {
     private DocumentCache documentCache;
     private RestClient restClient;
     private int poolSize;
+    private int notificationSize;
     private Router router;
 
     public NotificationRouter(DdsActorSystem ddsActorSystem,
@@ -62,7 +63,7 @@ public class NotificationRouter extends UntypedActor {
     public void preStart() {
         List<Routee> routees = new ArrayList<>();
         for (int i = 0; i < getPoolSize(); i++) {
-            ActorRef r = getContext().actorOf(Props.create(NotificationActor.class, discoveryConfiguration, restClient));
+            ActorRef r = getContext().actorOf(Props.create(NotificationActor.class, discoveryConfiguration.getNsaId(), restClient));
             getContext().watch(r);
             routees.add(new ActorRefRoutee(r));
         }
@@ -127,7 +128,7 @@ public class NotificationRouter extends UntypedActor {
         Collection<Document> documents = documentCache.values();
 
         // Clean up our trigger event.
-        log.debug("routeSubscriptionEvent: event=" + se.getEvent() + ", documents=" + documents.size() + ", size=" + discoveryConfiguration.getNotificationSize() + ", action=" + se.getSubscription().getAction().isCancelled());
+        log.debug("routeSubscriptionEvent: event=" + se.getEvent() + ", documents=" + documents.size() + ", size=" + notificationSize + ", action=" + se.getSubscription().getAction().isCancelled());
         se.getSubscription().setAction(null);
 
         // Send documents in chunks of 10.
@@ -140,7 +141,7 @@ public class NotificationRouter extends UntypedActor {
             notification.setEvent(DocumentEventType.ALL);
             notification.setSubscription(se.getSubscription());
             ArrayList<Document> docs = new ArrayList<>();
-            for (int i = 0; i < discoveryConfiguration.getNotificationSize()
+            for (int i = 0; i < notificationSize
                     && current < toArray.length; i++) {
                 docs.add((Document) toArray[current]);
                 current++;
@@ -171,5 +172,19 @@ public class NotificationRouter extends UntypedActor {
 
     public void sendNotification(Object message) {
         this.getSelf().tell(message, null);
+    }
+
+    /**
+     * @return the notificationSize
+     */
+    public int getNotificationSize() {
+        return notificationSize;
+    }
+
+    /**
+     * @param notificationSize the notificationSize to set
+     */
+    public void setNotificationSize(int notificationSize) {
+        this.notificationSize = notificationSize;
     }
 }

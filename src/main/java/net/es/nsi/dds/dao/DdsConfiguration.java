@@ -137,12 +137,16 @@ public class DdsConfiguration {
             setRepository(config.getRepository());
         }
 
-        if (config.getAuditInterval() < MIN_AUDIT_INTERVAL || config.getAuditInterval() > MAX_AUDIT_INTERVAL) {
+        if (config.getAuditInterval() == null) {
+            setAuditInterval(DEFAULT_AUDIT_INTERVAL);
+        }
+        else if (config.getAuditInterval() < MIN_AUDIT_INTERVAL || config.getAuditInterval() > MAX_AUDIT_INTERVAL) {
             ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "auditInterval", Long.toString(config.getAuditInterval()));
             setAuditInterval(DEFAULT_AUDIT_INTERVAL);
         }
-
-        setAuditInterval(config.getAuditInterval());
+        else {
+            setAuditInterval(config.getAuditInterval());
+        }
 
         if (config.getExpiryInterval() < EXPIRE_INTERVAL_MIN || config.getExpiryInterval() > EXPIRE_INTERVAL_MAX) {
             ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "expiryInterval", Long.toString(config.getExpiryInterval()));
@@ -151,13 +155,17 @@ public class DdsConfiguration {
 
         setExpiryInterval(config.getExpiryInterval());
 
-        if (config.getActorPool() < ACTORPOOL_MIN_SIZE || config.getActorPool() > ACTORPOOL_MAX_SIZE) {
+        if (config.getActorPool() == null) {
+            setActorPool(ACTORPOOL_DEFAULT_SIZE);
+        }
+        else if (config.getActorPool() < ACTORPOOL_MIN_SIZE || config.getActorPool() > ACTORPOOL_MAX_SIZE) {
             ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "actorPool", Integer.toString(config.getActorPool()));
             setActorPool(ACTORPOOL_DEFAULT_SIZE);
         }
-
-        setActorPool(config.getActorPool());
-
+        else {
+            setActorPool(config.getActorPool());
+        }
+        
         if (config.getBaseURL() == null || config.getBaseURL().isEmpty()) {
             ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "baseURL=" + config.getBaseURL());
             throw new FileNotFoundException("Invalid base URL: " + config.getBaseURL());
@@ -212,6 +220,7 @@ public class DdsConfiguration {
     /**
      * @return the auditInterval
      */
+    @Deprecated
     public long getAuditInterval() {
         return auditInterval;
     }
@@ -219,6 +228,7 @@ public class DdsConfiguration {
     /**
      * @param auditInterval the auditInterval to set
      */
+    @Deprecated
     public void setAuditInterval(long auditInterval) {
         this.auditInterval = auditInterval;
     }
@@ -331,6 +341,7 @@ public class DdsConfiguration {
     /**
      * @return the notificationSize
      */
+    @Deprecated
     public int getNotificationSize() {
         return notificationSize;
     }
@@ -338,6 +349,7 @@ public class DdsConfiguration {
     /**
      * @param notificationSize the notificationSize to set
      */
+    @Deprecated
     public void setNotificationSize(int notificationSize) {
         this.notificationSize = notificationSize;
     }
@@ -345,6 +357,7 @@ public class DdsConfiguration {
     /**
      * @return the pageSize
      */
+    @Deprecated
     public int getPageSize() {
         return pageSize;
     }
@@ -352,6 +365,7 @@ public class DdsConfiguration {
     /**
      * @param pageSize the pageSize to set
      */
+    @Deprecated
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }

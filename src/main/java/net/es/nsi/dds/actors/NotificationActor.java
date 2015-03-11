@@ -6,7 +6,6 @@ package net.es.nsi.dds.actors;
 
 import net.es.nsi.dds.messages.Notification;
 import akka.actor.UntypedActor;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
@@ -16,7 +15,6 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.config.ConfigurationManager;
-import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.api.jaxb.NotificationListType;
 import net.es.nsi.dds.api.jaxb.NotificationType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
@@ -35,11 +33,11 @@ public class NotificationActor extends UntypedActor {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final ObjectFactory factory = new ObjectFactory();
-    private final DdsConfiguration discoveryConfiguration;
+    private final String providerId;
     private final RestClient restClient;
 
-    public NotificationActor(DdsConfiguration discoveryConfiguration, RestClient restClient) {
-        this.discoveryConfiguration = discoveryConfiguration;
+    public NotificationActor(String providerId, RestClient restClient) {
+        this.providerId = providerId;
         this.restClient = restClient;
     }
 
@@ -71,7 +69,7 @@ public class NotificationActor extends UntypedActor {
 
             list.setId(notification.getSubscription().getId());
             list.setHref(notification.getSubscription().getSubscription().getHref());
-            list.setProviderId(discoveryConfiguration.getNsaId());
+            list.setProviderId(providerId);
             String callback = notification.getSubscription().getSubscription().getCallback();
             Client client = restClient.get();
 

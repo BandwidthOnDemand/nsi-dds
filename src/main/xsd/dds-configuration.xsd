@@ -9,45 +9,46 @@
         <xsd:annotation>
             <xsd:documentation xml:lang="en">
     This is the NSI Document Distribution Service v1.0 configuration file.
-    
+
     The following XML elements are supported in this configuration file:
-    
+
     nsaId - The NSA identifier of the local NSA assocated with this DDS
             instance.  This value will be used to determine which documents
             in the DDS document space are associated with the /local URL
             query.
-            
+
     documents - The local directory the DDS will monitor for document file
                 content to auto load into the DDS document space.  This
                 directory is checked for new content every auditInterval.
-                
+
     cache - The local directory used to store discovered documents that
             will be reloaded after a restart of the DDS.  One reloaded an
             audit occurs to refresh any documents with new versions available.
-            
+
     repository - The local directory where documents added to the local DDS are
                  stored.  This is different from the cache directory in that the
                  cache directory mirrors the state of the DDS document space,
                  while the repository only holds those documents mastered
                  ("owned") by this DDS server instance.
-                 
+
     auditInterval - The interval (in seconds) the DDS will audit all peer DDS
                     servers, Gof3 NSA and topology documents, or A-GOLE
                     topology. [No longer used, see beans.xml]
-                    
+
     expiryInterval - The number of seconds the DDS will maintain a document
-                     after the document's lifetime has been reached.
-                     
+                     in the local space after the document's lifetime has
+                     been reached.  Default is 24 hours.
+
     actorPool - The number of actors to instantiate per discovery type (DDS,
                 Gof3, A-GOLE). [No longer used, see beans.xml]
-                
+
     baseURL - The base URL of the local DDS service that will be used when
               registering with peer DDS services.  Is only needed if a peerURL
               type of "application/vnd.ogf.nsi.dds.v1+xml" is configured.
-              
+
     peerURL - Lists peer data sources for the DDS service to utilize for
               document discovery.  The following type of peerURL are supported:
-              
+
               application/vnd.ogf.nsi.dds.v1+xml - A peer DDS server.
               application/vnd.ogf.nsi.nsa.v1+xml - A Gof3 NSA.
               application/vnd.ogf.nsi.topology.v1+xml - The Automated GOLE topology discovery.
@@ -59,7 +60,7 @@
             <xsd:element name="cache" type="xsd:string" minOccurs="0"/>
             <xsd:element name="repository" type="xsd:string" minOccurs="0"/>
             <xsd:element name="auditInterval" type="xsd:long" minOccurs="0" />
-            <xsd:element name="expiryInterval" type="xsd:long"/>
+            <xsd:element name="expiryInterval" type="xsd:long" default="86400" />
             <xsd:element name="actorPool" type="xsd:int" minOccurs="0" />
             <xsd:element name="baseURL" type="xsd:anyURI"/>
             <xsd:element name="notificationSize" type="xsd:int" default="10" />
