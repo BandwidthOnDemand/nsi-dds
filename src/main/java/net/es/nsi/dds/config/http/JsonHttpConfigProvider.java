@@ -8,12 +8,13 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.Map;
 import net.es.nsi.dds.spring.SpringContext;
 
 public class JsonHttpConfigProvider  extends FileBasedConfigProvider implements HttpConfigProvider {
 
 
-    private HashMap<String, HttpConfig> configs = new HashMap<String, HttpConfig>();
+    private Map<String, HttpConfig> configs = new HashMap<>();
 
     public static JsonHttpConfigProvider getInstance() {
         SpringContext sc = SpringContext.getInstance();
@@ -23,11 +24,11 @@ public class JsonHttpConfigProvider  extends FileBasedConfigProvider implements 
 
     @Override
     public void loadConfig() throws Exception {
-
         File configFile = new File(this.getFilename());
+
         String json = FileUtils.readFileToString(configFile);
         Gson gson = new Gson();
-        Type type = new TypeToken<HashMap<String, HttpConfig>>() {}.getType();
+        Type type = new TypeToken<Map<String, HttpConfig>>() {}.getType();
 
         configs = gson.fromJson(json, type);
     }

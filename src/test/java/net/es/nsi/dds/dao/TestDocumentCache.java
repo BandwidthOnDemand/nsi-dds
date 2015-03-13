@@ -4,11 +4,6 @@
  */
 package net.es.nsi.dds.dao;
 
-import net.es.nsi.dds.dao.DocumentCache;
-import net.es.nsi.dds.dao.RepositoryProfile;
-import net.es.nsi.dds.dao.DdsConfiguration;
-import net.es.nsi.dds.dao.DdsProfile;
-import net.es.nsi.dds.dao.CacheProfile;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

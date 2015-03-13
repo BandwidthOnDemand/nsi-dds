@@ -9,6 +9,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.client.RestClient;
+import net.es.nsi.dds.config.Properties;
 import org.glassfish.jersey.client.ClientConfig;
 
 /**
@@ -32,7 +33,8 @@ public class TestConfig {
                 System.out.println("TestConfig: ConfigurationManager already initialized so shutting down.");
                 ConfigurationManager.INSTANCE.shutdown();
             }
-            ConfigurationManager.INSTANCE.initialize(CONFIG_DIR);
+            System.setProperty(Properties.DDS_SYSTEM_PROPERTY_CONFIGDIR, CONFIG_DIR);
+            ConfigurationManager.INSTANCE.initialize();
         }
         catch (Exception ex) {
             System.err.println("TestConfig: failed to initialize ConfigurationManager.");

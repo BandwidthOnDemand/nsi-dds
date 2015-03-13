@@ -1,5 +1,8 @@
 package net.es.nsi.dds.config;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import net.es.nsi.dds.spring.SpringContext;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.server.DdsServer;
@@ -59,29 +62,32 @@ public enum ConfigurationManager {
     }
 
     /**
-     * This method initialized the PCE configuration found under the specified
+     * This method initializes the DDS configuration found under the specified
      * configPath.
      *
-     * @param configPath The path containing all the needed configuration files.
-     * @throws Exception If there is an error loading any of the required configuration files.
+     * @env configdir The path containing all the needed configuration files.
+     * @throws IOException If there is an error loading bean configuration file.
      */
-    public synchronized void initialize(String configPath) throws Exception {
+    public synchronized void initialize() throws IOException {
+        String configPath = System.getProperty(Properties.DDS_SYSTEM_PROPERTY_CONFIGDIR);
+
         if (!isInitialized()) {
             // Load and watch the log4j configuration file for changes.
             DOMConfigurator.configureAndWatch(getLog4jConfig(configPath), 45 * 1000);
-
             final org.slf4j.Logger log = LoggerFactory.getLogger(ConfigurationManager.class);
 
-            // If absolute path then add "file:" so this will load properly.
-            if (configPath.startsWith("/")) {
-                configPath = "file:" + configPath;
+            Path path = Paths.get(configPath, "beans.xml");
+            Path realPath;
+            try {
+                realPath = path.toRealPath();
+            } catch (IOException ex) {
+                log.error("ConfigurationManager: configuration file not found " + path.toString(), ex);
+                throw ex;
             }
-
-            String beanConfig = new StringBuilder(configPath).append("beans.xml").toString();
 
             // Initialize the Spring context to load our dependencies.
             SpringContext sc = SpringContext.getInstance();
-            context = sc.initContext(beanConfig);
+            context = sc.initContext(realPath.toUri().toString());
 
             // Get references to the spring controlled beans.
             ddsServer = (DdsServer) context.getBean("ddsServer");
@@ -92,14 +98,15 @@ public enum ConfigurationManager {
             discoveryProvider.start();
 
             setInitialized(true);
-            log.info("Loaded configuration from: " + configPath);
+            log.info("Loaded configuration from: " + path.toString());
         }
     }
 
-     private String getLog4jConfig(String configPath) {
+     private String getLog4jConfig(String configPath) throws IOException {
         String log4jConfig = System.getProperty("log4j.configuration");
         if (log4jConfig == null) {
-            log4jConfig = configPath + "log4j.xml";
+            Path realPath = Paths.get(configPath, "log4j.xml").toRealPath();
+            log4jConfig = realPath.toString();
         }
         return log4jConfig;
     }

@@ -118,9 +118,7 @@ The basic runtime configuration of the `nsi-dds` is controlled through the `conf
         <documents>config/documents</documents>
         <cache>config/cache</cache>
         <repository>config/repository</repository>
-        <auditInterval>1800</auditInterval>
         <expiryInterval>600</expiryInterval>
-        <actorPool>10</actorPool>
         <baseURL>http://nsi-am-sl.northwestern.edu/dds</baseURL>
 
         <!-- DDS service interfaces. -->
@@ -141,11 +139,7 @@ The following XML elements are supported in this configuration file:
   
   * repository - The local directory where documents added to the local DDS are stored.  This is different from the cache directory in that the cache directory mirrors the state of the DDS document space, while the repository only holds those documents mastered ("owned") by this DDS server instance.
 
-  * auditInterval - [No longer used, see beans.xml] The interval (in seconds) the DDS will audit all peer DDS servers, Gof3 NSA and topology documents, or A-GOLE topology.
-
   * expiryInterval - The number of seconds the DDS will maintain a document after the document's lifetime has been reached.
-
-  * actorPool - [No longer used, see beans.xml] The number of actors to instantiate per discovery type (DDS, Gof3, A-GOLE).
   
   * baseURL - The base URL of the local DDS service that will be used when registering with peer DDS services.  Is only needed if a peerURL type of "application/vnd.ogf.nsi.dds.v1+xml" is configured.
 
@@ -207,6 +201,25 @@ If you are using a standard `nsi-safnari` deployment then you will want to confi
  
  Additional configuration options will be provided in the future.
 
+## Command line parameters
+
+```
+java -jar dds.jar [-base <application directory>] [-config <configDir>] [-ddsConfigFile <filename>]
+```
+  * **-base** The runtime home directory for the application (defaults to "user.dir").
+  
+  * **-config** DDS configuration files (defaults to ${user.dir}/config).
+  
+  * **-ddsConfigFile** Path to your DDS configuration file.
+  
+As an alternative to these command line parameters, values can be specified using the following System properties:
+
+  * **basedir** The runtime home directory for the application (defaults to "user.dir").
+  
+  * **configdir** DDS configuration files (defaults to ${user.dir}/config).
+  
+  * **ddsConfigFile** Path to your DDS configuration file.
+
 ## Install upstart scripts
 If you would like `initd` to manage the process lifecycle of `nsi-dds` then you can install the provided upstart configuration file.
 
@@ -241,18 +254,15 @@ script
 
 [ -e /home/safnari/nsi-dds/dds.jar ]
 exec su -l -s /bin/bash -c 'exec "$0" "$@"' $USER -- /usr/bin/java \
-	-Xmx1024m -Djava.net.preferIPv4Stack=true  \
+    -Xmx1024m -Djava.net.preferIPv4Stack=true  \
     -Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true \
+    -Djava.util.logging.config.file="$HOME/config/logging.properties" \
     -Djavax.net.ssl.trustStore=$TRUSTSTORE \
     -Djavax.net.ssl.trustStorePassword=$PASSWORD \
     -Djavax.net.ssl.keyStore=$KEYSTORE \
     -Djavax.net.ssl.keyStorePassword=$PASSWORD \
-    -Dapp.home="$HOME" \
-    -Dbasedir="/" \
-    -Djava.util.logging.config.file="$HOME/config/logging.properties" \
+    -Dbasedir="$HOME" \
     -jar "$HOME/dds.jar" \
-	-c "$HOME/config/" \
-    -ddsConfigFile "$HOME/config/dds.xml"
 end script
 ```
 

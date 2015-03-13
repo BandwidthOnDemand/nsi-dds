@@ -3,12 +3,15 @@ package net.es.nsi.dds.dao;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.api.jaxb.DdsConfigurationType;
 import net.es.nsi.dds.api.jaxb.PeerURLType;
+import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.spring.SpringApplicationContext;
@@ -122,19 +125,23 @@ public class DdsConfiguration {
 
         setBaseURL(config.getBaseURL());
 
-        // The DocumentCache will created the directoy if not present.
+        // We may need the application base directory for this next bit.
+        String basedir = System.getProperty(Properties.DDS_SYSTEM_PROPERTY_BASEDIR);
+
+        // Local document directory option from which we dynamically load files.
         if (config.getDocuments() != null && !config.getDocuments().isEmpty()) {
-            setDocuments(config.getDocuments());
+            // See if the user provided a fully qualified path.
+            setDocuments(fullyQualifyPath(config.getDocuments()));
         }
 
         // The DocumentCache will created the directoy if not present.
         if (config.getCache() != null && !config.getCache().isEmpty()) {
-            setCache(config.getCache());
+            setCache(fullyQualifyPath(config.getCache()));
         }
 
         // The RepositoryCache will created the directoy if not present.
         if (config.getRepository() != null && !config.getRepository().isEmpty()) {
-            setRepository(config.getRepository());
+            setRepository(fullyQualifyPath(config.getRepository()));
         }
 
         if (config.getAuditInterval() == null) {
@@ -165,7 +172,7 @@ public class DdsConfiguration {
         else {
             setActorPool(config.getActorPool());
         }
-        
+
         if (config.getBaseURL() == null || config.getBaseURL().isEmpty()) {
             ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "baseURL=" + config.getBaseURL());
             throw new FileNotFoundException("Invalid base URL: " + config.getBaseURL());
@@ -191,6 +198,16 @@ public class DdsConfiguration {
         }
 
         lastModified = lastMod;
+    }
+
+    private String fullyQualifyPath(String file) {
+        Path path = Paths.get(file);
+        if (!path.isAbsolute()) {
+            String basedir = System.getProperty(Properties.DDS_SYSTEM_PROPERTY_BASEDIR);
+            path = Paths.get(basedir, file);
+        }
+
+        return path.toString();
     }
 
     public boolean isDocumentsConfigured() {

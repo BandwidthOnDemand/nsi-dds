@@ -10,7 +10,7 @@
     <bean id="springApplicationContext" class="net.es.nsi.dds.spring.SpringApplicationContext" scope="singleton" />
 
     <bean id="httpConfigProvider" class="net.es.nsi.dds.config.http.JsonHttpConfigProvider" init-method="loadConfig" scope="singleton">
-        <property name="filename" value="#{ systemProperties['configPath'] }http.json"/>
+        <property name="filename" value="#{ systemProperties['configdir'] }/http.json"/>
     </bean>
 
     <bean id="ddsServer" class="net.es.nsi.dds.server.DdsServer" scope="singleton">
