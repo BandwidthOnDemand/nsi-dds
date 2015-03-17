@@ -9,20 +9,16 @@
 
     <bean id="springApplicationContext" class="net.es.nsi.dds.spring.SpringApplicationContext" scope="singleton" />
 
-    <bean id="httpConfigProvider" class="net.es.nsi.dds.config.http.JsonHttpConfigProvider" init-method="loadConfig" scope="singleton">
-        <property name="filename" value="#{ systemProperties['configdir'] }/http.json"/>
-    </bean>
-
-    <bean id="ddsServer" class="net.es.nsi.dds.server.DdsServer" scope="singleton">
-        <constructor-arg index="0" ref="httpConfigProvider"/>
+    <bean id="ddsConfiguration" class="net.es.nsi.dds.dao.DdsConfiguration" init-method="load" scope="singleton">
+        <property name="filename" value="#{ systemProperties['ddsConfigFile'] }"/>
     </bean>
 
     <bean id="restClient" class="net.es.nsi.dds.client.RestClient" scope="singleton">
-	<constructor-arg index="0" type="boolean" value="false"/>
+        <constructor-arg index="0" ref="ddsConfiguration"/>
     </bean>
-
-    <bean id="ddsConfiguration" class="net.es.nsi.dds.dao.DdsConfiguration" init-method="load" scope="singleton">
-        <property name="filename" value="#{ systemProperties['ddsConfigFile'] }"/>
+    
+    <bean id="ddsServer" class="net.es.nsi.dds.server.DdsServer" scope="singleton">
+        <constructor-arg index="0" ref="ddsConfiguration"/>
     </bean>
 
     <bean id="cacheProfile" class="net.es.nsi.dds.dao.CacheProfile" scope="singleton">

@@ -1,8 +1,0 @@
-{
-    "dds": {
-        "url": "http://localhost:8401/",
-        "packageName": "net.es.nsi.dds",
-        "staticPath": "config/www/",
-        "wwwPath": "/www"
-    }
-}

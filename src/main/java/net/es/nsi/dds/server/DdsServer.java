@@ -1,28 +1,26 @@
 package net.es.nsi.dds.server;
 
 import java.io.IOException;
-import net.es.nsi.dds.jersey.RestServer;
-import java.net.URI;
+import net.es.nsi.dds.api.DiscoveryService;
 import net.es.nsi.dds.config.http.HttpConfig;
-import net.es.nsi.dds.config.http.HttpConfigProvider;
+import net.es.nsi.dds.dao.DdsConfiguration;
+import net.es.nsi.dds.management.api.ManagementService;
 import net.es.nsi.dds.spring.SpringApplicationContext;
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.grizzly.http.server.NetworkListener;
-import org.glassfish.grizzly.http.server.StaticHttpHandler;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.message.DeflateEncoder;
+import org.glassfish.jersey.message.GZipEncoder;
+import org.glassfish.jersey.server.filter.EncodingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DdsServer {
-    public static final String PCE_SERVER_CONFIG_NAME = "dds";
-    private static final int FileCacheSecondsMaxAge = 3600;
+    private static final int FILE_CACHE_MAX_AGE = 3600;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private HttpConfig config;
-    private HttpServer server = null;
+    private RestServer server = null;
 
-    public DdsServer(HttpConfigProvider provider) {
-        this.config = provider.getConfig(PCE_SERVER_CONFIG_NAME);
+    public DdsServer(DdsConfiguration config) {
+        this.config = config.getHttpConfig();
     }
 
     public static DdsServer getInstance() {
@@ -33,33 +31,41 @@ public class DdsServer {
     public void start() throws IllegalStateException, IOException {
         synchronized(this) {
             if (server == null) {
-                try {
-                    log.debug("DDSServer.start: Starting Grizzly on " + config.getUrl() + " for resources " + config.getPackageName());
-                    server = GrizzlyHttpServerFactory.createHttpServer(URI.create(config.getUrl()), RestServer.getConfig(config.getPackageName()), false);
-                    NetworkListener listener = server.getListener("grizzly");
+                if (config.isSecure()) {
+                    // Start a HTTPS secure server.
+                    server = new RestServer(config.getAddress(), config.getPort(), config.getHttpsConfig().getSSLContext());
 
-                    server.getServerConfiguration().setMaxBufferedPostSize(server.getServerConfiguration().getMaxBufferedPostSize()*10);
+                }
+                else {
+                    // Start an insecure HTTP server.
+                    server = new RestServer(config.getAddress(), config.getPort());
+                }
 
-                    if (config.getStaticPath() != null && !config.getStaticPath().isEmpty()) {
-                        StaticHttpHandler staticHttpHandler = new StaticHttpHandler(config.getStaticPath());
-                        server.getServerConfiguration().addHttpHandler(staticHttpHandler, config.getWwwPath());
-                        if (listener != null) {
-                            listener.getFileCache().setSecondsMaxAge(FileCacheSecondsMaxAge);
-                        }
-                    }
+                server.addInterface(EncodingFilter.class)
+                      .addInterface(GZipEncoder.class)
+                      .addInterface(DeflateEncoder.class)
+                      .addInterface(DiscoveryService.class)
+                      .addInterface(ManagementService.class)
+                      .setPackages(config.getPackageName())
+                      .setFileCacheMaxAge(FILE_CACHE_MAX_AGE);
 
-                    server.start();
-                    while (!server.isStarted()) {
+                if (config.getStaticPath() != null) {
+                    server.setStaticPath(config.getStaticPath())
+                          .setRelativePath(config.getRelativePath());
+                }
+
+                log.debug("DDSServer.start: Starting Grizzly on " + config.getUrl() + " for resources " + config.getPackageName());
+                server.start();
+
+                while (!server.isStarted()) {
+                    try {
                         log.debug("DDSServer.start: Waiting for Grizzly to start ...");
                         Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        log.debug("Sleep interupted while waiting for DDS server to start", ex);
                     }
-                    log.debug("DDSServer.start: Started Grizzly.");
-                } catch (IOException ex) {
-                    log.error("Could not start HTTP server.", ex);
-                    throw ex;
-                } catch (InterruptedException ie) {
-                    log.debug("Sleep interupted", ie);
                 }
+                log.debug("DDSServer.start: Started Grizzly.");
             }
             else {
                 log.error("DDSServer.start: Grizzly already started.");
@@ -73,7 +79,7 @@ public class DdsServer {
         synchronized(this) {
             if (server != null) {
                 log.debug("DDSServer.stop: Stopping Grizzly.");
-                server.shutdownNow();
+                server.stop();
                 server = null;
             }
             else {

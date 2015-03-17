@@ -24,5 +24,10 @@ java -Xmx1024m -Djava.net.preferIPv4Stack=true  \
     -Dbasedir="$BASEDIR" \
 	-Djava.util.logging.config.file="$BASEDIR/config/logging.properties" \
 	-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true \
+        -Djava.util.logging.config.file=config/logging.properties \
+        -Djavax.net.ssl.keyStore=$KEYSTORE \
+        -Djavax.net.ssl.keyStorePassword=$PASSWORD \
+        -Djavax.net.ssl.trustStore=$TRUSTSTORE \
+        -Djavax.net.ssl.trustStorePassword=$PASSWORD \
 	-jar target/dds.jar \
 	$*

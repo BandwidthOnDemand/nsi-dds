@@ -64,11 +64,61 @@
             <xsd:element name="actorPool" type="xsd:int" minOccurs="0" />
             <xsd:element name="baseURL" type="xsd:anyURI"/>
             <xsd:element name="notificationSize" type="xsd:int" default="10" />
-            <xsd:element name="pageSize" type="xsd:int" default="50" />
+            <xsd:element name="server" type="tns:ServerType" minOccurs="0" />
+            <xsd:element name="client" type="tns:SecureType" minOccurs="0" />
             <xsd:element name="peerURL" type="tns:PeerURLType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
+    
+    <xsd:complexType name="ServerType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="secure" type="tns:SecureType" minOccurs="0"/>
+            <xsd:element name="static" type="tns:StaticType" minOccurs="0"/>
+        </xsd:sequence>
+        <xsd:attribute   name="address"     use="required" type="xsd:string" />
+        <xsd:attribute   name="port"        use="required" type="xsd:string" />
+        <xsd:attribute   name="packageName" use="required" type="xsd:string" />
+    </xsd:complexType>
 
+    <xsd:complexType name="SecureType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="keyStore" type="tns:KeyStoreType" />
+            <xsd:element name="trustStore" type="tns:KeyStoreType" />
+        </xsd:sequence>
+        <xsd:attribute   name="production" type="xsd:boolean" default="true"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="KeyStoreType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="file" type="xsd:string" />
+            <xsd:element name="password" type="xsd:string" />
+        </xsd:sequence>
+        <xsd:attribute   name="type" type="xsd:string" default="JKS"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="StaticType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="path" type="xsd:string" />
+            <xsd:element name="relative" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+    
     <xsd:complexType name="PeerURLType">
         <xsd:simpleContent>
             <xsd:extension  base="xsd:string">
@@ -77,3 +127,4 @@
         </xsd:simpleContent>
     </xsd:complexType>
 </xsd:schema>
+

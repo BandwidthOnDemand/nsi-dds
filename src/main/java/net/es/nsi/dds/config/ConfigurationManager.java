@@ -11,31 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
- * The Path Computation Engine's Configuration Manager loads initial
+ * The Document Discovery Service's Configuration Manager loads initial
  * configuration files and instantiates singletons.  Spring Beans are used
  * to drive initialization and created singletons for the key services.
- *
- * HttpConfigProvider - This provider contains configuration for the PCEServer
- * and AggServer.  The PCEServer drives the core logic for path computation and
- * exposes the web services interfaces as an external API.  The AggServer is a
- * test endpoint for receiving PCE results and is not utilized during normal
- * operation.
- *
- * ServiceInfoProvider - This provider loads NSA configuration and security
- * information from a configuration file.  This information is is not used
- * during pat computation, but is exposed through a web service interface for
- * use by the aggregator for peer communications.  ** This functionality should
- * not be part of the PCE and will be moved to a Discovery Service at a later
- * date. **
- *
- * TopologyProvider - This provider loads network topology information used
- * during the path computation process.  Topology is currently loaded from a
- * local configuration file but will be changed in the near future to use an
- * external topology service.
- *
- * PCEScheduler - The scheduling task for PCE functions such as configuration
- * monitoring and other maintenance tasks.
- *
  * @author hacksaw
  */
 public enum ConfigurationManager {

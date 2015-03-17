@@ -46,6 +46,12 @@
     <repository>src/test/resources/config/repository</repository>
     <expiryInterval>600</expiryInterval>
     <baseURL>http://localhost:8401/dds</baseURL>
+    <server address="localhost" port="8401" packageName="net.es.nsi.dds">
+        <static>
+            <path>src/test/resources/config/www</path>
+            <relative>/www</relative>
+        </static>
+    </server>
     <!--
     <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">http://localhost:8401/dds</peerURL>
     <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://bod.acc.dlp.surfnet.nl/nsa-discovery</peerURL>

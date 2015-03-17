@@ -18,7 +18,7 @@ import org.springframework.context.ApplicationContext;
  * @author hacksaw
  */
 public class TestURLEncode {
-    private static final String CONFIG_PATH = "configPath";
+    private static final String CONFIG_PATH = "configdir";
     private final static String CONFIG_DIR = "src/test/resources/config/";
     private static final String DEFAULT_DDS_FILE = CONFIG_DIR + "dds.xml";
     private static final String DDS_CONFIG_FILE_ARGNAME = "ddsConfigFile";
@@ -49,7 +49,7 @@ public class TestURLEncode {
             return;
         }
         assertNotNull(context.getBean("remoteSubscriptionCache"));
-        assertNotNull(context.getBean("httpConfigProvider"));
+        assertNotNull(context.getBean("ddsConfiguration"));
         assertNotNull(context.getBean("discoveryProvider"));
         DdsActorSystem actorSystem = (DdsActorSystem) context.getBean("ddsActorSystem");
         assertNotNull(actorSystem);

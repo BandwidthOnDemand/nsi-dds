@@ -6,5 +6,5 @@ public interface ConfigProvider {
 
     public void setFilename(String filename);
 
-    public void loadConfig() throws Exception;
+    public void load() throws Exception;
 }

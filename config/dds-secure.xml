@@ -46,9 +46,19 @@
     <cache>config/cache</cache>
     <repository>config/repository</repository>
     <expiryInterval>600</expiryInterval>
-    <baseURL>http://localhost:8401/dds</baseURL>
-    
-    <server address="localhost" port="8401" packageName="net.es.nsi.dds" />
+    <baseURL>https://example.net:8401/dds</baseURL>
+    <server address="example.net" port="8401" packageName="net.es.nsi.dds">
+        <secure production="true">
+            <keyStore type="JKS">
+                <file>config/keystore.jks</file>
+                <password>changeit</password>
+            </keyStore>
+            <trustStore type="JKS">
+                <file>config/truststore.jks</file>
+                <password>changeit</password>
+            </trustStore>
+        </secure>
+    </server>
     
     <client production="true">
         <keyStore type="JKS">
@@ -63,7 +73,7 @@
     
     <!-- DDS service interfaces. -->
     <!-- <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://agg.netherlight.net/dds</peerURL> -->
-    <!-- <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://nsi-aggr-west.es.net/discovery</peerURL> -->
+    <!-- <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://nsi-aggr-west.es.net/discovery</peerURL> --> 
 
     <!-- SURFnet configuration for discovery on production network. -->
     <!-- <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://bod2.surfnet.nl/nsa-discovery</peerURL> -->

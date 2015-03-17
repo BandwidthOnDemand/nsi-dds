@@ -9,7 +9,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.config.http.HttpConfig;
 import org.glassfish.jersey.client.ClientConfig;
 
@@ -18,13 +17,8 @@ import org.glassfish.jersey.client.ClientConfig;
  * @author hacksaw
  */
 public class Main {
-    private final static HttpConfig testServer = new HttpConfig() {
-        { setUrl("http://localhost:9800/"); setPackageName("net.es.nsi.dds.client"); }
-    };
+    private final static HttpConfig testServer = new HttpConfig("localhost", "9800", "net.es.nsi.dds.client");
 
-    private final static String callbackURL = testServer.getUrl() + "dds";
-
-    private final static ObjectFactory factory = new ObjectFactory();
     @SuppressWarnings({"ResultOfMethodCallIgnored"})
     public static void main(String[] args) throws Exception {
         ClientConfig clientConfig = RestClient.configureClient();

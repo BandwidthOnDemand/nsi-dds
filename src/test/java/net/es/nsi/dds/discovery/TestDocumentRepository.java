@@ -37,12 +37,7 @@ import org.slf4j.LoggerFactory;
 public class TestDocumentRepository {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final static HttpConfig testServer = new HttpConfig() {
-        {
-            setUrl("http://localhost:8402/");
-            setPackageName("net.es.nsi.dds.client");
-        }
-    };
+    private final static HttpConfig testServer = new HttpConfig("localhost", "8402", "net.es.nsi.dds.client");
 
     private final static String DOCUMENT_DIR = "src/test/resources/documents/";
     private final static ObjectFactory factory = new ObjectFactory();

@@ -2,6 +2,7 @@ package net.es.nsi.dds.discovery;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.net.URLEncoder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
@@ -47,21 +48,16 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DiscoveryTest {
 
-    private final static HttpConfig testServer = new HttpConfig() {
-        {
-            setUrl("http://localhost:8402/");
-            setPackageName("net.es.nsi.dds.client");
-        }
-    };
+    private final static HttpConfig testServer = new HttpConfig("localhost", "8402", "net.es.nsi.dds.client");
 
     private final static String DDS_CONFIGURATION = "src/test/resources/config/dds.xml";
     private final static String DOCUMENT_DIR = "src/test/resources/documents/";
-    private final static String callbackURL = testServer.getUrl() + "dds/callback";
     private final static ObjectFactory factory = new ObjectFactory();
     private static DdsConfiguration ddsConfig;
     private static TestConfig testConfig;
     private static WebTarget target;
     private static WebTarget discovery;
+    private static String callbackURL;
 
     @BeforeClass
     public static void oneTimeSetUp() {
@@ -78,6 +74,8 @@ public class DiscoveryTest {
 
             // Configure the local test client callback server.
             TestServer.INSTANCE.start(testServer);
+
+            callbackURL = new URL(testServer.getURL(), "dds/callback").toString();
         }
         catch (IllegalArgumentException | JAXBException | IOException | NullPointerException | IllegalStateException ex) {
             System.err.println("oneTimeSetUp: failed to start HTTP server " + ex.getLocalizedMessage());

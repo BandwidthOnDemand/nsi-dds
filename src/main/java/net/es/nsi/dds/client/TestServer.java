@@ -1,7 +1,6 @@
 package net.es.nsi.dds.client;
 
 
-import java.net.URI;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.api.jaxb.NotificationListType;
@@ -36,7 +35,8 @@ public enum TestServer {
     public void start(HttpConfig config) throws IllegalStateException {
         synchronized(this) {
             if (server == null) {
-                server = GrizzlyHttpServerFactory.createHttpServer(URI.create(config.getUrl()), getConfig(config.getPackageName()));
+                server = GrizzlyHttpServerFactory.createHttpServer(config.getURI(), getConfig(config.getPackageName()));
+                System.out.println("TestServer: started HTTP server on " + config.getUrl());
             }
             else {
                 System.err.println("start: server is already started.");

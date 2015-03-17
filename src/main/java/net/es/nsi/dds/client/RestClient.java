@@ -1,11 +1,8 @@
 package net.es.nsi.dds.client;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.security.KeyManagementException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
@@ -22,6 +19,8 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
+import net.es.nsi.dds.config.http.HttpsConfig;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.schema.NsiConstants;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import org.apache.http.client.config.RequestConfig;
@@ -31,9 +30,9 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.glassfish.jersey.SslConfigurator;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
@@ -44,11 +43,6 @@ import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.util.ResourceUtils;
 
 /**
  *
@@ -63,13 +57,19 @@ public class RestClient {
         client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
     }
 
-    public RestClient(boolean secure) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
-        if (secure) {
-            ClientConfig clientConfig = configureSecureClient();
+    public RestClient(HttpsConfig config) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+        ClientConfig clientConfig = configureSecureClient(config);
+        client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
+    }
+
+    public RestClient(DdsConfiguration config) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+        HttpsConfig cf = config.getClientConfig();
+        if (cf == null) {
+            ClientConfig clientConfig = configureClient();
             client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
         }
         else {
-            ClientConfig clientConfig = configureClient();
+            ClientConfig clientConfig = configureSecureClient(cf);
             client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
         }
     }
@@ -79,12 +79,18 @@ public class RestClient {
         return restClient;
     }
 
-    public static ClientConfig configureSecureClient() {
-        HostnameVerifier defaultHostnameVerifier = new DefaultHostnameVerifier();
+    public static ClientConfig configureSecureClient(HttpsConfig config) {
+        HostnameVerifier hostnameVerifier;
+        if (config.isProduction()) {
+            hostnameVerifier = new DefaultHostnameVerifier();
+        }
+        else {
+            hostnameVerifier = new NoopHostnameVerifier();
+        }
 
-        SSLContext sslContext = getSSLContext();
+        SSLContext sslContext = config.getSSLContext();
         LayeredConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-                sslContext, defaultHostnameVerifier);
+                sslContext, hostnameVerifier);
 
         final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.getSocketFactory())
@@ -122,56 +128,6 @@ public class RestClient {
         clientConfig.property(ApacheClientProperties.REQUEST_CONFIG, custom.build());
 
         return clientConfig;
-    }
-
-    private final static String SSL_KEYSTORE = "javax.net.ssl.keyStore";
-    private final static String SSL_KEYSTORE_PASSWORD = "javax.net.ssl.keyStorePassword";
-    private final static String SSL_TRUSTSTORE = "javax.net.ssl.trustStore";
-    private final static String SSL_TRUSTSTORE_PASSWORD = "javax.net.ssl.trustStorePassword";
-
-    private static SSLContext getSSLContext() {
-        String keyStore = System.getProperty(SSL_KEYSTORE, null);
-        String keyStorePassword = System.getProperty(SSL_KEYSTORE_PASSWORD, null);
-        String trustStore = System.getProperty(SSL_TRUSTSTORE, null);
-        String trustStorePassword = System.getProperty(SSL_TRUSTSTORE_PASSWORD, null);
-
-        if (keyStore == null) {
-            return null;
-        }
-
-        String defaultType = KeyStore.getDefaultType();
-        log.debug("Keystore default type " + defaultType);
-/*
-        try {
-            KeyStore ks = createKeyManagerKeyStore("JKS", keyStore, keyStorePassword);
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-            kmf.init(ks, keyStorePassword == null ? null : keyStorePassword.toCharArray());
-
-
-            //CustomKeyManager km = configureKeystore("JKS", keyStore, keyStorePassword);
-
-
-            KeyStore ts = createKeyManagerKeyStore("JKS", trustStore, trustStorePassword);
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance("PKIX");
-            tmf.init(ts);
-
-            SSLContext sslContext = SSLContext.getInstance("SSL");
-            //sslContext.init(createCustomKeyManangers(km), tmf.getTrustManagers(), null);
-            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-            return sslContext;
-        }
-        catch (Exception ex) {
-            log.error("Failed to initialize k:q:qey and trust stores.", ex);
-        }
-*/
-        SslConfigurator sslConfig = SslConfigurator.newInstance()
-            .trustStoreFile(trustStore)
-            .trustStorePassword(trustStorePassword)
-            .keyStoreFile(keyStore)
-            .keyPassword(keyStorePassword)
-            .securityProtocol("TLS");
-
-        return sslConfig.createSSLContext();
     }
 
     public Client get() {
@@ -214,32 +170,5 @@ public class RestClient {
 
             log.debug("Processing redirect with result " + resp.getStatus());
         }
-    }
-
-    private static KeyStore createKeyManagerKeyStore(String keyStoreType, String keyStore, String keyStorePassword) throws Exception {
-        if (keyStoreType == null || keyStore == null) {
-            return null;
-        }
-
-        KeyStore ks = KeyStore.getInstance(keyStoreType);
-        try (InputStream is = resourceFromString(keyStore).getInputStream()) {
-            ks.load(is, keyStorePassword == null ? null : keyStorePassword.toCharArray());
-        }
-        return ks;
-    }
-
-    public static Resource resourceFromString(String uri) throws MalformedURLException {
-        Resource resource;
-        File file = new File(uri);
-        if (file.exists()) {
-            resource = new FileSystemResource(uri);
-        }
-        else if (ResourceUtils.isUrl(uri)) {
-            resource = new UrlResource(uri);
-        }
-        else {
-            resource = new ClassPathResource(uri);
-        }
-        return resource;
     }
 }

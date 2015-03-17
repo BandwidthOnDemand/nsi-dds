@@ -7,6 +7,7 @@ package net.es.nsi.dds.management.logs;
 import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Formatter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -148,6 +149,10 @@ public class DdsLogger {
             // Ignore for now.
         }
 
+        return entry;
+    }
+
+    private void logEntry(LogType entry) {
         logsMap.put(entry.getId(), entry);
         logsQueue.add(entry);
 
@@ -155,8 +160,6 @@ public class DdsLogger {
             LogType out = logsQueue.remove();
             logsMap.remove(out.getId());
         }
-
-        return entry;
     }
 
     /**
@@ -175,7 +178,7 @@ public class DdsLogger {
         log.setLabel(tLog.getLabel());
         log.setDescription(description);
         log.setResource(resource);
-        logLog(log);
+        logger.info(createLog(log));
         return log;
     }
 
@@ -194,7 +197,7 @@ public class DdsLogger {
         log.setLabel(tLog.getLabel());
         log.setDescription(tLog.getDescription());
         log.setResource(resource);
-        logLog(log);
+        logger.info(createLog(log));
         return log;
     }
 
@@ -205,7 +208,7 @@ public class DdsLogger {
         error.setLabel(tError.getLabel());
         error.setDescription(tError.getDescription());
         error.setResource(resource);
-        logError(error);
+        logger.error(createLog(error));
         return error;
     }
 
@@ -216,7 +219,7 @@ public class DdsLogger {
         error.setLabel(tError.getLabel());
         error.setDescription(String.format(tError.getDescription(), secondaryResource));
         error.setResource(primaryResource);
-        logError(error);
+        logger.error(createLog(error));
         return error;
     }
 
@@ -237,7 +240,7 @@ public class DdsLogger {
                 error.setLabel(lastError.getLabel());
                 error.setDescription(String.format(lastError.getDescription(), "Repeated " + count + " times"));
                 error.setResource(lastRootResource);
-                logError(error);
+                logger.error(createLog(error));
             }
 
             lastError = tError;
@@ -251,7 +254,7 @@ public class DdsLogger {
         error.setLabel(tError.getLabel());
         error.setDescription(String.format(tError.getDescription(), secondaryResource));
         error.setResource(primaryResource);
-        logError(error);
+        logger.error(createLog(error));
     }
 
     public void errorSummary(DdsErrors tError, String rootResource, String primaryResource) {
@@ -267,7 +270,7 @@ public class DdsLogger {
                 error.setLabel(lastError.getLabel());
                 error.setDescription(lastError.getDescription() + "(Repeated " + count + " times)");
                 error.setResource(lastRootResource);
-                logError(error);
+                logger.error(createLog(error));
             }
 
             lastError = tError;
@@ -281,7 +284,7 @@ public class DdsLogger {
         error.setLabel(tError.getLabel());
         error.setDescription(tError.getDescription());
         error.setResource(primaryResource);
-        logError(error);
+        logger.error(createLog(error));
     }
 
     public LogType logAudit(DdsLogs tLog, String resource, String description) {
@@ -292,7 +295,7 @@ public class DdsLogger {
         log.setLabel(tLog.getLabel());
         log.setDescription(description);
         log.setResource(resource);
-        logLog(log);
+        logger.info(createLog(log));
         return log;
     }
 
@@ -304,7 +307,7 @@ public class DdsLogger {
         log.setLabel(tLog.getLabel());
         log.setDescription(tLog.getDescription());
         log.setResource(resource);
-        logLog(log);
+        logger.info(createLog(log));
         return log;
     }
 
@@ -316,7 +319,7 @@ public class DdsLogger {
         error.setLabel(tError.getLabel());
         error.setDescription(tError.getDescription());
         error.setResource(resource);
-        logError(error);
+        logger.error(createLog(error));
         return error;
     }
 
@@ -328,7 +331,7 @@ public class DdsLogger {
         error.setLabel(tError.getLabel());
         error.setDescription(String.format(tError.getDescription(), secondaryResource));
         error.setResource(primaryResource);
-        logError(error);
+        logger.error(createLog(error));
         return error;
     }
 
@@ -353,37 +356,21 @@ public class DdsLogger {
         return logsMap.get(id);
     }
 
-    private void logError(LogType tError) {
-        StringBuilder sb = new StringBuilder("code: ");
-        sb.append(tError.getCode());
-        sb.append(", label: ");
-        sb.append(tError.getLabel());
-        sb.append(", resource: ");
-        sb.append(tError.getResource());
-        sb.append(", description: ");
-        sb.append(tError.getDescription());
-
-        if (tError.getAudit() != null) {
-            sb.append(", audit: ");
-            sb.append(tError.getAudit().toString());
-        }
-        logger.error(sb.toString());
+    private String createLog(LogType log) {
+        logEntry(log);
+        return logToString(log);
     }
 
-    private void logLog(LogType tLog) {
-        StringBuilder sb = new StringBuilder("code: ");
-        sb.append(tLog.getCode());
-        sb.append(", label: ");
-        sb.append(tLog.getLabel());
-        sb.append(", resource: ");
-        sb.append(tLog.getResource());
-        sb.append(", description: ");
-        sb.append(tLog.getDescription());
+    private final static String LOG_FORMAT = "code: %d, label: %s, resource: %s, description: %s";
+    public String logToString(LogType log) {
+        StringBuilder sb = new StringBuilder();
+        Formatter formatter = new Formatter(sb);
+        formatter.format(LOG_FORMAT, log.getCode(), log.getLabel(), log.getResource(), log.getDescription());
 
-        if (tLog.getAudit() != null) {
+        if (log.getAudit() != null) {
             sb.append(", audit: ");
-            sb.append(tLog.getAudit().toString());
+            sb.append(log.getAudit().toString());
         }
-        logger.info(sb.toString());
+        return sb.toString();
     }
 }

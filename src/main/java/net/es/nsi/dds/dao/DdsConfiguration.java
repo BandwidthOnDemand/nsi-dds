@@ -1,5 +1,6 @@
 package net.es.nsi.dds.dao;
 
+import com.google.common.base.Optional;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,6 +13,9 @@ import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.api.jaxb.DdsConfigurationType;
 import net.es.nsi.dds.api.jaxb.PeerURLType;
 import net.es.nsi.dds.config.Properties;
+import net.es.nsi.dds.config.http.HttpConfig;
+import net.es.nsi.dds.config.http.HttpsConfig;
+import net.es.nsi.dds.management.jaxb.LogType;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.spring.SpringApplicationContext;
@@ -39,12 +43,7 @@ public class DdsConfiguration {
     public static final int NOTIFICATIONSIZE_DEFAULT_SIZE = 10;
     public static final int NOTIFICATIONSIZE_MIN_SIZE = 1;
 
-    public static final int PAGESIZE_MAX_SIZE = 100;
-    public static final int PAGESIZE_DEFAULT_SIZE = 50;
-    public static final int PAGESIZE_MIN_SIZE = 5;
-
     private String filename = null;
-
     private long lastModified = 0;
     private String nsaId = null;
     private String baseURL = null;
@@ -55,7 +54,8 @@ public class DdsConfiguration {
     private long expiryInterval = EXPIRE_INTERVAL_DEFAULT;
     private int actorPool = ACTORPOOL_DEFAULT_SIZE;
     private int notificationSize;
-    private int pageSize;
+    private HttpConfig httpConfig = null;
+    private Optional<HttpsConfig> clientConfig = Optional.absent();
     private Set<PeerURLType> discoveryURL = new HashSet<>();
 
     public static DdsConfiguration getInstance() {
@@ -63,9 +63,6 @@ public class DdsConfiguration {
         return configurationReader;
     }
 
-    /**
-     * @return the filename
-     */
     public String getFilename() {
         return filename;
     }
@@ -75,10 +72,12 @@ public class DdsConfiguration {
     }
 
     public synchronized void load() throws IllegalArgumentException, JAXBException, IOException, NullPointerException {
+        LogType errorAudit;
+
         // Make sure the condifuration file is set.
         if (getFilename() == null || getFilename().isEmpty()) {
-            ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
-            throw new IllegalArgumentException();
+            errorAudit = ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
+            throw new IllegalArgumentException(ddsLogger.logToString(errorAudit));
         }
 
         File file = null;
@@ -112,21 +111,18 @@ public class DdsConfiguration {
         }
 
         if (config.getNsaId() == null || config.getNsaId().isEmpty()) {
-            ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "nsaId", config.getNsaId());
-            throw new FileNotFoundException("Invalid nsaId: " + config.getNsaId());
+            errorAudit = ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "nsaId", config.getNsaId());
+            throw new FileNotFoundException(ddsLogger.logToString(errorAudit));
         }
 
         setNsaId(config.getNsaId());
 
         if (config.getBaseURL() == null || config.getBaseURL().isEmpty()) {
-            ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "baseURL", config.getBaseURL());
-            throw new FileNotFoundException("Invalid baseURL: " + config.getBaseURL());
+            errorAudit = ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_PARAMETER, "baseURL", config.getBaseURL());
+            throw new FileNotFoundException(ddsLogger.logToString(errorAudit));
         }
 
         setBaseURL(config.getBaseURL());
-
-        // We may need the application base directory for this next bit.
-        String basedir = System.getProperty(Properties.DDS_SYSTEM_PROPERTY_BASEDIR);
 
         // Local document directory option from which we dynamically load files.
         if (config.getDocuments() != null && !config.getDocuments().isEmpty()) {
@@ -186,11 +182,9 @@ public class DdsConfiguration {
             setNotificationSize(config.getNotificationSize());
         }
 
-        if (config.getPageSize() < PAGESIZE_MIN_SIZE || config.getPageSize() > PAGESIZE_MAX_SIZE) {
-            setPageSize(PAGESIZE_DEFAULT_SIZE);
-        }
-        else {
-            setPageSize(config.getPageSize());
+        httpConfig = new HttpConfig(config.getServer());
+        if (config.getClient() != null) {
+            clientConfig = Optional.of(new HttpsConfig(config.getClient()));
         }
 
         for (PeerURLType url : config.getPeerURL()) {
@@ -371,19 +365,15 @@ public class DdsConfiguration {
         this.notificationSize = notificationSize;
     }
 
-    /**
-     * @return the pageSize
-     */
-    @Deprecated
-    public int getPageSize() {
-        return pageSize;
+    public void setHttpConfig(HttpConfig httpConfig) {
+        this.httpConfig = httpConfig;
     }
 
-    /**
-     * @param pageSize the pageSize to set
-     */
-    @Deprecated
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
+    public HttpConfig getHttpConfig() {
+        return httpConfig;
+    }
+
+    public HttpsConfig getClientConfig() {
+        return clientConfig.orNull();
     }
 }
