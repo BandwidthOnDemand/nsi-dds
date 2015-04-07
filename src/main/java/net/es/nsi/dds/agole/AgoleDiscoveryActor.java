@@ -27,6 +27,8 @@ import net.es.nsi.dds.api.jaxb.NmlNSARelationType;
 import net.es.nsi.dds.api.jaxb.NmlNSAType;
 import net.es.nsi.dds.api.jaxb.NmlServiceType;
 import net.es.nsi.dds.api.jaxb.NmlTopologyType;
+import net.es.nsi.dds.api.jaxb.PeerRoleEnum;
+import net.es.nsi.dds.api.jaxb.PeersWithType;
 import net.es.nsi.dds.schema.NsiConstants;
 import net.es.nsi.dds.schema.XmlUtilities;
 import org.slf4j.Logger;
@@ -304,17 +306,20 @@ public class AgoleDiscoveryActor extends UntypedActor {
         return topologies;
     }
 
-    private Collection<String> parsePeersWith(List<NmlNSARelationType> relationList) {
-        List<String> peersWith = new ArrayList<>();
+    private Collection<PeersWithType> parsePeersWith(List<NmlNSARelationType> relationList) {
+        List<PeersWithType> peersWithList = new ArrayList<>();
         for (NmlNSARelationType relation : relationList) {
             if (NsiConstants.NML_PEERSWITH_RELATION.equalsIgnoreCase(relation.getType())) {
                 for (NmlNSAType nsa : relation.getNSA()) {
-                    peersWith.add(nsa.getId().trim());
+                    PeersWithType peersWith = factory.createPeersWithType();
+                    peersWith.setRole(PeerRoleEnum.PA);
+                    peersWith.setValue(nsa.getId().trim());
+                    peersWithList.add(peersWith);
                 }
             }
         }
 
-        return peersWith;
+        return peersWithList;
     }
 
     private List<InterfaceType> parseService(List<NmlServiceType> services) {
