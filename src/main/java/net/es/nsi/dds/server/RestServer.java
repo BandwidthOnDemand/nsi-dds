@@ -4,6 +4,7 @@
  */
 package net.es.nsi.dds.server;
 
+import net.es.nsi.dds.authorization.SecurityFilter;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import java.io.IOException;
@@ -90,7 +91,8 @@ public class RestServer {
             rs.register(intf);
         }
 
-        return rs.register(new MoxyXmlFeature())
+        return rs.registerClasses(SecurityFilter.class)
+                .register(new MoxyXmlFeature())
                 .register(new LoggingFilter(java.util.logging.Logger.getLogger(RestServer.class.getName()), true));
     }
 
@@ -108,7 +110,8 @@ public class RestServer {
                 log.debug("RestServer: Creating secure server.");
                 server = Optional.of(GrizzlyHttpServerFactory.createHttpServer(
                     getServerURI(), getResourceConfig(), true,
-                    new SSLEngineConfigurator(sslContext.get(), false, true, false)));
+                    new SSLEngineConfigurator(sslContext.get())
+                        .setNeedClientAuth(true).setClientMode(false)));
             }
             else {
                 log.debug("RestServer: Creating server.");

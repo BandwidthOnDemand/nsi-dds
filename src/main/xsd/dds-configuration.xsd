@@ -66,6 +66,7 @@
             <xsd:element name="notificationSize" type="xsd:int" default="10" />
             <xsd:element name="server" type="tns:ServerType" minOccurs="0" />
             <xsd:element name="client" type="tns:SecureType" minOccurs="0" />
+            <xsd:element name="accessControl" type="tns:AccessControlType" minOccurs="0" />
             <xsd:element name="peerURL" type="tns:PeerURLType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
@@ -107,6 +108,37 @@
         </xsd:sequence>
         <xsd:attribute   name="type" type="xsd:string" default="JKS"/>
     </xsd:complexType>
+    
+    <xsd:complexType name="AccessControlType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="dn" type="tns:DistinguishedNameType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute   name="enabled" type="xsd:boolean" default="false"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="DistinguishedNameType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:extension  base="xsd:string">
+                <xsd:attribute  name="access"  type="tns:AccessControlPermission"  default="read"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:simpleType name="AccessControlPermission">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration  value="read"/>
+            <xsd:enumeration  value="write"/>
+            <xsd:enumeration  value="admin"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 
     <xsd:complexType name="StaticType">
         <xsd:annotation>

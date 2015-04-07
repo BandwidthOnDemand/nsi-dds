@@ -10,8 +10,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.bind.JAXBException;
+import net.es.nsi.dds.api.jaxb.AccessControlType;
 import net.es.nsi.dds.api.jaxb.DdsConfigurationType;
+import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.api.jaxb.PeerURLType;
+import net.es.nsi.dds.authorization.AccessControlList;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.config.http.HttpsConfig;
@@ -26,6 +29,7 @@ import net.es.nsi.dds.spring.SpringApplicationContext;
  */
 public class DdsConfiguration {
     private final DdsLogger ddsLogger = DdsLogger.getLogger();
+    private final ObjectFactory factory = new ObjectFactory();
 
     public static final long MAX_AUDIT_INTERVAL = 86400L; // 24 hours in seconds
     public static final long DEFAULT_AUDIT_INTERVAL = 1200L; // 20 minutes in seconds
@@ -56,7 +60,8 @@ public class DdsConfiguration {
     private int notificationSize;
     private HttpConfig httpConfig = null;
     private Optional<HttpsConfig> clientConfig = Optional.absent();
-    private Set<PeerURLType> discoveryURL = new HashSet<>();
+    private AccessControlList accessControlList;
+    private final Set<PeerURLType> discoveryURL = new HashSet<>();
 
     public static DdsConfiguration getInstance() {
         DdsConfiguration configurationReader = SpringApplicationContext.getBean("ddsConfiguration", DdsConfiguration.class);
@@ -186,10 +191,18 @@ public class DdsConfiguration {
         if (config.getClient() != null) {
             clientConfig = Optional.of(new HttpsConfig(config.getClient()));
         }
-
-        for (PeerURLType url : config.getPeerURL()) {
-            discoveryURL.add(url);
+        
+        Optional<AccessControlType> accessControl = Optional.fromNullable(config.getAccessControl());
+        if (!accessControl.isPresent()) {
+            AccessControlType ac = factory.createAccessControlType();
+            accessControl = Optional.of(ac);
         }
+        
+        accessControlList = new AccessControlList(accessControl.get());
+
+        config.getPeerURL().stream().forEach((url) -> {
+            discoveryURL.add(url);
+        });
 
         lastModified = lastMod;
     }
@@ -375,5 +388,9 @@ public class DdsConfiguration {
 
     public HttpsConfig getClientConfig() {
         return clientConfig.orNull();
+    }
+    
+    public AccessControlList getAccessControlList() {
+        return accessControlList;
     }
 }

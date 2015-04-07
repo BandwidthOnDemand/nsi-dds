@@ -54,16 +54,16 @@ public class DdsProvider implements DiscoveryProvider {
     private DdsConfiguration configReader;
 
     // In-memory document cache.
-    private DocumentCache documentCache;
+    private final DocumentCache documentCache;
 
     // Local document repository for persistent document storage.
-    private DocumentCache documentRepository;
+    private final DocumentCache documentRepository;
 
     // The actor system used to send notifications.
-    private DdsActorController ddsActorController;
+    private final DdsActorController ddsActorController;
 
     // In-memory subscription cache indexed by subscriptionId.
-    private Map<String, Subscription> subscriptions = new ConcurrentHashMap<>();
+    private final Map<String, Subscription> subscriptions = new ConcurrentHashMap<>();
 
     public DdsProvider(DdsConfiguration configuration, DocumentCache documentCache, DocumentCache documentRepository, DdsActorController ddsActorController) {
         this.configReader = configuration;

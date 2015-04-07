@@ -25,6 +25,12 @@ public class Exceptions {
         Response ex = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new GenericEntity<JAXBElement<ErrorType>>(factory.createError(error)){}).build();
         return new WebApplicationException(ex);
     }
+    
+    public static WebApplicationException unauthorizedException(String resource, String parameter) {
+        ErrorType error = DiscoveryError.getErrorType(DiscoveryError.UNAUTHORIZED, resource, parameter);
+        Response ex = Response.status(Response.Status.UNAUTHORIZED).entity(new GenericEntity<JAXBElement<ErrorType>>(factory.createError(error)){}).build();
+        return new WebApplicationException(ex);
+    }
 
     public static WebApplicationException missingParameterException(String resource, String parameter) {
         ErrorType error = DiscoveryError.getErrorType(DiscoveryError.MISSING_PARAMETER, resource, parameter);

@@ -17,7 +17,11 @@
         <constructor-arg index="0" ref="ddsConfiguration"/>
     </bean>
     
-    <bean id="ddsServer" class="net.es.nsi.dds.server.DdsServer" scope="singleton">
+    <bean id="authorizationProvider" class="net.es.nsi.dds.authorization.DnAuthorizationProvider" scope="singleton">
+        <constructor-arg index="0" ref="ddsConfiguration"/>
+    </bean>
+
+    <bean id="ddsServer" class="net.es.nsi.dds.server.DdsServer" scope="singleton" depends-on="authorizationProvider">
         <constructor-arg index="0" ref="ddsConfiguration"/>
     </bean>
 

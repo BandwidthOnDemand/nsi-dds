@@ -52,6 +52,16 @@
             <relative>/www</relative>
         </static>
     </server>
+    
+    <accessControl enabled="true">
+        <dn access="read">CN=Go Daddy Secure Certificate Authority - G2, OU=http://certs.godaddy.com/repository/, O="GoDaddy.com, Inc.", L=Scottsdale, ST=Arizona, C=US</dn>
+        <dn access="read">CN=Go Daddy Root Certificate Authority - G2, O="GoDaddy.com, Inc.", L=Scottsdale, ST=Arizona, C=US</dn>
+        <dn access="read">CN=TERENA SSL CA, O=TERENA, C=NL</dn>
+        <dn access="admin">CN=bod.netherlight.net, OU=Domain Control Validated</dn>
+        <dn access="write">emailAddress=opennsa@northwestern.edu, OU=iCAIR - StarLight, L=Chicago, O=Northwestern U IT, ST=Illinois, C=US</dn>
+        <dn access="write">1.2.840.113549.1.9.1=#16186F70656E6E7361406E6F7274687765737465726E2E656475, OU=iCAIR - StarLight, L=Chicago, O=Northwestern U IT, ST=Illinois, C=US</dn>
+    </accessControl>
+    
     <!--
     <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">http://localhost:8401/dds</peerURL>
     <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://bod.acc.dlp.surfnet.nl/nsa-discovery</peerURL>
