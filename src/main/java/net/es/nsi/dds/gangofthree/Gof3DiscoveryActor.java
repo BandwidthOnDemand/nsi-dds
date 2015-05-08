@@ -9,28 +9,27 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.api.jaxb.AnyType;
 import net.es.nsi.dds.api.jaxb.DocumentEventType;
 import net.es.nsi.dds.api.jaxb.DocumentType;
 import net.es.nsi.dds.api.jaxb.InterfaceType;
+import net.es.nsi.dds.api.jaxb.NmlTopologyType;
 import net.es.nsi.dds.api.jaxb.NotificationType;
 import net.es.nsi.dds.api.jaxb.NsaType;
-import net.es.nsi.dds.api.jaxb.NmlTopologyType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
-import net.es.nsi.dds.provider.DdsProvider;
 import net.es.nsi.dds.client.RestClient;
+import net.es.nsi.dds.provider.DdsProvider;
 import net.es.nsi.dds.schema.NmlParser;
 import net.es.nsi.dds.schema.NsiConstants;
 import net.es.nsi.dds.schema.XmlUtilities;
 import org.apache.http.client.utils.DateUtils;
 import org.glassfish.jersey.client.ChunkedInput;
-import org.glassfish.jersey.client.ClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,29 +145,31 @@ public class Gof3DiscoveryActor extends UntypedActor {
                 XMLGregorianCalendar cal = XmlUtilities.longToXMLGregorianCalendar(time);
 
                 if (addNsaDocument(nsa, cal) == false) {
-                    log.debug("discoverTopology: addNsaDocument() returned false " + message.getNsaURL());
+                    log.debug("discoverNSA: addNsaDocument() returned false " + message.getNsaURL());
                     return false;
                 }
             }
             else if (response.getStatus() == Response.Status.NOT_MODIFIED.getStatusCode()) {
                 // We did not get an updated document.
-                log.debug("discover: NSA document not modified " + message.getNsaURL());
+                log.debug("discoverNSA: NSA document not modified " + message.getNsaURL());
             }
             else {
-                log.error("discover: get of NSA document failed " + response.getStatus() + ", url=" + message.getNsaURL());
+                log.error("discoverNSA: get of NSA document failed " + response.getStatus() + ", url=" + message.getNsaURL());
                 // TODO: Should we clear the topology URL and lastModified
                 // dates for errors and route back?
                 return false;
             }
         }
-        catch (DatatypeConfigurationException ex) {
-            log.error("discover: NSA document failed to create lastModified " + message.getNsaURL());
+        catch (IllegalStateException ex) {
+            log.error("discoverNSA: failed to retrieve NSA document from endpoint " + message.getNsaURL());
             return false;
         }
-        catch (Exception ex) {
-            // TODO: Should we clear the topology URL and lastModified
-            // dates for errors and route back?
-            log.error("discover: failed to retrieve NSA document from endpoint " + message.getNsaURL(), ex);
+        catch (JAXBException ex) {
+            log.error("discoverNSA: invalid document returned from endpoint " + message.getNsaURL());
+            return false;
+        }
+        catch (DatatypeConfigurationException ex) {
+            log.error("discoverNSA: NSA document failed to create lastModified " + message.getNsaURL());
             return false;
         }
         finally {
@@ -186,7 +187,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
         log.debug("discoverTopology: topology=" + url);
 
         //Client client = ClientBuilder.newClient(clientConfig);
-        long time = lastModifiedTime.longValue();
+        long time = lastModifiedTime;
         try {
             WebTarget topologyTarget = client.target(url);
             Response response = topologyTarget.request("*/*") // MediaTypes.NSI_TOPOLOGY_V2
@@ -241,14 +242,18 @@ public class Gof3DiscoveryActor extends UntypedActor {
                 log.error("discoverTopology: get of Topology document failed " + response.getStatus() + ", topology=" + url);
             }
         }
-        catch (DatatypeConfigurationException ex) {
-            log.error("discoverTopology: Topology document failed to create lastModified " + url);
-            time = 0L;
-        }
-        catch (Exception ex) {
+        catch (IllegalStateException ex) {
             // TODO: Should we clear the topology URL and lastModified
             // dates for errors and route back?
-            log.error("discoverTopology: failed to retrieve Topology document from endpoint " + url, ex);
+            log.error("discoverTopology: failed to retrieve Topology document from endpoint " + url);
+            time = 0L;
+        }
+        catch (JAXBException ex) {
+            log.error("discoverTopology: invalid document returned from endpoint " + url);
+            time = 0L;
+        }
+        catch (DatatypeConfigurationException ex) {
+            log.error("discoverTopology: Topology document failed to create lastModified " + url);
             time = 0L;
         }
         finally {
@@ -256,7 +261,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
         }
 
         log.debug("discoverTopology: exiting for topology=" + url + " with lastModifiedTime=" + new Date(time));
-        return new Long(time);
+        return time;
     }
 
     private boolean addNsaDocument(NsaType nsa, XMLGregorianCalendar discovered) {

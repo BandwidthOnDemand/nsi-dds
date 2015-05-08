@@ -1,19 +1,8 @@
 package net.es.nsi.dds.management;
 
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBElement;
-import net.es.nsi.dds.management.jaxb.ObjectFactory;
-import net.es.nsi.dds.management.jaxb.TimerListType;
-import net.es.nsi.dds.management.jaxb.TimerStatusType;
-import net.es.nsi.dds.management.jaxb.TimerType;
 import net.es.nsi.dds.test.TestConfig;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -29,7 +18,7 @@ public class TimersTest {
     public static void oneTimeSetUp() {
         System.out.println("*************************************** TimersTest oneTimeSetUp ***********************************");
         testConfig = new TestConfig();
-        management = testConfig.getTarget().path("management");
+        management = testConfig.getTarget().path("dds").path("management");
         System.out.println("*************************************** TimersTest oneTimeSetUp done ***********************************");
     }
 

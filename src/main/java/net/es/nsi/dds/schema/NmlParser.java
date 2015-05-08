@@ -131,7 +131,6 @@ public class NmlParser {
      * @param xml String containing the XML formated NSA object.
      * @return A JAXB compiled NSAType object.
      * @throws JAXBException If the XML contained in the string is not valid.
-     * @throws JAXBException If the XML is not well formed.
      */
     public NsaType parseNsaFromString(String xml) throws JAXBException {
         // Make sure we initialized properly.
@@ -143,6 +142,7 @@ public class NmlParser {
         NsaType nsaElement = null;
         try (StringReader reader = new StringReader(xml)) {
             Object unmarshal = jaxbContextNSA.createUnmarshaller().unmarshal(reader);
+
             if (unmarshal instanceof JAXBElement<?>) {
                 JAXBElement<?> jaxb = (JAXBElement<?>) unmarshal;
                 if (jaxb.getDeclaredType() == NsaType.class) {
@@ -156,6 +156,7 @@ public class NmlParser {
                 throw new JAXBException("parseNSAFromString: Expected JAXBElement<?> but found " + unmarshal.getClass());
             }
         }
+
         // Return the NSAType object.
         return nsaElement;
     }

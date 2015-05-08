@@ -48,9 +48,9 @@ public class RegistrationActor extends UntypedActor {
     private final DdsLogger logger = DdsLogger.getLogger();
 
     private final ObjectFactory factory = new ObjectFactory();
-    private DdsConfiguration discoveryConfiguration;
-    private RemoteSubscriptionCache remoteSubscriptionCache;
-    private RestClient restClient;
+    private final DdsConfiguration discoveryConfiguration;
+    private final RemoteSubscriptionCache remoteSubscriptionCache;
+    private final RestClient restClient;
 
     public RegistrationActor(DdsConfiguration discoveryConfiguration) {
         this.discoveryConfiguration = discoveryConfiguration;

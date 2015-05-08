@@ -26,7 +26,7 @@ public class LogsTest {
     public static void oneTimeSetUp() {
         System.out.println("*************************************** LogsTest oneTimeSetUp ***********************************");
         testConfig = new TestConfig();
-        management = testConfig.getTarget().path("management");
+        management = testConfig.getTarget().path("dds").path("management");
         System.out.println("*************************************** LogsTest oneTimeSetUp done ***********************************");
     }
 

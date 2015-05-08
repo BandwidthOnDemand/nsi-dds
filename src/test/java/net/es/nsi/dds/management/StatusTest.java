@@ -2,13 +2,8 @@ package net.es.nsi.dds.management;
 
 
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import net.es.nsi.dds.management.jaxb.StatusType;
-import net.es.nsi.dds.management.jaxb.TopologyStatusType;
 import net.es.nsi.dds.test.TestConfig;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -29,7 +24,7 @@ public class StatusTest {
     public static void oneTimeSetUp() {
         System.out.println("*************************************** StatusTest oneTimeSetUp ***********************************");
         testConfig = new TestConfig();
-        management = testConfig.getTarget().path("management").path("status");
+        management = testConfig.getTarget().path("dds").path("management").path("status");
         System.out.println("*************************************** StatusTest oneTimeSetUp done ***********************************");
     }
 

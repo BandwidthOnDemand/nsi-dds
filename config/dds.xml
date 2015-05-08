@@ -48,6 +48,8 @@
     <expiryInterval>600</expiryInterval>
     <baseURL>http://localhost:8401/dds</baseURL>
 
+    <server address="localhost" port="8401" packageName="net.es.nsi.dds" />
+
     <!-- DDS service interfaces. -->
     <!-- <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://agg.netherlight.net/dds</peerURL> -->
     <!-- <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://nsi-aggr-west.es.net/discovery</peerURL> -->

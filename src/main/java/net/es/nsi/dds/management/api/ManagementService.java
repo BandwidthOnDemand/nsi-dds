@@ -1,9 +1,11 @@
 package net.es.nsi.dds.management.api;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.Properties;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -17,16 +19,15 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import net.es.nsi.dds.config.ConfigurationManager;
-import net.es.nsi.dds.management.logs.DdsErrors;
-import net.es.nsi.dds.management.logs.DdsLogger;
+import net.es.nsi.dds.management.jaxb.AttributeType;
 import net.es.nsi.dds.management.jaxb.LogEnumType;
 import net.es.nsi.dds.management.jaxb.LogListType;
 import net.es.nsi.dds.management.jaxb.LogType;
-import net.es.nsi.dds.management.jaxb.StatusType;
 import net.es.nsi.dds.management.jaxb.ObjectFactory;
-import net.es.nsi.dds.provider.DiscoveryProvider;
-import net.es.nsi.dds.schema.XmlUtilities;
+import net.es.nsi.dds.management.jaxb.VersionType;
+import net.es.nsi.dds.management.logs.DdsErrors;
+import net.es.nsi.dds.management.logs.DdsLogger;
+import net.es.nsi.dds.schema.NsiConstants;
 import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +37,48 @@ import org.slf4j.LoggerFactory;
  *
  * @author hacksaw
  */
-@Path("/management")
+@Path("/dds/management")
 public class ManagementService {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final DdsLogger ddsLogger = DdsLogger.getLogger();
     private final ObjectFactory managementFactory = new ObjectFactory();
+
+    /**
+     * Get this DDS instance version information.
+     *
+     * @return
+     */
+    @GET
+    @Path("/version")
+    @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
+    public Response version() {
+        log.debug("version: PING!");
+
+        final Properties properties = new Properties();
+
+        // Load the properties file containing our $project.version from maven.
+        try {
+            properties.load(this.getClass().getClassLoader().getResourceAsStream("version.properties"));
+            properties.load(this.getClass().getClassLoader().getResourceAsStream("git.properties"));
+        }
+        catch (IllegalArgumentException | IOException | NullPointerException ex) {
+            log.error("version: Failed to load properties file", ex);
+            return Response.serverError().build();
+        }
+
+        VersionType result = managementFactory.createVersionType();
+        for (Object key : properties.keySet()) {
+            String type = (String) key;
+            String value = properties.getProperty(type);
+
+            AttributeType attribute = managementFactory.createAttributeType();
+            attribute.setType(type);
+            attribute.setValue(value);
+            result.getAttribute().add(attribute);
+        }
+
+        return Response.ok().entity(new GenericEntity<JAXBElement<VersionType>>(managementFactory.createVersion(result)) {}).build();
+    }
 
     /**
      * Retrieve a list of logs matching the specified criteria.  All parameters

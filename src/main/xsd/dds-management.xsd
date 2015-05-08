@@ -2,10 +2,27 @@
 <xsd:schema targetNamespace="http://schemas.es.net/nsi/2013/07/management/types"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:tns="http://schemas.es.net/nsi/2013/07/management/types">
-    
+
+    <!-- DDS server load version information. -->
+    <xsd:element name="version"  type="tns:VersionType" />
+
+    <xsd:complexType name="VersionType">
+        <xsd:sequence>
+            <xsd:element name="attribute" type="tns:AttributeType" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="AttributeType">
+        <xsd:simpleContent>
+            <xsd:extension  base="xsd:string">
+                <xsd:attribute  name="type"  type="xsd:string"  use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
     <!-- OAM relatated elements and types. -->
     <xsd:element name="status"  type="tns:StatusType" />
-    
+
     <xsd:complexType name="StatusType">
         <xsd:sequence>
             <xsd:element name="status"              type="tns:TopologyStatusType" />
@@ -26,17 +43,17 @@
             <xsd:enumeration  value="PartiallyCompleted" />
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:element name="timers"  type="tns:TimerListType" />
-    
+
     <xsd:complexType name="TimerListType">
         <xsd:sequence>
             <xsd:element name="timer" type="tns:TimerType" minOccurs="0" maxOccurs="unbounded" />
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:element name="timer"   type="tns:TimerType" />
-    
+
     <xsd:complexType name="TimerType">
         <xsd:sequence>
             <xsd:element name="timerInterval" type="xsd:long" />
@@ -46,9 +63,9 @@
         <xsd:attribute name="id"   type="xsd:anyURI" />
         <xsd:attribute name="href" type="xsd:anyURI" />
     </xsd:complexType>
-    
+
     <xsd:element name="timerStatus"   type="tns:TimerStatusType" />
-    
+
     <xsd:simpleType name="TimerStatusType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration  value="Unknown"/>
@@ -57,18 +74,18 @@
             <xsd:enumeration  value="Haulted"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <!-- Log elements and type definitions. -->
     <xsd:element name="logs"    type="tns:LogListType" />
-    
+
     <xsd:complexType name="LogListType">
         <xsd:sequence>
             <xsd:element ref="tns:log" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:element name="log"     type="tns:LogType" />
-    
+
     <xsd:complexType name="LogType">
         <xsd:sequence>
             <xsd:element name="code"        type="xsd:int" />
@@ -82,7 +99,7 @@
         <xsd:attribute name="audit" type="xsd:dateTime" use="optional" />
         <xsd:attribute name="date" type="xsd:dateTime" use="required" />
     </xsd:complexType>
-    
+
     <xsd:simpleType name="LogEnumType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration  value="Log"/>
