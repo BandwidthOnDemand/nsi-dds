@@ -8,7 +8,7 @@ nsi-pce.iml
 *.iml
 config/cache/*.xml
 config/repository/*.xml
-/src/test/resources/config/cache/
-/src/test/resources/config/repository/
-/src/main/resources/git.properties
+src/test/resources/config/cache/
+src/test/resources/config/repository/
+src/main/resources/git.properties
 *.swp

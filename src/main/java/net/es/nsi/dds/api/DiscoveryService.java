@@ -708,6 +708,8 @@ public class DiscoveryService {
             @QueryParam("requesterId") String requesterId,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws WebApplicationException {
 
+        log.debug("getSubscriptions: requesterId=" + requesterId);
+
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
         Date lastModified = null;
@@ -802,6 +804,8 @@ public class DiscoveryService {
             @PathParam("id") String id,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws WebApplicationException {
 
+        log.debug("getSubscriptions: id=" + id);
+
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
         Date lastDiscovered = null;
@@ -840,6 +844,8 @@ public class DiscoveryService {
             @HeaderParam("Accept") String accept,
             @PathParam("id") String id,
             InputStream request) throws WebApplicationException {
+
+        log.debug("editSubscription: id=" + id);
 
         // Parse the XML into JAXB objects.
         SubscriptionRequestType subscriptionRequest;
