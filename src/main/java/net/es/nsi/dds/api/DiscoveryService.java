@@ -768,6 +768,9 @@ public class DiscoveryService {
                 log.error("addSubscription: Failed to parse incoming request.", invalidXmlException);
                 throw invalidXmlException;
             }
+
+            log.debug("addSubscription: " + subscriptionRequest.getRequesterId());
+            
         } catch (JAXBException | IOException ex) {
             WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/subscriptions", "Unable to process XML " + ex.getMessage());
             log.error("addSubscription: Failed to parse incoming request.", invalidXmlException);

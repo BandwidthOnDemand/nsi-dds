@@ -4,9 +4,6 @@
  */
 package net.es.nsi.dds.actors;
 
-import net.es.nsi.dds.messages.Notification;
-import net.es.nsi.dds.messages.DocumentEvent;
-import net.es.nsi.dds.messages.SubscriptionEvent;
 import akka.actor.ActorRef;
 import akka.actor.Cancellable;
 import akka.actor.Props;
@@ -20,14 +17,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.api.jaxb.DocumentEventType;
+import net.es.nsi.dds.client.RestClient;
+import net.es.nsi.dds.dao.DdsConfiguration;
+import net.es.nsi.dds.dao.DocumentCache;
+import net.es.nsi.dds.messages.DocumentEvent;
+import net.es.nsi.dds.messages.Notification;
+import net.es.nsi.dds.messages.StartMsg;
+import net.es.nsi.dds.messages.SubscriptionEvent;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
-import net.es.nsi.dds.dao.DocumentCache;
 import net.es.nsi.dds.provider.Subscription;
-import net.es.nsi.dds.client.RestClient;
-import net.es.nsi.dds.messages.StartMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.concurrent.duration.Duration;
@@ -38,11 +38,11 @@ import scala.concurrent.duration.Duration;
  */
 public class NotificationRouter extends UntypedActor {
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private DdsActorSystem ddsActorSystem;
-    private DdsConfiguration discoveryConfiguration;
-    private DiscoveryProvider discoveryProvider;
-    private DocumentCache documentCache;
-    private RestClient restClient;
+    private final DdsActorSystem ddsActorSystem;
+    private final DdsConfiguration discoveryConfiguration;
+    private final DiscoveryProvider discoveryProvider;
+    private final DocumentCache documentCache;
+    private final RestClient restClient;
     private int poolSize;
     private int notificationSize;
     private Router router;
@@ -75,13 +75,13 @@ public class NotificationRouter extends UntypedActor {
         if (msg instanceof DocumentEvent) {
             // We have a document event.
             DocumentEvent de = (DocumentEvent) msg;
-            log.debug("NotificationRouter: document event " + de.getEvent() + ", id="  + de.getDocument().getId());
+            log.debug("NotificationRouter: document event " + de.getEvent() + ", id=" + de.getDocument().getId());
             routeDocumentEvent(de);
         }
         else if (msg instanceof SubscriptionEvent) {
             // We have a subscription event.
             SubscriptionEvent se = (SubscriptionEvent) msg;
-            log.debug("NotificationRouter: subscription event id=" + se.getSubscription().getId());
+            log.debug("NotificationRouter: subscription event id=" + se.getSubscription().getId() + ", requesterId=" + se.getSubscription().getSubscription().getRequesterId());
             routeSubscriptionEvent(se);
         }
         else if (msg instanceof Terminated) {
@@ -128,7 +128,7 @@ public class NotificationRouter extends UntypedActor {
         Collection<Document> documents = documentCache.values();
 
         // Clean up our trigger event.
-        log.debug("routeSubscriptionEvent: event=" + se.getEvent() + ", documents=" + documents.size() + ", size=" + notificationSize + ", action=" + se.getSubscription().getAction().isCancelled());
+        log.debug("routeSubscriptionEvent: requesterId=" + se.getSubscription().getSubscription().getRequesterId() + ", event=" + se.getEvent() + ", documents=" + documents.size() + ", postSize=" + notificationSize + ", action=" + se.getSubscription().getAction().isCancelled());
         se.getSubscription().setAction(null);
 
         // Send documents in chunks of 10.

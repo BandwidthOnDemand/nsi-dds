@@ -14,10 +14,10 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.messages.StartMsg;
+import static net.es.nsi.dds.spring.SpringExtension.SpringExtProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import static net.es.nsi.dds.spring.SpringExtension.SpringExtProvider;
 import org.springframework.context.ApplicationContextAware;
 
 /**
@@ -28,12 +28,12 @@ public class DdsActorController implements ApplicationContextAware {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     // Configuration reader.
-    private DdsActorSystem ddsActorSystem;
-    private DdsConfiguration configReader;
-    private List<ActorEntry> actorEntries;
+    private final DdsActorSystem ddsActorSystem;
+    private final DdsConfiguration configReader;
+    private final List<ActorEntry> actorEntries;
     private ApplicationContext applicationContext;
 
-    private List<ActorRef> startList = new ArrayList<>();
+    private final List<ActorRef> startList = new ArrayList<>();
 
     public DdsActorController(DdsActorSystem ddsActorSystem, DdsConfiguration configReader, ActorEntry... entries) {
         this.ddsActorSystem = ddsActorSystem;
