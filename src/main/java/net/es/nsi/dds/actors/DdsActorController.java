@@ -17,6 +17,7 @@ import net.es.nsi.dds.messages.StartMsg;
 import static net.es.nsi.dds.spring.SpringExtension.SpringExtProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -72,7 +73,7 @@ public class DdsActorController implements ApplicationContextAware {
         return configReader;
     }
 
-    public Cancellable scheduleNotification(Object message, long delay) {
+    public Cancellable scheduleNotification(Object message, long delay) throws BeansException {
         NotificationRouter notificationRouter = (NotificationRouter) applicationContext.getBean("notificationRouter");
         Cancellable scheduleOnce = notificationRouter.scheduleNotification(message, delay);
         return scheduleOnce;

@@ -768,18 +768,19 @@ public class DiscoveryService {
                 log.error("addSubscription: Failed to parse incoming request.", invalidXmlException);
                 throw invalidXmlException;
             }
-
-            log.debug("addSubscription: " + subscriptionRequest.getRequesterId());
-            
         } catch (JAXBException | IOException ex) {
             WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/subscriptions", "Unable to process XML " + ex.getMessage());
             log.error("addSubscription: Failed to parse incoming request.", invalidXmlException);
             throw invalidXmlException;
         }
 
+
+        log.debug("addSubscription: requesterId=" + subscriptionRequest.getRequesterId() + ", callback=" + subscriptionRequest.getCallback());
+
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
-        Subscription subscription;
-        subscription = discoveryProvider.addSubscription(subscriptionRequest, accept);
+        Subscription subscription = discoveryProvider.addSubscription(subscriptionRequest, accept);
+
+        log.debug("addSubscription: requesterId=" + subscriptionRequest.getRequesterId() + ", subscriptionId=" + subscription.getId());
 
         String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);
         JAXBElement<SubscriptionType> jaxb = factory.createSubscription(subscription.getSubscription());
@@ -880,7 +881,7 @@ public class DiscoveryService {
     @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     @Consumes({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     public Response deleteSubscription(@PathParam("id") String id) throws WebApplicationException {
-
+        log.debug("deleteSubscription: id=" + id);
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
         discoveryProvider.deleteSubscription(id);
         return Response.noContent().build();

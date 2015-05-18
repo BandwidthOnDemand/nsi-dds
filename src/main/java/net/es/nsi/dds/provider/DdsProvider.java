@@ -21,12 +21,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
-import net.es.nsi.dds.dao.DdsParser;
 import net.es.nsi.dds.actors.DdsActorController;
 import net.es.nsi.dds.api.DiscoveryError;
 import net.es.nsi.dds.api.Exceptions;
-import net.es.nsi.dds.dao.DdsConfiguration;
-import net.es.nsi.dds.dao.DocumentCache;
 import net.es.nsi.dds.api.jaxb.DocumentEventType;
 import net.es.nsi.dds.api.jaxb.DocumentType;
 import net.es.nsi.dds.api.jaxb.FilterType;
@@ -34,6 +31,9 @@ import net.es.nsi.dds.api.jaxb.NotificationType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.api.jaxb.SubscriptionRequestType;
 import net.es.nsi.dds.api.jaxb.SubscriptionType;
+import net.es.nsi.dds.dao.DdsConfiguration;
+import net.es.nsi.dds.dao.DdsParser;
+import net.es.nsi.dds.dao.DocumentCache;
 import net.es.nsi.dds.messages.DocumentEvent;
 import net.es.nsi.dds.messages.SubscriptionEvent;
 import net.es.nsi.dds.schema.XmlUtilities;
@@ -110,13 +110,15 @@ public class DdsProvider implements DiscoveryProvider {
 
     @Override
     public Subscription addSubscription(SubscriptionRequestType request, String encoding) {
+        log.debug("DdsProvider.addSubscription: requesterId=" + request.getRequesterId());
+
         // Populate a subscription object.
         Subscription subscription = new Subscription(request, encoding, configReader.getBaseURL());
 
         // Save the subscription.
         subscriptions.put(subscription.getId(), subscription);
 
-        // Now we need to schedule the send of the initail set of matching
+        // Now we need to schedule the send of the initial set of matching
         // documents in a notification to this subscription.  We delay the
         // send so that the requester has time to return and store the
         // subscription identifier.
@@ -125,6 +127,8 @@ public class DdsProvider implements DiscoveryProvider {
         se.setSubscription(subscription);
         Cancellable scheduleOnce = ddsActorController.scheduleNotification(se, 5);
         subscription.setAction(scheduleOnce);
+
+        log.debug("DdsProvider.addSubscription: schedule notification delivery for " + subscription.getId());
 
         return subscription;
     }
