@@ -85,7 +85,7 @@ public class DiscoveryService {
             @DefaultValue("false") @QueryParam("summary") boolean summary,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws Exception {
 
-        log.debug("getAll: summary=" + summary);
+        log.debug("getAll: summary=" + summary + ", If-Modified-Sinc=" + ifModifiedSince);
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 

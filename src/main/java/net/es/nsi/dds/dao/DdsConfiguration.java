@@ -8,7 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.api.jaxb.AccessControlType;
 import net.es.nsi.dds.api.jaxb.DdsConfigurationType;
@@ -61,7 +62,7 @@ public class DdsConfiguration {
     private HttpConfig httpConfig = null;
     private Optional<HttpsConfig> clientConfig = Optional.absent();
     private AccessControlList accessControlList;
-    private Collection<PeerURLType> discoveryURL = new CopyOnWriteArrayList<>();
+    private Map<String, PeerURLType> discoveryURL = new HashMap<>();
 
     public static DdsConfiguration getInstance() {
         DdsConfiguration configurationReader = SpringApplicationContext.getBean("ddsConfiguration", DdsConfiguration.class);
@@ -200,9 +201,10 @@ public class DdsConfiguration {
 
         accessControlList = new AccessControlList(accessControl.get());
 
-        Collection<PeerURLType> temp = new CopyOnWriteArrayList<>();
+        Map<String, PeerURLType> temp = new HashMap<>();
         for (PeerURLType peer : config.getPeerURL()) {
-            temp.add(peer);
+            String key = peer.getType() + "/" + peer.getValue();
+            temp.put(key, peer);
         }
         discoveryURL = temp;
 
@@ -220,27 +222,15 @@ public class DdsConfiguration {
     }
 
     public boolean isDocumentsConfigured() {
-        if (documents == null || documents.isEmpty()) {
-            return false;
-        }
-
-        return true;
+        return !(documents == null || documents.isEmpty());
     }
 
     public boolean isCacheConfigured() {
-        if (cache == null || cache.isEmpty()) {
-            return false;
-        }
-
-        return true;
+        return !(cache == null || cache.isEmpty());
     }
 
     public boolean isRepositoryConfigured() {
-        if (repository == null || repository.isEmpty()) {
-            return false;
-        }
-
-        return true;
+        return !(repository == null || repository.isEmpty());
     }
 
     /**
@@ -277,7 +267,7 @@ public class DdsConfiguration {
      * @return the discoveryURL
      */
     public Collection<PeerURLType> getDiscoveryURL() {
-        return Collections.unmodifiableCollection(discoveryURL);
+        return Collections.unmodifiableCollection(discoveryURL.values());
     }
 
     /**
