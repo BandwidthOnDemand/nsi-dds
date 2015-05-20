@@ -729,6 +729,7 @@ public class DiscoveryService {
                 }
 
                 results.getSubscription().add(subscription.getSubscription());
+                log.debug("getSubscriptions: " + subscription.getSubscription().getId());
             }
         }
 
@@ -897,6 +898,9 @@ public class DiscoveryService {
      * Endpoint for incoming DDS document notifications.  This endpoint is
      * registered against peer DDS servers.
      *
+     * @param host
+     * @param encoding
+     * @param source
      * @param request
      * @return
      * @throws WebApplicationException
@@ -905,9 +909,9 @@ public class DiscoveryService {
     @Path("/notifications")
     @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     @Consumes({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
-    public Response notifications(@HeaderParam("Accept") String encoding, @HeaderParam("X-Forwarded-For") String source, InputStream request) throws WebApplicationException {
+    public Response notifications(@HeaderParam("Host") String host, @HeaderParam("Accept") String encoding, @HeaderParam("X-Forwarded-For") String source, InputStream request) throws WebApplicationException {
 
-        log.debug("notifications: Incoming notification from " + source + ", "+ encoding);
+        log.debug("notifications: Incoming notification from Host=" + host + ", X-Forwarded-For=" + source + ", Accept="+ encoding);
 
         // Parse the XML into JAXB objects.
         NotificationListType notifications;

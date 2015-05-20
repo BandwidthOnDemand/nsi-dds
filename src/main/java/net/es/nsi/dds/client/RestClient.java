@@ -90,11 +90,11 @@ public class RestClient {
         }
 
         SSLContext sslContext = config.getSSLContext();
-        LayeredConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-                sslContext, hostnameVerifier);
+        LayeredConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+        PlainConnectionSocketFactory socketFactory = PlainConnectionSocketFactory.getSocketFactory();
 
         final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                .register("http", socketFactory)
                 .register("https", sslSocketFactory)
                 .build();
 
