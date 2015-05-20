@@ -4,9 +4,6 @@
  */
 package net.es.nsi.dds.actors;
 
-import net.es.nsi.dds.dao.RemoteSubscriptionCache;
-import net.es.nsi.dds.messages.RegistrationEvent;
-import net.es.nsi.dds.dao.RemoteSubscription;
 import akka.actor.UntypedActor;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,7 +15,6 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
-import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.api.jaxb.DocumentEventType;
 import net.es.nsi.dds.api.jaxb.ErrorType;
 import net.es.nsi.dds.api.jaxb.FilterCriteriaType;
@@ -27,12 +23,17 @@ import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.api.jaxb.SubscriptionListType;
 import net.es.nsi.dds.api.jaxb.SubscriptionRequestType;
 import net.es.nsi.dds.api.jaxb.SubscriptionType;
-import net.es.nsi.dds.util.UrlHelper;
 import net.es.nsi.dds.client.RestClient;
+import net.es.nsi.dds.dao.DdsConfiguration;
+import net.es.nsi.dds.dao.RemoteSubscription;
+import net.es.nsi.dds.dao.RemoteSubscriptionCache;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.management.logs.DdsLogs;
+import net.es.nsi.dds.messages.RegistrationEvent;
+import net.es.nsi.dds.messages.RegistrationEvent.Event;
 import net.es.nsi.dds.schema.NsiConstants;
+import net.es.nsi.dds.util.UrlHelper;
 import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,16 +67,21 @@ public class RegistrationActor extends UntypedActor {
     public void onReceive(Object msg) {
         if (msg instanceof RegistrationEvent) {
             RegistrationEvent event = (RegistrationEvent) msg;
-            log.debug("RegistrationActor: event=" + event.getEvent().name());
+            log.debug("RegistrationActor: event=" + event.getEvent().name() + ", url=" + event.getUrl());
 
-            if (event.getEvent() == RegistrationEvent.Event.Register) {
-                register(event);
-            }
-            else if (event.getEvent() == RegistrationEvent.Event.Update) {
-                update(event);
-            }
-            else if (event.getEvent() == RegistrationEvent.Event.Delete) {
-                delete(event);
+            switch (event.getEvent()) {
+                case Register:
+                    register(event);
+                    break;
+                case Update:
+                    update(event);
+                    break;
+                case Delete:
+                    delete(event);
+                    break;
+                default:
+                    unhandled(msg);
+                    break;
             }
         } else {
             unhandled(msg);
@@ -98,7 +104,11 @@ public class RegistrationActor extends UntypedActor {
      *
      * @param event
      */
-    private void register(RegistrationEvent event) {
+    private void register(RegistrationEvent event) throws IllegalArgumentException {
+        if (event.getEvent() != Event.Register) {
+            throw new IllegalArgumentException("register: invalid event type " + event.getEvent());
+        }
+
         final String remoteDdsURL = event.getUrl();
 
         // We will register for all events on all documents.
@@ -131,9 +141,8 @@ public class RegistrationActor extends UntypedActor {
                     .post(Entity.entity(new GenericEntity<JAXBElement<SubscriptionRequestType>>(jaxb) {}, NsiConstants.NSI_DDS_V1_XML));
         }
         catch (Exception ex) {
-            log.error("RegistrationActor.register: endpoint " + remoteDdsURL, ex);
+            log.error("RegistrationActor.register: error on endpoint " + remoteDdsURL, ex);
             logger.error(DdsErrors.DDS_SUBSCRIPTION_ADD_FAILED, remoteDdsURL);
-            //client.close();
             return;
         }
 
@@ -151,13 +160,14 @@ public class RegistrationActor extends UntypedActor {
             }
 
             response.close();
-            //client.close();
             return;
         }
 
         // Looks like we were successful so save the subscription information.
         SubscriptionType newSubscription = response.readEntity(SubscriptionType.class);
         logger.log(DdsLogs.DDS_SUBSCRIPTION_CREATED, remoteDdsURL, newSubscription.getHref());
+
+        log.debug("RegistrationActor: registered with remote DDS " + remoteDdsURL + ", id=" + newSubscription.getId());
 
         RemoteSubscription remoteSubscription = new RemoteSubscription();
         remoteSubscription.setDdsURL(remoteDdsURL);
@@ -174,9 +184,7 @@ public class RegistrationActor extends UntypedActor {
         }
 
         remoteSubscriptionCache.add(remoteSubscription);
-
         response.close();
-        //client.close();
 
         // Now that we have registered a new subscription make sure we clean up
         // and old ones that may exist on the remote DDS.
@@ -194,7 +202,6 @@ public class RegistrationActor extends UntypedActor {
         catch (Exception ex) {
             log.error("GET failed for " + webTarget.getUri().toASCIIString(), ex);
             logger.error(DdsErrors.DDS_SUBSCRIPTION_GET_FAILED, webTarget.getUri().toASCIIString());
-            //client.close();
             return;
         }
 
@@ -210,14 +217,12 @@ public class RegistrationActor extends UntypedActor {
                 logger.error(DdsErrors.DDS_SUBSCRIPTION_GET_FAILED_DETAILED, webTarget.getUri().toASCIIString(), response.getStatusInfo().getReasonPhrase());
             }
             response.close();
-            //client.close();
             return;
         }
 
         // Looks like we were successful so save the subscription information.
         SubscriptionListType subscriptions = response.readEntity(SubscriptionListType.class);
         response.close();
-        //client.close();
 
         // For each subscription returned registered to our nsaId we check to
         // see if it is the one we just registered (current subscription).  If
@@ -231,7 +236,11 @@ public class RegistrationActor extends UntypedActor {
         }
     }
 
-    private void update(RegistrationEvent event) {
+    private void update(RegistrationEvent event) throws IllegalArgumentException {
+        if (event.getEvent() != Event.Update) {
+            throw new IllegalArgumentException("update: invalid event type " + event.getEvent());
+        }
+
         Client client = restClient.get();
 
         // First we retrieve the remote subscription to see if it is still
@@ -253,7 +262,7 @@ public class RegistrationActor extends UntypedActor {
 
         // Read the remote subscription to determine existanxe and last update time.
         remoteSubscription.setLastAudit(new Date());
-        Response response = null;
+        Response response;
         try {
             log.debug("RegistrationActor.update: getting subscription " + absoluteURL + ", lastModified=" + remoteSubscription.getLastModified());
             response = webTarget.request(NsiConstants.NSI_DDS_V1_XML).header("If-Modified-Since", DateUtils.formatDate(remoteSubscription.getLastModified(), DateUtils.PATTERN_RFC1123)).get();
@@ -287,6 +296,7 @@ public class RegistrationActor extends UntypedActor {
 
             // Remove the stored subscription since a new one will be created.
             remoteSubscriptionCache.remove(remoteSubscription.getDdsURL());
+            event.setEvent(RegistrationEvent.Event.Register);
             register(event);
         }
         // An unexpected error has occured.
@@ -304,7 +314,11 @@ public class RegistrationActor extends UntypedActor {
         response.close();
     }
 
-    private void delete(RegistrationEvent event) {
+    private void delete(RegistrationEvent event) throws IllegalArgumentException {
+        if (event.getEvent() != Event.Delete) {
+            throw new IllegalArgumentException("delete: invalid event type " + event.getEvent());
+        }
+
         RemoteSubscription subscription = remoteSubscriptionCache.get(event.getUrl());
         if (deleteSubscription(subscription.getDdsURL(), subscription.getSubscription().getHref())) {
             remoteSubscriptionCache.remove(subscription.getDdsURL());
@@ -325,7 +339,7 @@ public class RegistrationActor extends UntypedActor {
 
         String absoluteURL = webTarget.getUri().toASCIIString();
 
-        Response response = null;
+        Response response;
         try {
             response = webTarget.request(NsiConstants.NSI_DDS_V1_XML).delete();
         }
@@ -335,6 +349,7 @@ public class RegistrationActor extends UntypedActor {
             return false;
         }
 
+        boolean result = true;
         if (response.getStatus() == Response.Status.NO_CONTENT.getStatusCode()) {
             // Successfully deleted the subscription.
             logger.log(DdsLogs.DDS_SUBSCRIPTION_DELETED, absoluteURL);
@@ -351,12 +366,10 @@ public class RegistrationActor extends UntypedActor {
             else {
                 logger.error(DdsErrors.DDS_SUBSCRIPTION_DELETE_FAILED_DETAILED, absoluteURL, response.getStatusInfo().getReasonPhrase());
             }
-
-            response.close();
-            return false;
+            result = false;
         }
 
         response.close();
-        return true;
+        return result;
     }
 }

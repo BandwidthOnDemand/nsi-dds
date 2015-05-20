@@ -4,7 +4,6 @@
  */
 package net.es.nsi.dds.actors;
 
-import net.es.nsi.dds.messages.Notification;
 import akka.actor.UntypedActor;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -14,13 +13,14 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
-import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.api.jaxb.NotificationListType;
 import net.es.nsi.dds.api.jaxb.NotificationType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
+import net.es.nsi.dds.client.RestClient;
+import net.es.nsi.dds.config.ConfigurationManager;
+import net.es.nsi.dds.messages.Notification;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
-import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.schema.XmlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public class NotificationActor extends UntypedActor {
     public void onReceive(Object msg) {
         if (msg instanceof Notification) {
             Notification notification = (Notification) msg;
-            log.debug("NotificationActor: notificationId=" + notification.getSubscription().getId());
+            log.debug("NotificationActor: notificationId=" + notification.getSubscription().getId() + ", requesterId=" + notification.getSubscription().getSubscription().getRequesterId());
 
             NotificationListType list = factory.createNotificationListType();
             for (Document document : notification.getDocuments()) {
@@ -89,7 +89,7 @@ public class NotificationActor extends UntypedActor {
                     DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
                     discoveryProvider.deleteSubscription(notification.getSubscription().getId());
                 }
-                else if (log.isDebugEnabled()) {
+                else {
                     log.debug("NotificationActor: sent notitifcation " + list.getId() + " to client " + callback + ", result = " + response.getStatusInfo().getReasonPhrase());
                 }
 

@@ -1,8 +1,5 @@
 package net.es.nsi.dds.actors;
 
-import net.es.nsi.dds.dao.RemoteSubscriptionCache;
-import net.es.nsi.dds.messages.RegistrationEvent;
-import net.es.nsi.dds.dao.RemoteSubscription;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.Terminated;
@@ -16,8 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.api.jaxb.PeerURLType;
+import net.es.nsi.dds.dao.DdsConfiguration;
+import net.es.nsi.dds.dao.RemoteSubscription;
+import net.es.nsi.dds.dao.RemoteSubscriptionCache;
+import net.es.nsi.dds.messages.RegistrationEvent;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.schema.NsiConstants;
 import org.slf4j.Logger;
@@ -31,13 +31,13 @@ import scala.concurrent.duration.Duration;
 public class RegistrationRouter extends UntypedActor {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private DdsActorSystem ddsActorSystem;
-    private DdsConfiguration discoveryConfiguration;
-    private int poolSize;
-    private long interval;
+    private final DdsActorSystem ddsActorSystem;
+    private final DdsConfiguration discoveryConfiguration;
+    private int poolSize = 5;
+    private long interval = 600;
     private Router router;
 
-    private RemoteSubscriptionCache remoteSubscriptionCache;
+    private final RemoteSubscriptionCache remoteSubscriptionCache;
 
     public RegistrationRouter(DdsActorSystem ddsActorSystem,
             DdsConfiguration discoveryConfiguration,
@@ -62,6 +62,8 @@ public class RegistrationRouter extends UntypedActor {
     public void onReceive(Object msg) {
         // Check to see if we got the go ahead to start registering.
         if (msg instanceof StartMsg) {
+            log.debug("RegistrationRouter: start event");
+
             // Create a Register event to start us off.
             RegistrationEvent event = new RegistrationEvent();
             event.setEvent(RegistrationEvent.Event.Register);
@@ -75,7 +77,7 @@ public class RegistrationRouter extends UntypedActor {
                 log.debug("RegistrationRouter: routeRegister");
                 routeRegister();
             }
-            if (re.getEvent() == RegistrationEvent.Event.Audit) {
+            else if (re.getEvent() == RegistrationEvent.Event.Audit) {
                 // A regular audit event.
                 log.debug("RegistrationRouter: routeAudit");
                 routeAudit();
@@ -89,7 +91,7 @@ public class RegistrationRouter extends UntypedActor {
         else if (msg instanceof Terminated) {
             log.error("RegistrationRouter: Terminated event.");
             router = router.removeRoutee(((Terminated) msg).actor());
-            ActorRef r = getContext().actorOf(Props.create(NotificationActor.class));
+            ActorRef r = getContext().actorOf(Props.create(RegistrationActor.class, discoveryConfiguration));
             getContext().watch(r);
             router = router.addRoutee(new ActorRefRoutee(r));
         }
@@ -113,7 +115,8 @@ public class RegistrationRouter extends UntypedActor {
                 RegistrationEvent regEvent = new RegistrationEvent();
                 regEvent.setEvent(RegistrationEvent.Event.Register);
                 regEvent.setUrl(url.getValue());
-                router.route(regEvent, getSelf());
+                log.debug("routeRegister: url=" + url.getValue());
+                router.route(regEvent, this.getSelf());
             }
         }
     }
@@ -124,28 +127,29 @@ public class RegistrationRouter extends UntypedActor {
         Set<String> subscriptionURL = Sets.newHashSet(remoteSubscriptionCache.keySet());
 
         for (PeerURLType url : discoveryURL) {
-            if (!url.getType().equalsIgnoreCase(NsiConstants.NSI_DDS_V1_XML)) {
-                continue;
-            }
+            if (url.getType().equalsIgnoreCase(NsiConstants.NSI_DDS_V1_XML)) {
+                // See if we already have seen this URL.
+                RemoteSubscription sub = remoteSubscriptionCache.get(url.getValue());
+                if (sub == null) {
+                    // We have not seen this before.
+                    log.debug("routeAudit: new registration for url=" + url.getValue());
 
-            // See if we already have seen this URL.
-            RemoteSubscription sub = remoteSubscriptionCache.get(url.getValue());
-            if (sub == null) {
-                // We have not seen this before.
-                RegistrationEvent regEvent = new RegistrationEvent();
-                regEvent.setEvent(RegistrationEvent.Event.Register);
-                regEvent.setUrl(url.getValue());
-                router.route(regEvent, getSelf());
-            }
-            else {
-                // We have seen this URL before.
-                RegistrationEvent regEvent = new RegistrationEvent();
-                regEvent.setEvent(RegistrationEvent.Event.Update);
-                regEvent.setUrl(url.getValue());
-                router.route(regEvent, getSelf());
+                    RegistrationEvent regEvent = new RegistrationEvent();
+                    regEvent.setEvent(RegistrationEvent.Event.Register);
+                    regEvent.setUrl(url.getValue());
+                    router.route(regEvent, this.getSelf());
+                }
+                else {
+                    // We have seen this URL before.
+                    log.debug("routeAudit: auditing registration for url=" + url.getValue());
+                    RegistrationEvent regEvent = new RegistrationEvent();
+                    regEvent.setEvent(RegistrationEvent.Event.Update);
+                    regEvent.setUrl(url.getValue());
+                    router.route(regEvent, this.getSelf());
 
-                // Remove from the existing list as processed.
-                subscriptionURL.remove(url.getValue());
+                    // Remove from the existing list as processed.
+                    subscriptionURL.remove(url.getValue());
+                }
             }
         }
 
