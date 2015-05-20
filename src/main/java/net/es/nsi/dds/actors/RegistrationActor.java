@@ -53,9 +53,9 @@ public class RegistrationActor extends UntypedActor {
     private final RemoteSubscriptionCache remoteSubscriptionCache;
     private final RestClient restClient;
 
-    public RegistrationActor(DdsConfiguration discoveryConfiguration) {
+    public RegistrationActor(DdsConfiguration discoveryConfiguration, RemoteSubscriptionCache remoteSubscriptionCache) {
         this.discoveryConfiguration = discoveryConfiguration;
-        this.remoteSubscriptionCache = RemoteSubscriptionCache.getInstance();
+        this.remoteSubscriptionCache = remoteSubscriptionCache;
         this.restClient = RestClient.getInstance();
     }
 

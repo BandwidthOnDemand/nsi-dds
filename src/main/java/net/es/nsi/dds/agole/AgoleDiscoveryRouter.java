@@ -18,16 +18,16 @@ import java.util.concurrent.TimeUnit;
 import javax.ws.rs.NotFoundException;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.actors.DdsActorSystem;
-import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.api.jaxb.PeerURLType;
-import net.es.nsi.dds.messages.StartMsg;
-import net.es.nsi.dds.schema.NsiConstants;
-import net.es.nsi.dds.messages.TimerMsg;
+import net.es.nsi.dds.dao.DdsConfiguration;
+import net.es.nsi.dds.management.api.ProviderStatus;
 import net.es.nsi.dds.management.jaxb.TopologyStatusType;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.management.logs.DdsLogs;
-import net.es.nsi.dds.management.api.ProviderStatus;
+import net.es.nsi.dds.messages.StartMsg;
+import net.es.nsi.dds.messages.TimerMsg;
+import net.es.nsi.dds.schema.NsiConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.concurrent.duration.Duration;
@@ -39,19 +39,19 @@ import scala.concurrent.duration.Duration;
 public class AgoleDiscoveryRouter extends UntypedActor {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private DdsLogger topologyLogger = DdsLogger.getLogger();
+    private final DdsLogger topologyLogger = DdsLogger.getLogger();
     private ProviderStatus manifestStatus = null;
 
-    private DdsActorSystem ddsActorSystem;
+    private final DdsActorSystem ddsActorSystem;
     private long interval;
     private int poolSize;
     private Router router = null;
-    private Map<String, AgoleDiscoveryMsg> discovery = new ConcurrentHashMap<>();
+    private final Map<String, AgoleDiscoveryMsg> discovery = new ConcurrentHashMap<>();
 
     private TopologyManifest manifest;
 
-    private DdsConfiguration discoveryConfiguration;
-    private AgoleManifestReader manifestReader;
+    private final DdsConfiguration discoveryConfiguration;
+    private final AgoleManifestReader manifestReader;
 
     private boolean isConfigured = false;
 
@@ -63,8 +63,7 @@ public class AgoleDiscoveryRouter extends UntypedActor {
 
     @Override
     public void preStart() {
-        Set<PeerURLType> discoveryURL = discoveryConfiguration.getDiscoveryURL();
-        for (PeerURLType url : discoveryURL) {
+        for (PeerURLType url : discoveryConfiguration.getDiscoveryURL()) {
             if (url.getType().equalsIgnoreCase(NsiConstants.NSI_TOPOLOGY_V1)) {
                 manifestReader.setTarget(url.getValue());
                 isConfigured = true;

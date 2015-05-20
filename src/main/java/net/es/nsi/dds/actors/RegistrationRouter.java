@@ -10,6 +10,7 @@ import akka.routing.Routee;
 import akka.routing.Router;
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +52,7 @@ public class RegistrationRouter extends UntypedActor {
     public void preStart() {
         List<Routee> routees = new ArrayList<>();
         for (int i = 0; i < getPoolSize(); i++) {
-            ActorRef r = getContext().actorOf(Props.create(RegistrationActor.class, discoveryConfiguration));
+            ActorRef r = getContext().actorOf(Props.create(RegistrationActor.class, discoveryConfiguration, remoteSubscriptionCache));
             getContext().watch(r);
             routees.add(new ActorRefRoutee(r));
         }
@@ -108,9 +109,7 @@ public class RegistrationRouter extends UntypedActor {
     private void routeRegister() {
         // We need to register invoke a registration actor for each remote DDS
         // we are peering with.
-        Set<PeerURLType> discoveryURL = discoveryConfiguration.getDiscoveryURL();
-
-        for (PeerURLType url : discoveryURL) {
+        for (PeerURLType url : discoveryConfiguration.getDiscoveryURL()) {
             if (url.getType().equalsIgnoreCase(NsiConstants.NSI_DDS_V1_XML)) {
                 RegistrationEvent regEvent = new RegistrationEvent();
                 regEvent.setEvent(RegistrationEvent.Event.Register);
@@ -123,12 +122,14 @@ public class RegistrationRouter extends UntypedActor {
 
     private void routeAudit() {
         // Check the list of discovery URL against what we already have.
-        Set<PeerURLType> discoveryURL = discoveryConfiguration.getDiscoveryURL();
+        Collection<PeerURLType> discoveryURL = discoveryConfiguration.getDiscoveryURL();
         Set<String> subscriptionURL = Sets.newHashSet(remoteSubscriptionCache.keySet());
 
         for (PeerURLType url : discoveryURL) {
+            // We only handle direct DDS peers here.
             if (url.getType().equalsIgnoreCase(NsiConstants.NSI_DDS_V1_XML)) {
-                // See if we already have seen this URL.
+                // See if we already have seen this URL.  If we have not then
+                // we need to create a new remote subscription.
                 RemoteSubscription sub = remoteSubscriptionCache.get(url.getValue());
                 if (sub == null) {
                     // We have not seen this before.
@@ -160,19 +161,19 @@ public class RegistrationRouter extends UntypedActor {
             if (sub != null) { // Should always be true unless modified while we are processing.
                 RegistrationEvent regEvent = new RegistrationEvent();
                 regEvent.setEvent(RegistrationEvent.Event.Delete);
-                regEvent.setUrl(url);
+                regEvent.setUrl(sub.getDdsURL());
                 router.route(regEvent, getSelf());
             }
         }
     }
 
     private void routeShutdown() {
-        for (String url : remoteSubscriptionCache.keySet()) {
+        for (String url : Sets.newHashSet(remoteSubscriptionCache.keySet())) {
             RemoteSubscription sub = remoteSubscriptionCache.get(url);
             if (sub != null) { // Should always be true unless modified while we are processing.
                 RegistrationEvent regEvent = new RegistrationEvent();
                 regEvent.setEvent(RegistrationEvent.Event.Delete);
-                regEvent.setUrl(url);
+                regEvent.setUrl(sub.getDdsURL());
                 router.route(regEvent, getSelf());
             }
         }

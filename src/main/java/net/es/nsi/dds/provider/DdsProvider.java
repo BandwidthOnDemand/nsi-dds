@@ -62,7 +62,8 @@ public class DdsProvider implements DiscoveryProvider {
     // The actor system used to send notifications.
     private final DdsActorController ddsActorController;
 
-    // In-memory subscription cache indexed by subscriptionId.
+    // In-memory subscription cache indexed by subscriptionId.  These are
+    // subscriptions from remote DDS servers.
     private final Map<String, Subscription> subscriptions = new ConcurrentHashMap<>();
 
     public DdsProvider(DdsConfiguration configuration, DocumentCache documentCache, DocumentCache documentRepository, DdsActorController ddsActorController) {

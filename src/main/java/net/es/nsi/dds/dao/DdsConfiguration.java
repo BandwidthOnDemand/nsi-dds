@@ -6,9 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.api.jaxb.AccessControlType;
 import net.es.nsi.dds.api.jaxb.DdsConfigurationType;
@@ -61,7 +61,7 @@ public class DdsConfiguration {
     private HttpConfig httpConfig = null;
     private Optional<HttpsConfig> clientConfig = Optional.absent();
     private AccessControlList accessControlList;
-    private final Set<PeerURLType> discoveryURL = new HashSet<>();
+    private Collection<PeerURLType> discoveryURL = new CopyOnWriteArrayList<>();
 
     public static DdsConfiguration getInstance() {
         DdsConfiguration configurationReader = SpringApplicationContext.getBean("ddsConfiguration", DdsConfiguration.class);
@@ -191,18 +191,20 @@ public class DdsConfiguration {
         if (config.getClient() != null) {
             clientConfig = Optional.of(new HttpsConfig(config.getClient()));
         }
-        
+
         Optional<AccessControlType> accessControl = Optional.fromNullable(config.getAccessControl());
         if (!accessControl.isPresent()) {
             AccessControlType ac = factory.createAccessControlType();
             accessControl = Optional.of(ac);
         }
-        
+
         accessControlList = new AccessControlList(accessControl.get());
 
-        config.getPeerURL().stream().forEach((url) -> {
-            discoveryURL.add(url);
-        });
+        Collection<PeerURLType> temp = new CopyOnWriteArrayList<>();
+        for (PeerURLType peer : config.getPeerURL()) {
+            temp.add(peer);
+        }
+        discoveryURL = temp;
 
         lastModified = lastMod;
     }
@@ -274,8 +276,8 @@ public class DdsConfiguration {
     /**
      * @return the discoveryURL
      */
-    public Set<PeerURLType> getDiscoveryURL() {
-        return Collections.unmodifiableSet(discoveryURL);
+    public Collection<PeerURLType> getDiscoveryURL() {
+        return Collections.unmodifiableCollection(discoveryURL);
     }
 
     /**
@@ -389,7 +391,7 @@ public class DdsConfiguration {
     public HttpsConfig getClientConfig() {
         return clientConfig.orNull();
     }
-    
+
     public AccessControlList getAccessControlList() {
         return accessControlList;
     }

@@ -16,7 +16,7 @@ public class RemoteSubscriptionCache {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     // In-memory subscription cache indexed by subscriptionId.
-    private Map<String, RemoteSubscription> remoteSubscriptions = new ConcurrentHashMap<>();
+    private final Map<String, RemoteSubscription> remoteSubscriptions = new ConcurrentHashMap<>();
 
     public RemoteSubscriptionCache() {
         log.debug("RemoteSubscriptionCache: creating.");

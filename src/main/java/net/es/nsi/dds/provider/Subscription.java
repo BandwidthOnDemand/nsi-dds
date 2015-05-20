@@ -26,7 +26,7 @@ public class Subscription implements Serializable {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private static final String SUBSCRIPTIONS_URL = "subscriptions";
-    private static ObjectFactory factory = new ObjectFactory();
+    private static final ObjectFactory factory = new ObjectFactory();
     private String id;
     private String encoding;
     private SubscriptionType subscription;

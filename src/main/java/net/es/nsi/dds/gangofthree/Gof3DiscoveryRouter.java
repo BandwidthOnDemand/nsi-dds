@@ -14,8 +14,8 @@ import akka.routing.ActorRefRoutee;
 import akka.routing.RoundRobinRoutingLogic;
 import akka.routing.Routee;
 import akka.routing.Router;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,13 +36,13 @@ import scala.concurrent.duration.Duration;
 public class Gof3DiscoveryRouter extends UntypedActor {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private DdsActorSystem ddsActorSystem;
-    private DdsConfiguration discoveryConfiguration;
+    private final DdsActorSystem ddsActorSystem;
+    private final DdsConfiguration discoveryConfiguration;
     private int poolSize;
     private long interval;
     private long refresh;
     private Router router;
-    private Map<String, Gof3DiscoveryMsg> discovery = new ConcurrentHashMap<>();
+    private final Map<String, Gof3DiscoveryMsg> discovery = new ConcurrentHashMap<>();
 
     public Gof3DiscoveryRouter(DdsActorSystem ddsActorSystem, DdsConfiguration discoveryConfiguration) {
         this.ddsActorSystem = ddsActorSystem;
@@ -95,10 +95,9 @@ public class Gof3DiscoveryRouter extends UntypedActor {
     }
 
     private void routeTimerEvent() {
-        Set<PeerURLType> discoveryURL = discoveryConfiguration.getDiscoveryURL();
-        Set<String> notSent = new HashSet<>(discovery.keySet());
+        Set<String> notSent = Sets.newHashSet(discovery.keySet());
 
-        for (PeerURLType url : discoveryURL) {
+        for (PeerURLType url : discoveryConfiguration.getDiscoveryURL()) {
             if (!url.getType().equalsIgnoreCase(NsiConstants.NSI_NSA_V1)) {
                 continue;
             }
