@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import javax.ws.rs.NotFoundException;
+import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.api.jaxb.AnyType;
@@ -17,18 +19,18 @@ import net.es.nsi.dds.api.jaxb.DocumentType;
 import net.es.nsi.dds.api.jaxb.FeatureType;
 import net.es.nsi.dds.api.jaxb.InterfaceType;
 import net.es.nsi.dds.api.jaxb.LocationType;
-import net.es.nsi.dds.api.jaxb.NotificationType;
-import net.es.nsi.dds.api.jaxb.NsaType;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
-import net.es.nsi.dds.provider.DdsProvider;
 import net.es.nsi.dds.api.jaxb.NmlLifeTimeType;
 import net.es.nsi.dds.api.jaxb.NmlLocationType;
 import net.es.nsi.dds.api.jaxb.NmlNSARelationType;
 import net.es.nsi.dds.api.jaxb.NmlNSAType;
 import net.es.nsi.dds.api.jaxb.NmlServiceType;
 import net.es.nsi.dds.api.jaxb.NmlTopologyType;
+import net.es.nsi.dds.api.jaxb.NotificationType;
+import net.es.nsi.dds.api.jaxb.NsaType;
+import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.api.jaxb.PeerRoleEnum;
 import net.es.nsi.dds.api.jaxb.PeersWithType;
+import net.es.nsi.dds.provider.DdsProvider;
 import net.es.nsi.dds.schema.NsiConstants;
 import net.es.nsi.dds.schema.XmlUtilities;
 import org.slf4j.Logger;
@@ -72,26 +74,25 @@ public class AgoleDiscoveryActor extends UntypedActor {
     }
 
     private boolean discoverTopology(AgoleDiscoveryMsg message) {
-        String id = message.getId();
         String url = message.getTopologyURL();
 
-        log.debug("discover: topology id=" + id + ", url=" + url);
+        log.debug("discover: topology url=" + url);
 
         if (url == null || url.isEmpty()) {
             return false;
         }
 
-        AgoleTopologyReader topologyReader = new AgoleTopologyReader(id, url, message.getTopologyLastModifiedTime());
+        AgoleTopologyReader topologyReader = new AgoleTopologyReader(url, message.getTopologyLastModifiedTime());
         NmlNSAType nsa;
         try {
             nsa = topologyReader.readNsaTopology();
-        } catch (Exception ex) {
-            log.error("discoverTopology: failed to read topology for id=" + id + ", url=" + url, ex);
+        } catch (NotFoundException | IllegalStateException | JAXBException ex) {
+            log.error("discoverTopology: failed to read topology for url=" + url, ex);
             return false;
         }
 
         if (nsa == null) {
-            log.debug("discoverTopology: Topology document not modified for id=" + id + ", url=" + url);
+            log.debug("discoverTopology: Topology document not modified for url=" + url);
             return false;
         }
 

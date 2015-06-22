@@ -51,25 +51,7 @@ public class NotificationActor extends UntypedActor {
             Notification notification = (Notification) msg;
             log.debug("NotificationActor: notificationId=" + notification.getSubscription().getId() + ", requesterId=" + notification.getSubscription().getSubscription().getRequesterId());
 
-            NotificationListType list = factory.createNotificationListType();
-            for (Document document : notification.getDocuments()) {
-                log.debug("NotificationActor: documentId=" + document.getDocument().getId());
-                NotificationType notify = factory.createNotificationType();
-                notify.setEvent(notification.getEvent());
-                notify.setDocument(document.getDocument());
-                try {
-                    XMLGregorianCalendar discovered = XmlUtilities.longToXMLGregorianCalendar(document.getLastDiscovered().getTime());
-                    notify.setDiscovered(discovered);
-                }
-                catch (Exception ex) {
-                    log.error("NotificationActor: discovered date conversion failed", ex);
-                }
-                list.getNotification().add(notify);
-            }
-
-            list.setId(notification.getSubscription().getId());
-            list.setHref(notification.getSubscription().getSubscription().getHref());
-            list.setProviderId(providerId);
+            NotificationListType list = getNotificationList(notification);
             String callback = notification.getSubscription().getSubscription().getCallback();
             Client client = restClient.get();
 
@@ -79,8 +61,9 @@ public class NotificationActor extends UntypedActor {
 
             log.debug("NotificationActor: sending mediaType=" + mediaType + ", subscriptionId=" + notification.getSubscription().getId() + ", callback=" + notification.getSubscription().getSubscription().getCallback());
 
+            Response response = null;
             try {
-                Response response = webTarget.request(mediaType).header(HttpHeaders.CONTENT_ENCODING, "gzip")
+                response = webTarget.request(mediaType).header(HttpHeaders.CONTENT_ENCODING, "gzip")
                     .post(Entity.entity(new GenericEntity<JAXBElement<NotificationListType>>(jaxb) {}, mediaType));
 
                 if (response.getStatus() != Response.Status.ACCEPTED.getStatusCode()) {
@@ -92,16 +75,43 @@ public class NotificationActor extends UntypedActor {
                 else {
                     log.debug("NotificationActor: sent notitifcation " + list.getId() + " to client " + callback + ", result = " + response.getStatusInfo().getReasonPhrase());
                 }
-
-                response.close();
             }
             catch (Exception ex) {
                 log.error("NotificationActor: failed notification " + list.getId() + " to client " + callback, ex);
                 DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
                 discoveryProvider.deleteSubscription(notification.getSubscription().getId());
             }
+            finally {
+                if (response != null) {
+                    response.close();
+                }
+            }
         } else {
             unhandled(msg);
         }
+    }
+
+    private NotificationListType getNotificationList(Notification notification) {
+        NotificationListType list = factory.createNotificationListType();
+        for (Document document : notification.getDocuments()) {
+            log.debug("NotificationActor: documentId=" + document.getDocument().getId());
+            NotificationType notify = factory.createNotificationType();
+            notify.setEvent(notification.getEvent());
+            notify.setDocument(document.getDocument());
+            try {
+                XMLGregorianCalendar discovered = XmlUtilities.longToXMLGregorianCalendar(document.getLastDiscovered().getTime());
+                notify.setDiscovered(discovered);
+            }
+            catch (Exception ex) {
+                log.error("NotificationActor: discovered date conversion failed", ex);
+            }
+            list.getNotification().add(notify);
+        }
+
+        list.setId(notification.getSubscription().getId());
+        list.setHref(notification.getSubscription().getSubscription().getHref());
+        list.setProviderId(providerId);
+
+        return list;
     }
 }

@@ -7,8 +7,8 @@ package net.es.nsi.dds.test;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.client.RestClient;
+import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.config.Properties;
 import org.glassfish.jersey.client.ClientConfig;
 
@@ -22,8 +22,8 @@ public class TestConfig {
     public static final String DEFAULT_DDS_FILE = CONFIG_DIR + "dds.xml";
     private static final String DDS_CONFIG_FILE_ARGNAME = "ddsConfigFile";
 
-    private Client client;
-    private WebTarget target;
+    private final Client client;
+    private final WebTarget target;
 
     public TestConfig() {
         System.setProperty(CONFIG_PATH, CONFIG_DIR);

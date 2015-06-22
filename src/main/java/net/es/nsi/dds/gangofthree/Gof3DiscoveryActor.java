@@ -43,11 +43,18 @@ public class Gof3DiscoveryActor extends UntypedActor {
     private final ObjectFactory factory = new ObjectFactory();
     private Client client;
 
+    /**
+     *
+     */
     @Override
     public void preStart() {
         client = RestClient.getInstance().get();
     }
 
+    /**
+     *
+     * @param msg
+     */
     @Override
     public void onReceive(Object msg) {
         if (msg instanceof Gof3DiscoveryMsg) {
@@ -74,17 +81,28 @@ public class Gof3DiscoveryActor extends UntypedActor {
         }
     }
 
+    /**
+     * Performs a Gang of Three NSA discovery by reading an NSA description
+     * file from a pre-defined URL.
+     *
+     * @param message Discovery instructions for the target NSA.
+     * @return Returns true if the NSA document was successfully discovered,
+     *         false otherwise.
+     */
     private boolean discoverNSA(Gof3DiscoveryMsg message) {
         log.debug("discoverNSA: nsa=" + message.getNsaURL() + ", lastModifiedTime=" + new Date(message.getNsaLastModifiedTime()));
 
         //Client client = ClientBuilder.newClient(clientConfig);
         long time = message.getNsaLastModifiedTime();
+        Response response = null;
         try {
             WebTarget nsaTarget = client.target(message.getNsaURL());
 
             log.debug("discoverNSA: querying with If-Modified-Since: " + DateUtils.formatDate(new Date(time)));
 
-            Response response= nsaTarget.request("*/*") // NsiConstants.NSI_NSA_V1
+            // Some NSA do not support the NSI_NSA_V1 application string so
+            // accept any encoding for the document.
+            response = nsaTarget.request("*/*") // NsiConstants.NSI_NSA_V1
                     .header("If-Modified-Since", DateUtils.formatDate(new Date(time), DateUtils.PATTERN_RFC1123))
                     .get();
 
@@ -109,6 +127,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
                         result.append(chunk);
                     }
                 }
+
                 // Now parse the string into an NML Topology object.
                 NsaType nsa = NmlParser.getInstance().parseNsaFromString(result.toString());
 
@@ -173,7 +192,14 @@ public class Gof3DiscoveryActor extends UntypedActor {
             return false;
         }
         finally {
-            //client.close();
+            if (response != null) {
+                // Close the response to avoid leaking.
+                log.error("discoverNSA: closing response.");
+                response.close();
+            }
+            else {
+                log.error("discoverNSA: not closing response.");
+            }
         }
 
         message.setNsaLastModifiedTime(time);
@@ -183,14 +209,18 @@ public class Gof3DiscoveryActor extends UntypedActor {
         return true;
     }
 
+    /**
+     *
+     */
     private Long discoverTopology(String nsaId, String url, Long lastModifiedTime) {
         log.debug("discoverTopology: topology=" + url);
 
         //Client client = ClientBuilder.newClient(clientConfig);
         long time = lastModifiedTime;
+        Response response = null;
         try {
             WebTarget topologyTarget = client.target(url);
-            Response response = topologyTarget.request("*/*") // MediaTypes.NSI_TOPOLOGY_V2
+            response = topologyTarget.request("*/*") // MediaTypes.NSI_TOPOLOGY_V2
                     .header("If-Modified-Since", DateUtils.formatDate(new Date(time), DateUtils.PATTERN_RFC1123))
                     .get();
 
@@ -257,13 +287,26 @@ public class Gof3DiscoveryActor extends UntypedActor {
             time = 0L;
         }
         finally {
-            //client.close();
+            if (response != null) {
+                // Close the response to avoid leaking.
+                log.error("discoverTopology: closing response.");
+                response.close();
+            }
+            else {
+                log.error("discoverTopology: not closing response.");
+            }
         }
 
         log.debug("discoverTopology: exiting for topology=" + url + " with lastModifiedTime=" + new Date(time));
         return time;
     }
 
+    /**
+     *
+     * @param nsa
+     * @param discovered
+     * @return
+     */
     private boolean addNsaDocument(NsaType nsa, XMLGregorianCalendar discovered) {
         // Now we add the NSA document into the DDS.
         DocumentType document = factory.createDocumentType();
@@ -310,6 +353,13 @@ public class Gof3DiscoveryActor extends UntypedActor {
         return true;
     }
 
+    /**
+     *
+     * @param topology
+     * @param discovered
+     * @param nsaId
+     * @return
+     */
     private boolean addTopologyDocument(NmlTopologyType topology, XMLGregorianCalendar discovered, String nsaId) {
 
         // Now we add the Topology document into the DDS.

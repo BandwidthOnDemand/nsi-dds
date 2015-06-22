@@ -71,6 +71,14 @@ public class DiscoveryService {
         return Response.ok().build();
     }
 
+    @GET
+    @Path("/error")
+    @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
+    public Response error() throws Exception {
+        log.debug("error: Bang!");
+        return Response.serverError().build();
+    }
+
     /**
      * Get all resources associated with this DDS instance.
      *

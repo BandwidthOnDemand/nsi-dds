@@ -1,6 +1,5 @@
 package net.es.nsi.dds.agole;
 
-import net.es.nsi.dds.management.logs.DdsErrors;
 import java.util.Date;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
@@ -9,9 +8,10 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
-import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.api.jaxb.NmlNSAType;
+import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.dao.DdsParser;
+import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import org.apache.http.client.utils.DateUtils;
 import org.glassfish.jersey.client.ChunkedInput;
@@ -27,13 +27,11 @@ import org.slf4j.LoggerFactory;
  */
 public class AgoleTopologyReader {
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private DdsLogger topologyLogger = DdsLogger.getLogger();
-
-    private String id;
+    private final DdsLogger topologyLogger = DdsLogger.getLogger();
     private String target;
     private long lastModifiedTime;
 
-    private Client client;
+    private final Client client;
 
     /**
      * Default class constructor.
@@ -47,9 +45,9 @@ public class AgoleTopologyReader {
      * NSA's associated NML topology.
      *
      * @param target Location of the NSA's XML based NML topology.
+     * @param lastModifiedTime
      */
-    public AgoleTopologyReader(String id, String target, long lastModifiedTime) {
-        this.id = id;
+    public AgoleTopologyReader(String target, long lastModifiedTime) {
         this.target = target;
         this.lastModifiedTime = lastModifiedTime;
         client = RestClient.getInstance().get();
@@ -110,7 +108,7 @@ public class AgoleTopologyReader {
                 response.close();
             }
         }
-        
+
         // We should never get this - an exception should be thrown.
         if (topology == null) {
             topologyLogger.errorAudit(DdsErrors.AUDIT_NSA_XML_PARSE, target);
