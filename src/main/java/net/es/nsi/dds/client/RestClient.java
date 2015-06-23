@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 public class RestClient {
     private final static Logger log = LoggerFactory.getLogger(RestClient.class);
     private final Client client;
+    private final static int TIMEOUT = 10 * 1000;
 
     public RestClient() {
         ClientConfig clientConfig = configureClient();
@@ -127,6 +128,9 @@ public class RestClient {
         custom.setExpectContinueEnabled(true);
         custom.setRelativeRedirectsAllowed(true);
         custom.setRedirectsEnabled(true);
+        custom.setSocketTimeout(TIMEOUT);
+        custom.setConnectTimeout(TIMEOUT);
+        custom.setConnectionRequestTimeout(TIMEOUT);
         clientConfig.property(ApacheClientProperties.REQUEST_CONFIG, custom.build());
 
         return clientConfig;
