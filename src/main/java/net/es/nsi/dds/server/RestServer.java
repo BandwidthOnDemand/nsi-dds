@@ -4,7 +4,6 @@
  */
 package net.es.nsi.dds.server;
 
-import net.es.nsi.dds.authorization.SecurityFilter;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import java.io.IOException;
@@ -13,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.net.ssl.SSLContext;
+import net.es.nsi.dds.authorization.SecurityFilter;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
@@ -39,7 +39,7 @@ public class RestServer {
     private Optional<String> relativePath = Optional.absent();
     private boolean secure = false;
     private int fileCacheMaxAge = 3600;
-    private List<Class<?>> interfaces = new ArrayList<>();
+    private final List<Class<?>> interfaces = new ArrayList<>();
 
     public RestServer(String address, String port, SSLContext sslContext) {
         log.debug("RestServer: creating secure HTTPS server.");
@@ -170,6 +170,7 @@ public class RestServer {
 
     /**
      * @param secure the secure to set
+     * @return
      */
     public RestServer setSecure(boolean secure) {
         this.secure = secure;
@@ -185,6 +186,7 @@ public class RestServer {
 
     /**
      * @param sslContext the sslContext to set
+     * @return
      */
     public RestServer setSslContext(SSLContext sslContext) {
         this.sslContext = Optional.fromNullable(sslContext);
@@ -200,6 +202,7 @@ public class RestServer {
 
     /**
      * @param address the address to set
+     * @return
      */
     public RestServer setAddress(String address) throws IllegalArgumentException {
         this.address = Optional.fromNullable(Strings.emptyToNull(address));
@@ -218,6 +221,7 @@ public class RestServer {
 
     /**
      * @param port the port to set
+     * @return
      */
     public RestServer setPort(String port) throws IllegalArgumentException {
         this.port = Optional.fromNullable(Strings.emptyToNull(port));
@@ -236,6 +240,7 @@ public class RestServer {
 
     /**
      * @param packages the packages to set
+     * @return
      */
     public RestServer setPackages(String packages) {
         this.packages = Optional.fromNullable(Strings.emptyToNull(packages));

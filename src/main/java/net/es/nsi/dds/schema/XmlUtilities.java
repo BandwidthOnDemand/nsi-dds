@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -103,6 +102,7 @@ public class XmlUtilities {
         JAXBContext jaxbContext = JAXBContext.newInstance(xmlClass);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         JAXBElement<?> element = (JAXBElement<?>) unmarshaller.unmarshal(getReader(is));
+        is.close();
         return element.getValue();
     }
 
