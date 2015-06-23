@@ -4,8 +4,6 @@
  */
 package net.es.nsi.dds.gangofthree;
 
-import net.es.nsi.dds.actors.DdsActorSystem;
-import net.es.nsi.dds.messages.TimerMsg;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.Terminated;
@@ -21,9 +19,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import net.es.nsi.dds.dao.DdsConfiguration;
+import net.es.nsi.dds.actors.DdsActorSystem;
 import net.es.nsi.dds.api.jaxb.PeerURLType;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.messages.StartMsg;
+import net.es.nsi.dds.messages.TimerMsg;
 import net.es.nsi.dds.schema.NsiConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,7 +116,7 @@ public class Gof3DiscoveryRouter extends UntypedActor {
             else {
                 msg.setNsaLastModifiedTime(0L);
                 for (String top : msg.getTopologyURL()) {
-                    msg.setTopologyLastModified(top, new Long(0L));
+                    msg.setTopologyLastModified(top, 0L);
                 }
 
                 msg.setInteration(0);

@@ -66,14 +66,14 @@ public class NotificationActor extends UntypedActor {
                 response = webTarget.request(mediaType).header(HttpHeaders.CONTENT_ENCODING, "gzip")
                     .post(Entity.entity(new GenericEntity<JAXBElement<NotificationListType>>(jaxb) {}, mediaType));
 
-                if (response.getStatus() != Response.Status.ACCEPTED.getStatusCode()) {
+                if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
+                    log.debug("NotificationActor: sent notitifcation " + list.getId() + " to client " + callback + ", result = " + response.getStatusInfo().getReasonPhrase());
+                }
+                else {
                     log.error("NotificationActor: failed notification " + list.getId() + " to client " + callback + ", result = " + response.getStatusInfo().getReasonPhrase());
                     // TODO: Tell discovery provider...
                     DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
                     discoveryProvider.deleteSubscription(notification.getSubscription().getId());
-                }
-                else {
-                    log.debug("NotificationActor: sent notitifcation " + list.getId() + " to client " + callback + ", result = " + response.getStatusInfo().getReasonPhrase());
                 }
             }
             catch (Exception ex) {

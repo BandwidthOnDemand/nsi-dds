@@ -20,7 +20,7 @@ public class Gof3DiscoveryMsg implements Serializable {
     private String nsaURL;
     private long nsaLastModifiedTime = 0;
     private String nsaId;
-    private Map<String, Long> topology = new HashMap<>(); // key = topologyURL, Long == topologyLastModifiedTime
+    private final Map<String, Long> topology = new HashMap<>(); // key = topologyURL, Long == topologyLastModifiedTime
 
     /**
      * @return the nsaURL

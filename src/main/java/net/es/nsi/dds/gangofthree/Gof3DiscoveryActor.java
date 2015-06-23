@@ -180,15 +180,19 @@ public class Gof3DiscoveryActor extends UntypedActor {
             }
         }
         catch (IllegalStateException ex) {
-            log.error("discoverNSA: failed to retrieve NSA document from endpoint " + message.getNsaURL());
+            log.error("discoverNSA: failed to retrieve NSA document from endpoint " + message.getNsaURL(), ex);
             return false;
         }
         catch (JAXBException ex) {
-            log.error("discoverNSA: invalid document returned from endpoint " + message.getNsaURL());
+            log.error("discoverNSA: invalid document returned from endpoint " + message.getNsaURL(), ex);
             return false;
         }
         catch (DatatypeConfigurationException ex) {
-            log.error("discoverNSA: NSA document failed to create lastModified " + message.getNsaURL());
+            log.error("discoverNSA: NSA document failed to create lastModified " + message.getNsaURL(), ex);
+            return false;
+        }
+        catch (Exception ex) {
+            log.error("discoverNSA: unknown error " + message.getNsaURL(), ex);
             return false;
         }
         finally {
