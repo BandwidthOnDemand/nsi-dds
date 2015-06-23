@@ -52,8 +52,17 @@ import org.slf4j.LoggerFactory;
 public class RestClient {
     private final static Logger log = LoggerFactory.getLogger(RestClient.class);
     private final Client client;
-    private final static int SO_TIMEOUT = 20 * 1000;
+
+    // Time for idle data timeout.
+    private final static String TCP_SO_TIMEOUT = "tcpSoTimeout";
+    private final static int SO_TIMEOUT = 60 * 1000;
+
+    // Time for the socket to connect.
+    private final static String TCP_CONNECT_TIMEOUT = "tcpConnectTimeout";
     private final static int CONNECT_TIMEOUT = 20 * 1000;
+
+    // Time to block for a socket from the connection manager.
+    private final static String TCP_CONNECT_REQUEST_TIMEOUT = "tcpConnectRequestTimeout";
     private final static int CONNECT_REQUEST_TIMEOUT = 30 * 1000;
 
     public RestClient() {
@@ -130,9 +139,9 @@ public class RestClient {
         custom.setExpectContinueEnabled(true);
         custom.setRelativeRedirectsAllowed(true);
         custom.setRedirectsEnabled(true);
-        custom.setSocketTimeout(SO_TIMEOUT);
-        custom.setConnectTimeout(CONNECT_TIMEOUT);
-        custom.setConnectionRequestTimeout(CONNECT_REQUEST_TIMEOUT);
+        custom.setSocketTimeout(Integer.parseInt(System.getProperty(TCP_SO_TIMEOUT, Integer.toString(SO_TIMEOUT))));
+        custom.setConnectTimeout(Integer.parseInt(System.getProperty(TCP_CONNECT_TIMEOUT, Integer.toString(CONNECT_TIMEOUT))));
+        custom.setConnectionRequestTimeout(Integer.parseInt(System.getProperty(TCP_CONNECT_REQUEST_TIMEOUT, Integer.toString(CONNECT_REQUEST_TIMEOUT))));
         clientConfig.property(ApacheClientProperties.REQUEST_CONFIG, custom.build());
 
         return clientConfig;
