@@ -1043,8 +1043,10 @@ mailing list (nsi-wg@ogf.org).
     <xsd:complexType name="AnyType">
         <xsd:annotation>
             <xsd:documentation xml:lang="en">
-                This type is used to hold a document or signature within the
-                document metadata.
+                This type is used to hold a document contents or digital
+                signature within the document metadata.  Basic types without
+                a dedicated element definition can be referenced within this
+                "##any" using the "value" element defined below.
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
@@ -1052,8 +1054,21 @@ mailing list (nsi-wg@ogf.org).
         </xsd:sequence>
         <xsd:anyAttribute namespace="##any" processContents="lax" />
     </xsd:complexType>
+    
+    <xsd:element name="value" type="xsd:anyType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                A simple element allowing for the inclusion of values from the
+                basic xml types (string, int, etc) within the signature and
+                content elements without needing to define an external
+                dedicated element type.  Values with their own schema definitions
+                should be included directly in the signature/content any
+                definition and not within this value element.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="error"     type="tns:ErrorType">
+    <xsd:element name="error" type="tns:ErrorType">
         <xsd:annotation>
             <xsd:documentation xml:lang="en">
                 The error element is returned in an HTTP response when an error

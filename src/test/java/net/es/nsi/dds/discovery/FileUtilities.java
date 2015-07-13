@@ -17,11 +17,11 @@ public class FileUtilities {
     public static boolean deleteDirectory(File path) {
         if (path.exists()) {
             File[] files = path.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isDirectory()) {
-                    deleteDirectory(files[i]);
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
                 } else {
-                    files[i].delete();
+                    file.delete();
                 }
             }
         }
@@ -44,10 +44,10 @@ public class FileUtilities {
         // For each document file in the document directory load into discovery service.
         List<String> files = new ArrayList<>();
         String file;
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()) {
-                file = listOfFiles[i].getAbsolutePath();
-                if (file.endsWith(".xml") || file.endsWith(".xml")) {
+        for (File listOfFile : listOfFiles) {
+            if (listOfFile.isFile()) {
+                file = listOfFile.getAbsolutePath();
+                if (file.endsWith(".xml")) {
                     files.add(file);
                 }
             }

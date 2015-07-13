@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns5:document id="urn:ogf:network:example.com:2013:nsa:vixen:status" version="2015-07-13T16:41:15.884-04:00" expires="2020-07-13T16:42:55.891-04:00"
+    xmlns:ns6="http://schemas.ogf.org/nsi/2014/02/discovery/nsa" xmlns:ns5="http://schemas.ogf.org/nsi/2014/02/discovery/types" xmlns:ns8="http://schemas.es.net/nsi/2014/03/dds/configuration"
+    xmlns:ns7="http://nordu.net/namespaces/2013/12/gnsbod" xmlns:ns9="http://schemas.ogf.org/nsi/2013/12/services/definition" xmlns:ns2="urn:ietf:params:xml:ns:vcard-4.0"
+    xmlns:ns4="http://schemas.ogf.org/nsi/2013/09/topology#" xmlns:ns3="http://schemas.ogf.org/nml/2013/05/base#">
+    <nsa>urn:ogf:network:example.com:2013:nsa:vixen</nsa>
+    <type>vnd.ogf.nsi.nsa.status.v1+xml</type>
+    <content>
+        <ns5:value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ACTIVE</ns5:value>
+    </content>
+</ns5:document>

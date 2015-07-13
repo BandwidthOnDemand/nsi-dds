@@ -423,6 +423,7 @@ public class DiscoveryTest {
     public void iReadEachDocumentType() throws Exception {
         readDocumentType(NsiConstants.NSI_DOC_TYPE_NSA_V1);
         readDocumentType(NsiConstants.NSI_DOC_TYPE_TOPOLOGY_V2);
+        readDocumentType("vnd.ogf.nsi.nsa.status.v1+xml");
     }
 
     public void readDocumentType(String type) throws Exception {
@@ -445,7 +446,7 @@ public class DiscoveryTest {
         assertFalse(documents.getDocument().isEmpty());
 
         for (DocumentType document : documents.getDocument()) {
-            System.out.println("readDocumentType: reaading document " + document.getId());
+            System.out.println("readDocumentType: reading document " + document.getId());
             response = testConfig.getClient().target(document.getHref()).request(NsiConstants.NSI_DDS_V1_XML).get();
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             response.close();
