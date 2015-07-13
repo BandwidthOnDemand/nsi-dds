@@ -1,11 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.actors;
 
 /**
- *
+ * This class models whether an actor must be sent a start message upon system
+ * startup.
+ * 
  * @author hacksaw
  */
 public class ActorEntry {
@@ -16,10 +14,10 @@ public class ActorEntry {
         this.actor = actor;
         this.start = start;
     }
-    
+
     public ActorEntry() {
     }
-    
+
     /**
      * @return the actor
      */

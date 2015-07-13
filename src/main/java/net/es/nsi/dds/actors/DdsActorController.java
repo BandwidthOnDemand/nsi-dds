@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.actors;
 
 import akka.actor.ActorRef;
@@ -14,7 +10,8 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.messages.StartMsg;
-import static net.es.nsi.dds.spring.SpringExtension.SpringExtProvider;
+import net.es.nsi.dds.spring.SpringExtension;
+import net.es.nsi.dds.spring.SpringExtension.SpringExt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -22,6 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
+ * This is a controller class that initializes the actor system.
  *
  * @author hacksaw
  */
@@ -48,21 +46,20 @@ public class DdsActorController implements ApplicationContextAware {
     }
 
     public void init() throws IllegalArgumentException, JAXBException, FileNotFoundException {
-        ActorSystem actorSystem = ddsActorSystem.getActorSystem();
-        SpringExtProvider.get(actorSystem).initialize(applicationContext);
+        final ActorSystem actorSystem = ddsActorSystem.getActorSystem();
+        SpringExtension.SpringExtProvider.get(actorSystem).initialize(applicationContext);
+        final SpringExt ext = SpringExtension.SpringExtProvider.get(actorSystem);
 
         // Initialize the injectes actors.
-        ActorRef actor;
-        for (ActorEntry entry : actorEntries) {
+        actorEntries.forEach((ActorEntry entry) -> {
             try {
-                log.info("DdsActorController: Initializing " + entry.getActor());
-                actor = actorSystem.actorOf(SpringExtProvider.get(actorSystem).props(entry.getActor()), "discovery-" + entry.getActor());
-                startList.add(actor);
-                log.info("DdsActorController: Initialized " + entry.getActor());
+                log.info("DdsActorController: Initializing {}", entry.getActor());
+                startList.add(actorSystem.actorOf(ext.props(entry.getActor()), "discovery-" + entry.getActor()));
+                log.info("DdsActorController: Initialized {}", entry.getActor());
             } catch (Exception ex) {
-                log.error("DdsActorController: Failed to initialize " + entry.getActor(), ex);
+                log.error("DdsActorController: Failed to initialize {}", entry.getActor(), ex);
             }
-        }
+        });
     }
 
     public ActorSystem getActorSystem() {
@@ -87,9 +84,9 @@ public class DdsActorController implements ApplicationContextAware {
     public void start() {
         log.info("DdsActorController: Starting discovery process...");
         StartMsg msg = new StartMsg();
-        for (ActorRef ref : startList) {
+        startList.stream().forEach((ref) -> {
             ref.tell(msg, null);
-        }
+        });
     }
     public void shutdown() {
         log.info("DdsActorController: Shutting down actor system...");

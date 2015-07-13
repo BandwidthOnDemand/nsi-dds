@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -63,15 +64,16 @@ public class AgoleDiscoveryRouter extends UntypedActor {
 
     @Override
     public void preStart() {
-        for (PeerURLType url : discoveryConfiguration.getDiscoveryURL()) {
-            if (url.getType().equalsIgnoreCase(NsiConstants.NSI_TOPOLOGY_V1)) {
-                manifestReader.setTarget(url.getValue());
-                isConfigured = true;
-                break;
-            }
-        }
+        Optional<PeerURLType> peerURL = discoveryConfiguration.getDiscoveryURL()
+                .stream()
+                .filter((url) -> url.getType().equalsIgnoreCase(NsiConstants.NSI_TOPOLOGY_V1))
+                .findFirst();
 
-        if (!isConfigured) {
+        isConfigured = peerURL.isPresent();
+        if (isConfigured) {
+            manifestReader.setTarget(peerURL.get().getValue());
+        }
+        else {
             log.info("AgoleDiscoveryRouter: No AGOLE URL provisioned so disabling audit.");
             return;
         }
@@ -158,7 +160,7 @@ public class AgoleDiscoveryRouter extends UntypedActor {
         log.debug("routeTimerEvent: entering.");
         Set<String> notSent = new HashSet<>(discovery.keySet());
 
-        for (Map.Entry<String, String> entry : manifest.getEntryList().entrySet()) {
+        manifest.getEntryList().entrySet().stream().forEach((entry) -> {
             String id = entry.getKey();
             String url =  entry.getValue();
 
@@ -173,13 +175,13 @@ public class AgoleDiscoveryRouter extends UntypedActor {
 
             router.route(msg, getSelf());
             notSent.remove(url);
-        }
+        });
 
         // Clean up the entries no longer in the configuration.
-        for (String url : notSent) {
+        notSent.stream().forEach((url) -> {
             log.debug("routeTimerEvent: entry no longer needed, url=" + url);
             discovery.remove(url);
-        }
+        });
 
         log.debug("routeTimerEvent: exiting.");
     }

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.actors;
 
 import akka.actor.ActorRef;
@@ -33,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import scala.concurrent.duration.Duration;
 
 /**
+ * This Notification Router will route notification messages to the target
+ * actors based on notification type.
  *
  * @author hacksaw
  */
@@ -75,13 +73,13 @@ public class NotificationRouter extends UntypedActor {
         if (msg instanceof DocumentEvent) {
             // We have a document event.
             DocumentEvent de = (DocumentEvent) msg;
-            log.debug("NotificationRouter: document event " + de.getEvent() + ", id=" + de.getDocument().getId());
+            log.debug("NotificationRouter: document event {}, id={}", de.getEvent(), de.getDocument().getId());
             routeDocumentEvent(de);
         }
         else if (msg instanceof SubscriptionEvent) {
             // We have a subscription event.
             SubscriptionEvent se = (SubscriptionEvent) msg;
-            log.debug("NotificationRouter: subscription event id=" + se.getSubscription().getId() + ", requesterId=" + se.getSubscription().getSubscription().getRequesterId());
+            log.debug("NotificationRouter: subscription event id={}, requesterId={}", se.getSubscription().getId(), se.getSubscription().getSubscription().getRequesterId());
             routeSubscriptionEvent(se);
         }
         else if (msg instanceof Terminated) {
@@ -95,7 +93,7 @@ public class NotificationRouter extends UntypedActor {
             // We ignore these for now as we have no specific start task.
         }
         else {
-            log.debug("NotificationRouter: unhandled event = " + msg.getClass().getName());
+            log.debug("NotificationRouter: unhandled event = {}", msg.getClass().getName());
             unhandled(msg);
         }
     }
@@ -103,32 +101,38 @@ public class NotificationRouter extends UntypedActor {
     private void routeDocumentEvent(DocumentEvent de) {
         Collection<Subscription> subscriptions = discoveryProvider.getSubscriptions(de);
 
-        log.debug("routeDocumentEvent: event=" + de.getEvent() + ", documentId=" + de.getDocument().getId());
+        log.debug("routeDocumentEvent: event={}, documentId={}", de.getEvent(), de.getDocument().getId());
 
         // We need to sent the list of matching documents to the callback
         // related to this subscription.  Only send if there is no pending
         // subscription event.
-        for (Subscription subscription : subscriptions) {
-            log.debug("routeDocumentEvent: id=" + de.getDocument().getId() + ", subscription=" + subscription.getId() + ", endpoint=" + subscription.getSubscription().getCallback());
-            if (subscription.getAction() == null) {
-                Notification notification = new Notification();
-                notification.setEvent(de.getEvent());
-                notification.setSubscription(subscription);
-                Collection<Document> documents = new ArrayList<>();
-                documents.add(de.getDocument());
-                notification.setDocuments(documents);
-                router.route(notification, getSender());
-            }
-        }
+        subscriptions.stream().map((subscription) -> {
+            log.debug("routeDocumentEvent: id={}, subscription={}, endpoint={}", de.getDocument().getId(), subscription.getId(), subscription.getSubscription().getCallback());
+            return subscription;
+        }).filter((subscription) -> (subscription.getAction() == null)).map((subscription) -> {
+            Notification notification = new Notification();
+            notification.setEvent(de.getEvent());
+            notification.setSubscription(subscription);
+            return notification;
+        }).map((notification) -> {
+            Collection<Document> documents = new ArrayList<>();
+            documents.add(de.getDocument());
+            notification.setDocuments(documents);
+            return notification;
+        }).forEach((notification) -> {
+            router.route(notification, getSender());
+        });
     }
 
     private void routeSubscriptionEvent(SubscriptionEvent se) {
-
         // TODO: Apply subscription filter to these documents.
         Collection<Document> documents = documentCache.values();
 
         // Clean up our trigger event.
-        log.debug("routeSubscriptionEvent: requesterId=" + se.getSubscription().getSubscription().getRequesterId() + ", event=" + se.getEvent() + ", documents=" + documents.size() + ", postSize=" + notificationSize + ", action=" + se.getSubscription().getAction().isCancelled());
+        log.debug("routeSubscriptionEvent: requesterId={}, event={}, documents={}, postSize={}, action={}",
+                se.getSubscription().getSubscription().getRequesterId(),
+                se.getEvent(), documents.size(), notificationSize,
+                se.getSubscription().getAction().isCancelled());
         se.getSubscription().setAction(null);
 
         // Send documents in chunks of 10.

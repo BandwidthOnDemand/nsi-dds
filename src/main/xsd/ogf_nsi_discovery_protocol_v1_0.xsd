@@ -37,13 +37,14 @@ or as required to translate it into languages other than English.
 The limited permissions granted above are perpetual and will not be revoked by
 the OGF or its successors or assignees.
 
-Open Grid Forum NSI Discovery Service Protocol v1.0.
+Open Grid Forum NSI Document Distribution Service Protocol v1.0.
 
-Description: This is the NSI Discovery Service Protocol types schema for the
-reference web services implementation of the OGF NSI Discovery Service v1.0.
-Comments and questions can be directed to the mailing list group mailing list
-(nsi-wg@ogf.org).
-
+Description: This is the NSI Document Distribution Protocol types schema for
+the reference web services implementation of the OGF NSI Document Distribution
+Service v1.0.  The Document Distribution Service provides the primary mechanism
+for information discovery within the Network Service Framwork suite of protocols.
+Comments and questions can be directed to the mailing list group
+mailing list (nsi-wg@ogf.org).
 -->
 <xsd:schema targetNamespace="http://schemas.ogf.org/nsi/2014/02/discovery/types"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -53,8 +54,8 @@ Comments and questions can be directed to the mailing list group mailing list
     <xsd:annotation>
         <xsd:appinfo>ogf_nsi_discovery_protocol_v1_0.xsd 2014-02-20</xsd:appinfo>
         <xsd:documentation xml:lang="en">
-            This is an XML schema document describing the OGF NSI Discovery
-            Service Protocol v1.0.
+            This is an XML schema document describing the OGF NSI Document
+            Distribution Service Protocol v1.0.
         </xsd:documentation>
     </xsd:annotation>
 
@@ -1047,9 +1048,9 @@ Comments and questions can be directed to the mailing list group mailing list
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
-        <xsd:anyAttribute namespace="##other" processContents="lax" />
+        <xsd:anyAttribute namespace="##any" processContents="lax" />
     </xsd:complexType>
 
     <xsd:element name="error"     type="tns:ErrorType">

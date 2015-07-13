@@ -117,14 +117,14 @@ public class AgoleDiscoveryActor extends UntypedActor {
         message.setNsaId(nsa.getId());
 
         Collection<NmlTopologyType> nmlDocuments = parseTopology(nsa, nsaDocument);
-        for (NmlTopologyType nmlDocument : nmlDocuments) {
+        nmlDocuments.stream().forEach((nmlDocument) -> {
             try {
                 addTopologyDocument(nmlDocument, lastDiscovered, nsa.getId());
             }
             catch (Exception ex) {
                 log.error("discoverTopology: Failed to topology document, nsaId=" + nsa.getId() + ", networkId=" + nmlDocument.getId());
             }
-        }
+        });
 
         // Now we retrieve the associated topology document.
         log.debug("discoverTopology: exiting.");
@@ -285,52 +285,56 @@ public class AgoleDiscoveryActor extends UntypedActor {
 
         // We pull the networkId out of the <Topology> elements.
         List<String> networkId = nsaDocument.getNetworkId();
-        for (NmlTopologyType topology : nsa.getTopology()) {
+        nsa.getTopology().stream().forEach((topology) -> {
             networkId.add(topology.getId().trim());
-        }
+        });
 
         return nsaDocument;
     }
 
     private Collection<NmlTopologyType> parseTopology(NmlNSAType nmlNsa, NsaType nsaDocument) {
         List<NmlTopologyType> topologies = nmlNsa.getTopology();
-        for (NmlTopologyType topology : topologies) {
+        topologies.stream().map((topology) -> {
             if (topology.getVersion() == null || !topology.getVersion().isValid()) {
                 topology.setVersion(nsaDocument.getVersion());
             }
-            if (topology.getLifetime() == null || topology.getLifetime().getEnd() == null || !topology.getLifetime().getEnd().isValid()) {
-                NmlLifeTimeType lifetime = factory.createNmlLifeTimeType();
-                lifetime.setEnd(nsaDocument.getExpires());
-                topology.setLifetime(lifetime);
-            }
-        }
+            return topology;
+        }).filter((topology) -> (topology.getLifetime() == null || topology.getLifetime().getEnd() == null || !topology.getLifetime().getEnd().isValid())).forEach((topology) -> {
+            NmlLifeTimeType lifetime = factory.createNmlLifeTimeType();
+            lifetime.setEnd(nsaDocument.getExpires());
+            topology.setLifetime(lifetime);
+        });
         return topologies;
     }
 
     private Collection<PeersWithType> parsePeersWith(List<NmlNSARelationType> relationList) {
         List<PeersWithType> peersWithList = new ArrayList<>();
-        for (NmlNSARelationType relation : relationList) {
-            if (NsiConstants.NML_PEERSWITH_RELATION.equalsIgnoreCase(relation.getType())) {
-                for (NmlNSAType nsa : relation.getNSA()) {
-                    PeersWithType peersWith = factory.createPeersWithType();
-                    peersWith.setRole(PeerRoleEnum.PA);
-                    peersWith.setValue(nsa.getId().trim());
-                    peersWithList.add(peersWith);
-                }
-            }
-        }
+        relationList.stream().filter((relation) -> (NsiConstants.NML_PEERSWITH_RELATION.equalsIgnoreCase(relation.getType()))).forEach((relation) -> {
+            relation.getNSA().stream().map((nsa) -> {
+                PeersWithType peersWith = factory.createPeersWithType();
+                peersWith.setRole(PeerRoleEnum.PA);
+                peersWith.setValue(nsa.getId().trim());
+                return peersWith;
+            }).forEach((peersWith) -> {
+                peersWithList.add(peersWith);
+            });
+        });
 
         return peersWithList;
     }
 
     private List<InterfaceType> parseService(List<NmlServiceType> services) {
         List<InterfaceType> interfaceList = new ArrayList<>();
-        for (NmlServiceType service : services) {
+        services.stream().map((service) -> {
             InterfaceType aInterface = factory.createInterfaceType();
             aInterface.setHref(service.getLink().trim());
+            return aInterface;
+        }).map((aInterface) -> {
             aInterface.setType(NsiConstants.NSI_CS_PROVIDER_V2);
+            return aInterface;
+        }).forEach((aInterface) -> {
             interfaceList.add(aInterface);
-        }
+        });
 
         return interfaceList;
     }

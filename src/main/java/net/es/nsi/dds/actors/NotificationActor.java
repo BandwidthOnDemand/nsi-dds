@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.actors;
 
 import akka.actor.UntypedActor;
@@ -20,12 +16,13 @@ import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.messages.Notification;
 import net.es.nsi.dds.provider.DiscoveryProvider;
-import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.schema.XmlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The Notification Actor delivers notifications to a specific DDS peer based
+ * on a previously filtered list of documents.
  *
  * @author hacksaw
  */
@@ -49,7 +46,7 @@ public class NotificationActor extends UntypedActor {
     public void onReceive(Object msg) {
         if (msg instanceof Notification) {
             Notification notification = (Notification) msg;
-            log.debug("NotificationActor: notificationId=" + notification.getSubscription().getId() + ", requesterId=" + notification.getSubscription().getSubscription().getRequesterId());
+            log.debug("NotificationActor: notificationId={}, requesterId={}", notification.getSubscription().getId(), notification.getSubscription().getSubscription().getRequesterId());
 
             NotificationListType list = getNotificationList(notification);
             String callback = notification.getSubscription().getSubscription().getCallback();
@@ -59,7 +56,7 @@ public class NotificationActor extends UntypedActor {
             JAXBElement<NotificationListType> jaxb = factory.createNotifications(list);
             String mediaType = notification.getSubscription().getEncoding();
 
-            log.debug("NotificationActor: sending mediaType=" + mediaType + ", subscriptionId=" + notification.getSubscription().getId() + ", callback=" + notification.getSubscription().getSubscription().getCallback());
+            log.debug("NotificationActor: sending mediaType={}, subscriptionId={}, callback={}", mediaType, notification.getSubscription().getId(), notification.getSubscription().getSubscription().getCallback());
 
             Response response = null;
             try {
@@ -67,17 +64,17 @@ public class NotificationActor extends UntypedActor {
                     .post(Entity.entity(new GenericEntity<JAXBElement<NotificationListType>>(jaxb) {}, mediaType));
 
                 if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
-                    log.debug("NotificationActor: sent notitifcation " + list.getId() + " to client " + callback + ", result = " + response.getStatusInfo().getReasonPhrase());
+                    log.debug("NotificationActor: sent notitifcation {} to client {}, result = {}", list.getId(), callback, response.getStatusInfo().getReasonPhrase());
                 }
                 else {
-                    log.error("NotificationActor: failed notification " + list.getId() + " to client " + callback + ", result = " + response.getStatusInfo().getReasonPhrase());
+                    log.error("NotificationActor: failed notification {} to client {}, result = {}", list.getId(), callback, response.getStatusInfo().getReasonPhrase());
                     // TODO: Tell discovery provider...
                     DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
                     discoveryProvider.deleteSubscription(notification.getSubscription().getId());
                 }
             }
             catch (Exception ex) {
-                log.error("NotificationActor: failed notification " + list.getId() + " to client " + callback, ex);
+                log.error("NotificationActor: failed notification {} to client {}" + list.getId(), callback, ex);
                 DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
                 discoveryProvider.deleteSubscription(notification.getSubscription().getId());
             }
@@ -93,8 +90,11 @@ public class NotificationActor extends UntypedActor {
 
     private NotificationListType getNotificationList(Notification notification) {
         NotificationListType list = factory.createNotificationListType();
-        for (Document document : notification.getDocuments()) {
-            log.debug("NotificationActor: documentId=" + document.getDocument().getId());
+
+        notification.getDocuments().stream().map((document) -> {
+            log.debug("NotificationActor: documentId={}", document.getDocument().getId());
+            return document;
+        }).map((document) -> {
             NotificationType notify = factory.createNotificationType();
             notify.setEvent(notification.getEvent());
             notify.setDocument(document.getDocument());
@@ -105,8 +105,10 @@ public class NotificationActor extends UntypedActor {
             catch (Exception ex) {
                 log.error("NotificationActor: discovered date conversion failed", ex);
             }
+            return notify;
+        }).forEach((notify) -> {
             list.getNotification().add(notify);
-        }
+        });
 
         list.setId(notification.getSubscription().getId());
         list.setHref(notification.getSubscription().getSubscription().getHref());

@@ -1,9 +1,9 @@
 package net.es.nsi.dds.actors;
 
-import net.es.nsi.dds.messages.TimerMsg;
 import akka.actor.UntypedActor;
 import java.util.concurrent.TimeUnit;
 import net.es.nsi.dds.dao.DocumentCache;
+import net.es.nsi.dds.messages.TimerMsg;
 import scala.concurrent.duration.Duration;
 
 /**
@@ -13,8 +13,8 @@ import scala.concurrent.duration.Duration;
  * @author hacksaw
  */
 public class DocumentExpiryActor extends UntypedActor {
-    private DdsActorSystem ddsActorSystem;
-    private DocumentCache documentCache;
+    private final DdsActorSystem ddsActorSystem;
+    private final DocumentCache documentCache;
     private long interval;
 
     public DocumentExpiryActor(DdsActorSystem ddsActorSystem, DocumentCache documentCache) {

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.actors;
 
 import akka.actor.ActorSystem;
@@ -12,7 +8,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- *
+ * Creates the base DDS actor system.
+ * 
  * @author hacksaw
  */
 public class DdsActorSystem implements ApplicationContextAware {
@@ -24,16 +21,16 @@ public class DdsActorSystem implements ApplicationContextAware {
     public DdsActorSystem() {
         // Initialize the AKKA actor system for the PCE and subsystems.
         log.info("DdsActorSystem: Initializing actor framework...");
-        actorSystem = akka.actor.ActorSystem.create("NSI-DISCOVERY");   
+        actorSystem = akka.actor.ActorSystem.create("NSI-DISCOVERY");
         SpringExtProvider.get(actorSystem).initialize(applicationContext);
         log.info("DdsActorSystem: ... Actor framework initialized.");
     }
-    
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
-    
+
     public ApplicationContext getApplicationContext() {
         return applicationContext;
     }
