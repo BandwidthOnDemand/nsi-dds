@@ -93,7 +93,7 @@ public class DiscoveryService {
             @DefaultValue("false") @QueryParam("summary") boolean summary,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws Exception {
 
-        log.debug("getAll: summary=" + summary + ", If-Modified-Sinc=" + ifModifiedSince);
+        log.debug("getAll: summary={}, If-Modified-Since={}", summary, ifModifiedSince);
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
@@ -200,11 +200,13 @@ public class DiscoveryService {
     @Path("/documents")
     @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     public Response getDocuments(
-            @QueryParam("id") String id,
             @QueryParam("nsa") String nsa,
             @QueryParam("type") String type,
+            @QueryParam("id") String id,
             @DefaultValue("false") @QueryParam("summary") boolean summary,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) {
+
+        log.debug("getDocuments: nsa={}, type{}, id={}, summary={}, If-Modified-Since={}", nsa, type, id, summary, ifModifiedSince);
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
@@ -218,13 +220,13 @@ public class DiscoveryService {
         Date discovered = new Date(0);
         DocumentListType results = factory.createDocumentListType();
         if (documents.size() > 0) {
-            // Only the document meta data is required and not the document
-            // contents.
             for (Document document : documents) {
                 if (discovered.before(document.getLastDiscovered())) {
                     discovered = document.getLastDiscovered();
                 }
 
+                // Check if only the document meta data is required and not
+                // the document contents.
                 if (summary) {
                     results.getDocument().add(document.getDocumentSummary());
                 }
@@ -234,7 +236,7 @@ public class DiscoveryService {
             }
         }
         else {
-            log.debug("getDocuments: zero results to query nsa=" + nsa + ", type=" + type + ", id=" + id + ", summary=" + summary);
+            log.debug("getDocuments: zero results to query nsa={}, type{}, id={}, summary={}, If-Modified-Since={}", nsa, type, id, summary, ifModifiedSince);
         }
 
         // Now we need to determine what "Last-Modified" date we send back.
@@ -268,6 +270,8 @@ public class DiscoveryService {
             @QueryParam("id") String id,
             @DefaultValue("false") @QueryParam("summary") boolean summary,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws WebApplicationException {
+
+        log.debug("getDocumentsByNsa: nsa={}, type{}, id={}, summary={}, If-Modified-Since={}", nsa, type, id, summary, ifModifiedSince);
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
@@ -327,7 +331,7 @@ public class DiscoveryService {
             @DefaultValue("false") @QueryParam("summary") boolean summary,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws WebApplicationException {
 
-        log.debug("getDocumentsByNsaAndType: " + nsa + ", " + type + ", " + id + ", " + summary + ", " + ifModifiedSince);
+        log.debug("getDocumentsByNsaAndType: nsa={}, type{}, id={}, summary={}, If-Modified-Since={}", nsa, type, id, summary, ifModifiedSince);
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
@@ -396,6 +400,8 @@ public class DiscoveryService {
             throw invalidXmlException;
         }
 
+        log.debug("addDocument: nsa={}, type{}, id={}", newDocument.getNsa(), newDocument.getType(), newDocument.getId());
+
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
         Document document = discoveryProvider.addDocument(newDocument, Source.LOCAL);
@@ -423,6 +429,8 @@ public class DiscoveryService {
             @PathParam("type") String type,
             @PathParam("id") String id) throws WebApplicationException {
 
+        log.debug("deleteDocument: nsa={}, type{}, id={}", nsa, type, id);
+
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
         Document document;
@@ -445,6 +453,7 @@ public class DiscoveryService {
     @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     @Consumes({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     public Response addLocalDocument(InputStream request) throws Exception {
+        log.debug("addLocalDocument:");
         return addDocument(request);
     }
 
@@ -461,10 +470,12 @@ public class DiscoveryService {
     @Path("/local")
     @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     public Response getLocalDocuments(
-            @QueryParam("id") String id,
             @QueryParam("type") String type,
+            @QueryParam("id") String id,
             @DefaultValue("false") @QueryParam("summary") boolean summary,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws WebApplicationException {
+
+        log.debug("getLocalDocuments: type{}, id={}, summary={}, If-Modified-Since={}", type, id, summary, ifModifiedSince);
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
@@ -520,6 +531,8 @@ public class DiscoveryService {
             @QueryParam("id") String id,
             @DefaultValue("false") @QueryParam("summary") boolean summary,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws WebApplicationException {
+
+        log.debug("getLocalDocumentsByType: type{}, id={}, summary={}, If-Modified-Since={}", type, id, summary, ifModifiedSince);
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
@@ -579,6 +592,8 @@ public class DiscoveryService {
             @DefaultValue("false") @QueryParam("summary") boolean summary,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws WebApplicationException {
 
+        log.debug("getLocalDocument: type{}, id={}, summary={}, If-Modified-Since={}", type, id, summary, ifModifiedSince);
+
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
         Date lastDiscovered = null;
@@ -627,6 +642,8 @@ public class DiscoveryService {
             @DefaultValue("false") @QueryParam("summary") boolean summary,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws WebApplicationException {
 
+        log.debug("getDocument: nsa={}, type{}, id={}, summary={}, If-Modified-Since={}", nsa, type, id, summary, ifModifiedSince);
+
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
         Date lastDiscovered = null;
@@ -673,6 +690,9 @@ public class DiscoveryService {
             @PathParam("type") String type,
             @PathParam("id") String id,
             InputStream request) throws WebApplicationException {
+
+        log.debug("updateDocument: nsa={}, type{}, id={}", nsa, type, id);
+
         // Parse incoming XML into JAXB objects.
         DocumentType updateRequest;
         try {
@@ -716,7 +736,7 @@ public class DiscoveryService {
             @QueryParam("requesterId") String requesterId,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws WebApplicationException {
 
-        log.debug("getSubscriptions: requesterId=" + requesterId);
+        log.debug("getSubscriptions: requesterId={}", requesterId);
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
@@ -737,7 +757,7 @@ public class DiscoveryService {
                 }
 
                 results.getSubscription().add(subscription.getSubscription());
-                log.debug("getSubscriptions: " + subscription.getSubscription().getId());
+                log.debug("getSubscriptions: {}", subscription.getSubscription().getId());
             }
         }
 
@@ -785,13 +805,12 @@ public class DiscoveryService {
             throw invalidXmlException;
         }
 
-
-        log.debug("addSubscription: requesterId=" + subscriptionRequest.getRequesterId() + ", callback=" + subscriptionRequest.getCallback());
+        log.debug("addSubscription: requesterId={}, callback={}", subscriptionRequest.getRequesterId(), subscriptionRequest.getCallback());
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
         Subscription subscription = discoveryProvider.addSubscription(subscriptionRequest, accept);
 
-        log.debug("addSubscription: requesterId=" + subscriptionRequest.getRequesterId() + ", subscriptionId=" + subscription.getId());
+        log.debug("addSubscription: requesterId={}, subscriptionId={}", subscriptionRequest.getRequesterId(), subscription.getId());
 
         String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);
         JAXBElement<SubscriptionType> jaxb = factory.createSubscription(subscription.getSubscription());
@@ -813,7 +832,7 @@ public class DiscoveryService {
             @PathParam("id") String id,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws WebApplicationException {
 
-        log.debug("getSubscriptions: id=" + id);
+        log.debug("getSubscriptions: id={}", id);
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
@@ -854,7 +873,7 @@ public class DiscoveryService {
             @PathParam("id") String id,
             InputStream request) throws WebApplicationException {
 
-        log.debug("editSubscription: id=" + id);
+        log.debug("editSubscription: id={}", id);
 
         // Parse the XML into JAXB objects.
         SubscriptionRequestType subscriptionRequest;
@@ -896,7 +915,7 @@ public class DiscoveryService {
     @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     @Consumes({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     public Response deleteSubscription(@PathParam("id") String id) throws WebApplicationException {
-        log.debug("deleteSubscription: id=" + id);
+        log.debug("deleteSubscription: id={}", id);
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
         discoveryProvider.deleteSubscription(id);
         return Response.noContent().build();
@@ -919,7 +938,7 @@ public class DiscoveryService {
     @Consumes({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     public Response notifications(@HeaderParam("Host") String host, @HeaderParam("Accept") String encoding, @HeaderParam("X-Forwarded-For") String source, InputStream request) throws WebApplicationException {
 
-        log.debug("notifications: Incoming notification from Host=" + host + ", X-Forwarded-For=" + source + ", Accept="+ encoding);
+        log.debug("notifications: Incoming notification from Host={}, X-Forwarded-For={}, Accept={}", host, source, encoding);
 
         // Parse the XML into JAXB objects.
         NotificationListType notifications;
@@ -942,15 +961,15 @@ public class DiscoveryService {
         // Process the notification request.
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
-        log.debug("notifications: provider=" + notifications.getProviderId() + ", subscriptionId=" + notifications.getId() + ", href=" + notifications.getHref());
+        log.debug("notifications: provider={}, subscriptionId={}, href={}", notifications.getProviderId(), notifications.getId(), notifications.getHref());
         for (NotificationType notification : notifications.getNotification()) {
-            log.debug("notifications: processing notification event=" + notification.getEvent() + ", documentId=" + notification.getDocument().getId());
+            log.debug("notifications: processing notification event={}, documentId={}" + notification.getEvent(), notification.getDocument().getId());
             try {
                 discoveryProvider.processNotification(notification);
             }
             catch (Exception ex) {
                 WebApplicationException internalServerErrorException = Exceptions.internalServerErrorException("notifications", "failed to process notification for documentId=" + notification.getDocument().getId());
-                log.error("notifications: failed to process notification for documentId=" + notification.getDocument().getId(), ex);
+                log.error("notifications: failed to process notification for documentId={}", notification.getDocument().getId(), ex);
                 throw internalServerErrorException;
             }
         }

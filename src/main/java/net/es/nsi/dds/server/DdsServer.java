@@ -16,7 +16,7 @@ public class DdsServer {
     private static final int FILE_CACHE_MAX_AGE = 3600;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private HttpConfig config;
+    private final HttpConfig config;
     private RestServer server = null;
 
     public DdsServer(DdsConfiguration config) {

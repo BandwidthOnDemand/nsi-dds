@@ -76,7 +76,7 @@ public class AgoleDiscoveryActor extends UntypedActor {
     private boolean discoverTopology(AgoleDiscoveryMsg message) {
         String url = message.getTopologyURL();
 
-        log.debug("discover: topology url=" + url);
+        log.debug("discover: topology url={}", url);
 
         if (url == null || url.isEmpty()) {
             return false;
@@ -87,12 +87,12 @@ public class AgoleDiscoveryActor extends UntypedActor {
         try {
             nsa = topologyReader.readNsaTopology();
         } catch (NotFoundException | IllegalStateException | JAXBException ex) {
-            log.error("discoverTopology: failed to read topology for url=" + url, ex);
+            log.error("discoverTopology: failed to read topology for url={}", url, ex);
             return false;
         }
 
         if (nsa == null) {
-            log.debug("discoverTopology: Topology document not modified for url=" + url);
+            log.debug("discoverTopology: Topology document not modified for url={}", url);
             return false;
         }
 
@@ -100,7 +100,7 @@ public class AgoleDiscoveryActor extends UntypedActor {
         try {
             lastDiscovered = XmlUtilities.xmlGregorianCalendar();
         } catch (DatatypeConfigurationException ex) {
-            log.error("discoverTopology: Failed to create a lastDiscovered value, id=" + nsa.getId(), ex);
+            log.error("discoverTopology: Failed to create a lastDiscovered value, id={}", nsa.getId(), ex);
             return false;
         }
 
@@ -122,7 +122,7 @@ public class AgoleDiscoveryActor extends UntypedActor {
                 addTopologyDocument(nmlDocument, lastDiscovered, nsa.getId());
             }
             catch (Exception ex) {
-                log.error("discoverTopology: Failed to topology document, nsaId=" + nsa.getId() + ", networkId=" + nmlDocument.getId());
+                log.error("discoverTopology: Failed to topology document, nsaId={}, networkId={}", nsa.getId(), nmlDocument.getId());
             }
         });
 
@@ -158,7 +158,7 @@ public class AgoleDiscoveryActor extends UntypedActor {
             try {
                 xmlGregorianCalendar = XmlUtilities.xmlGregorianCalendar(date);
             } catch (DatatypeConfigurationException ex) {
-                log.error("discover: NSA document does not contain an expires date, id=" + nsa.getId());
+                log.error("discover: NSA document does not contain an expires date, id={}", nsa.getId());
                 return false;
             }
 
@@ -205,7 +205,7 @@ public class AgoleDiscoveryActor extends UntypedActor {
             try {
                 xmlGregorianCalendar = XmlUtilities.xmlGregorianCalendar(date);
             } catch (DatatypeConfigurationException ex) {
-                log.error("discover: Topology document does not contain an expires date, id=" + topology.getId());
+                log.error("discover: Topology document does not contain an expires date, id={}", topology.getId());
                 return false;
             }
 

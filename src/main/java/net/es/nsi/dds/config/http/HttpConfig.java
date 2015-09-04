@@ -8,7 +8,6 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.api.jaxb.SecureType;
 import net.es.nsi.dds.api.jaxb.ServerType;
 import net.es.nsi.dds.api.jaxb.StaticType;
@@ -18,9 +17,7 @@ public class HttpConfig {
     private final static String DEFAULT_ADDRESS = "localhost";
     private final static String DEFAULT_PORT = "8401";
     private final static String DEFAULT_PACKAGENAME = "net.es.nsi.dds";
-
-    private final ObjectFactory factory = new ObjectFactory();
-
+    
     private Optional<String> address;
     private Optional<String> port;
     private Optional<String> packageName;

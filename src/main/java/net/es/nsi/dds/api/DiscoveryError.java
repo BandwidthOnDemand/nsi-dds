@@ -24,7 +24,7 @@ public enum DiscoveryError {
     NOT_FOUND(106, "NOT_FOUND", "Requested resources was not found (%s)."),
     INVALID_XML(107, "INVALID_XML", "Request contained invalid XML (%s)."),
     UNAUTHORIZED(108, "UNAUTHORIZED", "Supplied credentials did not have needed level of authorization (%s)."),
-    
+
     DOCUMENT_EXISTS(110, "DOCUMENT_EXISTS", "There is already a registered document under provided id (%s)."),
     DOCUMENT_DOES_NOT_EXIST(111, "DOCUMENT_DOES_NOT_EXIST", "The requested document does not exist (%s)."),
     DOCUMENT_INVALID(112, "DOCUMENT_INVALID", "There was a problem with the document that prevents storage (%s)."),
@@ -37,16 +37,16 @@ public enum DiscoveryError {
     // Mark the end.
     END(999, "END", "END");
 
-    private int code;
-    private String label;
-    private String description;
+    private final int code;
+    private final String label;
+    private final String description;
 
     /**
      * A mapping between the integer code and its corresponding Status to facilitate lookup by code.
      */
     private static Map<Integer, DiscoveryError> codeToStatusMapping;
 
-    private static ObjectFactory factory = new ObjectFactory();
+    private static final ObjectFactory factory = new ObjectFactory();
 
     private DiscoveryError(int code, String label, String description) {
         this.code = code;

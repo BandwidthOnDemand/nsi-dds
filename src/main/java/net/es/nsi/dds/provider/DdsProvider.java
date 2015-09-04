@@ -640,44 +640,40 @@ public class DdsProvider implements DiscoveryProvider {
 
     public Collection<Document> getDocumentsByDate(Date lastDiscovered, Collection<Document> input) {
         Collection<Document> output = new ArrayList<>();
-        for (Document document : input) {
-            if (document.getLastDiscovered().after(lastDiscovered)) {
-                output.add(document);
-            }
-        }
+        input.stream().filter((document) -> (document.getLastDiscovered().after(lastDiscovered)))
+                .forEach((document) -> {
+            output.add(document);
+        });
 
         return output;
     }
 
     public Collection<Document> getDocumentsByNsa(String nsa, Collection<Document> input) {
         Collection<Document> output = new ArrayList<>();
-        for (Document document : input) {
-            if (document.getDocument().getNsa().equalsIgnoreCase(nsa)) {
-                output.add(document);
-            }
-        }
+        input.stream().filter((document) -> (document.getDocument().getNsa().equalsIgnoreCase(nsa)))
+                .forEach((document) -> {
+            output.add(document);
+        });
 
         return output;
     }
 
     public Collection<Document> getDocumentsByType(String type, Collection<Document> input) {
         Collection<Document> output = new ArrayList<>();
-        for (Document document : input) {
-            if (document.getDocument().getType().equalsIgnoreCase(type)) {
-                output.add(document);
-            }
-        }
+        input.stream().filter((document) -> (document.getDocument().getType().equalsIgnoreCase(type)))
+                .forEach((document) -> {
+            output.add(document);
+        });
 
         return output;
     }
 
     public Collection<Document> getDocumentsById(String id, Collection<Document> input) {
         Collection<Document> output = new ArrayList<>();
-        for (Document document : input) {
-            if (document.getDocument().getId().equalsIgnoreCase(id)) {
-                output.add(document);
-            }
-        }
+        input.stream().filter((document) -> (document.getDocument().getId().equalsIgnoreCase(id)))
+                .forEach((document) -> {
+            output.add(document);
+        });
 
         return output;
     }

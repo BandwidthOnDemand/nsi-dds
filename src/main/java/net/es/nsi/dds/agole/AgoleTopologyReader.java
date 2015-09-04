@@ -57,6 +57,7 @@ public class AgoleTopologyReader {
      * Read the NML topology from target location using HTTP GET operation.
      *
      * @return The JAXB NSA element from the NML topology.
+     * @throws javax.xml.bind.JAXBException
      */
     public NmlNSAType readNsaTopology() throws NotFoundException, IllegalStateException, JAXBException {
         // Use the REST client to retrieve the master topology as a string.
@@ -69,7 +70,7 @@ public class AgoleTopologyReader {
 
             // A 304 Not Modified indicates we already have a up-to-date document.
             if (response.getStatus() == Response.Status.NOT_MODIFIED.getStatusCode()) {
-                log.debug("readNsaTopology: NOT_MODIFIED returned " + target);
+                log.debug("readNsaTopology: NOT_MODIFIED returned {}", target);
                 return null;
             }
             else if (response.getStatus() != Response.Status.OK.getStatusCode()) {
@@ -79,10 +80,10 @@ public class AgoleTopologyReader {
 
             // We want to store the last modified date as viewed from the HTTP server.
             Date lastMod = response.getLastModified();
-            log.debug("readNsaTopology: lastModified = " + new Date(getLastModifiedTime()) + ", current = " + lastMod);
+            log.debug("readNsaTopology: lastModified = {}, current = {}", new Date(getLastModifiedTime()), lastMod);
 
             if (lastMod != null) {
-                log.debug("readNsaTopology: Updating last modified time to " + lastMod);
+                log.debug("readNsaTopology: Updating last modified time to {}", lastMod);
                 lastModifiedTime = lastMod.getTime();
             }
 

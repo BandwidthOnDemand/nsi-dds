@@ -50,7 +50,7 @@ public class AgoleManifestReader {
 
     /**
      * Default class constructor.
-     * 
+     *
      * @param restClient
      */
     public AgoleManifestReader(RestClient restClient) {
@@ -123,15 +123,15 @@ public class AgoleManifestReader {
 
             // A 304 Not Modified indicates we already have a up-to-date document.
             if (response.getStatus() == Status.NOT_MODIFIED.getStatusCode()) {
-                log.debug("readManifest: no changes to " + getTarget());
+                log.debug("readManifest: no changes to {}", getTarget());
             }
             else if (response.getStatus() == Status.OK.getStatusCode()) {
-                log.debug("readManifest: processing changes to " + getTarget());
+                log.debug("readManifest: processing changes to {}", getTarget());
 
                 // We want to store the last modified date as viewed from the HTTP server.
                 Date lastMod = response.getLastModified();
                 if (lastMod != null) {
-                    log.debug("readManifest: Updating last modified time " + DateUtils.formatDate(lastMod, DateUtils.PATTERN_RFC1123));
+                    log.debug("readManifest: Updating last modified time {}", DateUtils.formatDate(lastMod, DateUtils.PATTERN_RFC1123));
                     setLastModified(lastMod.getTime());
                 }
 
@@ -156,7 +156,7 @@ public class AgoleManifestReader {
                         Map<QName, String> otherAttributes = innerTopology.getOtherAttributes();
                         String isReference = otherAttributes.get(_isReference_QNAME);
                         if (isReference != null && !isReference.isEmpty()) {
-                            log.debug("readManifest: topology id: " + networkObject.getId() + ", isReference: " + isReference);
+                            log.debug("readManifest: topology id: {}, isReference: ", networkObject.getId(), isReference);
                             newManifest.setTopologyURL(networkObject.getId(), isReference);
                         }
                         else {

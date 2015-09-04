@@ -116,7 +116,7 @@ public class AgoleDiscoveryRouter extends UntypedActor {
         else if (msg instanceof AgoleDiscoveryMsg) {
             AgoleDiscoveryMsg incoming = (AgoleDiscoveryMsg) msg;
 
-            log.debug("onReceive: discovery update for nsaId=" + incoming.getNsaId());
+            log.debug("onReceive: discovery update for nsaId={}", incoming.getNsaId());
 
             discovery.put(incoming.getTopologyURL(), incoming);
         }
@@ -136,7 +136,7 @@ public class AgoleDiscoveryRouter extends UntypedActor {
     }
 
     private TopologyManifest readManifest() {
-        log.debug("readManifest: starting manifest audit for " + manifestReader.getTarget());
+        log.debug("readManifest: starting manifest audit for {}", manifestReader.getTarget());
         manifestAuditStart();
         try {
             TopologyManifest manifestIfModified = manifestReader.getManifestIfModified();
@@ -144,15 +144,15 @@ public class AgoleDiscoveryRouter extends UntypedActor {
                 manifest = manifestIfModified;
             }
         } catch (NotFoundException nf) {
-            log.error("readManifest: could not find manifest file " + manifestReader.getTarget(), nf);
+            log.error("readManifest: could not find manifest file {}", manifestReader.getTarget(), nf);
             manifestAuditError();
         } catch (JAXBException jaxb) {
-            log.error("readManifest: could not parse manifest file " + manifestReader.getTarget(), jaxb);
+            log.error("readManifest: could not parse manifest file {}", manifestReader.getTarget(), jaxb);
             manifestAuditError();
         }
 
         manifestAuditSuccess();
-        log.debug("readManifest: completed manifest audit for " + manifestReader.getTarget());
+        log.debug("readManifest: completed manifest audit for {}", manifestReader.getTarget());
         return manifest;
     }
 
@@ -164,7 +164,7 @@ public class AgoleDiscoveryRouter extends UntypedActor {
             String id = entry.getKey();
             String url =  entry.getValue();
 
-            log.debug("routeTimerEvent: id=" + id + ", url=" + url);
+            log.debug("routeTimerEvent: id={}, url={}", id, url);
 
             AgoleDiscoveryMsg msg = discovery.get(url);
             if (msg == null) {
@@ -179,7 +179,7 @@ public class AgoleDiscoveryRouter extends UntypedActor {
 
         // Clean up the entries no longer in the configuration.
         notSent.stream().forEach((url) -> {
-            log.debug("routeTimerEvent: entry no longer needed, url=" + url);
+            log.debug("routeTimerEvent: entry no longer needed, url={}", url);
             discovery.remove(url);
         });
 

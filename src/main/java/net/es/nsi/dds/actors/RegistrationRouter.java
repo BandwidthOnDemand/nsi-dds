@@ -109,15 +109,15 @@ public class RegistrationRouter extends UntypedActor {
     private void routeRegister() {
         // We need to register invoke a registration actor for each remote DDS
         // we are peering with.
-        for (PeerURLType url : discoveryConfiguration.getDiscoveryURL()) {
-            if (url.getType().equalsIgnoreCase(NsiConstants.NSI_DDS_V1_XML)) {
-                RegistrationEvent regEvent = new RegistrationEvent();
-                regEvent.setEvent(RegistrationEvent.Event.Register);
-                regEvent.setUrl(url.getValue());
-                log.debug("routeRegister: url=" + url.getValue());
-                router.route(regEvent, this.getSelf());
-            }
-        }
+        discoveryConfiguration.getDiscoveryURL().stream()
+                .filter((url) -> (url.getType().equalsIgnoreCase(NsiConstants.NSI_DDS_V1_XML)))
+                .forEach((url) -> {
+            RegistrationEvent regEvent = new RegistrationEvent();
+            regEvent.setEvent(RegistrationEvent.Event.Register);
+            regEvent.setUrl(url.getValue());
+            log.debug("routeRegister: url={}", url.getValue());
+            router.route(regEvent, this.getSelf());
+        });
     }
 
     private void routeAudit() {
@@ -125,46 +125,46 @@ public class RegistrationRouter extends UntypedActor {
         Collection<PeerURLType> discoveryURL = discoveryConfiguration.getDiscoveryURL();
         Set<String> subscriptionURL = Sets.newHashSet(remoteSubscriptionCache.keySet());
 
-        for (PeerURLType url : discoveryURL) {
-            // We only handle direct DDS peers here.
-            if (url.getType().equalsIgnoreCase(NsiConstants.NSI_DDS_V1_XML)) {
-                // See if we already have seen this URL.  If we have not then
-                // we need to create a new remote subscription.
-                RemoteSubscription sub = remoteSubscriptionCache.get(url.getValue());
-                if (sub == null) {
-                    // We have not seen this before.
-                    log.debug("routeAudit: new registration for url=" + url.getValue());
+        discoveryURL.stream()
+                .filter((url) -> (url.getType().equalsIgnoreCase(NsiConstants.NSI_DDS_V1_XML)))
+                .forEach((url) -> {
+            // See if we already have seen this URL.  If we have not then
+            // we need to create a new remote subscription.
+            RemoteSubscription sub = remoteSubscriptionCache.get(url.getValue());
+            if (sub == null) {
+                // We have not seen this before.
+                log.debug("routeAudit: new registration for url={}", url.getValue());
 
-                    RegistrationEvent regEvent = new RegistrationEvent();
-                    regEvent.setEvent(RegistrationEvent.Event.Register);
-                    regEvent.setUrl(url.getValue());
-                    router.route(regEvent, this.getSelf());
-                }
-                else {
-                    // We have seen this URL before.
-                    log.debug("routeAudit: auditing registration for url=" + url.getValue());
-                    RegistrationEvent regEvent = new RegistrationEvent();
-                    regEvent.setEvent(RegistrationEvent.Event.Update);
-                    regEvent.setUrl(url.getValue());
-                    router.route(regEvent, this.getSelf());
-
-                    // Remove from the existing list as processed.
-                    subscriptionURL.remove(url.getValue());
-                }
+                RegistrationEvent regEvent = new RegistrationEvent();
+                regEvent.setEvent(RegistrationEvent.Event.Register);
+                regEvent.setUrl(url.getValue());
+                router.route(regEvent, this.getSelf());
             }
-        }
+            else {
+                // We have seen this URL before.
+                log.debug("routeAudit: auditing registration for url={}", url.getValue());
+                RegistrationEvent regEvent = new RegistrationEvent();
+                regEvent.setEvent(RegistrationEvent.Event.Update);
+                regEvent.setUrl(url.getValue());
+                router.route(regEvent, this.getSelf());
 
+                // Remove from the existing list as processed.
+                subscriptionURL.remove(url.getValue());
+            }
+        }); // We only handle direct DDS peers here.
         // Now we see if there are any URL we missed from the old list and
         // unsubscribe them since we seem to no longer be interested.
-        for (String url : subscriptionURL) {
-            RemoteSubscription sub = remoteSubscriptionCache.get(url);
-            if (sub != null) { // Should always be true unless modified while we are processing.
-                RegistrationEvent regEvent = new RegistrationEvent();
-                regEvent.setEvent(RegistrationEvent.Event.Delete);
-                regEvent.setUrl(sub.getDdsURL());
-                router.route(regEvent, getSelf());
-            }
-        }
+        subscriptionURL.stream()
+                .map((url) -> remoteSubscriptionCache.get(url))
+                .filter((sub) -> (sub != null)).map((sub) -> {
+            // Should always be true unless modified while we are processing.
+            RegistrationEvent regEvent = new RegistrationEvent();
+            regEvent.setEvent(RegistrationEvent.Event.Delete);
+            regEvent.setUrl(sub.getDdsURL());
+            return regEvent;
+        }).forEach((regEvent) -> {
+            router.route(regEvent, getSelf());
+        });
     }
 
     private void routeShutdown() {

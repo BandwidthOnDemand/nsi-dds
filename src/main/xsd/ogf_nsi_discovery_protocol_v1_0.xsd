@@ -616,7 +616,7 @@ mailing list (nsi-wg@ogf.org).
         </xsd:annotation>
         <xsd:sequence>
             <xsd:element name="discovered" type="xsd:dateTime" />
-            <xsd:element name="event" type="tns:DocumentEventType" />
+            <xsd:element name="event"      type="tns:DocumentEventType" />
             <xsd:element name="document"   type="tns:DocumentType" />
             <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
         </xsd:sequence>
@@ -994,9 +994,25 @@ mailing list (nsi-wg@ogf.org).
                 Elements:
 
                 nsa	- The source NSA associated with the generation and management
-                of the document within the network.
+                of the document within the network. This is assumed to be the NSA
+                to which the document relates, however, there may be situations
+                such as proxy publishing where this assumption is not true.
+                
+                For example, if the document being generated is the NSA Description
+                Document for NSA “urn:ogf:network:example.com:2013:nsa:vixen”, then
+                the nsa element should contain is the NSA identifier
+                “urn:ogf:network:example.com:2013:nsa:vixen”.
 
                 type - The unique string identifying the type of this document.
+                A document type is defined by the type and release of a data
+                document.  For example, NSI Topology version 1.0 and a NSI
+                Topology version 2.0 would be considered two different document
+                types:
+                    - vnd.ogf.nsi.topology.v1+xml
+                    - vnd.ogf.nsi.topology.v2+xml
+                
+                The NSA Description Document 1.0 is defined as the type:
+                    - vnd.ogf.nsi.nsa.v1+xml
 
                 signature - The OPTIONAL digital signature of the document
                 contents.
@@ -1011,15 +1027,15 @@ mailing list (nsi-wg@ogf.org).
                 Attributes:
 
                 id - The identifier of the document.  This value must be unique
-                in the context of the nsa and type values.
+                in the context of the nsa and type element values.
 
-                version	- The version of the document.  Typically the date this
-                version of the document was created.  Any updates to the document
-                must be tagged with a new version.
+                version	- The version of the document, or more specifically, the
+                date this version of the document was created.  Any updates to the
+                document must be tagged with a new version.
 
-                expires	- The date this version of the document expires and should
-                be deleted from the NSA (document server) and any clients caching
-                the document.
+                expires	- The date this version of the document expires and
+                should be deleted from the Global Document Space by an NSA and
+                any clients caching the document.
 
                 other - Provides a flexible mechanism allowing additional attributes
                 to be provided from other namespaces without needing to update
@@ -1033,8 +1049,8 @@ mailing list (nsi-wg@ogf.org).
             <xsd:element name="content"   type="tns:AnyType" minOccurs="0" />
             <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
         </xsd:sequence>
-        <xsd:attribute name="id" use="required" type="xsd:string" />
-        <xsd:attribute name="href" use="optional" type="xsd:anyURI" />
+        <xsd:attribute name="id"      use="required" type="xsd:string" />
+        <xsd:attribute name="href"    use="optional" type="xsd:anyURI" />
         <xsd:attribute name="version" use="required" type="xsd:dateTime" />
         <xsd:attribute name="expires" use="required" type="xsd:dateTime" />
         <xsd:anyAttribute namespace="##other" processContents="lax" />
@@ -1080,7 +1096,8 @@ mailing list (nsi-wg@ogf.org).
     <xsd:complexType name="ErrorType">
         <xsd:annotation>
             <xsd:documentation xml:lang="en">
-                This type models errors returned from Discovery Service operations.
+                This type models errors returned from Document Distribution
+                Service operations.
 
                 Elements:
 
@@ -1105,7 +1122,7 @@ mailing list (nsi-wg@ogf.org).
             <xsd:element name="description" type="xsd:string" />
             <xsd:element name="resource"    type="xsd:anyURI" />
         </xsd:sequence>
-        <xsd:attribute name="id"   type="xsd:string" use="required" />
-        <xsd:attribute name="date" type="xsd:dateTime" use="required" />
+        <xsd:attribute name="id"   use="required" type="xsd:string" />
+        <xsd:attribute name="date" use="required" type="xsd:dateTime" />
     </xsd:complexType>
 </xsd:schema>

@@ -10,13 +10,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Models the master topology list as converted from NML.
- * 
+ *
  * @author hacksaw
  */
 public class TopologyManifest {
     private String id;
     private long version;
-    private Map<String, String> entryList = new ConcurrentHashMap<>();
+    private final Map<String, String> entryList = new ConcurrentHashMap<>();
 
     /**
      * @return the id
@@ -60,8 +60,9 @@ public class TopologyManifest {
         this.entryList.clear();
         this.entryList.putAll(entryList);
     }
-    
+
     /**
+     * @param id
      * @return the String
      */
     public String getTopologyURL(String id) {
@@ -71,11 +72,11 @@ public class TopologyManifest {
     public void setTopologyURL(String id, String url) {
         entryList.put(id, url);
     }
-    
+
     public void put(String id, String url) {
         entryList.put(id, url);
     }
-    
+
     public String get(String id) {
         return entryList.get(id);
     }

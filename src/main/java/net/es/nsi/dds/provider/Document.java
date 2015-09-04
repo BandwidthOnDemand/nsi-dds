@@ -19,7 +19,7 @@ import net.es.nsi.dds.api.jaxb.ObjectFactory;
 public class Document implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final String DOCUMENTS_URL = "documents";
-    private static ObjectFactory factory = new ObjectFactory();
+    private static final ObjectFactory factory = new ObjectFactory();
 
     private String id;
     private String filename;
