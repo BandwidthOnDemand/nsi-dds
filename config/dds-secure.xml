@@ -73,8 +73,16 @@
     </client>
     
     <accessControl enabled="true">
-         <dn access="read">EMAILADDRESS=bob@example.com, CN=Bobby Boogie, OU=Sciences Network, O=Example Networks, L=New York, ST=NY, C=US</dn>
+        <rule access="read">
+		<dn>EMAILADDRESS=bob@example.com, CN=Bobby Boogie, OU=Sciences Network, O=Example Networks, L=New York, ST=NY, C=US</dn>
+        </rule>
+        <rule access="write">
+                <dn>CN=nsi-aggr-west.es.net, OU=Domain Control Validated</dn>
+		<nsaId>urn:ogf:network:es.net:2013:nsa:nsi-aggr-west</nsaId>
+        </rule>
     </accessControl>
+
+<!-- If you are a uPA you have no peerURL of type DDS.  They register with you, you do not register with them. -->
     
     <!-- DDS service interfaces. -->
     <!-- <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://agg.netherlight.net/dds</peerURL> -->

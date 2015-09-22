@@ -5,7 +5,7 @@
     xmlns="http://schemas.ogf.org/nml/2013/05/base#"
     xmlns:ns3="urn:ietf:params:xml:ns:vcard-4.0"
     xmlns:sd="http://schemas.ogf.org/nsi/2013/12/services/definition">
-    
+
     <name>NetherLight A-GOLE test bed</name>
     <Location id="urn:ogf:network:netherlight.net:2013:nsa:bod:location">
         <long>4.954585</long>
@@ -92,13 +92,13 @@
             <PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:pionier:1:out"/>
             <PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:pionier:1:in"/>
         </BidirectionalPort>
-        
+
         <!-- NSI CS Services offered by this Network. -->
         <sd:serviceDefinition id="urn:ogf:network:netherlight.net:2013:ServiceDefinition:EVTS.A-GOLE">
             <name>GLIF Automated GOLE Ethernet VLAN Transfer Service</name>
-            <serviceType>http://services.ogf.org/nsi/2013/07/definitions/EVTS.A-GOLE</serviceType>
+            <serviceType>http://services.ogf.org/nsi/2013/12/definitions/EVTS.A-GOLE</serviceType>
         </sd:serviceDefinition>
-        
+
         <Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
             <PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:232:out">
                 <LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</LabelGroup>
@@ -261,7 +261,7 @@
                 </Relation>
             </PortGroup>
         </Relation>
-        
+
         <!-- We define a hasService relationship to hold our definitions of
              NSI Service Domains and Adaptations. -->
         <Relation type="http://schemas.ogf.org/nml/2013/05/base#hasService">
@@ -269,7 +269,7 @@
                 encoding="http://schemas.ogf.org/nml/2013/05/ethernet"
                 labelSwapping = "true"
                 labelType="http://schemas.ogf.org/nml/2013/05/ethernet#vlan">
-                
+
                 <Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
                     <PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:232:in"/>
                     <PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:241:in"/>
@@ -284,7 +284,7 @@
                     <PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:czechlight:1:in"/>
                     <PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:pionier:1:in"/>
                 </Relation>
-                
+
                 <Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
                     <PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:232:out"/>
                     <PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:241:out"/>
@@ -299,7 +299,7 @@
                     <PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:czechlight:1:out"/>
                     <PortGroup id="urn:ogf:network:netherlight.net:2013:port:a-gole:testbed:pionier:1:out"/>
                 </Relation>
-                
+
                 <!-- NSI CS Services supported by this Service Domain. -->
                 <sd:serviceDefinition id="urn:ogf:network:netherlight.net:2013:ServiceDefinition:EVTS.A-GOLE" />
             </SwitchingService>

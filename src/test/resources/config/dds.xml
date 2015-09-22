@@ -54,12 +54,23 @@
     </server>
     
     <accessControl enabled="true">
-        <dn access="read">CN=Go Daddy Secure Certificate Authority - G2, OU=http://certs.godaddy.com/repository/, O="GoDaddy.com, Inc.", L=Scottsdale, ST=Arizona, C=US</dn>
-        <dn access="read">CN=Go Daddy Root Certificate Authority - G2, O="GoDaddy.com, Inc.", L=Scottsdale, ST=Arizona, C=US</dn>
-        <dn access="read">CN=TERENA SSL CA, O=TERENA, C=NL</dn>
-        <dn access="admin">CN=bod.netherlight.net, OU=Domain Control Validated</dn>
-        <dn access="write">emailAddress=opennsa@northwestern.edu, OU=iCAIR - StarLight, L=Chicago, O=Northwestern U IT, ST=Illinois, C=US</dn>
-        <dn access="write">1.2.840.113549.1.9.1=#16186F70656E6E7361406E6F7274687765737465726E2E656475, OU=iCAIR - StarLight, L=Chicago, O=Northwestern U IT, ST=Illinois, C=US</dn>
+        <rule access="read">
+            <dn>CN=Go Daddy Secure Certificate Authority - G2, OU=http://certs.godaddy.com/repository/, O="GoDaddy.com, Inc.", L=Scottsdale, ST=Arizona, C=US</dn>
+        </rule>
+        <rule access="read">
+            <dn>CN=Go Daddy Root Certificate Authority - G2, O="GoDaddy.com, Inc.", L=Scottsdale, ST=Arizona, C=US</dn>
+        </rule>
+        <rule access="read">
+            <dn>CN=TERENA SSL CA, O=TERENA, C=NL</dn>
+        </rule>
+        <rule access="admin">
+            <dn>CN=bod.netherlight.net, OU=Domain Control Validated</dn>
+        </rule>
+        <rule access="write">
+            <dn>emailAddress=opennsa@northwestern.edu, OU=iCAIR - StarLight, L=Chicago, O=Northwestern U IT, ST=Illinois, C=US</dn>
+            <dn>1.2.840.113549.1.9.1=#16186F70656E6E7361406E6F7274687765737465726E2E656475, OU=iCAIR - StarLight, L=Chicago, O=Northwestern U IT, ST=Illinois, C=US</dn>
+            <nsaId>urn:ogf:network:icair.org:2013:nsa</nsaId>
+        </rule>
     </accessControl>
     
     <!--

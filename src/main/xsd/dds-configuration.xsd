@@ -70,7 +70,7 @@
             <xsd:element name="peerURL" type="tns:PeerURLType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:complexType name="ServerType">
         <xsd:annotation>
             <xsd:documentation xml:lang="en">
@@ -96,7 +96,7 @@
         </xsd:sequence>
         <xsd:attribute   name="production" type="xsd:boolean" default="true"/>
     </xsd:complexType>
-    
+
     <xsd:complexType name="KeyStoreType">
         <xsd:annotation>
             <xsd:documentation xml:lang="en">
@@ -108,31 +108,50 @@
         </xsd:sequence>
         <xsd:attribute   name="type" type="xsd:string" default="JKS"/>
     </xsd:complexType>
-    
+
     <xsd:complexType name="AccessControlType">
         <xsd:annotation>
             <xsd:documentation xml:lang="en">
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element name="dn" type="tns:DistinguishedNameType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="rule" type="tns:RuleType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
         <xsd:attribute   name="enabled" type="xsd:boolean" default="false"/>
     </xsd:complexType>
-    
+
+    <xsd:complexType name="RuleType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="dn"    type="tns:DistinguishedNameType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="nsaId" type="xsd:anyURI" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute  name="access"  type="tns:AccessControlPermission"  default="read"/>
+    </xsd:complexType>
+
     <xsd:complexType name="DistinguishedNameType">
         <xsd:annotation>
             <xsd:documentation xml:lang="en">
             </xsd:documentation>
         </xsd:annotation>
         <xsd:simpleContent>
-            <xsd:extension  base="xsd:string">
-                <xsd:attribute  name="access"  type="tns:AccessControlPermission"  default="read"/>
-            </xsd:extension>
+            <xsd:extension  base="xsd:string" />
         </xsd:simpleContent>
     </xsd:complexType>
-    
+
     <xsd:simpleType name="AccessControlPermission">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                read - grants peer read-only access to documents within the document space.
+                write - grants read/write access to documents within the document space owned by specific NSA.
+                admin - grants read/write/admin access to the document space.
+
+                A peer DDS server is granted "write" access to its own nsaId for the purpose of subcription management.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:restriction base="xsd:string">
             <xsd:enumeration  value="read"/>
             <xsd:enumeration  value="write"/>
@@ -150,7 +169,7 @@
             <xsd:element name="relative" type="xsd:string" />
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:complexType name="PeerURLType">
         <xsd:simpleContent>
             <xsd:extension  base="xsd:string">

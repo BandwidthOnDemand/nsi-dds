@@ -21,13 +21,13 @@
                 <PortGroup id="urn:ogf:network:example.com:2013:stp:theworkshop:the-sleigh:out"/>
                 <PortGroup id="urn:ogf:network:example.com:2013:stp:theworkshop:the-sleigh:in"/>
             </BidirectionalPort>
-            
+
             <!-- NSI CS Services offered by this Network. -->
             <sd:serviceDefinition id="urn:ogf:network:example.com:2013:sd:theworkshop:EVTS.A-GOLE">
                 <name>GLIF Automated GOLE Ethernet VLAN Transfer Service</name>
-                <serviceType>http://services.ogf.org/nsi/2013/07/definitions/EVTS.A-GOLE</serviceType>
+                <serviceType>http://services.ogf.org/nsi/2013/12/definitions/EVTS.A-GOLE</serviceType>
             </sd:serviceDefinition>
-            
+
             <Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
                 <PortGroup id="urn:ogf:network:example.com:2013:stp:theworkshop:the-toy-bench:out">
                     <LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</LabelGroup>
@@ -44,7 +44,7 @@
                     <PortGroup id="urn:ogf:network:example.com:2013:stp:candycaneforest:swirrly:out"/>
                 </Relation>
             </Relation>
-            
+
             <Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
                 <PortGroup id="urn:ogf:network:example.com:2013:stp:theworkshop:the-sleigh:out">
                     <LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</LabelGroup>

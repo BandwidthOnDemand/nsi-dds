@@ -22,10 +22,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.api.jaxb.CollectionType;
@@ -66,8 +68,17 @@ public class DiscoveryService {
     @GET
     @Path("/ping")
     @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
-    public Response ping() throws Exception {
+    public Response ping(@Context SecurityContext sc) throws Exception {
         log.debug("ping: PING!");
+        if (sc == null) {
+            log.debug("Security Context is null.");
+        }
+        else {
+            log.debug("authentication scheme=" + sc.getAuthenticationScheme());
+            if (sc.getUserPrincipal() != null) {
+                log.debug("User principle=" + sc.getUserPrincipal().getName());
+            }
+        }
         return Response.ok().build();
     }
 
