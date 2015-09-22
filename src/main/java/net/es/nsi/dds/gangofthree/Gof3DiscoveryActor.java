@@ -12,6 +12,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -23,6 +24,7 @@ import net.es.nsi.dds.api.jaxb.NmlTopologyType;
 import net.es.nsi.dds.api.jaxb.NotificationType;
 import net.es.nsi.dds.api.jaxb.NsaType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
+import net.es.nsi.dds.api.jaxb.SdServiceDefinitionType;
 import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.provider.DdsProvider;
 import net.es.nsi.dds.schema.NmlParser;
@@ -253,6 +255,9 @@ public class Gof3DiscoveryActor extends UntypedActor {
                 // Now parse the string into an NML Topology object.
                 NmlTopologyType nml = NmlParser.getInstance().parseTopologyFromString(result.toString());
 
+                // Temporary fix to update out any old serviceType definitions.
+                aGoleServiceTypeFix(nml);
+
                 if (nml != null) {
                     // Add the document.
                     XMLGregorianCalendar cal;
@@ -303,6 +308,23 @@ public class Gof3DiscoveryActor extends UntypedActor {
 
         log.debug("discoverTopology: exiting for topology=" + url + " with lastModifiedTime=" + new Date(time));
         return time;
+    }
+
+    private static final String oldServiceType = "http://services.ogf.org/nsi/2013/07/definitions/EVTS.A-GOLE";
+    private static final String newServiceType = "http://services.ogf.org/nsi/2013/12/definitions/EVTS.A-GOLE";
+
+    private void aGoleServiceTypeFix(NmlTopologyType nml) {
+        for (Object object : nml.getAny()) {
+            if (object instanceof JAXBElement) {
+                JAXBElement<?> jaxb = (JAXBElement) object;
+                if (jaxb.getValue() instanceof SdServiceDefinitionType) {
+                    SdServiceDefinitionType serviceDefinition = (SdServiceDefinitionType) jaxb.getValue();
+                    if (oldServiceType.equalsIgnoreCase(serviceDefinition.getServiceType())) {
+                        serviceDefinition.setServiceType(newServiceType);
+                    }
+                }
+            }
+        }
     }
 
     /**
