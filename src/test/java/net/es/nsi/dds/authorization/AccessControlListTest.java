@@ -7,7 +7,6 @@ package net.es.nsi.dds.authorization;
 
 import net.es.nsi.dds.api.jaxb.AccessControlType;
 import net.es.nsi.dds.api.jaxb.ObjectFactory;
-import org.slf4j.Logger;
 
 /**
  * Test cases for the AccessControlList.
@@ -15,7 +14,6 @@ import org.slf4j.Logger;
  * @author hacksaw
  */
 public class AccessControlListTest {
-    private Logger log;
     private final ObjectFactory factory = new ObjectFactory();
     private AccessControlType acl_enabled;
     private AccessControlType acl_disabled;

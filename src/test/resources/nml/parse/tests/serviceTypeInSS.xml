@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<nml:Topology xmlns:nml="http://schemas.ogf.org/nml/2013/05/base#" xmlns:ns3="http://schemas.ogf.org/nsi/2013/12/services/definition" xmlns:nsi="http://schemas.ogf.org/nsi/2013/09/topology#" xmlns:vc="urn:ietf:params:xml:ns:vcard-4.0" id="urn:ogf:network:funet.fi:2013:topology" version="2015-09-23T16:41:12.155Z">
+    <nml:name>funet.fi</nml:name>
+    <nml:BidirectionalPort id="urn:ogf:network:funet.fi:2013:topology:espoo1-nordunet">
+        <nml:name>espoo1-nordunet</nml:name>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:espoo1-nordunet-in"/>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:espoo1-nordunet-out"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:funet.fi:2013:topology:test2-autobahn-2">
+        <nml:name>test2-autobahn-2</nml:name>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:test2-autobahn-2-in"/>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:test2-autobahn-2-out"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:funet.fi:2013:topology:csc1-csc-bmi-eyrg">
+        <nml:name>csc1-csc-bmi-eyrg</nml:name>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:csc1-csc-bmi-eyrg-in"/>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:csc1-csc-bmi-eyrg-out"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:funet.fi:2013:topology:test1-autobahn-2">
+        <nml:name>test1-autobahn-2</nml:name>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:test1-autobahn-2-in"/>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:test1-autobahn-2-out"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:funet.fi:2013:topology:test1-autobahn-4">
+        <nml:name>test1-autobahn-4</nml:name>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:test1-autobahn-4-in"/>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:test1-autobahn-4-out"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:funet.fi:2013:topology:espoo1-geant">
+        <nml:name>espoo1-geant</nml:name>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:espoo1-geant-in"/>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:espoo1-geant-out"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:funet.fi:2013:topology:csc2-csc-mankeli">
+        <nml:name>csc2-csc-mankeli</nml:name>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:csc2-csc-mankeli-in"/>
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:csc2-csc-mankeli-out"/>
+    </nml:BidirectionalPort>
+    <ns3:serviceDefinition id="urn:ogf:network:funet.fi:2013:topologyServiceDefinition:EVTS.A-GOLE">
+        <name>GLIF Automated GOLE Ethernet VLAN Transfer Service</name>
+        <serviceType>http://services.ogf.org/nsi/2013/07/definitions/EVTS.A-GOLE</serviceType>
+    </ns3:serviceDefinition>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:espoo1-nordunet-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2031-2035</nml:LabelGroup>
+            <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                <nml:PortGroup id="urn:ogf:network:nordu.net:2013:topology:funet-in"/>
+            </nml:Relation>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:espoo1-nordunet-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2031-2035</nml:LabelGroup>
+            <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                <nml:PortGroup id="urn:ogf:network:nordu.net:2013:topology:funet-out"/>
+            </nml:Relation>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:test2-autobahn-2-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1000-4094</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:test2-autobahn-2-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1000-4094</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:csc1-csc-bmi-eyrg-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">77-78</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:csc1-csc-bmi-eyrg-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">77-78</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:test1-autobahn-2-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1000-4094</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:test1-autobahn-2-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1000-4094</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:test1-autobahn-4-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1000-4094</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:test1-autobahn-4-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1000-4094</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:espoo1-geant-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2026-2030</nml:LabelGroup>
+            <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                <nml:PortGroup id="urn:ogf:network:geant.net:2013:topology:funet-in"/>
+            </nml:Relation>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:espoo1-geant-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2026-2030</nml:LabelGroup>
+            <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
+                <nml:PortGroup id="urn:ogf:network:geant.net:2013:topology:funet-out"/>
+            </nml:Relation>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:csc2-csc-mankeli-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1001-1003,1780-1799</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:funet.fi:2013:topology:csc2-csc-mankeli-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1001-1003,1780-1799</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasService">
+        <nml:SwitchingService labelSwapping="true" labelType="http://schemas.ogf.org/nml/2012/10/ethernet#vlan" id="urn:ogf:network:funet.fi:2013:topologyServiceDomain:a-gole:testbed:A-GOLE-EVTS">
+            <ns3:serviceDefinition id="urn:ogf:network:funet.fi:2013:topologyServiceDefinition:EVTS.A-GOLE">
+                <name>GLIF Automated GOLE Ethernet VLAN Transfer Service</name>
+                <serviceType>http://services.ogf.org/nsi/2013/07/definitions/EVTS.A-GOLE</serviceType>
+            </ns3:serviceDefinition>
+        </nml:SwitchingService>
+    </nml:Relation>
+</nml:Topology>
+

@@ -1,4 +1,4 @@
-package net.es.nei.dds.gangofthree;
+package net.es.nsi.dds.gangofthree;
 
 import java.io.File;
 import java.io.IOException;

@@ -25,8 +25,7 @@ public class NmlParser {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     // The JAXB context we load pre-loading in this singleton.
-    private static JAXBContext jaxbContextNSA = null;
-    private static JAXBContext jaxbContextTopology = null;
+    private static JAXBContext jaxbContext = null;
 
     /**
      * Private constructor loads the JAXB context once and prevents
@@ -35,8 +34,7 @@ public class NmlParser {
     private NmlParser() {
         try {
             // Load a JAXB context for the NML NSAType parser.
-            jaxbContextNSA = JAXBContext.newInstance("net.es.nsi.dds.api.jaxb", net.es.nsi.dds.api.jaxb.ObjectFactory.class.getClassLoader());
-            jaxbContextTopology = JAXBContext.newInstance(NmlTopologyType.class);
+            jaxbContext = JAXBContext.newInstance("net.es.nsi.dds.api.jaxb", net.es.nsi.dds.api.jaxb.ObjectFactory.class.getClassLoader());
         }
         catch (JAXBException jaxb) {
             log.error("NmlParser: Failed to load JAXB instance", jaxb);
@@ -75,14 +73,14 @@ public class NmlParser {
     @SuppressWarnings("unchecked")
     public NsaType parseNsaFromFile(String file) throws JAXBException, IOException {
         // Make sure we initialized properly.
-        if (jaxbContextNSA == null) {
+        if (jaxbContext == null) {
             throw new JAXBException("NmlParser: Failed to load JAXB instance");
         }
 
         // Parse the specified file.
         NsaType nsaElement = null;
         try (FileInputStream fileInputStream = new FileInputStream(file); BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream)) {
-            Object unmarshal = jaxbContextNSA.createUnmarshaller().unmarshal(bufferedInputStream);
+            Object unmarshal = jaxbContext.createUnmarshaller().unmarshal(bufferedInputStream);
             if (unmarshal instanceof JAXBElement<?>) {
                 JAXBElement<?> jaxb = (JAXBElement<?>) unmarshal;
                 if (jaxb.getDeclaredType() == NsaType.class) {
@@ -101,6 +99,35 @@ public class NmlParser {
         return nsaElement;
     }
 
+    @SuppressWarnings("unchecked")
+    public NmlTopologyType parseTopologyFromFile(String file) throws JAXBException, IOException {
+        // Make sure we initialized properly.
+        if (jaxbContext == null) {
+            throw new JAXBException("NmlParser: Failed to load JAXB instance");
+        }
+
+        // Parse the specified file.
+        NmlTopologyType nmlElement = null;
+        try (FileInputStream fileInputStream = new FileInputStream(file); BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream)) {
+            Object unmarshal = jaxbContext.createUnmarshaller().unmarshal(bufferedInputStream);
+            if (unmarshal instanceof JAXBElement<?>) {
+                JAXBElement<?> jaxb = (JAXBElement<?>) unmarshal;
+                if (jaxb.getDeclaredType() == NmlTopologyType.class) {
+                    nmlElement = (NmlTopologyType) jaxb.getValue();
+                }
+                else {
+                    throw new JAXBException("parseTopologyFromFile: Expected NmlTopologyType but found " + jaxb.getDeclaredType());
+                }
+            }
+            else {
+                throw new JAXBException("parseTopologyFromFile: Expected JAXBElement<?> but found " + unmarshal.getClass());
+            }
+        }
+
+        // Return the NSAType object.
+        return nmlElement;
+    }
+
     /**
      * Parse an NML Topology object from the specified string.
      *
@@ -112,16 +139,16 @@ public class NmlParser {
     @SuppressWarnings("unchecked")
     public NmlTopologyType parseTopologyFromString(String xml) throws JAXBException {
         // Make sure we initialized properly.
-        if (jaxbContextTopology == null) {
+        if (jaxbContext == null) {
             throw new JAXBException("NmlParser: Failed to load JAXB Topology instance");
         }
 
         JAXBElement<NmlTopologyType> topologyElement;
         try (StringReader reader = new StringReader(xml)) {
-            topologyElement = (JAXBElement<NmlTopologyType>) jaxbContextNSA.createUnmarshaller().unmarshal(reader);
+            topologyElement = (JAXBElement<NmlTopologyType>) jaxbContext.createUnmarshaller().unmarshal(reader);
         }
 
-        // Return the NSAType object.
+        // Return the NmlTopologyType object.
         return topologyElement.getValue();
     }
 
@@ -134,14 +161,14 @@ public class NmlParser {
      */
     public NsaType parseNsaFromString(String xml) throws JAXBException {
         // Make sure we initialized properly.
-        if (jaxbContextNSA == null) {
+        if (jaxbContext == null) {
             throw new JAXBException("NmlParser: Failed to load JAXB NSA instance");
         }
 
         // Parse the specified XML string.
         NsaType nsaElement = null;
         try (StringReader reader = new StringReader(xml)) {
-            Object unmarshal = jaxbContextNSA.createUnmarshaller().unmarshal(reader);
+            Object unmarshal = jaxbContext.createUnmarshaller().unmarshal(reader);
 
             if (unmarshal instanceof JAXBElement<?>) {
                 JAXBElement<?> jaxb = (JAXBElement<?>) unmarshal;

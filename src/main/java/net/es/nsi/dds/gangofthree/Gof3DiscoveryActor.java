@@ -5,6 +5,7 @@
 package net.es.nsi.dds.gangofthree;
 
 import akka.actor.UntypedActor;
+import com.google.common.annotations.VisibleForTesting;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Gof3DiscoveryActor extends UntypedActor {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final static Logger log = LoggerFactory.getLogger(Gof3DiscoveryActor.class);
     private final ObjectFactory factory = new ObjectFactory();
     private Client client;
 
@@ -259,10 +260,10 @@ public class Gof3DiscoveryActor extends UntypedActor {
                 // Now parse the string into an NML Topology object.
                 NmlTopologyType nml = NmlParser.getInstance().parseTopologyFromString(result.toString());
 
-                // Temporary fix to update out any old serviceType definitions.
-                aGoleServiceTypeFix(nml);
-
                 if (nml != null) {
+                    // Temporary fix to update out any old serviceType definitions.
+                    aGoleServiceTypeFix(nml);
+
                     // Add the document.
                     XMLGregorianCalendar cal;
                     cal = XmlUtilities.longToXMLGregorianCalendar(time);
@@ -314,11 +315,13 @@ public class Gof3DiscoveryActor extends UntypedActor {
         return time;
     }
 
-    private static final String OldServiceType = "http://services.ogf.org/nsi/2013/07/definitions/EVTS.A-GOLE";
+    private static final String OldServiceType1 = "http://services.ogf.org/nsi/2013/07/definitions/EVTS.A-GOLE";
     private static final String OldServiceType2 = "http://services.ogf.org/nsi/2013/07/descriptions/EVTS.A-GOLE";
-    private static final String NewServiceType = "http://services.ogf.org/nsi/2013/12/definitions/EVTS.A-GOLE";
+    private static final String OldServiceType3 = "http://services.ogf.org/nsi/2013/12/definitions/EVTS.A-GOLE";
+    private static final String NewServiceType = "http://services.ogf.org/nsi/2013/12/descriptions/EVTS.A-GOLE";
 
-    private void aGoleServiceTypeFix(NmlTopologyType nml) {
+    @VisibleForTesting
+    protected static boolean aGoleServiceTypeFix(NmlTopologyType nml) {
         boolean modified;
 
         // Check the ServiceDefinition for the old serviceType.
@@ -342,21 +345,29 @@ public class Gof3DiscoveryActor extends UntypedActor {
         // Increment the version to indicate a change.
         if (modified) {
             XMLGregorianCalendar version = nml.getVersion();
-            version.setSecond(version.getSecond() + 1);
+            log.debug("Modified id=" + nml.getId() + ", version=" + version);
+            
+            version.setSecond(version.getSecond() + 5);
             nml.setVersion(version);
+            log.debug("Set new version id=" + nml.getId() + ", version=" + nml.getVersion());
         }
+
+        return modified;
     }
 
-    private boolean convertServiceType(List<Object> any) {
+    private static boolean convertServiceType(List<Object> any) {
         boolean modified = false;
         for (Object object : any) {
             if (object instanceof JAXBElement) {
                 JAXBElement<?> jaxb = (JAXBElement) object;
                 if (jaxb.getValue() instanceof SdServiceDefinitionType) {
                     SdServiceDefinitionType serviceDefinition = (SdServiceDefinitionType) jaxb.getValue();
-                    String serviceType = serviceDefinition.getServiceType().trim();
+                    String serviceType = serviceDefinition.getServiceType();
                     if (serviceType != null) {
-                        if (serviceType.equalsIgnoreCase(OldServiceType) || serviceType.equalsIgnoreCase(OldServiceType2)) {
+                        serviceType = serviceType.trim();
+                        if (serviceType.equalsIgnoreCase(OldServiceType1) ||
+                                serviceType.equalsIgnoreCase(OldServiceType2) ||
+                                serviceType.equalsIgnoreCase(OldServiceType3)) {
                             log.debug("Converting service type for id=" + serviceDefinition.getId());
                             serviceDefinition.setServiceType(NewServiceType);
                             modified = true;

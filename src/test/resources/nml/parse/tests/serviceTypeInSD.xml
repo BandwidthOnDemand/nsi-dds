@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<nml:Topology id="urn:ogf:network:surfnet.nl:1990:netherlight7" version="2015-09-18T11:34:31+02:00" xmlns:nsi_topology="http://schemas.ogf.org/nsi/2013/09/topology#"
+    xmlns:nsi_definitions="http://schemas.ogf.org/nsi/2013/12/services/definition" xmlns:nml="http://schemas.ogf.org/nml/2013/05/base#">
+    <nml:name>netherlight7</nml:name>
+    <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-4-1">
+        <nml:name>Asd001A_8700_07 4/1 UvA (SNE)</nml:name>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-4-1-out"/>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-4-1-in"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-2">
+        <nml:name>Asd001A_8700_07 7/2 NORDUnet (nl-sar2-nordunet xe-0/0/3)</nml:name>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-2-out"/>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-2-in"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-1">
+        <nml:name>Asd001A_8700_07 10/1 MANLAN (via Hibernia)</nml:name>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-1-out"/>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-1-in"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-8-1">
+        <nml:name>Asd001A_8700_07 8/1 StarLight/iCAIR (via GEANT Open London)</nml:name>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-8-1-out"/>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-8-1-in"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-13">
+        <nml:name>Asd001A_8700_07 5/13 iperf1 eth2</nml:name>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-13-out"/>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-13-in"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-14">
+        <nml:name>Asd001A_8700_07 5/14 SURFnet (Asd001A_5410_01 5/8)</nml:name>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-14-out"/>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-14-in"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-15">
+        <nml:name>Asd001A_8700_07 5/15 iperf1 eth3</nml:name>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-15-out"/>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-15-in"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-16">
+        <nml:name>Asd001A_8700_07 5/16 RIX-Kentis</nml:name>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-16-out"/>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-16-in"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-17">
+        <nml:name>Asd001A_8700_07 5/17 CzechLight (GEANT patch panel pp-nl-e10 tray4 p5+6)</nml:name>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-17-out"/>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-17-in"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-2">
+        <nml:name>Asd001A_8700 10/2 ESnet</nml:name>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-2-out"/>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-2-in"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-18">
+        <nml:name>Asd001A_8700_07 5/18 PIONIER/PSNC (Asd001A_OME24 1/7/2 CBF to Hamburg)</nml:name>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-18-out"/>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-18-in"/>
+    </nml:BidirectionalPort>
+    <nml:BidirectionalPort id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-1">
+        <nml:name>Asd001A_8700_07 7/1 GEANT</nml:name>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-1-out"/>
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-1-in"/>
+    </nml:BidirectionalPort>
+    <nsi_definitions:serviceDefinition id="urn:ogf:network:surfnet.nl:1990:netherlight7:servicedefinition:EVTS.A-GOLE">
+        <name>GLIF Automated GOLE Ethernet VLAN Transfer Service</name>
+        <serviceType>http://services.ogf.org/nsi/2013/07/definitions/EVTS.A-GOLE</serviceType>
+    </nsi_definitions:serviceDefinition>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-4-1-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-4-1-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-2-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2-4095</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-2-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2-4095</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-1-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1819,3400-3598,4006-4019</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-1-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1819,3400-3598,4006-4019</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-8-1-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">4020-4039</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-8-1-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">4020-4039</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-13-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">3000-4000</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-13-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">3000-4000</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-14-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2-4095</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-14-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2-4095</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-15-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1700-2099</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-15-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1700-2099</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-16-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2050-2099</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-16-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2050-2099</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-17-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-17-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-2-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1000-1019</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-2-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1000-1019</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-18-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-18-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1779-1799</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-1-in">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2-4095</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-1-out">
+            <nml:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2-4095</nml:LabelGroup>
+        </nml:PortGroup>
+    </nml:Relation>
+    <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasService">
+        <nml:SwitchingService encoding="http://schemas.ogf.org/nml/2012/10/ethernet" labelSwapping="true" labelType="http://schemas.ogf.org/nml/2012/10/ethernet#vlan"
+            id="urn:ogf:network:surfnet.nl:1990:netherlight7:servicedomain:A-GOLE-EVTS">
+            <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-4-1-in"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-2-in"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-1-in"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-8-1-in"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-13-in"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-14-in"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-15-in"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-16-in"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-17-in"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-2-in"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-18-in"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-1-in"/>
+            </nml:Relation>
+            <nml:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-4-1-out"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-2-out"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-1-out"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-8-1-out"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-13-out"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-14-out"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-15-out"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-16-out"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-17-out"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-10-2-out"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-5-18-out"/>
+                <nml:PortGroup id="urn:ogf:network:surfnet.nl:1990:netherlight7:2c:39:c1:38:e0:00-7-1-out"/>
+            </nml:Relation>
+            <nsi_definitions:serviceDefinition id="urn:ogf:network:surfnet.nl:1990:netherlight7:servicedefinition:EVTS.A-GOLE"/>
+        </nml:SwitchingService>
+    </nml:Relation>
+</nml:Topology>
+
