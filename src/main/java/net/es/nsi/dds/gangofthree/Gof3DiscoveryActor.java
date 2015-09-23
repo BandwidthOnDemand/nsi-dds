@@ -7,6 +7,7 @@ package net.es.nsi.dds.gangofthree;
 import akka.actor.UntypedActor;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -20,6 +21,9 @@ import net.es.nsi.dds.api.jaxb.AnyType;
 import net.es.nsi.dds.api.jaxb.DocumentEventType;
 import net.es.nsi.dds.api.jaxb.DocumentType;
 import net.es.nsi.dds.api.jaxb.InterfaceType;
+import net.es.nsi.dds.api.jaxb.NmlNetworkObject;
+import net.es.nsi.dds.api.jaxb.NmlSwitchingServiceType;
+import net.es.nsi.dds.api.jaxb.NmlTopologyRelationType;
 import net.es.nsi.dds.api.jaxb.NmlTopologyType;
 import net.es.nsi.dds.api.jaxb.NotificationType;
 import net.es.nsi.dds.api.jaxb.NsaType;
@@ -310,21 +314,59 @@ public class Gof3DiscoveryActor extends UntypedActor {
         return time;
     }
 
-    private static final String oldServiceType = "http://services.ogf.org/nsi/2013/07/definitions/EVTS.A-GOLE";
-    private static final String newServiceType = "http://services.ogf.org/nsi/2013/12/definitions/EVTS.A-GOLE";
+    private static final String OldServiceType = "http://services.ogf.org/nsi/2013/07/definitions/EVTS.A-GOLE";
+    private static final String OldServiceType2 = "http://services.ogf.org/nsi/2013/07/descriptions/EVTS.A-GOLE";
+    private static final String NewServiceType = "http://services.ogf.org/nsi/2013/12/definitions/EVTS.A-GOLE";
 
     private void aGoleServiceTypeFix(NmlTopologyType nml) {
-        for (Object object : nml.getAny()) {
-            if (object instanceof JAXBElement) {
-                JAXBElement<?> jaxb = (JAXBElement) object;
-                if (jaxb.getValue() instanceof SdServiceDefinitionType) {
-                    SdServiceDefinitionType serviceDefinition = (SdServiceDefinitionType) jaxb.getValue();
-                    if (oldServiceType.equalsIgnoreCase(serviceDefinition.getServiceType())) {
-                        serviceDefinition.setServiceType(newServiceType);
+        boolean modified;
+
+        // Check the ServiceDefinition for the old serviceType.
+        modified = convertServiceType(nml.getAny());
+
+        // Check the SwitchingServices for a ServiceDefinition with the old serviceType.
+        for (NmlTopologyRelationType relation : nml.getRelation()) {
+            if (NmlRelationships.hasService(relation.getType())) {
+                for (NmlNetworkObject service : relation.getService()) {
+                    // We want the SwitchingService.
+                    if (service instanceof NmlSwitchingServiceType) {
+                        NmlSwitchingServiceType ss = (NmlSwitchingServiceType) service;
+                        log.debug("Converting SwitchingService type for id=" + ss.getId());
+                        boolean mod = convertServiceType(ss.getAny());
+                        modified = modified || mod;
                     }
                 }
             }
         }
+
+        // Increment the version to indicate a change.
+        if (modified) {
+            XMLGregorianCalendar version = nml.getVersion();
+            version.setSecond(version.getSecond() + 1);
+            nml.setVersion(version);
+        }
+    }
+
+    private boolean convertServiceType(List<Object> any) {
+        boolean modified = false;
+        for (Object object : any) {
+            if (object instanceof JAXBElement) {
+                JAXBElement<?> jaxb = (JAXBElement) object;
+                if (jaxb.getValue() instanceof SdServiceDefinitionType) {
+                    SdServiceDefinitionType serviceDefinition = (SdServiceDefinitionType) jaxb.getValue();
+                    String serviceType = serviceDefinition.getServiceType().trim();
+                    if (serviceType != null) {
+                        if (serviceType.equalsIgnoreCase(OldServiceType) || serviceType.equalsIgnoreCase(OldServiceType2)) {
+                            log.debug("Converting service type for id=" + serviceDefinition.getId());
+                            serviceDefinition.setServiceType(NewServiceType);
+                            modified = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return modified;
     }
 
     /**
