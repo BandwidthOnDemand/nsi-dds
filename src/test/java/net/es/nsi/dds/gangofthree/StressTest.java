@@ -3,15 +3,18 @@ package net.es.nsi.dds.gangofthree;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.client.TestServer;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.discovery.FileUtilities;
+import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.test.TestConfig;
 import org.junit.AfterClass;
 import static org.junit.Assert.fail;
@@ -49,7 +52,7 @@ public class StressTest {
 
             callbackURL = new URL(testServer.getURL(), "dds/callback").toString();
         }
-        catch (IllegalArgumentException | JAXBException | IOException | NullPointerException | IllegalStateException ex) {
+        catch (IllegalArgumentException | JAXBException | IOException | IllegalStateException | KeyStoreException | NoSuchAlgorithmException | CertificateException ex) {
             System.err.println("oneTimeSetUp: failed to start HTTP server " + ex.getLocalizedMessage());
             fail();
         }

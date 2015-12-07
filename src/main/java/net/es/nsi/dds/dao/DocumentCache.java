@@ -14,9 +14,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
-import net.es.nsi.dds.api.jaxb.DocumentType;
+import net.es.nsi.dds.jaxb.DdsParser;
+import net.es.nsi.dds.jaxb.dds.DocumentType;
 import net.es.nsi.dds.provider.Document;
-import net.es.nsi.dds.schema.XmlUtilities;
+import net.es.nsi.dds.util.XmlUtilities;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +33,10 @@ public class DocumentCache {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     // The holder of our configuration.
-    private DdsProfile ddsProfile;
+    private final DdsProfile ddsProfile;
 
     // In-memory document cache indexed by nsa/type/id.
-    private Map<String, Document> documents = new ConcurrentHashMap<>();
+    private final Map<String, Document> documents = new ConcurrentHashMap<>();
 
     // Are we configured to use the temporary document cache directory?
     private boolean enabled = false;
@@ -161,6 +162,8 @@ public class DocumentCache {
 
     /**
      * Load cache with all document files from local cache directory.
+     * @param path
+     * @return
      */
     public Map<String, String> loadDirectory(String path) {
         Map<String, String> list = new ConcurrentHashMap<>();

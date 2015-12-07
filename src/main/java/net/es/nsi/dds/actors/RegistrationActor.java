@@ -11,24 +11,24 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
-import net.es.nsi.dds.api.jaxb.DocumentEventType;
-import net.es.nsi.dds.api.jaxb.ErrorType;
-import net.es.nsi.dds.api.jaxb.FilterCriteriaType;
-import net.es.nsi.dds.api.jaxb.FilterType;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
-import net.es.nsi.dds.api.jaxb.SubscriptionListType;
-import net.es.nsi.dds.api.jaxb.SubscriptionRequestType;
-import net.es.nsi.dds.api.jaxb.SubscriptionType;
 import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.dao.RemoteSubscription;
 import net.es.nsi.dds.dao.RemoteSubscriptionCache;
+import net.es.nsi.dds.jaxb.dds.DocumentEventType;
+import net.es.nsi.dds.jaxb.dds.ErrorType;
+import net.es.nsi.dds.jaxb.dds.FilterCriteriaType;
+import net.es.nsi.dds.jaxb.dds.FilterType;
+import net.es.nsi.dds.jaxb.dds.ObjectFactory;
+import net.es.nsi.dds.jaxb.dds.SubscriptionListType;
+import net.es.nsi.dds.jaxb.dds.SubscriptionRequestType;
+import net.es.nsi.dds.jaxb.dds.SubscriptionType;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.management.logs.DdsLogs;
 import net.es.nsi.dds.messages.RegistrationEvent;
 import net.es.nsi.dds.messages.RegistrationEvent.Event;
-import net.es.nsi.dds.schema.NsiConstants;
+import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.UrlHelper;
 import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The Registration Actor handles local DDS subscription registrations to peer
  * DDS services.
- * 
+ *
  * @author hacksaw
  */
 public class RegistrationActor extends UntypedActor {

@@ -1045,8 +1045,8 @@ mailing list (nsi-wg@ogf.org).
         <xsd:sequence>
             <xsd:element name="nsa"       type="xsd:anyURI" />
             <xsd:element name="type"      type="xsd:string" />
-            <xsd:element name="signature" type="tns:AnyType" minOccurs="0" />
-            <xsd:element name="content"   type="tns:AnyType" minOccurs="0" />
+            <xsd:element name="signature" type="tns:ContentType" minOccurs="0" />
+            <xsd:element name="content"   type="tns:ContentType" minOccurs="0" />
             <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
         </xsd:sequence>
         <xsd:attribute name="id"      use="required" type="xsd:string" />
@@ -1055,8 +1055,17 @@ mailing list (nsi-wg@ogf.org).
         <xsd:attribute name="expires" use="required" type="xsd:dateTime" />
         <xsd:anyAttribute namespace="##other" processContents="lax" />
     </xsd:complexType>
+    
+    <xsd:complexType name="ContentType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="contentType"             use="optional" type="xsd:string" />
+                <xsd:attribute name="contentTransferEncoding" use="optional" type="xsd:string" />
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
 
-    <xsd:complexType name="AnyType">
+    <xsd:complexType name="AnyHolderType">
         <xsd:annotation>
             <xsd:documentation xml:lang="en">
                 This type is used to hold a document contents or digital
@@ -1068,6 +1077,9 @@ mailing list (nsi-wg@ogf.org).
         <xsd:sequence>
             <xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
+        <xsd:attribute name="id"                      use="optional" type="xsd:string" />
+        <xsd:attribute name="contentType"             use="optional" type="xsd:string" />
+        <xsd:attribute name="contentTransferEncoding" use="optional" type="xsd:string" />
         <xsd:anyAttribute namespace="##any" processContents="lax" />
     </xsd:complexType>
     

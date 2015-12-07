@@ -10,10 +10,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import net.es.nsi.dds.api.DiscoveryError;
 import net.es.nsi.dds.api.Exceptions;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
-import net.es.nsi.dds.api.jaxb.SubscriptionRequestType;
-import net.es.nsi.dds.api.jaxb.SubscriptionType;
-import net.es.nsi.dds.schema.XmlUtilities;
+import net.es.nsi.dds.jaxb.dds.ObjectFactory;
+import net.es.nsi.dds.jaxb.dds.SubscriptionRequestType;
+import net.es.nsi.dds.jaxb.dds.SubscriptionType;
+import net.es.nsi.dds.util.XmlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

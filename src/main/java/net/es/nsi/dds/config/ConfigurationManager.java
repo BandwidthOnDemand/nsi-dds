@@ -47,7 +47,7 @@ public enum ConfigurationManager {
      * @throws IOException If there is an error loading bean configuration file.
      */
     public synchronized void initialize() throws IOException {
-        String configPath = System.getProperty(Properties.DDS_SYSTEM_PROPERTY_CONFIGDIR);
+        String configPath = System.getProperty(Properties.SYSTEM_PROPERTY_CONFIGDIR);
 
         if (!isInitialized()) {
             // Load and watch the log4j configuration file for changes.

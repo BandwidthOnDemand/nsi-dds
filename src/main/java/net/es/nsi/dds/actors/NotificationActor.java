@@ -9,14 +9,14 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
-import net.es.nsi.dds.api.jaxb.NotificationListType;
-import net.es.nsi.dds.api.jaxb.NotificationType;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.config.ConfigurationManager;
+import net.es.nsi.dds.jaxb.dds.NotificationListType;
+import net.es.nsi.dds.jaxb.dds.NotificationType;
+import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.messages.Notification;
 import net.es.nsi.dds.provider.DiscoveryProvider;
-import net.es.nsi.dds.schema.XmlUtilities;
+import net.es.nsi.dds.util.XmlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

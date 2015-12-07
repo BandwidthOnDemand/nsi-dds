@@ -66,6 +66,7 @@
             <xsd:element name="notificationSize" type="xsd:int" default="10" />
             <xsd:element name="server" type="tns:ServerType" minOccurs="0" />
             <xsd:element name="client" type="tns:SecureType" minOccurs="0" />
+            <xsd:element name="signature" type="tns:SignatureStoreType" minOccurs="0" />
             <xsd:element name="accessControl" type="tns:AccessControlType" minOccurs="0" />
             <xsd:element name="peerURL" type="tns:PeerURLType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
@@ -107,6 +108,21 @@
             <xsd:element name="password" type="xsd:string" />
         </xsd:sequence>
         <xsd:attribute   name="type" type="xsd:string" default="JKS"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="SignatureStoreType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="tns:KeyStoreType">
+                <xsd:sequence>
+                    <xsd:element name="alias" type="xsd:string" />
+                </xsd:sequence>
+                <xsd:attribute name="sign" type="xsd:boolean" default="false"/>
+            </xsd:extension>
+        </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="AccessControlType">

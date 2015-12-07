@@ -33,7 +33,7 @@ public class TestConfig {
                 System.out.println("TestConfig: ConfigurationManager already initialized so shutting down.");
                 ConfigurationManager.INSTANCE.shutdown();
             }
-            System.setProperty(Properties.DDS_SYSTEM_PROPERTY_CONFIGDIR, CONFIG_DIR);
+            System.setProperty(Properties.SYSTEM_PROPERTY_CONFIGDIR, CONFIG_DIR);
             ConfigurationManager.INSTANCE.initialize();
         }
         catch (Exception ex) {

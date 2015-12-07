@@ -39,7 +39,9 @@
               application/vnd.ogf.nsi.topology.v1+xml - The Automated GOLE topology discovery.
 -->
 <tns:dds xmlns:tns="http://schemas.es.net/nsi/2014/03/dds/configuration"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://schemas.es.net/nsi/2014/03/dds/configuration file:/Users/hacksaw/src/github/nsi-dds/src/main/xsd/dds-configuration.xsd">
+    
     <!-- we need to set this to the uPA's NSA ID so that the local networks are discovered correctly -->
     <nsaId>urn:ogf:network:surfnet.nl:1990:nsa:bod7</nsaId>
     <documents>config/documents</documents>
@@ -47,7 +49,7 @@
     <repository>config/repository</repository>
     <expiryInterval>600</expiryInterval>
     <baseURL>http://localhost:8401/dds</baseURL>
-
+    <notificationSize>10</notificationSize>
     <server address="localhost" port="8401" packageName="net.es.nsi.dds" />
 
     <!-- DDS service interfaces. -->
@@ -65,5 +67,32 @@
 
     <!-- Old AutoGOLE github discovery mechanism. -->
     <!-- <peerURL type="application/vnd.ogf.nsi.topology.v1+xml">https://raw.githubusercontent.com/jeroenh/AutoGOLE-Topologies/master/master.xml</peerURL> -->
+
+    <client production="false">
+        <keyStore type="JKS">
+                <file>config/keystore.jks</file>
+            <password>changeit</password>
+        </keyStore>
+        <trustStore type="JKS">
+                <file>config/truststore.jks</file>
+            <password>changeit</password>
+        </trustStore>
+    </client>
+
+    <signature type="JKS" sign="false">
+        <file>config/keystore.jks</file>
+        <password>changeit</password>
+        <alias>macauley</alias>
+    </signature>
+    
+    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://nsi-aggr-west.es.net/nsa-discovery</peerURL>
+    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://62.217.124.244:8080/nsi_discovery_geant_all.xml</peerURL>
+    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://pmri061.it.northwestern.edu:9443/NSI/discovery.xml</peerURL>
+    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://idc.cipo.rnp.br/rnp-nsa.xml</peerURL>
+    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://ns.ps.jgn-x.jp/NSI/jgn-x_jp_2013_nsa.xml</peerURL>
+    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://163.220.30.174:28443/NSI/aist-nsi-aggr:2013:nsa.xml</peerURL>
+    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://163.220.30.174:28443/NSI/aist.go.jp:2013:nsa.xml</peerURL>
+    <peerURL type="application/vnd.ogf.nsi.topology.v1+xml">https://raw.githubusercontent.com/jeroenh/AutoGOLE-Topologies/master/master.xml</peerURL>
+
 </tns:dds>
 

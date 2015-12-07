@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import net.es.nsi.dds.api.jaxb.NmlNetworkObject;
-import net.es.nsi.dds.api.jaxb.NmlSwitchingServiceType;
-import net.es.nsi.dds.api.jaxb.NmlTopologyRelationType;
-import net.es.nsi.dds.api.jaxb.NmlTopologyType;
-import net.es.nsi.dds.api.jaxb.SdServiceDefinitionType;
-import net.es.nsi.dds.schema.NmlParser;
+import net.es.nsi.dds.jaxb.NmlParser;
+import net.es.nsi.dds.jaxb.nml.NmlNetworkObject;
+import net.es.nsi.dds.jaxb.nml.NmlSwitchingServiceType;
+import net.es.nsi.dds.jaxb.nml.NmlTopologyRelationType;
+import net.es.nsi.dds.jaxb.nml.NmlTopologyType;
+import net.es.nsi.dds.jaxb.nml.ServiceDefinitionType;
 import net.es.nsi.dds.util.Log4jHelper;
 import org.apache.log4j.xml.DOMConfigurator;
 import static org.junit.Assert.assertTrue;
@@ -49,7 +49,7 @@ public class NmlConversionTest {
     }
 
     private void convertTest(String file) throws JAXBException, IOException {
-        NmlTopologyType nml = NmlParser.getInstance().parseTopologyFromFile(file);
+        NmlTopologyType nml = NmlParser.getInstance().readTopology(file);
 
         assertTrue(ServiceDefinitionConverter.convert(nml));
 
@@ -79,8 +79,8 @@ public class NmlConversionTest {
         for (Object object : any) {
             if (object instanceof JAXBElement) {
                 JAXBElement<?> jaxb = (JAXBElement) object;
-                if (jaxb.getValue() instanceof SdServiceDefinitionType) {
-                    SdServiceDefinitionType serviceDefinition = (SdServiceDefinitionType) jaxb.getValue();
+                if (jaxb.getValue() instanceof ServiceDefinitionType) {
+                    ServiceDefinitionType serviceDefinition = (ServiceDefinitionType) jaxb.getValue();
                     String serviceType = serviceDefinition.getServiceType();
                     log.debug("Checking serviceDefinition id=" + serviceDefinition.getId() + ", serviceType=" + serviceType);
                     if (serviceType != null) {

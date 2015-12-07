@@ -107,15 +107,15 @@ public class Main {
 
         // Get the application base directory.
         String basedir = getBasedir(cmd);
-        System.setProperty(Properties.DDS_SYSTEM_PROPERTY_BASEDIR, basedir);
+        System.setProperty(Properties.SYSTEM_PROPERTY_BASEDIR, basedir);
 
         // Now for the configuration directory path.
         String configdir = getConfigdir(cmd, basedir);
-        System.setProperty(Properties.DDS_SYSTEM_PROPERTY_CONFIGDIR, configdir);
+        System.setProperty(Properties.SYSTEM_PROPERTY_CONFIGDIR, configdir);
 
         // See if the user overrode the default location of the dds configuration file.
         String ddsFile = getConfigFile(cmd, configdir);
-        System.setProperty(Properties.DDS_SYSTEM_PROPERTY_CONFIGFILE, ddsFile);
+        System.setProperty(Properties.SYSTEM_PROPERTY_CONFIGFILE, ddsFile);
 
     }
 
@@ -151,7 +151,7 @@ public class Main {
      */
     private static String getBasedir(CommandLine cmd) throws IOException {
         // Get the application base directory.
-        String basedir = System.getProperty(Properties.DDS_SYSTEM_PROPERTY_BASEDIR);
+        String basedir = System.getProperty(Properties.SYSTEM_PROPERTY_BASEDIR);
         basedir = cmd.getOptionValue(DDS_ARGNAME_BASEDIR, basedir);
         if(basedir == null || basedir.isEmpty()) {
             basedir = System.getProperty("user.dir");
@@ -175,7 +175,7 @@ public class Main {
      * @throws IOException
      */
     private static String getConfigdir(CommandLine cmd, String basedir) throws IOException {
-        String configdir = System.getProperty(Properties.DDS_SYSTEM_PROPERTY_CONFIGDIR);
+        String configdir = System.getProperty(Properties.SYSTEM_PROPERTY_CONFIGDIR);
         configdir = cmd.getOptionValue(DDS_ARGNAME_CONFIGDIR, configdir);
         Path configPath;
         if(configdir == null || configdir.isEmpty()) {
@@ -203,7 +203,7 @@ public class Main {
      * @throws IOException
      */
     private static String getConfigFile(CommandLine cmd, String configdir) throws IOException {
-        String ddsFile = System.getProperty(Properties.DDS_SYSTEM_PROPERTY_CONFIGFILE);
+        String ddsFile = System.getProperty(Properties.SYSTEM_PROPERTY_CONFIGFILE);
         ddsFile = cmd.getOptionValue(DDS_ARGNAME_CONFIGFILE, ddsFile);
         Path ddsPath;
         if (ddsFile == null || ddsFile.isEmpty()) {

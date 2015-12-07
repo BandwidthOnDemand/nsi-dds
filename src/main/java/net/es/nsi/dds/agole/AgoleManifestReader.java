@@ -11,12 +11,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
-import net.es.nsi.dds.api.jaxb.NmlNetworkObject;
-import net.es.nsi.dds.api.jaxb.NmlTopologyType;
 import net.es.nsi.dds.client.RestClient;
+import net.es.nsi.dds.jaxb.NmlParser;
+import net.es.nsi.dds.jaxb.nml.NmlNetworkObject;
+import net.es.nsi.dds.jaxb.nml.NmlTopologyType;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
-import net.es.nsi.dds.schema.NmlParser;
 import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,7 +139,7 @@ public class AgoleManifestReader {
                 String xml = response.readEntity(String.class);
 
                 // Parse the master topology.
-                NmlTopologyType topology = NmlParser.getInstance().parseTopologyFromString(xml);
+                NmlTopologyType topology = NmlParser.getInstance().xml2Jaxb(NmlTopologyType.class, xml);
 
                 // Create an internal object to hold the master list.
                 TopologyManifest newManifest = new TopologyManifest();

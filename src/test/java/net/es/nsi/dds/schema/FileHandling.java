@@ -4,6 +4,7 @@
  */
 package net.es.nsi.dds.schema;
 
+import net.es.nsi.dds.util.XmlUtilities;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,8 +12,8 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
-import net.es.nsi.dds.api.jaxb.DocumentType;
-import net.es.nsi.dds.dao.DdsParser;
+import net.es.nsi.dds.jaxb.DdsParser;
+import net.es.nsi.dds.jaxb.dds.DocumentType;
 
 /**
  *

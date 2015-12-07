@@ -9,8 +9,8 @@ import java.util.Date;
 import javax.ws.rs.WebApplicationException;
 import net.es.nsi.dds.api.DiscoveryError;
 import net.es.nsi.dds.api.Exceptions;
-import net.es.nsi.dds.api.jaxb.DocumentType;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
+import net.es.nsi.dds.jaxb.dds.DocumentType;
+import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 
 /**
  *

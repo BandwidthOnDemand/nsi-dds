@@ -1,6 +1,6 @@
 package net.es.nsi.dds.management.api;
 
-import net.es.nsi.dds.management.jaxb.TopologyStatusType;
+import net.es.nsi.dds.jaxb.management.TopologyStatusType;
 
 /**
  *

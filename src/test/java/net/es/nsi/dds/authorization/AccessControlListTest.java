@@ -5,8 +5,8 @@
  */
 package net.es.nsi.dds.authorization;
 
-import net.es.nsi.dds.api.jaxb.AccessControlType;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
+import net.es.nsi.dds.jaxb.configuration.AccessControlType;
+import net.es.nsi.dds.jaxb.configuration.ObjectFactory;
 
 /**
  * Test cases for the AccessControlList.

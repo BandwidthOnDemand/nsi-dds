@@ -3,10 +3,10 @@ package net.es.nsi.dds.provider;
 import java.util.Collection;
 import java.util.Date;
 import javax.ws.rs.WebApplicationException;
-import net.es.nsi.dds.api.jaxb.DocumentType;
-import net.es.nsi.dds.api.jaxb.FilterType;
-import net.es.nsi.dds.api.jaxb.NotificationType;
-import net.es.nsi.dds.api.jaxb.SubscriptionRequestType;
+import net.es.nsi.dds.jaxb.dds.DocumentType;
+import net.es.nsi.dds.jaxb.dds.FilterType;
+import net.es.nsi.dds.jaxb.dds.NotificationType;
+import net.es.nsi.dds.jaxb.dds.SubscriptionRequestType;
 import net.es.nsi.dds.messages.DocumentEvent;
 
 /**

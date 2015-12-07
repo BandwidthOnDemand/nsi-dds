@@ -13,10 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
-import net.es.nsi.dds.management.jaxb.LogEnumType;
-import net.es.nsi.dds.management.jaxb.LogType;
-import net.es.nsi.dds.management.jaxb.ObjectFactory;
-import net.es.nsi.dds.schema.XmlUtilities;
+import net.es.nsi.dds.jaxb.management.LogEnumType;
+import net.es.nsi.dds.jaxb.management.LogType;
+import net.es.nsi.dds.jaxb.management.ObjectFactory;
+import net.es.nsi.dds.util.XmlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

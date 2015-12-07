@@ -1,16 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.schema;
 
-import javax.xml.bind.JAXBElement;
+import java.io.IOException;
+import java.util.Optional;
+import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
-import net.es.nsi.dds.api.jaxb.AnyType;
-import net.es.nsi.dds.api.jaxb.DocumentType;
-import net.es.nsi.dds.api.jaxb.NsaType;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import net.es.nsi.dds.jaxb.DdsParser;
+import net.es.nsi.dds.jaxb.NsaParser;
+import net.es.nsi.dds.jaxb.dds.ContentType;
+import net.es.nsi.dds.jaxb.dds.DocumentType;
+import net.es.nsi.dds.jaxb.nsa.NsaType;
+import net.es.nsi.dds.lib.DocumentBuilder;
+import net.es.nsi.dds.util.NsiConstants;
+import net.es.nsi.dds.util.XmlUtilities;
 import org.junit.Test;
 
 /**
@@ -18,11 +20,13 @@ import org.junit.Test;
  * @author hacksaw
  */
 public class EncoderTest {
-    private final static ObjectFactory factory = new ObjectFactory();
+    private final static net.es.nsi.dds.jaxb.dds.ObjectFactory ddsFactory = new net.es.nsi.dds.jaxb.dds.ObjectFactory();
+    private final static net.es.nsi.dds.jaxb.nsa.ObjectFactory nsaFactory = new net.es.nsi.dds.jaxb.nsa.ObjectFactory();
 
     @Test
-    public void encodeNsaDocument() throws DatatypeConfigurationException {
-        NsaType nsa = factory.createNsaType();
+    public void encodeNsaDocument() throws DatatypeConfigurationException, IllegalArgumentException, IOException, JAXBException, ParserConfigurationException {
+        System.out.println("encodeNsaDocument");
+        NsaType nsa = nsaFactory.createNsaType();
         nsa.setId("urn:ogf:network:example.com:2013:nsa:vixen");
         nsa.setVersion(XmlUtilities.longToXMLGregorianCalendar(System.currentTimeMillis()));
         nsa.setExpires(XmlUtilities.longToXMLGregorianCalendar(System.currentTimeMillis() + 100000L));
@@ -31,35 +35,39 @@ public class EncoderTest {
         nsa.setStartTime(nsa.getVersion());
         nsa.getNetworkId().add("urn:ogf:network:example.com:2013:network:theworkshop");
 
-        AnyType any = factory.createAnyType();
-        any.getAny().add(factory.createNsa(nsa));
+        // Convert the JAXB NSA description document to DOM format.
+        Optional<org.w3c.dom.Document> doc = Optional.of(NsaParser.getInstance().jaxb2Dom(nsaFactory.createNsa(nsa)));
 
-        DocumentType document = factory.createDocumentType();
-        document.setId("urn:ogf:network:example.com:2013:nsa:vixen");
-        document.setVersion(nsa.getVersion());
-        document.setExpires(nsa.getExpires());
-        document.setNsa("urn:ogf:network:example.com:2013:nsa:vixen");
-        document.setType("vnd.ogf.nsi.nsa.v1+xml");
-        document.setContent(any);
+        // Build the DDS document to add.
+        DocumentBuilder dBuilder = new DocumentBuilder()
+                .withNsaId(nsa.getId())
+                .withType(NsiConstants.NSI_DOC_TYPE_NSA_V1)
+                .withId(nsa.getId())
+                .withVersion(nsa.getVersion())
+                .withExpires(nsa.getExpires())
+                .withContents(doc.get());
 
-        String jaxbToString = XmlUtilities.jaxbToString(DocumentType.class, factory.createDocument(document));
+        // Create the document we want to add to DDS.
+        String jaxbToString = DdsParser.getInstance().jaxb2Xml(ddsFactory.createDocument(dBuilder.build()));
         System.out.println(jaxbToString);
     }
 
     @Test
-    public void encodeSimpleDocument() throws DatatypeConfigurationException {
-        DocumentType document = factory.createDocumentType();
+    public void encodeSimpleDocument() throws DatatypeConfigurationException, JAXBException {
+        System.out.println("encodeSimpleDocument");
+        DocumentType document = ddsFactory.createDocumentType();
         document.setId("urn:ogf:network:example.com:2013:nsa:vixen:status");
         document.setVersion(XmlUtilities.longToXMLGregorianCalendar(System.currentTimeMillis()));
         document.setExpires(XmlUtilities.longToXMLGregorianCalendar(System.currentTimeMillis() + 100000L));
         document.setNsa("urn:ogf:network:example.com:2013:nsa:vixen");
         document.setType("vnd.ogf.nsi.nsa.status.v1+xml");
-        JAXBElement<Object> createValue = factory.createValue("ACTIVE");
-        AnyType any2 = factory.createAnyType();
-        any2.getAny().add(createValue);
-        document.setContent(any2);
+        ContentType contentHolder = ddsFactory.createContentType();
+        contentHolder.setValue("ACTIVE");
+        contentHolder.setContentType("text/plain");
+        contentHolder.setContentTransferEncoding("7bit");
+        document.setContent(contentHolder);
 
-        String jaxbToString = XmlUtilities.jaxbToString(DocumentType.class, factory.createDocument(document));
+        String jaxbToString = DdsParser.getInstance().jaxb2Xml(ddsFactory.createDocument(document));
         System.out.println(jaxbToString);
     }
 }

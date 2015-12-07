@@ -10,10 +10,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.api.Exceptions;
-import net.es.nsi.dds.api.jaxb.NotificationListType;
-import net.es.nsi.dds.api.jaxb.NotificationType;
-import net.es.nsi.dds.schema.NsiConstants;
-import net.es.nsi.dds.schema.XmlUtilities;
+import net.es.nsi.dds.jaxb.dds.NotificationListType;
+import net.es.nsi.dds.jaxb.dds.NotificationType;
+import net.es.nsi.dds.util.NsiConstants;
+import net.es.nsi.dds.util.XmlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

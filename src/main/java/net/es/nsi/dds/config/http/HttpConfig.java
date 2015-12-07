@@ -8,16 +8,16 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import net.es.nsi.dds.api.jaxb.SecureType;
-import net.es.nsi.dds.api.jaxb.ServerType;
-import net.es.nsi.dds.api.jaxb.StaticType;
 import net.es.nsi.dds.config.Properties;
+import net.es.nsi.dds.jaxb.configuration.SecureType;
+import net.es.nsi.dds.jaxb.configuration.ServerType;
+import net.es.nsi.dds.jaxb.configuration.StaticType;
 
 public class HttpConfig {
     private final static String DEFAULT_ADDRESS = "localhost";
     private final static String DEFAULT_PORT = "8401";
     private final static String DEFAULT_PACKAGENAME = "net.es.nsi.dds";
-    
+
     private Optional<String> address;
     private Optional<String> port;
     private Optional<String> packageName;
@@ -40,7 +40,7 @@ public class HttpConfig {
         }
 
         // We will use the application basedir to fully qualify any relative paths.
-        basedir = System.getProperty(Properties.DDS_SYSTEM_PROPERTY_BASEDIR);
+        basedir = System.getProperty(Properties.SYSTEM_PROPERTY_BASEDIR);
 
         // These two parameters must be present.
         address = Optional.fromNullable(Strings.emptyToNull(config.getAddress()));

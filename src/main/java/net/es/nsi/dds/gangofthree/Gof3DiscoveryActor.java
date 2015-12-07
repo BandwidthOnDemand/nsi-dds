@@ -15,19 +15,15 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
-import net.es.nsi.dds.api.jaxb.AnyType;
-import net.es.nsi.dds.api.jaxb.DocumentEventType;
-import net.es.nsi.dds.api.jaxb.DocumentType;
-import net.es.nsi.dds.api.jaxb.InterfaceType;
-import net.es.nsi.dds.api.jaxb.NmlTopologyType;
-import net.es.nsi.dds.api.jaxb.NotificationType;
-import net.es.nsi.dds.api.jaxb.NsaType;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
 import net.es.nsi.dds.client.RestClient;
-import net.es.nsi.dds.provider.DdsProvider;
-import net.es.nsi.dds.schema.NmlParser;
-import net.es.nsi.dds.schema.NsiConstants;
-import net.es.nsi.dds.schema.XmlUtilities;
+import net.es.nsi.dds.jaxb.NmlParser;
+import net.es.nsi.dds.jaxb.NsaParser;
+import net.es.nsi.dds.jaxb.nml.NmlTopologyType;
+import net.es.nsi.dds.jaxb.nsa.InterfaceType;
+import net.es.nsi.dds.jaxb.nsa.NsaType;
+import net.es.nsi.dds.lib.DocHelper;
+import net.es.nsi.dds.util.NsiConstants;
+import net.es.nsi.dds.util.XmlUtilities;
 import org.apache.http.client.utils.DateUtils;
 import org.glassfish.jersey.client.ChunkedInput;
 import org.slf4j.Logger;
@@ -38,9 +34,7 @@ import org.slf4j.LoggerFactory;
  * @author hacksaw
  */
 public class Gof3DiscoveryActor extends UntypedActor {
-
-    private final Logger log = LoggerFactory.getLogger(Gof3DiscoveryActor.class);
-    private final ObjectFactory factory = new ObjectFactory();
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private Client client;
 
     /**
@@ -128,8 +122,8 @@ public class Gof3DiscoveryActor extends UntypedActor {
                     }
                 }
 
-                // Now parse the string into an NML Topology object.
-                NsaType nsa = NmlParser.getInstance().parseNsaFromString(result.toString());
+                // Now parse the string into an NSA object.
+                NsaType nsa = NsaParser.getInstance().xml2Jaxb(NsaType.class, result.toString());
 
                 // We have a document to process.
                 if (nsa == null) {
@@ -163,7 +157,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
 
                 XMLGregorianCalendar cal = XmlUtilities.longToXMLGregorianCalendar(time);
 
-                if (addNsaDocument(nsa, cal) == false) {
+                if (DocHelper.addNsaDocument(nsa, cal) == false) {
                     log.debug("discoverNSA: addNsaDocument() returned false " + message.getNsaURL());
                     return false;
                 }
@@ -189,10 +183,6 @@ public class Gof3DiscoveryActor extends UntypedActor {
         }
         catch (DatatypeConfigurationException ex) {
             log.error("discoverNSA: NSA document failed to create lastModified " + message.getNsaURL(), ex);
-            return false;
-        }
-        catch (Exception ex) {
-            log.error("discoverNSA: unknown error " + message.getNsaURL(), ex);
             return false;
         }
         finally {
@@ -251,7 +241,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
                 }
 
                 // Now parse the string into an NML Topology object.
-                NmlTopologyType nml = NmlParser.getInstance().parseTopologyFromString(result.toString());
+                NmlTopologyType nml = NmlParser.getInstance().xml2Jaxb(NmlTopologyType.class, result.toString());
 
                 if (nml != null) {
                     // Temporary fix to update out any old serviceType definitions.
@@ -261,7 +251,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
                     XMLGregorianCalendar cal;
                     cal = XmlUtilities.longToXMLGregorianCalendar(time);
 
-                    if (addTopologyDocument(nml, cal, nsaId) == false) {
+                    if (DocHelper.addTopologyDocument(nml, cal, nsaId) == false) {
                         log.debug("discoverTopology: addTopologyDocument() returned false " + url);
                     }
                 }
@@ -306,125 +296,5 @@ public class Gof3DiscoveryActor extends UntypedActor {
 
         log.debug("discoverTopology: exiting for topology=" + url + " with lastModifiedTime=" + new Date(time));
         return time;
-    }
-
-    /**
-     *
-     * @param nsa
-     * @param discovered
-     * @return
-     */
-    private boolean addNsaDocument(NsaType nsa, XMLGregorianCalendar discovered) {
-        // Now we add the NSA document into the DDS.
-        DocumentType document = factory.createDocumentType();
-
-        // Set the naming attributes.
-        document.setId(nsa.getId());
-        document.setType(NsiConstants.NSI_DOC_TYPE_NSA_V1);
-        document.setNsa(nsa.getId());
-
-        // We need the version of the document.
-        document.setVersion(nsa.getVersion());
-
-        // If there is no expires time specified then it is infinite.
-        if (nsa.getExpires() == null || !nsa.getExpires().isValid()) {
-            // No expire value provided so make one.
-            Date date = new Date(System.currentTimeMillis() + XmlUtilities.ONE_YEAR);
-            XMLGregorianCalendar xmlGregorianCalendar;
-            try {
-                xmlGregorianCalendar = XmlUtilities.xmlGregorianCalendar(date);
-            } catch (DatatypeConfigurationException ex) {
-                log.error("discover: NSA document does not contain an expires date, id=" + nsa.getId());
-                return false;
-            }
-
-            document.setExpires(xmlGregorianCalendar);
-        }
-        else {
-            document.setExpires(nsa.getExpires());
-        }
-
-        // Add the NSA document into the entry.
-        AnyType any = factory.createAnyType();
-        any.getAny().add(factory.createNsa(nsa));
-        document.setContent(any);
-
-        // Try to add the document as a notification of document change.
-        NotificationType notify = factory.createNotificationType();
-        notify.setEvent(DocumentEventType.ALL);
-        notify.setDiscovered(discovered);
-        notify.setDocument(document);
-
-        DdsProvider.getInstance().processNotification(notify);
-
-        return true;
-    }
-
-    /**
-     *
-     * @param topology
-     * @param discovered
-     * @param nsaId
-     * @return
-     */
-    private boolean addTopologyDocument(NmlTopologyType topology, XMLGregorianCalendar discovered, String nsaId) {
-
-        // Now we add the Topology document into the DDS.
-        DocumentType document = factory.createDocumentType();
-
-        // Set the naming attributes.
-        document.setId(topology.getId());
-        document.setType(NsiConstants.NSI_DOC_TYPE_TOPOLOGY_V2);
-        document.setNsa(nsaId);
-
-        // If there is no version specified then we add one.
-        if (topology.getVersion() == null || !topology.getVersion().isValid()) {
-            // No expire value provided so make one.
-            XMLGregorianCalendar xmlGregorianCalendar;
-            try {
-                xmlGregorianCalendar = XmlUtilities.xmlGregorianCalendar();
-            } catch (DatatypeConfigurationException ex) {
-                log.error("discover: Topology document does not contain a version, id=" + topology.getId());
-                return false;
-            }
-
-            document.setVersion(xmlGregorianCalendar);
-        }
-        else {
-            document.setVersion(topology.getVersion());
-        }
-
-        // If there is no expires time specified then it is infinite.
-        if (topology.getLifetime() == null || topology.getLifetime().getEnd() == null || !topology.getLifetime().getEnd().isValid()) {
-            // No expire value provided so make one.
-            Date date = new Date(System.currentTimeMillis() + XmlUtilities.ONE_YEAR);
-            XMLGregorianCalendar xmlGregorianCalendar;
-            try {
-                xmlGregorianCalendar = XmlUtilities.xmlGregorianCalendar(date);
-            } catch (DatatypeConfigurationException ex) {
-                log.error("discover: Topology document does not contain an expires date, id=" + topology.getId());
-                return false;
-            }
-
-            document.setExpires(xmlGregorianCalendar);
-        }
-        else {
-            document.setExpires(topology.getLifetime().getEnd());
-        }
-
-        // Add the NSA document into the entry.
-        AnyType any = factory.createAnyType();
-        any.getAny().add(factory.createTopology(topology));
-        document.setContent(any);
-
-        // Try to add the document as a notification of document change.
-        NotificationType notify = factory.createNotificationType();
-        notify.setEvent(DocumentEventType.ALL);
-        notify.setDiscovered(discovered);
-        notify.setDocument(document);
-
-        DdsProvider.getInstance().processNotification(notify);
-
-        return true;
     }
 }

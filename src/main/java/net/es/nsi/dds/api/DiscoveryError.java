@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import net.es.nsi.dds.api.jaxb.ErrorType;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
-import net.es.nsi.dds.dao.DdsParser;
+import net.es.nsi.dds.jaxb.DdsParser;
+import net.es.nsi.dds.jaxb.dds.ErrorType;
+import net.es.nsi.dds.jaxb.dds.ObjectFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the error values for the PCE logging system.
@@ -36,6 +38,8 @@ public enum DiscoveryError {
 
     // Mark the end.
     END(999, "END", "END");
+
+    private final static Logger log = LoggerFactory.getLogger(DiscoveryError.class);
 
     private final int code;
     private final String label;
@@ -80,27 +84,28 @@ public enum DiscoveryError {
     public static ErrorType getErrorType(String xml) {
         ErrorType error;
         try {
-            @SuppressWarnings("unchecked")
-            JAXBElement<ErrorType> errorElement = (JAXBElement<ErrorType>) DdsParser.getInstance().stringToJaxb(xml);
-            error = errorElement.getValue();
+            error = DdsParser.getInstance().xml2Jaxb(ErrorType.class, xml);
         }
         catch (JAXBException ex) {
             error = getErrorType(INTERNAL_SERVER_ERROR, "JAXB", xml);
-
         }
         return error;
     }
 
     public static String getErrorString(DiscoveryError error, String resource, String info) {
-        ErrorType fp = getErrorType(error, resource, info);
-        JAXBElement<ErrorType> errorElement = factory.createError(fp);
-        String xml = DdsParser.getInstance().jaxbToString(errorElement);
-        return xml;
+        try {
+            ErrorType fp = getErrorType(error, resource, info);
+            JAXBElement<ErrorType> errorElement = factory.createError(fp);
+            return DdsParser.getInstance().jaxb2Xml(errorElement);
+        } catch (JAXBException ex) {
+            log.error("getErrorString: could not generate xml", ex);
+            return null;
+        }
     }
 
-    public static String getErrorString(ErrorType error) {
+    public static String getErrorString(ErrorType error) throws JAXBException {
         JAXBElement<ErrorType> errorElement = factory.createError(error);
-        String xml = DdsParser.getInstance().jaxbToString(errorElement);
+        String xml = DdsParser.getInstance().jaxb2Xml(errorElement);
         return xml;
     }
 

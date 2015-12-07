@@ -263,6 +263,7 @@ mailing list group mailing list (nsi-wg@ogf.org).
             <xsd:element name="href"        type="xsd:anyURI" />
             <xsd:element name="describedBy" type="xsd:anyURI" minOccurs="0" />
         </xsd:sequence>
+        <xsd:attribute name="id" use="optional" type="xsd:string" />
     </xsd:complexType>
     
     <xsd:complexType name="FeatureType">

@@ -1,34 +1,44 @@
 package net.es.nsi.dds.dao;
 
-import com.google.common.base.Optional;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
-import net.es.nsi.dds.api.jaxb.AccessControlType;
-import net.es.nsi.dds.api.jaxb.DdsConfigurationType;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
-import net.es.nsi.dds.api.jaxb.PeerURLType;
 import net.es.nsi.dds.authorization.AccessControlList;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.config.http.HttpsConfig;
-import net.es.nsi.dds.management.jaxb.LogType;
+import net.es.nsi.dds.jaxb.ConfigurationParser;
+import net.es.nsi.dds.jaxb.configuration.AccessControlType;
+import net.es.nsi.dds.jaxb.configuration.DdsConfigurationType;
+import net.es.nsi.dds.jaxb.configuration.ObjectFactory;
+import net.es.nsi.dds.jaxb.configuration.PeerURLType;
+import net.es.nsi.dds.jaxb.configuration.SignatureStoreType;
+import net.es.nsi.dds.jaxb.management.LogType;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
+import net.es.nsi.dds.signing.KeyStoreHandler;
 import net.es.nsi.dds.spring.SpringApplicationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author hacksaw
  */
 public class DdsConfiguration {
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private final DdsLogger ddsLogger = DdsLogger.getLogger();
     private final ObjectFactory factory = new ObjectFactory();
 
@@ -60,9 +70,14 @@ public class DdsConfiguration {
     private int actorPool = ACTORPOOL_DEFAULT_SIZE;
     private int notificationSize;
     private HttpConfig httpConfig = null;
-    private Optional<HttpsConfig> clientConfig = Optional.absent();
+    private Optional<HttpsConfig> clientConfig = Optional.empty();
     private AccessControlList accessControlList;
     private Map<String, PeerURLType> discoveryURL = new HashMap<>();
+
+    // Configuration for digital signing of documents populated through Gof3 agents.
+    private boolean sign = false;
+    private KeyStoreHandler signingStore = null;
+    private String signingAlias = null;
 
     public static DdsConfiguration getInstance() {
         DdsConfiguration configurationReader = SpringApplicationContext.getBean("ddsConfiguration", DdsConfiguration.class);
@@ -77,7 +92,7 @@ public class DdsConfiguration {
         this.filename = filename;
     }
 
-    public synchronized void load() throws IllegalArgumentException, JAXBException, IOException, NullPointerException {
+    public synchronized void load() throws IllegalArgumentException, JAXBException, IOException, FileNotFoundException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
         LogType errorAudit;
 
         // Make sure the condifuration file is set.
@@ -105,7 +120,7 @@ public class DdsConfiguration {
         DdsConfigurationType config;
 
         try {
-            config = DdsParser.getInstance().parse(getFilename());
+            config = ConfigurationParser.getInstance().readConfiguration(getFilename());
         }
         catch (IOException io) {
             ddsLogger.errorAudit(DdsErrors.DDS_CONFIGURATION_INVALID_FILENAME, "filename", getFilename());
@@ -193,7 +208,7 @@ public class DdsConfiguration {
             clientConfig = Optional.of(new HttpsConfig(config.getClient()));
         }
 
-        Optional<AccessControlType> accessControl = Optional.fromNullable(config.getAccessControl());
+        Optional<AccessControlType> accessControl = Optional.ofNullable(config.getAccessControl());
         if (!accessControl.isPresent()) {
             AccessControlType ac = factory.createAccessControlType();
             accessControl = Optional.of(ac);
@@ -201,12 +216,23 @@ public class DdsConfiguration {
 
         accessControlList = new AccessControlList(accessControl.get());
 
-        Map<String, PeerURLType> temp = new HashMap<>();
-        for (PeerURLType peer : config.getPeerURL()) {
-            String key = peer.getType() + "/" + peer.getValue();
-            temp.put(key, peer);
+        // Load the peer discovery URL.
+        discoveryURL = config.getPeerURL().stream().collect(
+            Collectors.toMap(peer -> peer.getType() + "/" + peer.getValue(), peer -> peer)
+        );
+
+        // Populate digital signing information for Gof3 documents.
+        Optional<SignatureStoreType> signature = Optional.ofNullable(config.getSignature());
+        if (signature.isPresent()) {
+            if (signature.get().isSign()) {
+                signingAlias = Optional.ofNullable(signature.get().getAlias()).orElseThrow(new IllegalArgumentExceptionSupplier("signing alias is required"));
+                signingStore = new KeyStoreHandler(
+                        fullyQualifyPath(Optional.ofNullable(signature.get().getFile()).orElseThrow(new IllegalArgumentExceptionSupplier("signing keystore filename is required"))),
+                        signature.get().getPassword(),
+                        signature.get().getType());
+                sign = signature.get().isSign();
+            }
         }
-        discoveryURL = temp;
 
         lastModified = lastMod;
     }
@@ -214,7 +240,7 @@ public class DdsConfiguration {
     private String fullyQualifyPath(String file) {
         Path path = Paths.get(file);
         if (!path.isAbsolute()) {
-            String basedir = System.getProperty(Properties.DDS_SYSTEM_PROPERTY_BASEDIR);
+            String basedir = System.getProperty(Properties.SYSTEM_PROPERTY_BASEDIR);
             path = Paths.get(basedir, file);
         }
 
@@ -379,10 +405,22 @@ public class DdsConfiguration {
     }
 
     public HttpsConfig getClientConfig() {
-        return clientConfig.orNull();
+        return clientConfig.orElse(null);
     }
 
     public AccessControlList getAccessControlList() {
         return accessControlList;
+    }
+
+    public boolean isSign() {
+        return sign;
+    }
+
+    public KeyStoreHandler getSigningStore() {
+        return signingStore;
+    }
+
+    public String getSigningAlias() {
+        return signingAlias;
     }
 }

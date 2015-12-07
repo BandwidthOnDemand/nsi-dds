@@ -24,19 +24,19 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.actors.DdsActorController;
 import net.es.nsi.dds.api.DiscoveryError;
 import net.es.nsi.dds.api.Exceptions;
-import net.es.nsi.dds.api.jaxb.DocumentEventType;
-import net.es.nsi.dds.api.jaxb.DocumentType;
-import net.es.nsi.dds.api.jaxb.FilterType;
-import net.es.nsi.dds.api.jaxb.NotificationType;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
-import net.es.nsi.dds.api.jaxb.SubscriptionRequestType;
-import net.es.nsi.dds.api.jaxb.SubscriptionType;
 import net.es.nsi.dds.dao.DdsConfiguration;
-import net.es.nsi.dds.dao.DdsParser;
 import net.es.nsi.dds.dao.DocumentCache;
+import net.es.nsi.dds.jaxb.DdsParser;
+import net.es.nsi.dds.jaxb.dds.DocumentEventType;
+import net.es.nsi.dds.jaxb.dds.DocumentType;
+import net.es.nsi.dds.jaxb.dds.FilterType;
+import net.es.nsi.dds.jaxb.dds.NotificationType;
+import net.es.nsi.dds.jaxb.dds.ObjectFactory;
+import net.es.nsi.dds.jaxb.dds.SubscriptionRequestType;
+import net.es.nsi.dds.jaxb.dds.SubscriptionType;
 import net.es.nsi.dds.messages.DocumentEvent;
 import net.es.nsi.dds.messages.SubscriptionEvent;
-import net.es.nsi.dds.schema.XmlUtilities;
+import net.es.nsi.dds.util.XmlUtilities;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -720,7 +720,7 @@ public class DdsProvider implements DiscoveryProvider {
         for (String filename : xmlFilenames) {
             DocumentType document;
             try {
-                document = DdsParser.getInstance().readDocument(filename);
+                document = DdsParser.getInstance().parseFile(DocumentType.class, filename);
                 if (document == null) {
                     log.error("loadDocuments: Loaded empty document from " + filename);
                     continue;

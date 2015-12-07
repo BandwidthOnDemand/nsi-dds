@@ -8,9 +8,9 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
-import net.es.nsi.dds.api.jaxb.NmlNSAType;
 import net.es.nsi.dds.client.RestClient;
-import net.es.nsi.dds.dao.DdsParser;
+import net.es.nsi.dds.jaxb.NmlParser;
+import net.es.nsi.dds.jaxb.nml.NmlNSAType;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import org.apache.http.client.utils.DateUtils;
@@ -98,7 +98,7 @@ public class AgoleTopologyReader {
             }
 
             // Parse the NSA topology.
-            topology = DdsParser.getInstance().parseNsaFromString(result.toString());
+            topology = NmlParser.getInstance().xml2Jaxb(NmlNSAType.class, result.toString());
         }
         catch (NotFoundException | IllegalStateException | JAXBException ex) {
             topologyLogger.errorAudit(DdsErrors.AUDIT_NSA_COMMS, target, ex.getMessage());

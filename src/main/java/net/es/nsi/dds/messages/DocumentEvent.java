@@ -5,7 +5,7 @@
 package net.es.nsi.dds.messages;
 
 import java.io.Serializable;
-import net.es.nsi.dds.api.jaxb.DocumentEventType;
+import net.es.nsi.dds.jaxb.dds.DocumentEventType;
 import net.es.nsi.dds.provider.Document;
 
 /**
@@ -14,7 +14,7 @@ import net.es.nsi.dds.provider.Document;
  */
 public class DocumentEvent implements Serializable {
     private static final long serialVersionUID = 1L;
-  
+
     private DocumentEventType event;
     private Document document;
 
@@ -45,5 +45,5 @@ public class DocumentEvent implements Serializable {
     public void setDocument(Document document) {
         this.document = document;
     }
-    
+
 }

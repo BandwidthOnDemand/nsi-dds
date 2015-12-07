@@ -6,6 +6,9 @@ package net.es.nsi.dds.authorization;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.util.Log4jHelper;
@@ -35,7 +38,7 @@ public class AclSchemaTest {
     private static final String DN8 = "C=NL, O=TERENA, CN=TERENA SSL CA, O=TERENA";
 
     @Before
-    public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException, IOException {
+    public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException, IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
         // Load and watch the log4j configuration file for changes.
         DOMConfigurator.configureAndWatch(Log4jHelper.getLog4jConfig("src/test/resources/config/"), 45 * 1000);
         log = LoggerFactory.getLogger(AclSchemaTest.class);

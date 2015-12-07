@@ -1,9 +1,13 @@
 package net.es.nsi.dds.discovery;
 
+import com.google.common.base.Strings;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericEntity;
@@ -13,30 +17,29 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
-import net.es.nsi.dds.api.jaxb.DocumentEventType;
-import net.es.nsi.dds.api.jaxb.DocumentListType;
-import net.es.nsi.dds.api.jaxb.DocumentType;
-import net.es.nsi.dds.api.jaxb.FilterCriteriaType;
-import net.es.nsi.dds.api.jaxb.FilterType;
-import net.es.nsi.dds.api.jaxb.NotificationListType;
-import net.es.nsi.dds.api.jaxb.NotificationType;
-import net.es.nsi.dds.api.jaxb.NsaType;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
-import net.es.nsi.dds.api.jaxb.SubscriptionRequestType;
-import net.es.nsi.dds.api.jaxb.SubscriptionType;
 import net.es.nsi.dds.client.TestServer;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
-import net.es.nsi.dds.dao.DdsParser;
-import net.es.nsi.dds.schema.NsiConstants;
-import net.es.nsi.dds.schema.XmlUtilities;
+import net.es.nsi.dds.jaxb.DdsParser;
+import net.es.nsi.dds.jaxb.dds.DocumentEventType;
+import net.es.nsi.dds.jaxb.dds.DocumentListType;
+import net.es.nsi.dds.jaxb.dds.DocumentType;
+import net.es.nsi.dds.jaxb.dds.FilterCriteriaType;
+import net.es.nsi.dds.jaxb.dds.FilterType;
+import net.es.nsi.dds.jaxb.dds.NotificationListType;
+import net.es.nsi.dds.jaxb.dds.NotificationType;
+import net.es.nsi.dds.jaxb.dds.ObjectFactory;
+import net.es.nsi.dds.jaxb.dds.SubscriptionRequestType;
+import net.es.nsi.dds.jaxb.dds.SubscriptionType;
+import net.es.nsi.dds.jaxb.nsa.NsaType;
 import net.es.nsi.dds.test.TestConfig;
+import net.es.nsi.dds.util.NsiConstants;
+import net.es.nsi.dds.util.XmlUtilities;
 import org.glassfish.jersey.client.ChunkedInput;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
@@ -76,7 +79,7 @@ public class DiscoveryTest {
 
             callbackURL = new URL(testServer.getURL(), "dds/callback").toString();
         }
-        catch (IllegalArgumentException | JAXBException | IOException | NullPointerException | IllegalStateException ex) {
+        catch (IllegalArgumentException | JAXBException | IOException | IllegalStateException | KeyStoreException | NoSuchAlgorithmException | CertificateException ex) {
             System.err.println("oneTimeSetUp: failed to start HTTP server " + ex.getLocalizedMessage());
             fail();
         }
@@ -159,7 +162,7 @@ public class DiscoveryTest {
 
         for (DocumentType document : documents.getDocument()) {
             System.out.println("cDocumentsFull: " + document.getNsa() + ", " + document.getType() + ", " + document.getId() + ", href=" + document.getHref());
-            assertFalse(document.getContent().getAny().isEmpty());
+            assertFalse(document.getContent().getValue().isEmpty());
 
             response = testConfig.getClient().target(document.getHref()).request(NsiConstants.NSI_DDS_V1_XML).get();
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -167,7 +170,7 @@ public class DiscoveryTest {
             response.close();
 
             assertNotNull(doc);
-            assertFalse(doc.getContent().getAny().isEmpty());
+            assertFalse(doc.getContent().getValue().isEmpty());
 
             // Do a search using the NSA and Type from previous result.
             response = discovery.path("documents")
@@ -210,7 +213,7 @@ public class DiscoveryTest {
 
         for (DocumentType document : documents.getDocument()) {
             System.out.println("dDocumentsSummary: " + document.getNsa() + ", " + document.getType() + ", " + document.getId() + ", href=" + document.getHref());
-            assertNull(document.getContent());
+            assertTrue(document.getContent() == null || Strings.isNullOrEmpty(document.getContent().getValue()));
 
             // Read the direct href and get summary contents.
             response = testConfig.getClient().target(document.getHref()).queryParam("summary", "true").request(NsiConstants.NSI_DDS_V1_XML).get();
@@ -219,7 +222,7 @@ public class DiscoveryTest {
             response.close();
 
             assertNotNull(doc);
-            assertNull(doc.getContent());
+            assertTrue(doc.getContent() == null || Strings.isNullOrEmpty(doc.getContent().getValue()));
         }
     }
 

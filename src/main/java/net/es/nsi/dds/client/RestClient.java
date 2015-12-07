@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import net.es.nsi.dds.config.http.HttpsConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
-import net.es.nsi.dds.schema.NsiConstants;
+import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;

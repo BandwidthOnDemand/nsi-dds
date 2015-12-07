@@ -6,7 +6,7 @@ package net.es.nsi.dds.dao;
 
 import java.io.Serializable;
 import java.util.Date;
-import net.es.nsi.dds.api.jaxb.SubscriptionType;
+import net.es.nsi.dds.jaxb.dds.SubscriptionType;
 
 /**
  *

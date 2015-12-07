@@ -3,11 +3,11 @@ package net.es.nsi.dds.gangofthree;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
-import net.es.nsi.dds.api.jaxb.NmlNetworkObject;
-import net.es.nsi.dds.api.jaxb.NmlSwitchingServiceType;
-import net.es.nsi.dds.api.jaxb.NmlTopologyRelationType;
-import net.es.nsi.dds.api.jaxb.NmlTopologyType;
-import net.es.nsi.dds.api.jaxb.SdServiceDefinitionType;
+import net.es.nsi.dds.jaxb.nml.NmlNetworkObject;
+import net.es.nsi.dds.jaxb.nml.NmlSwitchingServiceType;
+import net.es.nsi.dds.jaxb.nml.NmlTopologyRelationType;
+import net.es.nsi.dds.jaxb.nml.NmlTopologyType;
+import net.es.nsi.dds.jaxb.nml.ServiceDefinitionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +63,8 @@ public class ServiceDefinitionConverter {
         for (Object object : any) {
             if (object instanceof JAXBElement) {
                 JAXBElement<?> jaxb = (JAXBElement) object;
-                if (jaxb.getValue() instanceof SdServiceDefinitionType) {
-                    SdServiceDefinitionType serviceDefinition = (SdServiceDefinitionType) jaxb.getValue();
+                if (jaxb.getValue() instanceof ServiceDefinitionType) {
+                    ServiceDefinitionType serviceDefinition = (ServiceDefinitionType) jaxb.getValue();
                     String serviceType = serviceDefinition.getServiceType();
                     if (serviceType != null) {
                         serviceType = serviceType.trim();

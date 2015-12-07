@@ -6,6 +6,9 @@ package net.es.nsi.dds.actors;
 
 import akka.actor.UntypedActor;
 import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.dao.DdsConfiguration;
@@ -16,7 +19,7 @@ import scala.concurrent.duration.Duration;
 
 /**
  * This actor is on a timer to periodically load the DDS configuration file.
- * 
+ *
  * @author hacksaw
  */
 public class ConfigurationActor extends UntypedActor {
@@ -44,7 +47,7 @@ public class ConfigurationActor extends UntypedActor {
             try {
                 discoveryConfiguration.load();
             }
-            catch (IllegalArgumentException | JAXBException | IOException | NullPointerException ex) {
+            catch (IllegalArgumentException | JAXBException | IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException ex) {
                 log.error("onReceive: Configuration load failed.", ex);
             }
 

@@ -7,12 +7,17 @@ package net.es.nsi.dds.dao;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Collection;
-import org.junit.*;
-import static org.junit.Assert.*;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.provider.Document;
-import java.net.URLDecoder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -22,7 +27,7 @@ public class TestDocumentCache {
     private DdsConfiguration config;
 
     @Before
-    public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException, IOException {
+    public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException, IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
         config = new DdsConfiguration();
         config.setFilename("src/test/resources/config/dds.xml");
         config.load();

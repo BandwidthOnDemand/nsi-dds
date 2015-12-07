@@ -419,35 +419,101 @@
             </plugin>
 
             <plugin>
+                <!-- We use this plugin to ensure that our usage of the
+                maven-jaxb2-plugin is JDK 8 compatible in absence of a fix
+                for https://java.net/jira/browse/MAVEN_JAXB2_PLUGIN-80. -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <id>set-additional-system-properties</id>
+                        <goals>
+                            <goal>set-system-properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <properties>
+                        <property>
+                            <name>javax.xml.accessExternalSchema</name>
+                            <value>file,http</value>
+                        </property>
+                    </properties>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>1.5</version>
+                <version>1.6</version>
                 <executions>
+                  <execution>
+                    <id>configuration</id>
+                    <goals>
+                        <goal>xjc</goal>
+                    </goals>
+                    <configuration>
+                        <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
+                        <bindingFiles>configuration.xjb</bindingFiles>
+                        <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
+                        <schemaFiles>dds-configuration.xsd</schemaFiles>
+                        <packageName>net.es.nsi.dds.jaxb.configuration</packageName>
+                    </configuration>
+                  </execution>
                   <execution>
                     <id>management</id>
                     <goals>
                         <goal>xjc</goal>
                     </goals>
                     <configuration>
+                        <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
+                        <bindingFiles>management.xjb</bindingFiles>
                         <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
                         <schemaFiles>dds-management.xsd</schemaFiles>
-                        <packageName>net.es.nsi.dds.management.jaxb</packageName>
-                        <staleFile>${project.build.directory}/jaxb2/.mgntXjcStaleFlag</staleFile>
+                        <packageName>net.es.nsi.dds.jaxb.management</packageName>
                         <clearOutputDir>false</clearOutputDir>
                     </configuration>
                   </execution>
                   <execution>
-                    <id>discovery</id>
+                    <id>dds</id>
                     <goals>
                         <goal>xjc</goal>
                     </goals>
                     <configuration>
-                        <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
                         <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
-                        <bindingFiles>discovery.xjb</bindingFiles>
-                        <schemaFiles>dds-configuration.xsd, ogf_nsi_discovery_protocol_v1_0.xsd, ogf_nsi_discovery_nsa_v1_0.xsd, gnsbod.xsd, ogf_nsi_services_definition_v2_0.xsd, nmlbase.xsd, nsi-ext.xsd</schemaFiles>
-                        <packageName>net.es.nsi.dds.api.jaxb</packageName>
-                        <staleFile>${project.build.directory}/jaxb2/.discoveryXjcStaleFlag</staleFile>
+                        <bindingFiles>dds.xjb</bindingFiles>
+                        <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
+                        <schemaFiles>ogf_nsi_discovery_protocol_v1_0.xsd</schemaFiles>
+                        <packageName>net.es.nsi.dds.jaxb.dds</packageName>
+                        <clearOutputDir>false</clearOutputDir>
+                    </configuration>
+                  </execution>
+                  <execution>
+                    <id>nml</id>
+                    <goals>
+                        <goal>xjc</goal>
+                    </goals>
+                    <configuration>
+                        <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
+                        <bindingFiles>nml.xjb</bindingFiles>
+                        <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
+                        <schemaFiles>nmlbase.xsd, nml-ethernet.xsd, ogf_nsi_services_definition_v2_0.xsd, nsi-ext.xsd</schemaFiles>
+                        <packageName>net.es.nsi.dds.jaxb.nml</packageName>
+                        <clearOutputDir>false</clearOutputDir>
+                    </configuration>
+                  </execution>
+                  <execution>
+                    <id>nsa</id>
+                    <goals>
+                        <goal>xjc</goal>
+                    </goals>
+                    <configuration>
+                        <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
+                        <bindingFiles>nsa.xjb</bindingFiles>
+                        <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
+                        <schemaFiles>ogf_nsi_discovery_nsa_v1_0.xsd, xCard.xsd, gnsbod.xsd</schemaFiles>
+                        <packageName>net.es.nsi.dds.jaxb.nsa</packageName>
                         <clearOutputDir>false</clearOutputDir>
                     </configuration>
                   </execution>

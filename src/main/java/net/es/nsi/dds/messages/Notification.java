@@ -6,7 +6,7 @@ package net.es.nsi.dds.messages;
 
 import java.io.Serializable;
 import java.util.Collection;
-import net.es.nsi.dds.api.jaxb.DocumentEventType;
+import net.es.nsi.dds.jaxb.dds.DocumentEventType;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.provider.Subscription;
 
@@ -16,7 +16,7 @@ import net.es.nsi.dds.provider.Subscription;
  */
 public class Notification implements Serializable {
     private static final long serialVersionUID = 1L;
-  
+
     private DocumentEventType event;
     private Subscription subscription;
     private Collection<Document> documents;

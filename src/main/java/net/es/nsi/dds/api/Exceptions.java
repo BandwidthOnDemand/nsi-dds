@@ -9,8 +9,8 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
-import net.es.nsi.dds.api.jaxb.ErrorType;
-import net.es.nsi.dds.api.jaxb.ObjectFactory;
+import net.es.nsi.dds.jaxb.dds.ErrorType;
+import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.provider.InvalidVersionException;
 
 /**

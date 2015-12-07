@@ -3,18 +3,18 @@ package net.es.nsi.dds.client;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import net.es.nsi.dds.config.http.HttpConfig;
-import net.es.nsi.dds.api.jaxb.NotificationListType;
+import net.es.nsi.dds.jaxb.dds.NotificationListType;
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
-import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 
 public enum TestServer {
     INSTANCE;
 
     private static HttpServer server = null;
-    private static ConcurrentLinkedQueue<NotificationListType> notificationQueue = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<NotificationListType> notificationQueue = new ConcurrentLinkedQueue<>();
 
     public boolean pushDdsNotification(NotificationListType notify) {
         return notificationQueue.add(notify);
