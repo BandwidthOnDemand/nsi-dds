@@ -1,16 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.schema;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.NmlParser;
 import net.es.nsi.dds.jaxb.NsaParser;
+import net.es.nsi.dds.jaxb.dds.CollectionType;
+import net.es.nsi.dds.jaxb.dds.FilterCriteriaType;
+import net.es.nsi.dds.jaxb.dds.FilterOrType;
+import net.es.nsi.dds.jaxb.dds.SubscriptionType;
 import net.es.nsi.dds.jaxb.nml.NmlTopologyType;
 import net.es.nsi.dds.jaxb.nsa.NsaType;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -241,5 +243,52 @@ public class JaxbTest {
         NmlTopologyType xml2Jaxb = NmlParser.getInstance().xml2Jaxb(NmlTopologyType.class, nml);
         System.out.println("topologyId=" + xml2Jaxb.getId());
         assertEquals("urn:ogf:network:ja.net:2013:topology", xml2Jaxb.getId());
+    }
+
+    @Test
+    public void subscriptionTest() throws IllegalArgumentException, JAXBException {
+        final String subXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+"<ns0:collection xmlns:ns0=\"http://schemas.ogf.org/nsi/2014/02/discovery/types\">\n" +
+"    <ns0:subscriptions>\n" +
+"        <ns0:subscription id=\"decd1977-d8f8-42a9-b7a5-acecb34fd6cd\" href=\"http://localhost:8401/dds/subscriptions/decd1977-d8f8-42a9-b7a5-acecb34fd6cd\" version=\"2015-12-09T12:37:43.098-05:00\">\n" +
+"            <requesterId>urn:ogf:network:opennsa.org:2015:nsa:dds</requesterId>\n" +
+"            <callback>http://localhost:8402/dds/notifications</callback>\n" +
+"            <filter>\n" +
+"                <include>\n" +
+"                    <event>All</event>\n" +
+"                </include>\n" +
+"                <exclude>\n" +
+"                    <event>All</event>\n" +
+"                    <or>\n" +
+"                        <nsa>urn:ogf:network:opennsa.net:2015:nsa:safnari</nsa>\n" +
+"                        <type>vnd.ogf.nsi.nsa.v1+xml</type>\n" +
+"                    </or>\n" +
+"                </exclude>\n" +
+"            </filter>\n" +
+"        </ns0:subscription>\n" +
+"    </ns0:subscriptions>\n" +
+"</ns0:collection>";
+
+        CollectionType collection = DdsParser.getInstance().xml2Jaxb(CollectionType.class, subXML);
+        System.out.println("Subscription count: " + collection.getSubscriptions().getSubscription().size());
+
+        boolean found = false;
+        for (SubscriptionType subscription : collection.getSubscriptions().getSubscription()) {
+            for (FilterCriteriaType exclude : subscription.getFilter().getExclude()) {
+                for (FilterOrType or : exclude.getOr()) {
+
+                    for (JAXBElement<String> nsaOrTypeOrId : or.getNsaOrTypeOrId()) {
+                        System.out.println(nsaOrTypeOrId.getName().getLocalPart() + " = " + nsaOrTypeOrId.getValue());
+
+                        if ("nsa".equalsIgnoreCase(nsaOrTypeOrId.getName().getLocalPart()) &&
+                                "urn:ogf:network:opennsa.net:2015:nsa:safnari".equalsIgnoreCase(nsaOrTypeOrId.getValue())) {
+                            found = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        assertTrue(found);
     }
 }
