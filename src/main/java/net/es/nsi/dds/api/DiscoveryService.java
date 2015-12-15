@@ -653,7 +653,7 @@ public class DiscoveryService {
             @DefaultValue("false") @QueryParam("summary") boolean summary,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws WebApplicationException {
 
-        log.debug("getDocument: nsa={}, type{}, id={}, summary={}, If-Modified-Since={}", nsa, type, id, summary, ifModifiedSince);
+        log.debug("getDocument: nsa={}, type={}, id={}, summary={}, If-Modified-Since={}", nsa, type, id, summary, ifModifiedSince);
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 

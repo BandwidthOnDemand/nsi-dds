@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.gangofthree;
 
 import akka.actor.UntypedActor;
@@ -185,6 +181,9 @@ public class Gof3DiscoveryActor extends UntypedActor {
             log.error("discoverNSA: NSA document failed to create lastModified " + message.getNsaURL(), ex);
             return false;
         }
+        catch (IllegalArgumentException ex) {
+            log.error("discoverNSA: Failed to create NSA description document for {} ", message.getNsaURL(), ex);
+        }
         finally {
             if (response != null) {
                 // Close the response to avoid leaking.
@@ -286,11 +285,11 @@ public class Gof3DiscoveryActor extends UntypedActor {
         finally {
             if (response != null) {
                 // Close the response to avoid leaking.
-                log.error("discoverTopology: closing response.");
+                log.debug("discoverTopology: closing response.");
                 response.close();
             }
             else {
-                log.error("discoverTopology: not closing response.");
+                log.debug("discoverTopology: not closing response.");
             }
         }
 

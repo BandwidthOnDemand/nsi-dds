@@ -2,6 +2,7 @@ package net.es.nsi.dds.server;
 
 import java.io.IOException;
 import net.es.nsi.dds.api.DiscoveryService;
+import net.es.nsi.dds.api.Portal;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.management.api.ManagementService;
@@ -45,6 +46,7 @@ public class DdsServer {
                       .addInterface(GZipEncoder.class)
                       .addInterface(DeflateEncoder.class)
                       .addInterface(DiscoveryService.class)
+                      .addInterface(Portal.class)
                       .addInterface(ManagementService.class)
                       .setPackages(config.getPackageName())
                       .setFileCacheMaxAge(FILE_CACHE_MAX_AGE);

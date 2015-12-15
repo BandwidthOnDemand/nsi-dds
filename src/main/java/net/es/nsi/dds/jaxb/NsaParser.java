@@ -37,12 +37,12 @@ public class NsaParser extends JaxbParser {
     }
 
     public NsaType readTopology(String filename) throws JAXBException, IOException {
-        return getInstance().parseFile(NsaType.class, filename);
+        return this.parseFile(NsaType.class, filename);
     }
 
     public void writeTopology(String file, NsaType nsa) throws JAXBException, IOException {
         // Parse the specified file.
         JAXBElement<NsaType> element = factory.createNsa(nsa);
-        getInstance().writeFile(element, file);
+        this.writeFile(element, file);
     }
 }

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -184,6 +185,6 @@ public class XmlUtilities {
                 }
             }
         }
-        return results;
+        return new CopyOnWriteArrayList(results);
     }
 }

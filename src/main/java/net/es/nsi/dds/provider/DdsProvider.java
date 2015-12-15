@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,8 +37,8 @@ import net.es.nsi.dds.jaxb.dds.SubscriptionRequestType;
 import net.es.nsi.dds.jaxb.dds.SubscriptionType;
 import net.es.nsi.dds.messages.DocumentEvent;
 import net.es.nsi.dds.messages.SubscriptionEvent;
-import net.es.nsi.dds.util.XmlUtilities;
 import net.es.nsi.dds.spring.SpringApplicationContext;
+import net.es.nsi.dds.util.XmlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -190,6 +191,11 @@ public class DdsProvider implements DiscoveryProvider {
     }
 
     @Override
+    public Collection<Subscription> getSubscriptions() {
+        return Collections.unmodifiableCollection(new ArrayList<>(subscriptions.values()));
+    }
+
+    @Override
     public Subscription getSubscription(String id, Date lastModified) throws WebApplicationException {
         if (id == null || id.isEmpty()) {
             throw Exceptions.missingParameterException("subscription", "id");
@@ -215,10 +221,10 @@ public class DdsProvider implements DiscoveryProvider {
 
         Collection<Subscription> subs = new ArrayList<>();
         if (requesterId != null && !requesterId.isEmpty()) {
-            subs = getSubscriptionByRequesterId(requesterId, subscriptions.values());
+            subs = getSubscriptionByRequesterId(requesterId, getSubscriptions());
         }
         else {
-            subs.addAll(subscriptions.values());
+            subs.addAll(getSubscriptions());
         }
 
         if (lastModified != null) {
@@ -687,7 +693,7 @@ public class DdsProvider implements DiscoveryProvider {
     @Override
     public Collection<Subscription> getSubscriptions(DocumentEvent event) {
         // TODO: Match everything for demo.  Need to fix later.
-        return subscriptions.values();
+        return getSubscriptions();
     }
 
     @Override
@@ -720,7 +726,7 @@ public class DdsProvider implements DiscoveryProvider {
         for (String filename : xmlFilenames) {
             DocumentType document;
             try {
-                document = DdsParser.getInstance().parseFile(DocumentType.class, filename);
+                document = DdsParser.getInstance().readDocument(filename);
                 if (document == null) {
                     log.error("loadDocuments: Loaded empty document from " + filename);
                     continue;

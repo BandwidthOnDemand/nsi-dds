@@ -6,9 +6,10 @@ package net.es.nsi.dds.gangofthree;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  *
@@ -20,7 +21,7 @@ public class Gof3DiscoveryMsg implements Serializable {
     private String nsaURL;
     private long nsaLastModifiedTime = 0;
     private String nsaId;
-    private final Map<String, Long> topology = new HashMap<>(); // key = topologyURL, Long == topologyLastModifiedTime
+    private final Map<String, Long> topology = new ConcurrentHashMap<>(); // key = topologyURL, Long == topologyLastModifiedTime
 
     /**
      * @return the nsaURL
@@ -45,7 +46,7 @@ public class Gof3DiscoveryMsg implements Serializable {
     }
 
     public Set<String> getTopologyURL() {
-        return this.topology.keySet();
+        return Collections.unmodifiableSet(new ConcurrentSkipListSet<>(this.topology.keySet()));
     }
 
     public Long removeTopologyURL(String url) {
@@ -53,7 +54,7 @@ public class Gof3DiscoveryMsg implements Serializable {
     }
 
     public Map<String, Long> getTopology() {
-        return Collections.unmodifiableMap(this.topology);
+        return Collections.unmodifiableMap(new ConcurrentHashMap<>(this.topology));
     }
 
     public Long getTopologyLastModified(String url) {

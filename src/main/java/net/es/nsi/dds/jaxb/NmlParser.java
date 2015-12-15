@@ -37,12 +37,12 @@ public class NmlParser extends JaxbParser {
     }
 
     public NmlTopologyType readTopology(String filename) throws JAXBException, IOException {
-        return getInstance().parseFile(NmlTopologyType.class, filename);
+        return this.parseFile(NmlTopologyType.class, filename);
     }
 
     public void writeTopology(String file, NmlTopologyType nml) throws JAXBException, IOException {
         // Parse the specified file.
         JAXBElement<NmlTopologyType> element = factory.createTopology(nml);
-        getInstance().writeFile(element, file);
+        this.writeFile(element, file);
     }
 }

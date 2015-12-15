@@ -156,6 +156,28 @@ public class JaxbParser {
         return result;
     }
 
+    public String jaxb2XmlFormatter(JAXBElement<?> jaxbElement) throws JAXBException {
+        // We will write the XML encoding into a string.
+        StringWriter writer = new StringWriter();
+        String result;
+        try {
+            Marshaller marshaller = marshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.marshal(jaxbElement, writer);
+            result = writer.toString();
+        } catch (JAXBException ex) {
+            // Something went wrong so get out of here.
+            log.error("Failed to serialize JAXB structure.", ex);
+            throw ex;
+        }
+        finally {
+            try { writer.close(); } catch (IOException ex) {}
+        }
+
+        // Return the XML string.
+        return result;
+    }
+
     /**
      * Convert the specified string representation of a XML document to a JAXB object.
      *

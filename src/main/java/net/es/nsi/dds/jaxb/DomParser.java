@@ -5,6 +5,7 @@
  */
 package net.es.nsi.dds.jaxb;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -43,6 +45,11 @@ public class DomParser {
         return builder.parse(is);
     }
 
+    public static Document xml2Dom(String xml) throws ParserConfigurationException, SAXException, IOException {
+        InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+        return xml2Dom(stream);
+    }
+
     /**
      * Convert a DOM Document to a string.
      *
@@ -58,6 +65,17 @@ public class DomParser {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer trans = tf.newTransformer();
         trans.transform(new DOMSource(doc), new StreamResult(baos));
+        return new String(baos.toByteArray(), StandardCharsets.UTF_8);
+    }
+
+    public static String prettyPrint(Document document) throws TransformerConfigurationException, TransformerException {
+        document.setXmlStandalone(true);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        transformer.transform(new DOMSource(document), new StreamResult(baos));
         return new String(baos.toByteArray(), StandardCharsets.UTF_8);
     }
 }

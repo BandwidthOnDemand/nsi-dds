@@ -8,11 +8,12 @@ import java.nio.file.Paths;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.authorization.AccessControlList;
@@ -72,7 +73,7 @@ public class DdsConfiguration {
     private HttpConfig httpConfig = null;
     private Optional<HttpsConfig> clientConfig = Optional.empty();
     private AccessControlList accessControlList;
-    private Map<String, PeerURLType> discoveryURL = new HashMap<>();
+    private Map<String, PeerURLType> discoveryURL = new ConcurrentHashMap<>();
 
     // Configuration for digital signing of documents populated through Gof3 agents.
     private boolean sign = false;
@@ -293,7 +294,7 @@ public class DdsConfiguration {
      * @return the discoveryURL
      */
     public Collection<PeerURLType> getDiscoveryURL() {
-        return Collections.unmodifiableCollection(discoveryURL.values());
+        return Collections.unmodifiableCollection(new ArrayList<>(discoveryURL.values()));
     }
 
     /**

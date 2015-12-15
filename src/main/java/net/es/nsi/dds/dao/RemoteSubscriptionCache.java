@@ -1,9 +1,12 @@
 package net.es.nsi.dds.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +42,10 @@ public class RemoteSubscriptionCache {
     }
 
     public Collection<RemoteSubscription> values() {
-        return remoteSubscriptions.values();
+        return Collections.unmodifiableCollection(new ArrayList<>(remoteSubscriptions.values()));
     }
 
     public Set<String> keySet() {
-        return remoteSubscriptions.keySet();
+        return Collections.unmodifiableSet(new ConcurrentSkipListSet<>(remoteSubscriptions.keySet()));
     }
 }

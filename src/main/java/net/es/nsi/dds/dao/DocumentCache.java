@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -17,8 +18,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.dds.DocumentType;
 import net.es.nsi.dds.provider.Document;
-import net.es.nsi.dds.util.XmlUtilities;
 import net.es.nsi.dds.spring.SpringApplicationContext;
+import net.es.nsi.dds.util.XmlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,7 +151,7 @@ public class DocumentCache {
      * @return
      */
     public Collection<Document> values() {
-        return documents.values();
+        return Collections.unmodifiableCollection(new ArrayList<>(documents.values()));
     }
 
     /**
@@ -259,7 +260,8 @@ public class DocumentCache {
      * expire time to now.
      */
     public void expire() {
-        for (Document document : documents.values()) {
+        Collection<Document> values = Collections.unmodifiableCollection(new ArrayList<>(documents.values()));
+        for (Document document : values) {
             // We need to determine if this document is still valid
             // before proceding.
             DocumentType doc = document.getDocument();
@@ -319,6 +321,6 @@ public class DocumentCache {
      * @return the documents
      */
     public Map<String, Document> getDocuments() {
-        return Collections.unmodifiableMap(documents);
+        return Collections.unmodifiableMap(new ConcurrentHashMap<String, Document>(documents));
     }
 }

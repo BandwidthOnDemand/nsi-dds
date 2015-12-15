@@ -5,13 +5,13 @@
  */
 package net.es.nsi.dds.lib;
 
-import java.io.ByteArrayInputStream;
+import com.google.common.base.Strings;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.zip.GZIPInputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import javax.mail.MessagingException;
 import javax.xml.parsers.ParserConfigurationException;
 import net.es.nsi.dds.jaxb.DomParser;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -24,37 +24,57 @@ import org.xml.sax.SAXException;
 public class Decoder {
     private final static Logger log = LoggerFactory.getLogger(Decoder.class);
 
-    public static Document decode(String source) throws IOException {
-        byte[] encoded = Base64.getDecoder().decode(source);
-        byte[] xml = decompress(encoded);
-
-        try {
-            Document doc = DomParser.xml2Dom(new ByteArrayInputStream(xml));
-            return doc;
+    public static Document decode2Dom(String contentTransferEncoding,
+            String contentType, String source) throws IOException, UnsupportedEncodingException, RuntimeException {
+        if (Strings.isNullOrEmpty(contentTransferEncoding)) {
+            contentTransferEncoding = ContentTransferEncoding._8BIT;
         }
-        catch (ParserConfigurationException | SAXException ex) {
+
+        if (Strings.isNullOrEmpty(contentType)) {
+            contentType = ContentType.TEXT;
+        }
+
+        try (InputStream ctis = ContentType.decode(contentType, ContentTransferEncoding.decode(contentTransferEncoding, source))) {
+            return DomParser.xml2Dom(ctis);
+        } catch (MessagingException ex) {
+            throw new RuntimeException(ex);
+        } catch (ParserConfigurationException | SAXException ex) {
             log.error("decode: failed to parse document", ex);
             throw new IOException(ex.getMessage(), ex.getCause());
         }
     }
 
-    private static byte[] decompress(byte[] source) throws IOException {
-        try (ByteArrayInputStream is = new ByteArrayInputStream(source)) {
-            return gunzip(is);
+    public static String decode2String(String contentTransferEncoding,
+            String contentType, String source) throws IOException, UnsupportedEncodingException, RuntimeException {
+        if (Strings.isNullOrEmpty(contentTransferEncoding)) {
+            contentTransferEncoding = ContentTransferEncoding._7BIT;
         }
-        catch (IOException io) {
-            log.error("Failed to decompress document", io);
-            throw io;
+
+        if (Strings.isNullOrEmpty(contentType)) {
+            contentType = ContentType.TEXT;
+        }
+
+        try (InputStream ctes = ContentTransferEncoding.decode(contentTransferEncoding, source)) {
+            return ContentType.decode2String(contentType, ctes);
+        } catch (MessagingException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
-    private static byte[] gunzip(ByteArrayInputStream is) throws IOException {
-        try (GZIPInputStream gis = new GZIPInputStream(is)) {
-            return IOUtils.toByteArray(gis);
+    public static byte[] decode2ByteArray(String contentTransferEncoding,
+            String contentType, String source) throws IOException, UnsupportedEncodingException, RuntimeException {
+        if (Strings.isNullOrEmpty(contentTransferEncoding)) {
+            contentTransferEncoding = ContentTransferEncoding._7BIT;
         }
-        catch (IOException io) {
-            log.error("Failed to gunzip document", io);
-            throw io;
+
+        if (Strings.isNullOrEmpty(contentType)) {
+            contentType = ContentType.TEXT;
+        }
+
+        try (InputStream ctes = ContentTransferEncoding.decode(contentTransferEncoding, source)) {
+            return ContentType.decode2ByteArray(contentType, ctes);
+        } catch (MessagingException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }

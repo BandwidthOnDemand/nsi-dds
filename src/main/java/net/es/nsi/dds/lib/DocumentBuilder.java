@@ -116,13 +116,19 @@ public class DocumentBuilder {
         }
 
         // Decode the document contents.
-        Document contentsDecoded = Decoder.decode(contents.getValue());
+        Document contentsDecoded = Decoder.decode2Dom(
+                contents.getContentTransferEncoding(),
+                contents.getContentType(),
+                contents.getValue());
 
         // Get signature if present.
         ContentType signature = document.getSignature();
         if (signature != null && !signature.getValue().isEmpty()) {
             // Validate signature.
-            Document signatureDecoded = Decoder.decode(signature.getValue());
+            Document signatureDecoded = Decoder.decode2Dom(
+                signature.getContentTransferEncoding(),
+                signature.getContentType(),
+                signature.getValue());
 
             boolean valid = false;
             try {

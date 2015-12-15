@@ -22,6 +22,9 @@ public interface DiscoveryProvider {
     public Subscription addSubscription(SubscriptionRequestType request, String encoding);
     public Subscription deleteSubscription(String id) throws WebApplicationException;
     public Subscription editSubscription(String id, SubscriptionRequestType request, String encoding) throws WebApplicationException;
+    public Collection<Subscription> getSubscriptions();
+    public Collection<Subscription> getSubscriptions(DocumentEvent event);
+
     public Subscription getSubscription(String id, Date lastModified) throws WebApplicationException;
     public Collection<Subscription> getSubscriptions(String requesterId, Date lastModified) throws WebApplicationException;
 
@@ -41,7 +44,6 @@ public interface DiscoveryProvider {
     public void processNotification(NotificationType notification);
 
     public Collection<Document> getDocuments(FilterType filter);
-    public Collection<Subscription> getSubscriptions(DocumentEvent event);
 
     public void loadDocuments();
 }
