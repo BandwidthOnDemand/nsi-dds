@@ -197,7 +197,7 @@ public class JaxbParser {
             throw new IllegalArgumentException("Unable to convert string to JAXB, class=" + xmlClass.getName() + ", xml=\n" + xml);
         }
         else if (element.get().getDeclaredType() == xmlClass) {
-            return element.get().getValue();
+            return xmlClass.cast(element.get().getValue());
         }
 
         throw new JAXBException("Expected XML for class " + xmlClass.getCanonicalName() + " but found " + element.get().getDeclaredType().getCanonicalName());
@@ -213,14 +213,13 @@ public class JaxbParser {
      * @throws JAXBException Could not parse the specified XML document.
      * @throws IOException InputStream could not be read.
      */
-    @SuppressWarnings("unchecked")
     public <T extends Object> T xml2Jaxb(Class<T> xmlClass, InputStream is) throws JAXBException, IOException {
         JAXBElement<T> element = (JAXBElement<T>) unmarshaller().unmarshal(getReader(is));
         if (element == null) {
             throw new IllegalArgumentException("Unable to convert stream to JAXB, class=" + xmlClass.getName());
         }
         else if (element.getDeclaredType() == xmlClass) {
-            return element.getValue();
+            return xmlClass.cast(element.getValue());
         }
 
         throw new JAXBException("Expected XML for class " + xmlClass.getCanonicalName() + " but found " + element.getDeclaredType().getCanonicalName());
@@ -236,11 +235,10 @@ public class JaxbParser {
      * @throws JAXBException Could not parse the specified XML document.
      * @throws IOException BufferedInputStream could not be read.
      */
-    @SuppressWarnings("unchecked")
     public <T extends Object> T xml2Jaxb(Class<T> xmlClass, BufferedInputStream is) throws JAXBException, IOException {
         JAXBElement<T> element = (JAXBElement<T>) unmarshaller().unmarshal(is);
         if (element.getDeclaredType() == xmlClass) {
-            return element.getValue();
+            return xmlClass.cast(element.getValue());
         }
 
         throw new JAXBException("Expected XML for class " + xmlClass.getCanonicalName() + " but found " + element.getDeclaredType().getCanonicalName());

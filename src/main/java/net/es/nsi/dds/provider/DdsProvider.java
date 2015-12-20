@@ -5,6 +5,8 @@
 package net.es.nsi.dds.provider;
 
 import akka.actor.Cancellable;
+import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
@@ -300,21 +302,21 @@ public class DdsProvider implements DiscoveryProvider {
         Document document = new Document(request, configReader.getBaseURL());
 
         // See if we already have a document under this id.
-        Document get = documentCache.get(document.getId());
-        if (get != null) {
+        Optional<Document> get = Optional.fromNullable(documentCache.get(document.getId()));
+        if (get.isPresent()) {
             throw Exceptions.resourceExistsException(DiscoveryError.DOCUMENT_EXISTS, "document", document.getId());
         }
 
         // Validate basic fields.
-        if (request.getNsa() == null || request.getNsa().isEmpty()) {
+        if (Strings.isNullOrEmpty(request.getNsa())) {
             throw Exceptions.missingParameterException(document.getId(), "nsa");
         }
 
-        if (request.getType() == null || request.getType().isEmpty()) {
+        if (Strings.isNullOrEmpty(request.getType())) {
             throw Exceptions.missingParameterException(document.getId(), "type");
         }
 
-        if (request.getId() == null || request.getId().isEmpty()) {
+        if (Strings.isNullOrEmpty(request.getId())) {
             throw Exceptions.missingParameterException(document.getId(), "id");
         }
 

@@ -13,12 +13,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author hacksaw
  */
 public class LogsTest {
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private static TestConfig testConfig;
     private static WebTarget management;
 
@@ -39,6 +42,8 @@ public class LogsTest {
 
     @Test
     public void getAllLogs() {
+        log.debug("getAllLogs: entering...");
+
         Response response = management.path("logs").request(MediaType.APPLICATION_JSON).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
@@ -71,6 +76,8 @@ public class LogsTest {
 
     @Test
     public void getTypeFilteredLogs() {
+        log.debug("getTypeFilteredLogs: entering...");
+
         Response response = management.path("logs").queryParam("type", "Log").queryParam("code", "1001").request(MediaType.APPLICATION_JSON).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
@@ -88,6 +95,8 @@ public class LogsTest {
 
     @Test
     public void getLabelFilteredLogs() {
+        log.debug("getLabelFilteredLogs: entering...");
+
         Response response = management.path("logs").queryParam("label", "AUDIT_SUCCESSFUL").request(MediaType.APPLICATION_JSON).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
@@ -113,6 +122,8 @@ public class LogsTest {
 
     @Test
     public void badFilter() {
+        log.debug("badFilter: entering...");
+
         Response response = management.path("logs").queryParam("code", "1001").request(MediaType.APPLICATION_JSON).get();
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         response.close();

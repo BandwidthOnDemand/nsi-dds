@@ -1,5 +1,6 @@
 package net.es.nsi.dds.management.api;
 
+import com.google.common.base.Strings;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
@@ -108,7 +109,7 @@ public class ManagementService {
 
         // TODO: Linear searches through thousands of logs will get slow.  Fix
         // if it becomes a problem.
-        if (type != null && !type.isEmpty()) {
+        if (!Strings.isNullOrEmpty(type)) {
             if (!LogEnumType.LOG.value().equalsIgnoreCase(type) &&
                     !LogEnumType.ERROR.value().equalsIgnoreCase(type)) {
                 LogType error = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, type, "Invalid log type");
@@ -136,12 +137,12 @@ public class ManagementService {
                 }
             }
         }
-        else if (code != null && !code.isEmpty()) {
+        else if (!Strings.isNullOrEmpty(code)) {
             LogType error = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, code, "Code query parameter must be paired with a type parameter");
             return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
         }
 
-        if (label != null && !label.isEmpty()) {
+        if (!Strings.isNullOrEmpty(label)) {
             for (Iterator<LogType> iter = topologylogs.getLog().iterator(); iter.hasNext();) {
                 LogType result = iter.next();
                 if (!result.getLabel().equalsIgnoreCase(label)) {
@@ -190,7 +191,6 @@ public class ManagementService {
     /**
      * Get a specific log entry.
      * @param id The identifier of the log.
-     * @param audit
      * @return The log if it exists.
      * @throws Exception If there is an internal server error.
      */
@@ -202,7 +202,7 @@ public class ManagementService {
 
         // Verify we have the service Id from the request path.  Not sure if
         // this would ever happen.
-        if (id == null || id.isEmpty()) {
+        if (Strings.isNullOrEmpty(id)) {
             LogType error = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, id, "Log identifier must be specified in path");
             return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
         }

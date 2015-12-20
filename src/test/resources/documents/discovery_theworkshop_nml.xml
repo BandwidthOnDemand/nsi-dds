@@ -6,56 +6,6 @@
     expires="2016-12-04T18:13:51.0Z">
     <nsa>urn:ogf:network:example.com:2013:nsa:vixen</nsa>
     <type>vnd.ogf.nsi.topology.v2+xml</type>
-    <content>
-        <Topology xmlns="http://schemas.ogf.org/nml/2013/05/base#"
-                xmlns:sd="http://schemas.ogf.org/nsi/2013/12/services/definition"
-                id="urn:ogf:network:example.com:2013:network:theworkshop">
-            <name>Santa's Workshop</name>
-            <BidirectionalPort id="urn:ogf:network:example.com:2013:stp:theworkshop:the-toy-bench">
-                <name>Network hookup to the Toy Bench</name>
-                <PortGroup id="urn:ogf:network:example.com:2013:stp:theworkshop:the-toy-bench:out"/>
-                <PortGroup id="urn:ogf:network:example.com:2013:stp:theworkshop:the-toy-bench:in"/>
-            </BidirectionalPort>
-            <BidirectionalPort id="urn:ogf:network:example.com:2013:stp:theworkshop:the-sleigh">
-                <name>Network hookup to The Sleigh</name>
-                <PortGroup id="urn:ogf:network:example.com:2013:stp:theworkshop:the-sleigh:out"/>
-                <PortGroup id="urn:ogf:network:example.com:2013:stp:theworkshop:the-sleigh:in"/>
-            </BidirectionalPort>
-
-            <!-- NSI CS Services offered by this Network. -->
-            <sd:serviceDefinition id="urn:ogf:network:example.com:2013:sd:theworkshop:EVTS.A-GOLE">
-                <name>GLIF Automated GOLE Ethernet VLAN Transfer Service</name>
-                <serviceType>http://services.ogf.org/nsi/2013/12/definitions/EVTS.A-GOLE</serviceType>
-            </sd:serviceDefinition>
-
-            <Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
-                <PortGroup id="urn:ogf:network:example.com:2013:stp:theworkshop:the-toy-bench:out">
-                    <LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</LabelGroup>
-                </PortGroup>
-                <Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
-                    <PortGroup id="urn:ogf:network:example.com:2013:stp:candycaneforest:swirrly:in"/>
-                </Relation>
-            </Relation>
-            <Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
-                <PortGroup id="urn:ogf:network:example.com:2013:stp:theworkshop:the-toy-bench:in">
-                    <LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</LabelGroup>
-                </PortGroup>
-                <Relation type="http://schemas.ogf.org/nml/2013/05/base#isAlias">
-                    <PortGroup id="urn:ogf:network:example.com:2013:stp:candycaneforest:swirrly:out"/>
-                </Relation>
-            </Relation>
-
-            <Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
-                <PortGroup id="urn:ogf:network:example.com:2013:stp:theworkshop:the-sleigh:out">
-                    <LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</LabelGroup>
-                </PortGroup>
-            </Relation>
-            <Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
-                <PortGroup id="urn:ogf:network:example.com:2013:stp:theworkshop:the-sleigh:in">
-                    <LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">1799</LabelGroup>
-                </PortGroup>
-            </Relation>
-        </Topology>
-    </content>
+    <content contentType="application/xml" contentTransferEncoding="base64">ICAgICAgICA8VG9wb2xvZ3kgeG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm9nZi5vcmcvbm1sLzIwMTMvMDUvYmFzZSMiDQogICAgICAgICAgICAgICAgeG1sbnM6c2Q9Imh0dHA6Ly9zY2hlbWFzLm9nZi5vcmcvbnNpLzIwMTMvMTIvc2VydmljZXMvZGVmaW5pdGlvbiINCiAgICAgICAgICAgICAgICBpZD0idXJuOm9nZjpuZXR3b3JrOmV4YW1wbGUuY29tOjIwMTM6bmV0d29yazp0aGV3b3Jrc2hvcCI+DQogICAgICAgICAgICA8bmFtZT5TYW50YSdzIFdvcmtzaG9wPC9uYW1lPg0KICAgICAgICAgICAgPEJpZGlyZWN0aW9uYWxQb3J0IGlkPSJ1cm46b2dmOm5ldHdvcms6ZXhhbXBsZS5jb206MjAxMzpzdHA6dGhld29ya3Nob3A6dGhlLXRveS1iZW5jaCI+DQogICAgICAgICAgICAgICAgPG5hbWU+TmV0d29yayBob29rdXAgdG8gdGhlIFRveSBCZW5jaDwvbmFtZT4NCiAgICAgICAgICAgICAgICA8UG9ydEdyb3VwIGlkPSJ1cm46b2dmOm5ldHdvcms6ZXhhbXBsZS5jb206MjAxMzpzdHA6dGhld29ya3Nob3A6dGhlLXRveS1iZW5jaDpvdXQiLz4NCiAgICAgICAgICAgICAgICA8UG9ydEdyb3VwIGlkPSJ1cm46b2dmOm5ldHdvcms6ZXhhbXBsZS5jb206MjAxMzpzdHA6dGhld29ya3Nob3A6dGhlLXRveS1iZW5jaDppbiIvPg0KICAgICAgICAgICAgPC9CaWRpcmVjdGlvbmFsUG9ydD4NCiAgICAgICAgICAgIDxCaWRpcmVjdGlvbmFsUG9ydCBpZD0idXJuOm9nZjpuZXR3b3JrOmV4YW1wbGUuY29tOjIwMTM6c3RwOnRoZXdvcmtzaG9wOnRoZS1zbGVpZ2giPg0KICAgICAgICAgICAgICAgIDxuYW1lPk5ldHdvcmsgaG9va3VwIHRvIFRoZSBTbGVpZ2g8L25hbWU+DQogICAgICAgICAgICAgICAgPFBvcnRHcm91cCBpZD0idXJuOm9nZjpuZXR3b3JrOmV4YW1wbGUuY29tOjIwMTM6c3RwOnRoZXdvcmtzaG9wOnRoZS1zbGVpZ2g6b3V0Ii8+DQogICAgICAgICAgICAgICAgPFBvcnRHcm91cCBpZD0idXJuOm9nZjpuZXR3b3JrOmV4YW1wbGUuY29tOjIwMTM6c3RwOnRoZXdvcmtzaG9wOnRoZS1zbGVpZ2g6aW4iLz4NCiAgICAgICAgICAgIDwvQmlkaXJlY3Rpb25hbFBvcnQ+DQoNCiAgICAgICAgICAgIDwhLS0gTlNJIENTIFNlcnZpY2VzIG9mZmVyZWQgYnkgdGhpcyBOZXR3b3JrLiAtLT4NCiAgICAgICAgICAgIDxzZDpzZXJ2aWNlRGVmaW5pdGlvbiBpZD0idXJuOm9nZjpuZXR3b3JrOmV4YW1wbGUuY29tOjIwMTM6c2Q6dGhld29ya3Nob3A6RVZUUy5BLUdPTEUiPg0KICAgICAgICAgICAgICAgIDxuYW1lPkdMSUYgQXV0b21hdGVkIEdPTEUgRXRoZXJuZXQgVkxBTiBUcmFuc2ZlciBTZXJ2aWNlPC9uYW1lPg0KICAgICAgICAgICAgICAgIDxzZXJ2aWNlVHlwZT5odHRwOi8vc2VydmljZXMub2dmLm9yZy9uc2kvMjAxMy8xMi9kZWZpbml0aW9ucy9FVlRTLkEtR09MRTwvc2VydmljZVR5cGU+DQogICAgICAgICAgICA8L3NkOnNlcnZpY2VEZWZpbml0aW9uPg0KDQogICAgICAgICAgICA8UmVsYXRpb24gdHlwZT0iaHR0cDovL3NjaGVtYXMub2dmLm9yZy9ubWwvMjAxMy8wNS9iYXNlI2hhc091dGJvdW5kUG9ydCI+DQogICAgICAgICAgICAgICAgPFBvcnRHcm91cCBpZD0idXJuOm9nZjpuZXR3b3JrOmV4YW1wbGUuY29tOjIwMTM6c3RwOnRoZXdvcmtzaG9wOnRoZS10b3ktYmVuY2g6b3V0Ij4NCiAgICAgICAgICAgICAgICAgICAgPExhYmVsR3JvdXAgbGFiZWx0eXBlPSJodHRwOi8vc2NoZW1hcy5vZ2Yub3JnL25tbC8yMDEyLzEwL2V0aGVybmV0I3ZsYW4iPjE3OTk8L0xhYmVsR3JvdXA+DQogICAgICAgICAgICAgICAgPC9Qb3J0R3JvdXA+DQogICAgICAgICAgICAgICAgPFJlbGF0aW9uIHR5cGU9Imh0dHA6Ly9zY2hlbWFzLm9nZi5vcmcvbm1sLzIwMTMvMDUvYmFzZSNpc0FsaWFzIj4NCiAgICAgICAgICAgICAgICAgICAgPFBvcnRHcm91cCBpZD0idXJuOm9nZjpuZXR3b3JrOmV4YW1wbGUuY29tOjIwMTM6c3RwOmNhbmR5Y2FuZWZvcmVzdDpzd2lycmx5OmluIi8+DQogICAgICAgICAgICAgICAgPC9SZWxhdGlvbj4NCiAgICAgICAgICAgIDwvUmVsYXRpb24+DQogICAgICAgICAgICA8UmVsYXRpb24gdHlwZT0iaHR0cDovL3NjaGVtYXMub2dmLm9yZy9ubWwvMjAxMy8wNS9iYXNlI2hhc0luYm91bmRQb3J0Ij4NCiAgICAgICAgICAgICAgICA8UG9ydEdyb3VwIGlkPSJ1cm46b2dmOm5ldHdvcms6ZXhhbXBsZS5jb206MjAxMzpzdHA6dGhld29ya3Nob3A6dGhlLXRveS1iZW5jaDppbiI+DQogICAgICAgICAgICAgICAgICAgIDxMYWJlbEdyb3VwIGxhYmVsdHlwZT0iaHR0cDovL3NjaGVtYXMub2dmLm9yZy9ubWwvMjAxMi8xMC9ldGhlcm5ldCN2bGFuIj4xNzk5PC9MYWJlbEdyb3VwPg0KICAgICAgICAgICAgICAgIDwvUG9ydEdyb3VwPg0KICAgICAgICAgICAgICAgIDxSZWxhdGlvbiB0eXBlPSJodHRwOi8vc2NoZW1hcy5vZ2Yub3JnL25tbC8yMDEzLzA1L2Jhc2UjaXNBbGlhcyI+DQogICAgICAgICAgICAgICAgICAgIDxQb3J0R3JvdXAgaWQ9InVybjpvZ2Y6bmV0d29yazpleGFtcGxlLmNvbToyMDEzOnN0cDpjYW5keWNhbmVmb3Jlc3Q6c3dpcnJseTpvdXQiLz4NCiAgICAgICAgICAgICAgICA8L1JlbGF0aW9uPg0KICAgICAgICAgICAgPC9SZWxhdGlvbj4NCg0KICAgICAgICAgICAgPFJlbGF0aW9uIHR5cGU9Imh0dHA6Ly9zY2hlbWFzLm9nZi5vcmcvbm1sLzIwMTMvMDUvYmFzZSNoYXNPdXRib3VuZFBvcnQiPg0KICAgICAgICAgICAgICAgIDxQb3J0R3JvdXAgaWQ9InVybjpvZ2Y6bmV0d29yazpleGFtcGxlLmNvbToyMDEzOnN0cDp0aGV3b3Jrc2hvcDp0aGUtc2xlaWdoOm91dCI+DQogICAgICAgICAgICAgICAgICAgIDxMYWJlbEdyb3VwIGxhYmVsdHlwZT0iaHR0cDovL3NjaGVtYXMub2dmLm9yZy9ubWwvMjAxMi8xMC9ldGhlcm5ldCN2bGFuIj4xNzk5PC9MYWJlbEdyb3VwPg0KICAgICAgICAgICAgICAgIDwvUG9ydEdyb3VwPg0KICAgICAgICAgICAgPC9SZWxhdGlvbj4NCiAgICAgICAgICAgIDxSZWxhdGlvbiB0eXBlPSJodHRwOi8vc2NoZW1hcy5vZ2Yub3JnL25tbC8yMDEzLzA1L2Jhc2UjaGFzSW5ib3VuZFBvcnQiPg0KICAgICAgICAgICAgICAgIDxQb3J0R3JvdXAgaWQ9InVybjpvZ2Y6bmV0d29yazpleGFtcGxlLmNvbToyMDEzOnN0cDp0aGV3b3Jrc2hvcDp0aGUtc2xlaWdoOmluIj4NCiAgICAgICAgICAgICAgICAgICAgPExhYmVsR3JvdXAgbGFiZWx0eXBlPSJodHRwOi8vc2NoZW1hcy5vZ2Yub3JnL25tbC8yMDEyLzEwL2V0aGVybmV0I3ZsYW4iPjE3OTk8L0xhYmVsR3JvdXA+DQogICAgICAgICAgICAgICAgPC9Qb3J0R3JvdXA+DQogICAgICAgICAgICA8L1JlbGF0aW9uPg0KICAgICAgICA8L1RvcG9sb2d5Pg==</content>
 </tns:document>
 

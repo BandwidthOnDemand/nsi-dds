@@ -1,12 +1,18 @@
 package net.es.nsi.dds.jaxb;
 
 import java.io.IOException;
+import java.io.InputStream;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.jaxb.dds.CollectionType;
 import net.es.nsi.dds.jaxb.dds.DocumentListType;
 import net.es.nsi.dds.jaxb.dds.DocumentType;
+import net.es.nsi.dds.jaxb.dds.NotificationListType;
+import net.es.nsi.dds.jaxb.dds.NotificationType;
 import net.es.nsi.dds.jaxb.dds.ObjectFactory;
+import net.es.nsi.dds.jaxb.dds.SubscriptionListType;
+import net.es.nsi.dds.jaxb.dds.SubscriptionRequestType;
+import net.es.nsi.dds.jaxb.dds.SubscriptionType;
 
 /**
  * A singleton to load the very expensive NMWG JAXBContext once.
@@ -50,6 +56,50 @@ public class DdsParser extends JaxbParser {
 
     public CollectionType readCollection(String filename) throws JAXBException, IOException {
         return this.parseFile(CollectionType.class, filename);
+    }
+
+    public DocumentType xml2Document(InputStream is) throws JAXBException, IOException {
+        return this.xml2Jaxb(DocumentType.class, is);
+    }
+
+    public String document2Xml(DocumentType document) throws JAXBException, IOException {
+        JAXBElement<DocumentType> jaxb = factory.createDocument(document);
+        return this.jaxb2Xml(jaxb);
+    }
+
+    public String documents2Xml(DocumentListType documents) throws JAXBException, IOException {
+        JAXBElement<DocumentListType> jaxb = factory.createDocuments(documents);
+        return this.jaxb2Xml(jaxb);
+    }
+
+    public String collection2Xml(CollectionType collection) throws JAXBException, IOException {
+        JAXBElement<CollectionType> jaxb = factory.createCollection(collection);
+        return this.jaxb2Xml(jaxb);
+    }
+
+    public String subscriptions2Xml(SubscriptionListType list) throws JAXBException, IOException {
+        JAXBElement<SubscriptionListType> jaxb = factory.createSubscriptions(list);
+        return this.jaxb2Xml(jaxb);
+    }
+
+    public String subscription2Xml(SubscriptionType subscription) throws JAXBException, IOException {
+        JAXBElement<SubscriptionType> jaxb = factory.createSubscription(subscription);
+        return this.jaxb2Xml(jaxb);
+    }
+
+    public String notifications2Xml(NotificationListType list) throws JAXBException, IOException {
+        JAXBElement<NotificationListType> jaxb = factory.createNotifications(list);
+        return this.jaxb2Xml(jaxb);
+    }
+
+    public String notification2Xml(NotificationType notification) throws JAXBException, IOException {
+        JAXBElement<NotificationType> jaxb = factory.createNotification(notification);
+        return this.jaxb2Xml(jaxb);
+    }
+
+    public String subscriptionRequest2Xml(SubscriptionRequestType request) throws JAXBException, IOException {
+        JAXBElement<SubscriptionRequestType> jaxb = factory.createSubscriptionRequest(request);
+        return this.jaxb2Xml(jaxb);
     }
 
     public String xmlFormatter(DocumentType document) throws JAXBException {

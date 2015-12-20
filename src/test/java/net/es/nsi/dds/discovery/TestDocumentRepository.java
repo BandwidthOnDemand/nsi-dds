@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.discovery;
 
 import java.io.File;
@@ -103,6 +99,7 @@ public class TestDocumentRepository {
         // For each document file in the document directory load into discovery service.
         List<String> identifiers = new ArrayList<>();
         for (String file : FileUtilities.getXmlFileList(DOCUMENT_DIR)) {
+            log.debug("\n\n\n\n\n\n\n\n\n\nFile: " + file);
             DocumentType document = DdsParser.getInstance().readDocument(file);
             JAXBElement<DocumentType> jaxbRequest = factory.createDocument(document);
             Response response = discovery.path("documents").request(MediaType.APPLICATION_XML).post(Entity.entity(new GenericEntity<JAXBElement<DocumentType>>(jaxbRequest) {}, MediaType.APPLICATION_XML));
@@ -121,6 +118,7 @@ public class TestDocumentRepository {
     }
 
     private boolean verifyAddResults(List<String> identifiers) throws JAXBException, IOException, NullPointerException {
+        log.debug("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRepo Dir=" + ddsConfig.getRepository());
         List<String> repository = new ArrayList<>();
         for (String file : FileUtilities.getXmlFileList(ddsConfig.getRepository())) {
             DocumentType document = DdsParser.getInstance().readDocument(file);

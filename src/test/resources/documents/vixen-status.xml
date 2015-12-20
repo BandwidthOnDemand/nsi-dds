@@ -5,7 +5,5 @@
     xmlns:ns4="http://schemas.ogf.org/nsi/2013/09/topology#" xmlns:ns3="http://schemas.ogf.org/nml/2013/05/base#">
     <nsa>urn:ogf:network:example.com:2013:nsa:vixen</nsa>
     <type>vnd.ogf.nsi.nsa.status.v1+xml</type>
-    <content>
-        <ns5:value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ACTIVE</ns5:value>
-    </content>
+    <content contentType="application/xml" contentTransferEncoding="base64">PG5zNTp2YWx1ZSB4bWxuczpuczU9Imh0dHA6Ly9zY2hlbWFzLm9nZi5vcmcvbnNpLzIwMTQvMDIvZGlzY292ZXJ5L3R5cGVzIiB4c2k6dHlwZT0ieHM6c3RyaW5nIiB4bWxuczp4cz0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiPkFDVElWRTwvbnM1OnZhbHVlPg==    </content>
 </ns5:document>

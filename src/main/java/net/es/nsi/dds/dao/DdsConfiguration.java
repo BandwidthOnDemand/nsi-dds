@@ -1,5 +1,6 @@
 package net.es.nsi.dds.dao;
 
+import com.google.common.base.Strings;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -147,18 +148,18 @@ public class DdsConfiguration {
         setBaseURL(config.getBaseURL());
 
         // Local document directory option from which we dynamically load files.
-        if (config.getDocuments() != null && !config.getDocuments().isEmpty()) {
+        if (!Strings.isNullOrEmpty(config.getDocuments())) {
             // See if the user provided a fully qualified path.
             setDocuments(fullyQualifyPath(config.getDocuments()));
         }
 
         // The DocumentCache will created the directoy if not present.
-        if (config.getCache() != null && !config.getCache().isEmpty()) {
+        if (!Strings.isNullOrEmpty(config.getCache())) {
             setCache(fullyQualifyPath(config.getCache()));
         }
 
         // The RepositoryCache will created the directoy if not present.
-        if (config.getRepository() != null && !config.getRepository().isEmpty()) {
+        if (!Strings.isNullOrEmpty(config.getRepository())) {
             setRepository(fullyQualifyPath(config.getRepository()));
         }
 

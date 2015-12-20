@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.api;
 
 import java.io.IOException;
@@ -23,14 +19,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.config.ConfigurationManager;
+import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.dds.CollectionType;
 import net.es.nsi.dds.jaxb.dds.DocumentListType;
 import net.es.nsi.dds.jaxb.dds.DocumentType;
@@ -39,7 +34,6 @@ import net.es.nsi.dds.jaxb.dds.NotificationType;
 import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.jaxb.dds.SubscriptionListType;
 import net.es.nsi.dds.jaxb.dds.SubscriptionRequestType;
-import net.es.nsi.dds.jaxb.dds.SubscriptionType;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.provider.Source;
@@ -193,8 +187,16 @@ public class DiscoveryService {
         all.setDocuments(documentResults);
         all.setLocal(localResults);
         all.setSubscriptions(subscriptionsResults);
-        String date = DateUtils.formatDate(discovered, DateUtils.PATTERN_RFC1123);
-        return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<CollectionType>>(factory.createCollection(all)){}).build();
+
+        try {
+            String date = DateUtils.formatDate(discovered, DateUtils.PATTERN_RFC1123);
+            String encoded = DdsParser.getInstance().collection2Xml(all);
+            return Response.ok().header("Last-Modified", date).entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/", "Unable to format XML response " + ex.getMessage());
+            log.error("getAll: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -251,13 +253,23 @@ public class DiscoveryService {
         }
 
         // Now we need to determine what "Last-Modified" date we send back.
-        JAXBElement<DocumentListType> jaxb = factory.createDocuments(results);
+        Response.ResponseBuilder header;
         if (results.getDocument().size() > 0) {
             String date = DateUtils.formatDate(discovered, DateUtils.PATTERN_RFC1123);
-            return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<DocumentListType>>(jaxb){}).build();
+            header = Response.ok().header("Last-Modified", date);
+        }
+        else {
+            header = Response.ok();
         }
 
-        return Response.ok().entity(new GenericEntity<JAXBElement<DocumentListType>>(jaxb){}).build();
+        try {
+            String encoded = DdsParser.getInstance().documents2Xml(results);
+            return header.entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/documents", "Unable to format XML response " + ex.getMessage());
+            log.error("getDocuments: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -311,13 +323,23 @@ public class DiscoveryService {
         }
 
         // Now we need to determine what "Last-Modified" date we send back.
-        JAXBElement<DocumentListType> jaxb = factory.createDocuments(results);
+        Response.ResponseBuilder header;
         if (results.getDocument().size() > 0) {
             String date = DateUtils.formatDate(discovered, DateUtils.PATTERN_RFC1123);
-            return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<DocumentListType>>(jaxb){}).build();
+            header = Response.ok().header("Last-Modified", date);
+        }
+        else {
+            header = Response.ok();
         }
 
-        return Response.ok().entity(new GenericEntity<JAXBElement<DocumentListType>>(jaxb){}).build();
+        try {
+            String encoded = DdsParser.getInstance().documents2Xml(results);
+            return header.entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/documents", "Unable to format XML response " + ex.getMessage());
+            log.error("getDocuments: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -372,13 +394,23 @@ public class DiscoveryService {
         }
 
         // Now we need to determine what "Last-Modified" date we send back.
-        JAXBElement<DocumentListType> jaxb = factory.createDocuments(results);
+        Response.ResponseBuilder header;
         if (results.getDocument().size() > 0) {
             String date = DateUtils.formatDate(discovered, DateUtils.PATTERN_RFC1123);
-            return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<DocumentListType>>(jaxb){}).build();
+            header = Response.ok().header("Last-Modified", date);
+        }
+        else {
+            header = Response.ok();
         }
 
-        return Response.ok().entity(new GenericEntity<JAXBElement<DocumentListType>>(jaxb){}).build();
+        try {
+            String encoded = DdsParser.getInstance().documents2Xml(results);
+            return header.entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/documents", "Unable to format XML response " + ex.getMessage());
+            log.error("getDocuments: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -396,15 +428,7 @@ public class DiscoveryService {
         // Parse incoming XML into JAXB objects.
         DocumentType newDocument;
         try {
-            Object object = XmlUtilities.xmlToJaxb(DocumentType.class, request);
-            if (object instanceof DocumentType) {
-                newDocument = (DocumentType) object;
-            }
-            else {
-                WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/documents", "Expected DocumentType but found " + object.getClass().getCanonicalName());
-                log.error("addDocument: Failed to parse incoming request.", invalidXmlException);
-                throw invalidXmlException;
-            }
+            newDocument = DdsParser.getInstance().xml2Document(request);
         } catch (JAXBException | IOException ex) {
             WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/documents", "Unable to process XML " + ex.getMessage());
             log.error("addDocument: Failed to parse incoming request.", invalidXmlException);
@@ -414,12 +438,17 @@ public class DiscoveryService {
         log.debug("addDocument: nsa={}, type{}, id={}", newDocument.getNsa(), newDocument.getType(), newDocument.getId());
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
-
         Document document = discoveryProvider.addDocument(newDocument, Source.LOCAL);
 
-        String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
-        JAXBElement<DocumentType> jaxb = factory.createDocument(document.getDocument());
-        return Response.created(URI.create(document.getDocument().getHref())).header("Last-Modified", date).entity(new GenericEntity<JAXBElement<DocumentType>>(jaxb){}).build();
+        try {
+            String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
+            String encoded = DdsParser.getInstance().document2Xml(document.getDocument());
+            return Response.created(URI.create(document.getDocument().getHref())).header("Last-Modified", date).entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/documents", "Unable to format XML response " + ex.getMessage());
+            log.error("addDocument: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -447,9 +476,15 @@ public class DiscoveryService {
         Document document;
         document = discoveryProvider.deleteDocument(nsa, type, id);
 
-        String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
-        JAXBElement<DocumentType> jaxb = factory.createDocument(document.getDocument());
-        return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<DocumentType>>(jaxb){}).build();
+        try {
+            String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
+            String encoded = DdsParser.getInstance().document2Xml(document.getDocument());
+            return Response.ok().header("Last-Modified", date).entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException(document.getDocument().getHref(), "Unable to format XML response " + ex.getMessage());
+            log.error("deleteDocument: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -470,6 +505,7 @@ public class DiscoveryService {
 
     /**
      * Return a list of local documents based on document identifier and type.
+     *
      * @param id
      * @param type
      * @param summary
@@ -515,13 +551,23 @@ public class DiscoveryService {
         }
 
         // Now we need to determine what "Last-Modified" date we send back.
-        JAXBElement<DocumentListType> jaxb = factory.createDocuments(results);
+        Response.ResponseBuilder header;
         if (results.getDocument().size() > 0) {
             String date = DateUtils.formatDate(discovered, DateUtils.PATTERN_RFC1123);
-            return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<DocumentListType>>(jaxb){}).build();
+            header = Response.ok().header("Last-Modified", date);
+        }
+        else {
+            header = Response.ok();
         }
 
-        return Response.ok().entity(new GenericEntity<JAXBElement<DocumentListType>>(jaxb){}).build();
+        try {
+            String encoded = DdsParser.getInstance().documents2Xml(results);
+            return header.entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/local", "Unable to format XML response " + ex.getMessage());
+            log.error("getLocalDocuments: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -543,7 +589,7 @@ public class DiscoveryService {
             @DefaultValue("false") @QueryParam("summary") boolean summary,
             @HeaderParam("If-Modified-Since") String ifModifiedSince) throws WebApplicationException {
 
-        log.debug("getLocalDocumentsByType: type{}, id={}, summary={}, If-Modified-Since={}", type, id, summary, ifModifiedSince);
+        log.debug("getLocalDocumentsByType: type={}, id={}, summary={}, If-Modified-Since={}", type, id, summary, ifModifiedSince);
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
@@ -575,13 +621,23 @@ public class DiscoveryService {
         }
 
         // Now we need to determine what "Last-Modified" date we send back.
-        JAXBElement<DocumentListType> jaxb = factory.createDocuments(results);
+        Response.ResponseBuilder header;
         if (results.getDocument().size() > 0) {
             String date = DateUtils.formatDate(discovered, DateUtils.PATTERN_RFC1123);
-            return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<DocumentListType>>(jaxb){}).build();
+            header = Response.ok().header("Last-Modified", date);
+        }
+        else {
+            header = Response.ok();
         }
 
-        return Response.ok().entity(new GenericEntity<JAXBElement<DocumentListType>>(jaxb){}).build();
+        try {
+            String encoded = DdsParser.getInstance().documents2Xml(results);
+            return header.entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/local/" + type, "Unable to format XML response " + ex.getMessage());
+            log.error("getLocalDocumentsByType: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -620,16 +676,23 @@ public class DiscoveryService {
             return Response.notModified().build();
         }
 
-        JAXBElement<DocumentType> jaxb;
+        DocumentType result;
         if (summary) {
-            jaxb = factory.createDocument(document.getDocumentSummary());
+            result = document.getDocumentSummary();
         }
         else {
-            jaxb = factory.createDocument(document.getDocument());
+            result = document.getDocument();
         }
 
-        String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
-        return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<DocumentType>>(jaxb){}).build();
+        try {
+            String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
+            String encoded = DdsParser.getInstance().document2Xml(result);
+            return Response.ok().header("Last-Modified", date).entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/local/" + type, "Unable to format XML response " + ex.getMessage());
+            log.error("getLocalDocumentsByType: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -662,24 +725,30 @@ public class DiscoveryService {
             lastDiscovered = DateUtils.parseDate(ifModifiedSince);
         }
 
-        Document document;
-        document = discoveryProvider.getDocument(nsa, type, id, lastDiscovered);
+        Document document = discoveryProvider.getDocument(nsa, type, id, lastDiscovered);
 
         if (document == null) {
             // We found matching but it was not modified.
             return Response.notModified().build();
         }
 
-        JAXBElement<DocumentType> jaxb;
+        DocumentType result;
         if (summary) {
-            jaxb = factory.createDocument(document.getDocumentSummary());
+            result = document.getDocumentSummary();
         }
         else {
-            jaxb = factory.createDocument(document.getDocument());
+            result = document.getDocument();
         }
 
-        String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
-        return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<DocumentType>>(jaxb){}).build();
+        try {
+            String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
+            String encoded = DdsParser.getInstance().document2Xml(result);
+            return Response.ok().header("Last-Modified", date).entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/documents/" + nsa + "/" + type + "/" + id, "Unable to format XML response " + ex.getMessage());
+            log.error("getDocument: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -723,13 +792,17 @@ public class DiscoveryService {
         }
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
+        Document document = discoveryProvider.updateDocument(nsa, type, id, updateRequest, Source.LOCAL);
 
-        Document document;
-        document = discoveryProvider.updateDocument(nsa, type, id, updateRequest, Source.LOCAL);
-
-        String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
-        JAXBElement<DocumentType> jaxb = factory.createDocument(document.getDocument());
-        return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<DocumentType>>(jaxb){}).build();
+        try {
+            String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
+            String encoded = DdsParser.getInstance().document2Xml(document.getDocument());
+            return Response.ok().header("Last-Modified", date).entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/documents/" + nsa + "/" + type + "/" + id, "Unable to format XML response " + ex.getMessage());
+            log.error("updateDocument: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -773,13 +846,23 @@ public class DiscoveryService {
         }
 
         // Now we need to determine what "Last-Modified" date we send back.
-        JAXBElement<SubscriptionListType> jaxb = factory.createSubscriptions(results);
+        Response.ResponseBuilder header;
         if (results.getSubscription().size() > 0) {
             String date = DateUtils.formatDate(modified, DateUtils.PATTERN_RFC1123);
-            return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<SubscriptionListType>>(jaxb){}).build();
+            header = Response.ok().header("Last-Modified", date);
+        }
+        else {
+            header = Response.ok();
         }
 
-        return Response.ok().entity(new GenericEntity<JAXBElement<SubscriptionListType>>(jaxb){}).build();
+        try {
+            String encoded = DdsParser.getInstance().subscriptions2Xml(results);
+            return header.entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/subscriptions", "Unable to format XML response " + ex.getMessage());
+            log.error("getSubscriptions: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -823,9 +906,15 @@ public class DiscoveryService {
 
         log.debug("addSubscription: requesterId={}, subscriptionId={}", subscriptionRequest.getRequesterId(), subscription.getId());
 
-        String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);
-        JAXBElement<SubscriptionType> jaxb = factory.createSubscription(subscription.getSubscription());
-        return Response.created(URI.create(subscription.getSubscription().getHref())).header("Last-Modified", date).entity(new GenericEntity<JAXBElement<SubscriptionType>>(jaxb){}).build();
+        try {
+            String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);
+            String encoded = DdsParser.getInstance().subscription2Xml(subscription.getSubscription());
+            return Response.created(URI.create(subscription.getSubscription().getHref())).header("Last-Modified", date).entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/subscriptions", "Unable to format XML response " + ex.getMessage());
+            log.error("getSubscriptions: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -860,10 +949,15 @@ public class DiscoveryService {
             return Response.notModified().build();
         }
 
-        JAXBElement<SubscriptionType> jaxb = factory.createSubscription(subscription.getSubscription());
-
-        String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);
-        return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<SubscriptionType>>(jaxb){}).build();
+        try {
+            String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);
+            String encoded = DdsParser.getInstance().subscription2Xml(subscription.getSubscription());
+            return Response.ok().header("Last-Modified", date).entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/subscriptions/" + id, "Unable to format XML response " + ex.getMessage());
+            log.error("getSubscription: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
     }
 
     /**
@@ -906,12 +1000,18 @@ public class DiscoveryService {
 
         // Process the subscription edit request.
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
-        Subscription subscription;
-        subscription = discoveryProvider.editSubscription(id, subscriptionRequest, accept);
+        Subscription subscription = discoveryProvider.editSubscription(id, subscriptionRequest, accept);
 
-        String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);
-        JAXBElement<SubscriptionType> jaxb = factory.createSubscription(subscription.getSubscription());
-        return Response.ok(URI.create(subscription.getSubscription().getHref())).header("Last-Modified", date).entity(new GenericEntity<JAXBElement<SubscriptionType>>(jaxb){}).build();
+        try {
+            String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);
+            String encoded = DdsParser.getInstance().subscription2Xml(subscription.getSubscription());
+            return Response.ok(URI.create(subscription.getSubscription().getHref())).header("Last-Modified", date).entity(encoded).build();
+        } catch (JAXBException | IOException ex) {
+            WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/subscriptions/" + id, "Unable to format XML response " + ex.getMessage());
+            log.error("getSubscription: Failed to format outgoing response.", invalidXmlException);
+            throw invalidXmlException;
+        }
+
     }
 
     /**

@@ -1,20 +1,21 @@
 package net.es.nsi.dds.actors;
 
 import akka.actor.UntypedActor;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.dao.RemoteSubscription;
 import net.es.nsi.dds.dao.RemoteSubscriptionCache;
+import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.dds.DocumentEventType;
 import net.es.nsi.dds.jaxb.dds.ErrorType;
 import net.es.nsi.dds.jaxb.dds.FilterCriteriaType;
@@ -129,14 +130,14 @@ public class RegistrationActor extends UntypedActor {
 
         Client client = restClient.get();
         WebTarget webTarget = client.target(remoteDdsURL).path("subscriptions");
-        JAXBElement<SubscriptionRequestType> jaxb = factory.createSubscriptionRequest(request);
 
         Response response = null;
         try {
             log.debug("RegistrationActor: registering with remote DDS {}", remoteDdsURL);
+            String encoded = DdsParser.getInstance().subscriptionRequest2Xml(request);
             response = webTarget.request(NsiConstants.NSI_DDS_V1_XML)
                     .header(HttpHeaders.CONTENT_ENCODING, "gzip")
-                    .post(Entity.entity(new GenericEntity<JAXBElement<SubscriptionRequestType>>(jaxb) {}, NsiConstants.NSI_DDS_V1_XML));
+                    .post(Entity.entity(encoded, NsiConstants.NSI_DDS_V1_XML));
 
             if (response.getStatus() == Response.Status.CREATED.getStatusCode()) {
                 // Looks like we were successful so save the subscription information.
@@ -180,7 +181,7 @@ public class RegistrationActor extends UntypedActor {
                 }
             }
         }
-        catch (Exception ex) {
+        catch (JAXBException | IOException ex) {
             log.error("RegistrationActor.register: error on endpoint {}", remoteDdsURL, ex);
             logger.error(DdsErrors.DDS_SUBSCRIPTION_ADD_FAILED, remoteDdsURL);
         }

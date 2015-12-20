@@ -22,8 +22,8 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import net.es.nsi.dds.config.http.HttpsConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
-import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.spring.SpringApplicationContext;
+import net.es.nsi.dds.util.NsiConstants;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -174,10 +174,16 @@ public class RestClient {
             String method = requestContext.getMethod();
             Response resp;
             if ("POST".equalsIgnoreCase(method) || "PUT".equalsIgnoreCase(method)) {
-                resp = inClient.target(responseContext.getLocation()).request(requestContext.getMediaType()).headers(headers).method(requestContext.getMethod(), Entity.entity(new GenericEntity<JAXBElement<?>>((JAXBElement<?>)entity) {}, NsiConstants.NSI_DDS_V1_XML));
+                resp = inClient.target(responseContext.getLocation())
+                        .request(requestContext.getMediaType())
+                        .headers(headers)
+                        .method(requestContext.getMethod(), Entity.entity(new GenericEntity<JAXBElement<?>>((JAXBElement<?>)entity) {}, NsiConstants.NSI_DDS_V1_XML));
             }
             else {
-                resp = inClient.target(responseContext.getLocation()).request(requestContext.getMediaType()).headers(headers).method(requestContext.getMethod());
+                resp = inClient.target(responseContext.getLocation())
+                        .request(requestContext.getMediaType())
+                        .headers(headers)
+                        .method(requestContext.getMethod());
             }
 
             responseContext.setEntityStream((InputStream) resp.getEntity());
