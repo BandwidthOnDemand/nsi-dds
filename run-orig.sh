@@ -29,5 +29,5 @@ java -Xmx1024m -Djava.net.preferIPv4Stack=true  \
         -Djavax.net.ssl.keyStorePassword=$PASSWORD \
         -Djavax.net.ssl.trustStore=$TRUSTSTORE \
         -Djavax.net.ssl.trustStorePassword=$PASSWORD \
-	-jar target/dds-jar-with-dependencies.jar \
+	-jar target/dds.jar \
 	$*
