@@ -56,6 +56,7 @@ public class DiscoveryService {
     /**
      * Ping to see if the DDS service is operational.
      *
+     * @param sc
      * @return
      * @throws Exception
      */

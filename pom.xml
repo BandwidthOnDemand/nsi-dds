@@ -27,13 +27,6 @@
         </repository>
     </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>onejar-maven-plugin.googlecode.com</id>
-            <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <dependencies>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -538,24 +531,45 @@
                 </executions>
             </plugin>
 
-            <!-- puts all code & libraries in one jar -->
             <plugin>
-                <groupId>org.dstovall</groupId>
-                <artifactId>onejar-maven-plugin</artifactId>
-                <version>1.4.4</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                     <manifest>
+                        <addClasspath>true</addClasspath>
+                        <mainClass>net.es.nsi.dds.server.Main</mainClass>
+                     </manifest>
+                   </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                   <finalName>dds</finalName>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>DDS</id>
-                        <configuration>
-                            <mainClass>net.es.nsi.dds.server.Main</mainClass>
-                            <classifier>onejar</classifier>
-                            <filename>dds.jar</filename>
-                        </configuration>
+                        <id>assemble-all</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>one-jar</goal>
+                            <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                   <archive>
+                     <manifest>
+                        <addClasspath>true</addClasspath>
+                        <mainClass>net.es.nsi.dds.server.Main</mainClass>
+                     </manifest>
+                   </archive>
+                </configuration>
             </plugin>
 
             <plugin>

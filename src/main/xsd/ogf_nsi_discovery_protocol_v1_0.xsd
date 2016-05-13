@@ -971,16 +971,16 @@ mailing list (nsi-wg@ogf.org).
     <xsd:complexType name="DocumentType">
         <xsd:annotation>
             <xsd:documentation xml:lang="en">
-                The DocumentType type definition models a data relating to a
-                single document exchanged within the network.  Meta-data
+                The DocumentType type definition models all data relating to
+                a single document exchanged within the network.  Meta-data
                 associated with the document, document signature, and the
                 document itself is encapsulated in this type.  The type
                 itself is structured such that it does not need to be
                 manipulated between receiving and propagating to a peer.
 
                 A document is uniquely named within the network by the tuple
-                of nsa, type, and id.  The identifier element itself does not
-                need to be unique within the network; it must just be unique
+                of nsa, type, and id.  The identifier (id) element itself does 
+                not need to be unique within the network; it must just be unique
                 within the context of the nsa and type elements.  These rules
                 allow the reuse of the same id value for a document of different
                 types under the same source NSA.  This is important for both
@@ -1018,7 +1018,9 @@ mailing list (nsi-wg@ogf.org).
                 contents.
 
                 content - The contents of the document modeled by this document
-                resource.
+                resource.  The document containted in this element must be
+                encoded as a MIMW string following the content transfer encoding
+                rules as defined in RFC1341.
 
                 other - Provides a flexible mechanism allowing additional elements
                 to be provided from other namespaces without needing to update
@@ -1027,7 +1029,8 @@ mailing list (nsi-wg@ogf.org).
                 Attributes:
 
                 id - The identifier of the document.  This value must be unique
-                in the context of the nsa and type element values.
+                in the context of the nsa and type element values within the
+                global document space. 
 
                 version	- The version of the document, or more specifically, the
                 date this version of the document was created.  Any updates to the
@@ -1057,6 +1060,64 @@ mailing list (nsi-wg@ogf.org).
     </xsd:complexType>
     
     <xsd:complexType name="ContentType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                This simple string type is used to hold a document contents or
+                digital signature within the document metadata.  Elements of
+                is type use the contentTransferEncoding and contentType
+                attributes to describe the encoding of the document within
+                this string value.  The document meta-data "type" element
+                identifies the document type itself.
+                
+                When encoding a document to be contained in this element, the
+                contentType attribute is applied first using rules defined in
+                RFC1341 (section 4), followed by the contentTransferEncoding
+                attribute using rules defined in RFC1341 (section 5).  As an
+                example, an NSI topology document version 2 is encoded as
+                follows:
+                
+                type="vnd.ogf.nsi.topology.v2+xml"
+                contentType="application/x-gzip"
+                contentTransferEncoding="base64"
+                
+                In this case the "vnd.ogf.nsi.topology.v2+xml" document type
+                (XML) is compressed using gzip into a binary encoding, then
+                base64 encoded before being stored in the content element for
+                addition to the DDS.
+                
+                When decoding the contents contained in this element, the
+                contentTransferEncoding attribute is applied first using rules
+                defined in RFC1341 (section 5), followed by the contentType
+                attribute using rules defined in RFC1341 (section 4).  As an
+                example, an NSI Description Document version 1 is encoded as
+                follows:
+                
+                type="vnd.ogf.nsi.nsa.v1+xml"
+                contentType="application/x-gzip"
+                contentTransferEncoding="base64"
+                
+                In this case the "vnd.ogf.nsi.nsa.v1+xml" document type
+                (XML) will need to decoded from base64 as indicated by the 
+                contentTransferEncoding attribute, then decompressed using
+                gzip from the binary encoding into the resulting XML as
+                specified by the type.
+                
+                Attributes:
+                
+                contentType - This attribute is used to specify the nature
+                of the data in the body of the content element, by giving type
+                and subtype identifiers, and by providing auxiliary information
+                that may be required for certain document types.  RFC1341
+                (section 4) describes this in more detail.
+                
+                contentTransferEncoding - This attribute is used to indicate 
+                the type of transformation that has been used in order
+                to represent the body in an acceptable manner for transport in
+                the string content element of the document meta-data.  The
+                supported values of this attribute are defined in RFC1341
+                (section 5).
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:simpleContent>
             <xsd:extension base="xsd:string">
                 <xsd:attribute name="contentType"             use="optional" type="xsd:string" />
@@ -1064,37 +1125,6 @@ mailing list (nsi-wg@ogf.org).
             </xsd:extension>
         </xsd:simpleContent>
     </xsd:complexType>
-
-    <xsd:complexType name="AnyHolderType">
-        <xsd:annotation>
-            <xsd:documentation xml:lang="en">
-                This type is used to hold a document contents or digital
-                signature within the document metadata.  Basic types without
-                a dedicated element definition can be referenced within this
-                "##any" using the "value" element defined below.
-            </xsd:documentation>
-        </xsd:annotation>
-        <xsd:sequence>
-            <xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-        </xsd:sequence>
-        <xsd:attribute name="id"                      use="optional" type="xsd:string" />
-        <xsd:attribute name="contentType"             use="optional" type="xsd:string" />
-        <xsd:attribute name="contentTransferEncoding" use="optional" type="xsd:string" />
-        <xsd:anyAttribute namespace="##any" processContents="lax" />
-    </xsd:complexType>
-    
-    <xsd:element name="value" type="xsd:anyType">
-        <xsd:annotation>
-            <xsd:documentation xml:lang="en">
-                A simple element allowing for the inclusion of values from the
-                basic xml types (string, int, etc) within the signature and
-                content elements without needing to define an external
-                dedicated element type.  Values with their own schema definitions
-                should be included directly in the signature/content any
-                definition and not within this value element.
-            </xsd:documentation>
-        </xsd:annotation>
-    </xsd:element>
 
     <xsd:element name="error" type="tns:ErrorType">
         <xsd:annotation>
