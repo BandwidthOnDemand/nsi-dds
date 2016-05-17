@@ -20,6 +20,7 @@ import net.es.nsi.dds.dao.RemoteSubscriptionCache;
 import net.es.nsi.dds.jaxb.configuration.PeerURLType;
 import net.es.nsi.dds.messages.RegistrationEvent;
 import net.es.nsi.dds.messages.StartMsg;
+import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.NsiConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,11 @@ public class RegistrationRouter extends UntypedActor {
         this.ddsActorSystem = ddsActorSystem;
         this.discoveryConfiguration = discoveryConfiguration;
         this.remoteSubscriptionCache = remoteSubscriptionCache;
+    }
+
+    public static RegistrationRouter getInstance() {
+        RegistrationRouter registrationRouter = SpringApplicationContext.getBean("registrationRouter", RegistrationRouter.class);
+        return registrationRouter;
     }
 
     @Override
@@ -205,5 +211,10 @@ public class RegistrationRouter extends UntypedActor {
      */
     public void setInterval(long interval) {
         this.interval = interval;
+    }
+
+    public boolean isSubscription(String url) {
+        RemoteSubscription subscription = remoteSubscriptionCache.get(url);
+        return subscription != null;
     }
 }

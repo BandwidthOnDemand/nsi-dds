@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.xml.bind.JAXBException;
+import net.es.nsi.dds.actors.RegistrationRouter;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.dds.CollectionType;
@@ -1072,6 +1073,14 @@ public class DiscoveryService {
 
         // Process the notification request.
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
+
+        // Make sure this is still a valid subscription otherwise we ignore it
+        // and remove the subscriptions on the remote DDS instance via and
+        // exception thrown by this lookup.
+        if (!RegistrationRouter.getInstance().isSubscription(notifications.getHref())) {
+            log.error("notifications: Notification does not exist - provider={}, subscriptionId={}, href={}", notifications.getProviderId(), notifications.getId(), notifications.getHref());
+            throw Exceptions.doesNotExistException(DiscoveryError.SUBCRIPTION_DOES_NOT_EXIST, "id", notifications.getId());
+        }
 
         log.debug("notifications: provider={}, subscriptionId={}, href={}", notifications.getProviderId(), notifications.getId(), notifications.getHref());
         for (NotificationType notification : notifications.getNotification()) {

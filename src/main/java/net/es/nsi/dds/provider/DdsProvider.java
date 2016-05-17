@@ -139,6 +139,8 @@ public class DdsProvider implements DiscoveryProvider {
 
     @Override
     public Subscription deleteSubscription(String id) throws WebApplicationException {
+        log.debug("DdsProvider.deleteSubscription: id=" + id);
+
         if (id == null || id.isEmpty()) {
             throw Exceptions.missingParameterException("subscription", "id");
         }
@@ -158,6 +160,8 @@ public class DdsProvider implements DiscoveryProvider {
 
     @Override
     public Subscription editSubscription(String id, SubscriptionRequestType request, String encoding) throws WebApplicationException {
+        log.debug("DdsProvider.editSubscription: id=" + id);
+
         // Make sure we have all needed parameters.
         if (id == null || id.isEmpty()) {
             throw Exceptions.missingParameterException("subscription", "id");
