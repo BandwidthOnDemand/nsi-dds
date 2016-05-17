@@ -28,24 +28,25 @@ public class NmlConversionTest {
 
     @Before
     public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException, IOException {
+        System.out.println("*************************************** NmlConversionTest oneTimeSetUp ***********************************");
         // Load and watch the log4j configuration file for changes.
         DOMConfigurator.configureAndWatch(Log4jHelper.getLog4jConfig("src/test/resources/config/"), 45 * 1000);
         log = LoggerFactory.getLogger(NmlConversionTest.class);
-
+        System.out.println("*************************************** NmlConversionTest oneTimeSetUp Done ***********************************");
     }
 
     @Test
     public void serviceTypeInSD() throws JAXBException, IOException {
-        log.debug("serviceTypeInSD: start");
+        log.debug("*************************************** serviceTypeInSD: start");
         convertTest("src/test/resources/nml/parse/tests/serviceTypeInSD.xml");
-        log.debug("serviceTypeInSD: end");
+        log.debug("*************************************** serviceTypeInSD: end");
     }
 
     @Test
     public void serviceTypeInSDandSS() throws JAXBException, IOException {
-        log.debug("serviceTypeInSDandSS: start");
+        log.debug("*************************************** serviceTypeInSDandSS: start");
         convertTest("src/test/resources/nml/parse/tests/serviceTypeInSS.xml");
-        log.debug("serviceTypeInSDandSS: end");
+        log.debug("*************************************** serviceTypeInSDandSS: end");
     }
 
     private void convertTest(String file) throws JAXBException, IOException {

@@ -36,7 +36,7 @@ public class StressTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        System.out.println("*************************************** DiscoveryTest oneTimeSetUp ***********************************");
+        System.out.println("*************************************** StressTest oneTimeSetUp ***********************************");
 
         try {
             // Load a copy of the test DDS configuration and clear the document
@@ -60,12 +60,12 @@ public class StressTest {
         testConfig = new TestConfig();
         target = testConfig.getTarget();
         discovery = target.path("dds");
-        System.out.println("*************************************** DiscoveryTest oneTimeSetUp done ***********************************");
+        System.out.println("*************************************** StressTest oneTimeSetUp done ***********************************");
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
-        System.out.println("*************************************** DiscoveryTest oneTimeTearDown ***********************************");
+        System.out.println("*************************************** StressTest oneTimeTearDown ***********************************");
         testConfig.shutdown();
         try {
             TestServer.INSTANCE.shutdown();
@@ -74,11 +74,12 @@ public class StressTest {
             System.err.println("oneTimeTearDown: test server shutdown failed." + ex.getLocalizedMessage());
             fail();
         }
-        System.out.println("*************************************** DiscoveryTest oneTimeTearDown done ***********************************");
+        System.out.println("*************************************** StressTest oneTimeTearDown done ***********************************");
     }
 
     @Test
     public void errorTest() {
+        System.out.println("*************************************** errorTest ***********************************");
         // Simple ping to determine if interface is available.
         for (int i = 0; i < 2000; i++) {
             Response response = discovery.path("error").request(MediaType.APPLICATION_XML).get();

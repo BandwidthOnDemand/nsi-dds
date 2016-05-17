@@ -1084,7 +1084,7 @@ public class DiscoveryService {
 
         log.debug("notifications: provider={}, subscriptionId={}, href={}", notifications.getProviderId(), notifications.getId(), notifications.getHref());
         for (NotificationType notification : notifications.getNotification()) {
-            log.debug("notifications: processing notification event={}, documentId={}" + notification.getEvent(), notification.getDocument().getId());
+            log.debug("notifications: processing notification event=" + notification.getEvent() + ", documentId=" + notification.getDocument().getId());
             try {
                 discoveryProvider.processNotification(notification);
             }
