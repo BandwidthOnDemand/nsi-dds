@@ -195,7 +195,7 @@ public class DdsLogger {
         log.setType(LogEnumType.LOG);
         log.setCode(tLog.getCode());
         log.setLabel(tLog.getLabel());
-        log.setDescription(tLog.getDescription());
+        log.setDescription(String.format(tLog.getDescription(), resource));
         log.setResource(resource);
         logger.info(createLog(log));
         return log;
@@ -206,7 +206,7 @@ public class DdsLogger {
         error.setType(LogEnumType.ERROR);
         error.setCode(tError.getCode());
         error.setLabel(tError.getLabel());
-        error.setDescription(tError.getDescription());
+        error.setDescription(String.format(tError.getDescription(), resource));
         error.setResource(resource);
         logger.error(createLog(error));
         return error;

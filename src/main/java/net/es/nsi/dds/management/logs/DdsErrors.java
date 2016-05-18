@@ -26,6 +26,10 @@ public enum DdsErrors {
     DDS_SUBSCRIPTION_GET_FAILED_DETAILED(6006, "DDS_SUBSCRIPTION_GET_FAILED_DETAILED", "Subscription get failed (%s)."),
     DDS_SUBSCRIPTION_NOT_FOUND(6007, "DDS_SUBSCRIPTION_NOT_FOUND", "Subscription not found (%s)."),
 
+    DDS_NOTIFICATION_SUBSCRIPTION_PARSE_ERROR(7001, "DDS_NOTIFICATION_SUBSCRIPTION_PARSE_ERROR", "Unable to parse incoming subscription (%s)."),
+    DDS_NOTIFICATION_SUBSCRIPTION_NOT_FOUND(7002, "DDS_NOTIFICATION_SUBSCRIPTION_NOT_FOUND", "Subscription for incoming notification not found (%s)."),
+    DDS_NOTIFICATION_PROCESSING_ERROR(7003, "DDS_NOTIFICATION_PROCESSING_ERROR", "Unable to process incoming subscription (%s)."),
+
     // Topology audit errors - specifically around the discovery of topology from NSA.
     AUDIT(2000, "AUDIT", "The topology audit failed."),
     AUDIT_FORCED(2001, "AUDIT_FORCED", "A user forced topology audit failed (%s)."),

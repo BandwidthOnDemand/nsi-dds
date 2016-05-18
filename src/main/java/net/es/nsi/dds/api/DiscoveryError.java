@@ -32,8 +32,6 @@ public enum DiscoveryError {
     DOCUMENT_INVALID(112, "DOCUMENT_INVALID", "There was a problem with the document that prevents storage (%s)."),
     DOCUMENT_VERSION(113, "DOCUMENT_VERSION", "The document version was older than the current document (%s)."),
 
-
-
     SUBCRIPTION_DOES_NOT_EXIST(120, "SUBCRIPTION_DOES_NOT_EXIST", "Requested subscription identifier does not exist (%s)."),
 
     // Mark the end.

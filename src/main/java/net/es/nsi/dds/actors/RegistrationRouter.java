@@ -214,7 +214,6 @@ public class RegistrationRouter extends UntypedActor {
     }
 
     public boolean isSubscription(String url) {
-        RemoteSubscription subscription = remoteSubscriptionCache.get(url);
-        return subscription != null;
+        return remoteSubscriptionCache.values().stream().anyMatch((subscription) -> (subscription.getSubscription().getHref().contentEquals(url)));
     }
 }

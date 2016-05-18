@@ -35,6 +35,8 @@ import net.es.nsi.dds.jaxb.dds.NotificationType;
 import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.jaxb.dds.SubscriptionListType;
 import net.es.nsi.dds.jaxb.dds.SubscriptionRequestType;
+import net.es.nsi.dds.management.logs.DdsErrors;
+import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.provider.Source;
@@ -1061,11 +1063,13 @@ public class DiscoveryService {
                 notifications = (NotificationListType) object;
             }
             else {
+                DdsLogger.getInstance().error(DdsErrors.DDS_NOTIFICATION_SUBSCRIPTION_PARSE_ERROR, source, encoding);
                 WebApplicationException invalidXmlException = Exceptions.invalidXmlException("notifications", "Expected NotificationListType but found " + object.getClass().getCanonicalName());
                 log.error("notifications: Failed to parse incoming notifications.", invalidXmlException);
                 throw invalidXmlException;
             }
         } catch (JAXBException | IOException ex) {
+            DdsLogger.getInstance().error(DdsErrors.DDS_NOTIFICATION_SUBSCRIPTION_PARSE_ERROR, source, encoding);
             WebApplicationException invalidXmlException = Exceptions.invalidXmlException("notifications", "Unable to process XML " + ex.getMessage());
             log.error("notifications: Failed to parse incoming notifications.", invalidXmlException);
             throw invalidXmlException;
@@ -1079,6 +1083,7 @@ public class DiscoveryService {
         // exception thrown by this lookup.
         if (!RegistrationRouter.getInstance().isSubscription(notifications.getHref())) {
             log.error("notifications: Notification does not exist - provider={}, subscriptionId={}, href={}", notifications.getProviderId(), notifications.getId(), notifications.getHref());
+            DdsLogger.getInstance().error(DdsErrors.DDS_NOTIFICATION_SUBSCRIPTION_NOT_FOUND, "id", notifications.getId());
             throw Exceptions.doesNotExistException(DiscoveryError.SUBCRIPTION_DOES_NOT_EXIST, "id", notifications.getId());
         }
 
@@ -1089,6 +1094,7 @@ public class DiscoveryService {
                 discoveryProvider.processNotification(notification);
             }
             catch (Exception ex) {
+                DdsLogger.getInstance().error(DdsErrors.DDS_NOTIFICATION_PROCESSING_ERROR, "id", notifications.getId());
                 WebApplicationException internalServerErrorException = Exceptions.internalServerErrorException("notifications", "failed to process notification for documentId=" + notification.getDocument().getId());
                 log.error("notifications: failed to process notification for documentId={}", notification.getDocument().getId(), ex);
                 throw internalServerErrorException;

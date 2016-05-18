@@ -51,7 +51,7 @@ public class Exceptions {
     }
 
     public static WebApplicationException doesNotExistException(DiscoveryError errorEnum, String resource, String id) {
-        ErrorType error = DiscoveryError.getErrorType(errorEnum, resource, id);
+        ErrorType error = DiscoveryError.getErrorType(errorEnum, id, resource);
         Response ex = Response.status(Response.Status.NOT_FOUND).entity(new GenericEntity<JAXBElement<ErrorType>>(factory.createError(error)){}).build();
         return new WebApplicationException(ex);
     }
