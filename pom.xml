@@ -531,7 +531,29 @@
                 </executions>
             </plugin>
 
-            <!-- puts all code & libraries in one jar -->
+            <!-- Set up DDS document files for unit tests. -->
+            <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <echo>Copying test files to unit test locations.</echo>
+                                <copy todir="${project.basedir}/src/test/resources/config/cache">
+                                    <fileset dir="${project.basedir}/src/test/resources/test-cache" />
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+                <!-- puts all code & libraries in one jar -->
             <plugin>
                 <groupId>com.jolira</groupId>
                 <artifactId>onejar-maven-plugin</artifactId>

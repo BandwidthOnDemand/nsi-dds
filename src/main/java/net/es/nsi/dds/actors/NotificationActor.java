@@ -69,7 +69,7 @@ public class NotificationActor extends UntypedActor {
                     log.debug("NotificationActor: sent notitifcation {} to client {}, result = {}", list.getId(), callback, response.getStatusInfo().getReasonPhrase());
                 }
                 else {
-                    log.error("NotificationActor: failed notification {} to client {}, result = {}", list.getId(), callback, response.getStatusInfo().getReasonPhrase());
+                    log.error("NotificationActor: failed notification {} to client {}, code = {}, result = {}", list.getId(), callback, response.getStatusInfo().getStatusCode(), response.getStatusInfo().getReasonPhrase());
                     // TODO: Tell discovery provider...
                     DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
                     discoveryProvider.deleteSubscription(notification.getSubscription().getId());
