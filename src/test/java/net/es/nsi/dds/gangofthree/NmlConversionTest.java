@@ -49,6 +49,13 @@ public class NmlConversionTest {
         log.debug("*************************************** serviceTypeInSDandSS: end");
     }
 
+    @Test
+    public void serviceTypeInSDWithBoundaryTime() throws JAXBException, IOException {
+        log.debug("*************************************** serviceTypeInSDWithBoundaryTime: start");
+        convertTest("src/test/resources/nml/parse/tests/serviceTypeInSDWithBoundaryTime.xml");
+        log.debug("*************************************** serviceTypeInSDWithBoundaryTime: end");
+    }
+
     private void convertTest(String file) throws JAXBException, IOException {
         NmlTopologyType nml = NmlParser.getInstance().readTopology(file);
 

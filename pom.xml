@@ -553,7 +553,8 @@
                     </execution>
                 </executions>
             </plugin>
-                <!-- puts all code & libraries in one jar -->
+
+            <!-- puts all code & libraries in one jar -->
             <plugin>
                 <groupId>com.jolira</groupId>
                 <artifactId>onejar-maven-plugin</artifactId>

@@ -217,6 +217,8 @@ public class Gof3DiscoveryActor extends UntypedActor {
                     .header("If-Modified-Since", DateUtils.formatDate(new Date(time), DateUtils.PATTERN_RFC1123))
                     .get();
 
+            log.debug("discoverNSA: response status " + response.getStatus());
+
             Date lastModified = response.getLastModified();
             if (lastModified != null) {
                 log.debug("discoverTopology: time=" + new Date(time) + ", lastModified=" + new Date(lastModified.getTime()));
@@ -225,8 +227,6 @@ public class Gof3DiscoveryActor extends UntypedActor {
             else {
                 log.debug("discoverTopology: lastModified is null time=" + new Date(time));
             }
-
-            log.debug("discoverNSA: response status " + response.getStatus());
 
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
                 // Read the NML topology into a string buffer to avoid parsing
@@ -280,6 +280,10 @@ public class Gof3DiscoveryActor extends UntypedActor {
         }
         catch (DatatypeConfigurationException ex) {
             log.error("discoverTopology: Topology document failed to create lastModified " + url);
+            time = 0L;
+        }
+        catch (IllegalArgumentException ex) {
+            log.error("discoverTopology: Failed to convert NML topology document from endpoint " + url);
             time = 0L;
         }
         finally {

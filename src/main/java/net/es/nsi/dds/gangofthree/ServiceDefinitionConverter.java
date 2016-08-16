@@ -2,6 +2,9 @@ package net.es.nsi.dds.gangofthree;
 
 import java.util.List;
 import javax.xml.bind.JAXBElement;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.jaxb.nml.NmlNetworkObject;
 import net.es.nsi.dds.jaxb.nml.NmlSwitchingServiceType;
@@ -50,8 +53,18 @@ public class ServiceDefinitionConverter {
             XMLGregorianCalendar version = nml.getVersion();
             log.debug("Modified id=" + nml.getId() + ", version=" + version);
 
-            version.setSecond(version.getSecond() + 5);
+            Duration fiveSeconds;
+            try {
+                fiveSeconds = DatatypeFactory.newInstance().newDuration(5000);
+            } catch (DatatypeConfigurationException ex) {
+                log.error("Failed converting id=" + nml.getId() + ", version=" + version);
+                log.error("Could not create DatatypeFactory for a Duration of 5 seconds", ex);
+                throw new IllegalArgumentException(ex);
+            }
+
+            version.add(fiveSeconds);
             nml.setVersion(version);
+
             log.debug("Set new version id=" + nml.getId() + ", version=" + nml.getVersion());
         }
 
