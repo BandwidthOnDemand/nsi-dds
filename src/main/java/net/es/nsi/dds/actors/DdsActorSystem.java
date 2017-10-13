@@ -9,43 +9,44 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * Creates the base DDS actor system.
- * 
+ *
  * @author hacksaw
  */
 public class DdsActorSystem implements ApplicationContextAware {
-    private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private ActorSystem actorSystem;
-    private ApplicationContext applicationContext;
+  private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public DdsActorSystem() {
-        // Initialize the AKKA actor system for the PCE and subsystems.
-        log.info("DdsActorSystem: Initializing actor framework...");
-        actorSystem = akka.actor.ActorSystem.create("NSI-DISCOVERY");
-        SpringExtProvider.get(actorSystem).initialize(applicationContext);
-        log.info("DdsActorSystem: ... Actor framework initialized.");
-    }
+  private ActorSystem actorSystem;
+  private ApplicationContext applicationContext;
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
+  public DdsActorSystem() {
+    // Initialize the AKKA actor system for the PCE and subsystems.
+    log.info("DdsActorSystem: Initializing actor framework...");
+    actorSystem = akka.actor.ActorSystem.create("NSI-DISCOVERY");
+    SpringExtProvider.get(actorSystem).initialize(applicationContext);
+    log.info("DdsActorSystem: ... Actor framework initialized.");
+  }
 
-    public ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) {
+    this.applicationContext = applicationContext;
+  }
 
-    /**
-     * @return the actorSystem
-     */
-    public akka.actor.ActorSystem getActorSystem() {
-        return actorSystem;
-    }
+  public ApplicationContext getApplicationContext() {
+    return applicationContext;
+  }
 
-    /**
-     * @param actorSystem the actorSystem to set
-     */
-    public void setActorSystem(akka.actor.ActorSystem actorSystem) {
-        this.actorSystem = actorSystem;
-    }
+  /**
+   * @return the actorSystem
+   */
+  public akka.actor.ActorSystem getActorSystem() {
+    return actorSystem;
+  }
+
+  /**
+   * @param actorSystem the actorSystem to set
+   */
+  public void setActorSystem(akka.actor.ActorSystem actorSystem) {
+    this.actorSystem = actorSystem;
+  }
 }

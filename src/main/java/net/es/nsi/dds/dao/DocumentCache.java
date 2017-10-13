@@ -260,6 +260,10 @@ public class DocumentCache {
      * expire time to now.
      */
     public void expire() {
+        // We take the current time and add the expiry buffer.
+        Date now = new Date();
+        now.setTime(now.getTime() + ddsProfile.getExpiryInterval() * 1000);
+
         Collection<Document> values = Collections.unmodifiableCollection(new ArrayList<>(documents.values()));
         for (Document document : values) {
             // We need to determine if this document is still valid
@@ -268,13 +272,9 @@ public class DocumentCache {
             XMLGregorianCalendar expires = doc.getExpires();
             if (expires != null) {
                 Date expiresTime = expires.toGregorianCalendar().getTime();
-
-                // We take the current time and add the expiry buffer.
-                Date now = new Date();
-                now.setTime(now.getTime() + ddsProfile.getExpiryInterval() * 1000);
                 if (expiresTime.before(now)) {
                     // This document is old and no longer valid.
-                    log.debug("expire: document has expired " + document.getId() + ", expires=" + expires.toGregorianCalendar().getTime().toString());
+                    log.debug("[DocumentCache] document has expired " + document.getId() + ", expires=" + expires.toGregorianCalendar().getTime().toString());
                     this.remove(document.getId());
                 }
             }

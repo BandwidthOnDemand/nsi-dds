@@ -40,6 +40,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.RequestEntityProcessing;
 import org.glassfish.jersey.filter.LoggingFilter;
+import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
 import org.slf4j.Logger;
@@ -68,6 +69,7 @@ public class RestClient {
     public RestClient() {
         ClientConfig clientConfig = configureClient();
         client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
+        client.property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_SERVER, "DEBUG");
     }
 
     public RestClient(HttpsConfig config) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
