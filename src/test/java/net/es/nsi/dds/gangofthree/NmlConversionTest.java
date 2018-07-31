@@ -3,6 +3,7 @@ package net.es.nsi.dds.gangofthree;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.jaxb.NmlParser;
@@ -54,6 +55,53 @@ public class NmlConversionTest {
         log.debug("*************************************** serviceTypeInSDWithBoundaryTime: start");
         convertTest("src/test/resources/nml/parse/tests/serviceTypeInSDWithBoundaryTime.xml");
         log.debug("*************************************** serviceTypeInSDWithBoundaryTime: end");
+    }
+
+    @Test
+    public void nmlDocumentWithEthernetElements() throws JAXBException, IOException {
+        log.debug("*************************************** nmlDocumentWithEthernetElements: start");
+
+        NmlEthernet nml = new NmlEthernet();
+        nml.setMaximumReservableCapacity(Optional.of(10000000000L));
+        nml.setMinimumReservableCapacity(Optional.of(0L));
+        nml.setCapacity(Optional.of(10000000000L));
+        nml.setGranularity(Optional.of(1000000L));
+        validateEthernetAttributes("src/test/resources/nml/parse/tests/nmlDocumentWithEthernetElements.xml",
+                "urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt2:xe-0_0_0:+:out", nml);
+
+        NmlEthernet nmlEsnet = new NmlEthernet();
+        nmlEsnet.setMaximumReservableCapacity(Optional.of(10000000000L));
+        nmlEsnet.setMinimumReservableCapacity(Optional.of(1000000L));
+        nmlEsnet.setCapacity(Optional.of(10000000000L));
+        nmlEsnet.setGranularity(Optional.of(1000000L));
+        validateEthernetAttributes("src/test/resources/nml/parse/tests/ESnet-topology.xml",
+                "urn:ogf:network:es.net:2013::fnal-mr2:xe-2_2_0:+:out", nmlEsnet);
+        log.debug("*************************************** nmlDocumentWithEthernetElements: end");
+    }
+
+    private void validateEthernetAttributes(String file, String port, NmlEthernet attrs) throws JAXBException, IOException {
+      NmlTopologyType nml = NmlParser.getInstance().readTopology(file);
+      nml.getRelation().stream()
+              .filter((r) -> "http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort".equalsIgnoreCase(r.getType()))
+              .forEach((NmlTopologyRelationType r) -> {
+                if (!r.getPort().isEmpty()) {
+                  r.getPort().stream().filter((p) -> (p.getId().equalsIgnoreCase(port)))
+                          .findFirst().ifPresent((p) -> {
+                            log.debug("Parsing Port ANY elements, siz = " + p.getAny().size());
+                            NmlEthernet nmlEthernet = new NmlEthernet(p.getAny());
+                            assertTrue(nmlEthernet.equals(attrs));
+                                  });
+                }
+
+                if (!r.getPortGroup().isEmpty()) {
+                  r.getPortGroup().stream().filter((p) -> (p.getId().equalsIgnoreCase(port)))
+                          .findFirst().ifPresent((p) -> {
+                            log.debug("Parsing PortGroup ANY elements, size = " + p.getAny().size());
+                            NmlEthernet nmlEthernet = new NmlEthernet(p.getAny());
+                            assertTrue(nmlEthernet.equals(attrs));
+                                  });
+                }
+              });
     }
 
     private void convertTest(String file) throws JAXBException, IOException {

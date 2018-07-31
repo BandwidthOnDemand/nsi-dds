@@ -25,4 +25,16 @@
         </jxb:bindings>
     </jxb:bindings>
 
+    <jxb:bindings schemaLocation="nml-ethernet.xsd" node="/xs:schema">
+        <jxb:schemaBindings>
+            <jxb:nameXmlTransform>
+                <jxb:typeName prefix="Eth"/>
+                <jxb:anonymousTypeName prefix="Eth"/>
+            </jxb:nameXmlTransform>
+        </jxb:schemaBindings>
+        <jxb:bindings node=".//xs:element[@name='label']">
+                <jxb:factoryMethod name="EthLabel"/>
+        </jxb:bindings>
+    </jxb:bindings>
+
 </jxb:bindings>

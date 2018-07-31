@@ -206,6 +206,12 @@
         </dependency>
 
         <dependency>
+          <groupId>org.projectlombok</groupId>
+          <artifactId>lombok</artifactId>
+          <version>1.18.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>1.9.5</version>
@@ -372,258 +378,258 @@
                     <!--
                          Controls the length of the abbreviated git commit it (git.commit.id.abbrev)
 
-                         Defaults to `7`.
-                         `0` carries the special meaning.
-                         Maximum value is `40`, because of max SHA-1 length.
-                     -->
-                    <abbrevLength>7</abbrevLength>
+              Defaults to `7`.
+              `0` carries the special meaning.
+              Maximum value is `40`, because of max SHA-1 length.
+          -->
+          <abbrevLength>7</abbrevLength>
 
-                    <!-- @since 2.1.0 -->
-                    <!--
-                        read up about git-describe on the in man, or it's homepage - it's a really powerful versioning helper
-                        and the recommended way to use git-commit-id-plugin. The configuration bellow is optional,
-                        by default describe will run "just like git-describe on the command line", even though it's a JGit reimplementation.
-                    -->
-                    <gitDescribe>
+          <!-- @since 2.1.0 -->
+          <!--
+              read up about git-describe on the in man, or it's homepage - it's a really powerful versioning helper
+              and the recommended way to use git-commit-id-plugin. The configuration bellow is optional,
+              by default describe will run "just like git-describe on the command line", even though it's a JGit reimplementation.
+          -->
+          <gitDescribe>
 
-                        <!-- don't generate the describe property -->
-                        <skip>false</skip>
+            <!-- don't generate the describe property -->
+            <skip>false</skip>
 
-                        <!--
-                            if no tag was found "near" this commit, just print the commit's id instead,
-                            helpful when you always expect this field to be not-empty
-                        -->
-                        <always>false</always>
-                        <!--
-                             how many chars should be displayed as the commit object id?
-                             7 is git's default,
-                             0 has a special meaning (see end of this README.md),
-                             and 40 is the maximum value here
-                        -->
-                        <abbrev>7</abbrev>
+            <!--
+                if no tag was found "near" this commit, just print the commit's id instead,
+                helpful when you always expect this field to be not-empty
+            -->
+            <always>false</always>
+            <!--
+                 how many chars should be displayed as the commit object id?
+                 7 is git's default,
+                 0 has a special meaning (see end of this README.md),
+                 and 40 is the maximum value here
+            -->
+            <abbrev>7</abbrev>
 
-                        <!-- when the build is triggered while the repo is in "dirty state", append this suffix -->
-                        <dirty>-dirty</dirty>
+            <!-- when the build is triggered while the repo is in "dirty state", append this suffix -->
+            <dirty>-dirty</dirty>
 
-                        <!-- Only consider tags matching the given pattern. This can be used to avoid leaking private tags from the repository. -->
-                        <match>*</match>
+            <!-- Only consider tags matching the given pattern. This can be used to avoid leaking private tags from the repository. -->
+            <match>*</match>
 
-                        <!--
-                             always print using the "tag-commits_from_tag-g_commit_id-maybe_dirty" format, even if "on" a tag.
-                             The distance will always be 0 if you're "on" the tag.
-                        -->
-                        <forceLongFormat>false</forceLongFormat>
-                    </gitDescribe>
-                </configuration>
+            <!--
+                 always print using the "tag-commits_from_tag-g_commit_id-maybe_dirty" format, even if "on" a tag.
+                 The distance will always be 0 if you're "on" the tag.
+            -->
+            <forceLongFormat>false</forceLongFormat>
+          </gitDescribe>
+        </configuration>
 
-            </plugin>
-            <!-- END OF GIT COMMIT ID PLUGIN CONFIGURATION -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <compilerArgument>-Xlint:deprecation</compilerArgument>
-                </configuration>
-            </plugin>
+      </plugin>
+      <!-- END OF GIT COMMIT ID PLUGIN CONFIGURATION -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <compilerArgument>-Xlint:deprecation</compilerArgument>
+        </configuration>
+      </plugin>
 
-            <plugin>
-                <!-- We use this plugin to ensure that our usage of the
-                maven-jaxb2-plugin is JDK 8 compatible in absence of a fix
-                for https://java.net/jira/browse/MAVEN_JAXB2_PLUGIN-80. -->
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0-alpha-2</version>
-                <executions>
-                    <execution>
-                        <id>set-additional-system-properties</id>
-                        <goals>
-                            <goal>set-system-properties</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <properties>
-                        <property>
-                            <name>javax.xml.accessExternalSchema</name>
-                            <value>file,http,all</value>
-                        </property>
-                    </properties>
-                </configuration>
-            </plugin>
+      <plugin>
+        <!-- We use this plugin to ensure that our usage of the
+        maven-jaxb2-plugin is JDK 8 compatible in absence of a fix
+        for https://java.net/jira/browse/MAVEN_JAXB2_PLUGIN-80. -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>1.0-alpha-2</version>
+        <executions>
+          <execution>
+            <id>set-additional-system-properties</id>
+            <goals>
+              <goal>set-system-properties</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <properties>
+            <property>
+              <name>javax.xml.accessExternalSchema</name>
+              <value>file,http,all</value>
+            </property>
+          </properties>
+        </configuration>
+      </plugin>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                  <execution>
-                    <id>configuration</id>
-                    <goals>
-                        <goal>xjc</goal>
-                    </goals>
-                    <configuration>
-                        <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
-                        <bindingFiles>configuration.xjb</bindingFiles>
-                        <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
-                        <schemaFiles>dds-configuration.xsd</schemaFiles>
-                        <packageName>net.es.nsi.dds.jaxb.configuration</packageName>
-                    </configuration>
-                  </execution>
-                  <execution>
-                    <id>management</id>
-                    <goals>
-                        <goal>xjc</goal>
-                    </goals>
-                    <configuration>
-                        <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
-                        <bindingFiles>management.xjb</bindingFiles>
-                        <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
-                        <schemaFiles>dds-management.xsd</schemaFiles>
-                        <packageName>net.es.nsi.dds.jaxb.management</packageName>
-                        <clearOutputDir>false</clearOutputDir>
-                    </configuration>
-                  </execution>
-                  <execution>
-                    <id>dds</id>
-                    <goals>
-                        <goal>xjc</goal>
-                    </goals>
-                    <configuration>
-                        <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
-                        <bindingFiles>dds.xjb</bindingFiles>
-                        <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
-                        <schemaFiles>ogf_nsi_discovery_protocol_v1_0.xsd</schemaFiles>
-                        <packageName>net.es.nsi.dds.jaxb.dds</packageName>
-                        <clearOutputDir>false</clearOutputDir>
-                    </configuration>
-                  </execution>
-                  <execution>
-                    <id>nml</id>
-                    <goals>
-                        <goal>xjc</goal>
-                    </goals>
-                    <configuration>
-                        <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
-                        <bindingFiles>nml.xjb</bindingFiles>
-                        <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
-                        <schemaFiles>nmlbase.xsd, nml-ethernet.xsd, ogf_nsi_services_definition_v2_0.xsd, nsi-ext.xsd</schemaFiles>
-                        <packageName>net.es.nsi.dds.jaxb.nml</packageName>
-                        <clearOutputDir>false</clearOutputDir>
-                    </configuration>
-                  </execution>
-                  <execution>
-                    <id>nsa</id>
-                    <goals>
-                        <goal>xjc</goal>
-                    </goals>
-                    <configuration>
-                        <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
-                        <bindingFiles>nsa.xjb</bindingFiles>
-                        <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
-                        <schemaFiles>ogf_nsi_discovery_nsa_v1_0.xsd, xCard.xsd, gnsbod.xsd</schemaFiles>
-                        <packageName>net.es.nsi.dds.jaxb.nsa</packageName>
-                        <clearOutputDir>false</clearOutputDir>
-                    </configuration>
-                  </execution>
-                </executions>
-            </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jaxb2-maven-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>configuration</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+            <configuration>
+              <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
+              <bindingFiles>configuration.xjb</bindingFiles>
+              <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
+              <schemaFiles>dds-configuration.xsd</schemaFiles>
+              <packageName>net.es.nsi.dds.jaxb.configuration</packageName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>management</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+            <configuration>
+              <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
+              <bindingFiles>management.xjb</bindingFiles>
+              <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
+              <schemaFiles>dds-management.xsd</schemaFiles>
+              <packageName>net.es.nsi.dds.jaxb.management</packageName>
+              <clearOutputDir>false</clearOutputDir>
+            </configuration>
+          </execution>
+          <execution>
+            <id>dds</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+            <configuration>
+              <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
+              <bindingFiles>dds.xjb</bindingFiles>
+              <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
+              <schemaFiles>ogf_nsi_discovery_protocol_v1_0.xsd</schemaFiles>
+              <packageName>net.es.nsi.dds.jaxb.dds</packageName>
+              <clearOutputDir>false</clearOutputDir>
+            </configuration>
+          </execution>
+          <execution>
+            <id>nml</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+            <configuration>
+              <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
+              <bindingFiles>nml.xjb</bindingFiles>
+              <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
+              <schemaFiles>nmlbase.xsd, nml-ethernet.xsd, ogf_nsi_services_definition_v2_0.xsd, nsi-ext.xsd</schemaFiles>
+              <packageName>net.es.nsi.dds.jaxb.nml</packageName>
+              <clearOutputDir>false</clearOutputDir>
+            </configuration>
+          </execution>
+          <execution>
+            <id>nsa</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+            <configuration>
+              <bindingDirectory>${basedir}/src/main/xsd</bindingDirectory>
+              <bindingFiles>nsa.xjb</bindingFiles>
+              <schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
+              <schemaFiles>ogf_nsi_discovery_nsa_v1_0.xsd, xCard.xsd, gnsbod.xsd</schemaFiles>
+              <packageName>net.es.nsi.dds.jaxb.nsa</packageName>
+              <clearOutputDir>false</clearOutputDir>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-            <!-- Set up DDS document files for unit tests. -->
-            <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <echo>Copying test files to unit test locations.</echo>
-                                <copy todir="${project.basedir}/src/test/resources/config/cache">
-                                    <fileset dir="${project.basedir}/src/test/resources/test-cache" />
-                                </copy>
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+      <!-- Set up DDS document files for unit tests. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.8</version>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <echo>Copying test files to unit test locations.</echo>
+                <copy todir="${project.basedir}/src/test/resources/config/cache">
+                  <fileset dir="${project.basedir}/src/test/resources/test-cache" />
+                </copy>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-            <!-- puts all code & libraries in one jar -->
-            <plugin>
-                <groupId>com.jolira</groupId>
-                <artifactId>onejar-maven-plugin</artifactId>
-                <version>1.4.4</version>
-                <executions>
-                    <execution>
-                        <id>DDS</id>
-                        <configuration>
-                            <mainClass>net.es.nsi.dds.server.Main</mainClass>
-                            <classifier>onejar</classifier>
-                            <filename>dds.jar</filename>
-                        </configuration>
-                        <goals>
-                            <goal>one-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+      <!-- puts all code & libraries in one jar -->
+      <plugin>
+        <groupId>com.jolira</groupId>
+        <artifactId>onejar-maven-plugin</artifactId>
+        <version>1.4.4</version>
+        <executions>
+          <execution>
+            <id>DDS</id>
+            <configuration>
+              <mainClass>net.es.nsi.dds.server.Main</mainClass>
+              <classifier>onejar</classifier>
+              <filename>dds.jar</filename>
+            </configuration>
+            <goals>
+              <goal>one-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.16</version>
-                <configuration>
-                    <argLine>-Xmx1024m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true</argLine>
-                    <argLine>-Djersey.config.test.container.port=8401</argLine>
-                    <argLine>-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true</argLine>
-                </configuration>
-            </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.16</version>
+        <configuration>
+          <argLine>-Xmx1024m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true</argLine>
+          <argLine>-Djersey.config.test.container.port=8401</argLine>
+          <argLine>-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true</argLine>
+        </configuration>
+      </plugin>
 
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                  <filesets>
-                    <fileset>
-                      <directory>${basedir}/var</directory>
-                    </fileset>
-                  </filesets>
-                </configuration>
-              </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}/var</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <distributionManagement>
+    <repository>
+      <id>surfnet-public-releases</id>
+      <name>surfnet-public-releases</name>
+      <url>http://atlas.dlp.surfnet.nl/nexus/content/repositories/public-releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>surfnet-public-snapshots</id>
+      <name>surfnet-snapshots</name>
+      <url>http://atlas.dlp.surfnet.nl/nexus/content/repositories/public-snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <profiles>
+    <profile>
+      <id>examples-source-zip</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+          </plugin>
         </plugins>
-    </build>
-
-    <distributionManagement>
-        <repository>
-            <id>surfnet-public-releases</id>
-            <name>surfnet-public-releases</name>
-            <url>http://atlas.dlp.surfnet.nl/nexus/content/repositories/public-releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>surfnet-public-snapshots</id>
-            <name>surfnet-snapshots</name>
-            <url>http://atlas.dlp.surfnet.nl/nexus/content/repositories/public-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-    <profiles>
-        <profile>
-            <id>examples-source-zip</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

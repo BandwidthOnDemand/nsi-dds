@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:Topology xmlns:ns3="http://schemas.ogf.org/nml/2013/05/base#" xmlns:ns4="http://schemas.ogf.org/nsi/2013/12/services/definition"
+    id="urn:ogf:network:netlab.es.net:2013:" version="2018-07-27T02:51:31.496Z">
+    <ns3:name>netlab.es.net</ns3:name>
+    <ns3:Lifetime>
+        <ns3:start>2018-07-26T19:51:31.496-07:00</ns3:start>
+        <ns3:end>2018-07-27T19:51:31.496-07:00</ns3:end>
+    </ns3:Lifetime>
+    <ns3:BidirectionalPort id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt1:xe-11_2_0:+">
+        <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt1:xe-11_2_0:+:in"/>
+        <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt1:xe-11_2_0:+:out"/>
+    </ns3:BidirectionalPort>
+    <ns3:BidirectionalPort id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt2:xe-0_0_0:+">
+        <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt2:xe-0_0_0:+:in"/>
+        <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt2:xe-0_0_0:+:out"/>
+    </ns3:BidirectionalPort>
+    <ns3:BidirectionalPort id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt1:9_1_1:+">
+        <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt1:9_1_1:+:in"/>
+        <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt1:9_1_1:+:out"/>
+    </ns3:BidirectionalPort>
+    <ns3:BidirectionalPort id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt2:10_1_5:+">
+        <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt2:10_1_5:+:in"/>
+        <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt2:10_1_5:+:out"/>
+    </ns3:BidirectionalPort>
+    <ns4:serviceDefinition id="urn:ogf:network:netlab.es.net:2013::ServiceDefinition:EVTS.A-GOLE">
+        <name>GLIF Automated GOLE Ethernet VLAN Transfer Service</name>
+        <serviceType>http://services.ogf.org/nsi/2013/12/descriptions/EVTS.A-GOLE</serviceType>
+    </ns4:serviceDefinition>
+    <ns3:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasService">
+        <ns3:SwitchingService encoding="http://schemas.ogf.org/nml/2012/10/ethernet" id="urn:ogf:network:netlab.es.net:2013::ServiceDomain:EVTS.A-GOLE" labelSwapping="true" labelType="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">
+            <ns3:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+                <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt1:xe-11_2_0:+:in"/>
+                <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt2:xe-0_0_0:+:in"/>
+                <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt1:9_1_1:+:in"/>
+                <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt2:10_1_5:+:in"/>
+            </ns3:Relation>
+            <ns3:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+                <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt1:xe-11_2_0:+:out"/>
+                <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt2:xe-0_0_0:+:out"/>
+                <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt1:9_1_1:+:out"/>
+                <ns3:PortGroup id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt2:10_1_5:+:out"/>
+            </ns3:Relation>
+            <ns4:serviceDefinition id="urn:ogf:network:netlab.es.net:2013::ServiceDefinition:EVTS.A-GOLE"/>
+        </ns3:SwitchingService>
+    </ns3:Relation>
+    <ns3:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
+        <ns3:PortGroup encoding="http://schemas.ogf.org/nml/2012/10/ethernet" id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt1:xe-11_2_0:+:in">
+            <ns3:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2000-2900</ns3:LabelGroup>
+            <nml-eth:maximumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:maximumReservableCapacity>
+            <nml-eth:minimumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">0</nml-eth:minimumReservableCapacity>
+            <nml-eth:capacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:capacity>
+            <nml-eth:granularity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">1000000</nml-eth:granularity>
+        </ns3:PortGroup>
+        <ns3:PortGroup encoding="http://schemas.ogf.org/nml/2012/10/ethernet" id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt2:xe-0_0_0:+:in">
+            <ns3:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2000-2900</ns3:LabelGroup>
+            <nml-eth:maximumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:maximumReservableCapacity>
+            <nml-eth:minimumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">0</nml-eth:minimumReservableCapacity>
+            <nml-eth:capacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:capacity>
+            <nml-eth:granularity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">1000000</nml-eth:granularity>
+        </ns3:PortGroup>
+        <ns3:PortGroup encoding="http://schemas.ogf.org/nml/2012/10/ethernet" id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt1:9_1_1:+:in">
+            <ns3:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2000-2900</ns3:LabelGroup>
+            <nml-eth:maximumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:maximumReservableCapacity>
+            <nml-eth:minimumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">0</nml-eth:minimumReservableCapacity>
+            <nml-eth:capacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:capacity>
+            <nml-eth:granularity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">1000000</nml-eth:granularity>
+        </ns3:PortGroup>
+        <ns3:PortGroup encoding="http://schemas.ogf.org/nml/2012/10/ethernet" id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt2:10_1_5:+:in">
+            <ns3:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2000-2900</ns3:LabelGroup>
+            <nml-eth:maximumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:maximumReservableCapacity>
+            <nml-eth:minimumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">0</nml-eth:minimumReservableCapacity>
+            <nml-eth:capacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:capacity>
+            <nml-eth:granularity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">1000000</nml-eth:granularity>
+        </ns3:PortGroup>
+    </ns3:Relation>
+    <ns3:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasOutboundPort">
+        <ns3:PortGroup encoding="http://schemas.ogf.org/nml/2012/10/ethernet" id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt1:xe-11_2_0:+:out">
+            <ns3:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2000-2900</ns3:LabelGroup>
+            <nml-eth:maximumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:maximumReservableCapacity>
+            <nml-eth:minimumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">0</nml-eth:minimumReservableCapacity>
+            <nml-eth:capacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:capacity>
+            <nml-eth:granularity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">1000000</nml-eth:granularity>
+        </ns3:PortGroup>
+        <ns3:PortGroup encoding="http://schemas.ogf.org/nml/2012/10/ethernet" id="urn:ogf:network:netlab.es.net:2013::netlab-mx960-rt2:xe-0_0_0:+:out">
+            <ns3:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2000-2900</ns3:LabelGroup>
+            <nml-eth:maximumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:maximumReservableCapacity>
+            <nml-eth:minimumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">0</nml-eth:minimumReservableCapacity>
+            <nml-eth:capacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:capacity>
+            <nml-eth:granularity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">1000000</nml-eth:granularity>
+        </ns3:PortGroup>
+        <ns3:PortGroup encoding="http://schemas.ogf.org/nml/2012/10/ethernet" id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt1:9_1_1:+:out">
+            <ns3:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2000-2900</ns3:LabelGroup>
+            <nml-eth:maximumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:maximumReservableCapacity>
+            <nml-eth:minimumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">0</nml-eth:minimumReservableCapacity>
+            <nml-eth:capacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:capacity>
+            <nml-eth:granularity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">1000000</nml-eth:granularity>
+        </ns3:PortGroup>
+        <ns3:PortGroup encoding="http://schemas.ogf.org/nml/2012/10/ethernet" id="urn:ogf:network:netlab.es.net:2013::netlab-7750sr12-rt2:10_1_5:+:out">
+            <ns3:LabelGroup labeltype="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">2000-2900</ns3:LabelGroup>
+            <nml-eth:maximumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:maximumReservableCapacity>
+            <nml-eth:minimumReservableCapacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">0</nml-eth:minimumReservableCapacity>
+            <nml-eth:capacity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">10000000000</nml-eth:capacity>
+            <nml-eth:granularity xmlns:nml-base="http://schemas.ogf.org/nml/2013/05/base#" xmlns:nml-eth="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:nsi-defs="http://schemas.ogf.org/nsi/2013/12/services/definition">1000000</nml-eth:granularity>
+        </ns3:PortGroup>
+    </ns3:Relation>
+</ns3:Topology>
+

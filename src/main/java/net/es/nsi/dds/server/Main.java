@@ -3,6 +3,8 @@ package net.es.nsi.dds.server;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import net.es.nsi.dds.config.ConfigurationManager;
+import net.es.nsi.dds.config.Properties;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -11,9 +13,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.LoggerFactory;
-
-import net.es.nsi.dds.config.ConfigurationManager;
-import net.es.nsi.dds.config.Properties;
 
 /**
  * This is the main execution thread for the NSI Document Distribution Service.
@@ -35,9 +34,7 @@ public class Main {
     private static final String DEFAULT_CONFIGDIR = "config/";
     private static final String DEFAULT_DDS_FILE = "dds.xml";
 
-    public static final String PCE_SERVER_CONFIG_NAME = "dds";
-
-    // Keep running PCE while true.
+    // Keep running DDS while true.
     private static boolean keepRunning = true;
 
     /**
@@ -68,7 +65,7 @@ public class Main {
             new Thread() {
                 @Override
                 public void run() {
-                    log.info("Shutting down PCE...");
+                    log.info("Shutting down DDS...");
                     DdsServer.getInstance().shutdown();
                     log.info("...Shutdown complete.");
                     Main.setKeepRunning(false);
@@ -224,19 +221,19 @@ public class Main {
     }
 
     /**
-     * Returns a boolean indicating whether the PCE should continue running
+     * Returns a boolean indicating whether the DDS should continue running
      * (true) or should terminate (false).
      *
-     * @return true if the PCE should be running, false otherwise.
+     * @return true if the DDS should be running, false otherwise.
      */
     public static boolean isKeepRunning() {
         return keepRunning;
     }
 
     /**
-     * Set whether the PCE should be running (true) or terminated (false).
+     * Set whether the DDS should be running (true) or terminated (false).
      *
-     * @param keepRunning true if the PCE should be running, false otherwise.
+     * @param keepRunning true if the DDS should be running, false otherwise.
      */
     public static void setKeepRunning(boolean keepRunning) {
         Main.keepRunning = keepRunning;
