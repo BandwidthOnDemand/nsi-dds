@@ -88,6 +88,12 @@ public class NotificationActor extends UntypedActor {
                 DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
                 discoveryProvider.deleteSubscription(notification.getSubscription().getId());
             }
+            catch (Exception ex) {
+                log.error("NotificationActor: Exception - failed notification = {} to client = {}, ex = {}",
+                        list.getId(), callback, ex);
+                DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
+                discoveryProvider.deleteSubscription(notification.getSubscription().getId());
+            }
             finally {
                 log.debug("NotificationActor: completed - subscriptionId = {}, requesterId = {}, callback = {}",
                         notification.getSubscription().getId(),
