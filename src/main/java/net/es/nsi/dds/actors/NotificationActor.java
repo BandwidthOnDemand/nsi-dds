@@ -2,6 +2,7 @@ package net.es.nsi.dds.actors;
 
 import akka.actor.UntypedActor;
 import java.io.IOException;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -64,6 +65,7 @@ public class NotificationActor extends UntypedActor {
                     notification.getSubscription().getSubscription().getCallback());
 
             Response response = null;
+            boolean error = false;
             try {
                 String encoded = DdsParser.getInstance().notifications2Xml(list);
                 response = webTarget.request(mediaType).header(HttpHeaders.CONTENT_ENCODING, "gzip")
@@ -78,21 +80,16 @@ public class NotificationActor extends UntypedActor {
                             list.getId(), callback, response.getStatusInfo().getStatusCode(),
                             response.getStatusInfo().getReasonPhrase());
                     // TODO: Tell discovery provider...
-                    DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
-                    discoveryProvider.deleteSubscription(notification.getSubscription().getId());
+                    error = true;
                 }
             }
-            catch (IOException | WebApplicationException | JAXBException ex) {
-                log.error("NotificationActor: failed notification = {} to client = {}, ex = {}",
+            catch (IOException | JAXBException | WebApplicationException | ProcessingException ex) {
+              // Do not change this to specific Exceptions unless you keep the
+              // generic catch due to underlying SSL exceptions from the SSL
+              // provider.
+              log.error("NotificationActor: failed notification = {} to client = {}, ex = {}",
                         list.getId(), callback, ex);
-                DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
-                discoveryProvider.deleteSubscription(notification.getSubscription().getId());
-            }
-            catch (Exception ex) {
-                log.error("NotificationActor: Exception - failed notification = {} to client = {}, ex = {}",
-                        list.getId(), callback, ex);
-                DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
-                discoveryProvider.deleteSubscription(notification.getSubscription().getId());
+              error = true;
             }
             finally {
                 log.debug("NotificationActor: completed - subscriptionId = {}, requesterId = {}, callback = {}",
@@ -102,6 +99,11 @@ public class NotificationActor extends UntypedActor {
 
                 if (response != null) {
                     response.close();
+                }
+
+                if (error) {
+                  DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
+                  discoveryProvider.deleteSubscription(notification.getSubscription().getId());
                 }
             }
         } else {
