@@ -48,7 +48,9 @@ public class NotificationActor extends UntypedActor {
     public void onReceive(Object msg) {
         if (msg instanceof Notification) {
             Notification notification = (Notification) msg;
-            log.debug("NotificationActor: notificationId={}, requesterId={}", notification.getSubscription().getId(), notification.getSubscription().getSubscription().getRequesterId());
+            log.debug("NotificationActor: subscriptionId = {}, requesterId = {}",
+                    notification.getSubscription().getId(),
+                    notification.getSubscription().getSubscription().getRequesterId());
 
             NotificationListType list = getNotificationList(notification);
             String callback = notification.getSubscription().getSubscription().getCallback();
@@ -57,7 +59,9 @@ public class NotificationActor extends UntypedActor {
             final WebTarget webTarget = client.target(callback);
             String mediaType = notification.getSubscription().getEncoding();
 
-            log.debug("NotificationActor: sending mediaType={}, subscriptionId={}, callback={}", mediaType, notification.getSubscription().getId(), notification.getSubscription().getSubscription().getCallback());
+            log.debug("NotificationActor: sending mediaType={}, subscriptionId={}, callback={}",
+                    mediaType, notification.getSubscription().getId(),
+                    notification.getSubscription().getSubscription().getCallback());
 
             Response response = null;
             try {
@@ -66,21 +70,30 @@ public class NotificationActor extends UntypedActor {
                     .post(Entity.entity(encoded, mediaType));
 
                 if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
-                    log.debug("NotificationActor: sent notitifcation {} to client {}, result = {}", list.getId(), callback, response.getStatusInfo().getReasonPhrase());
+                    log.debug("NotificationActor: sent notitifcation = {} to client = {}, result = {}",
+                            list.getId(), callback, response.getStatusInfo().getReasonPhrase());
                 }
                 else {
-                    log.error("NotificationActor: failed notification {} to client {}, code = {}, result = {}", list.getId(), callback, response.getStatusInfo().getStatusCode(), response.getStatusInfo().getReasonPhrase());
+                    log.error("NotificationActor: failed notification = {} to client = {}, code = {}, result = {}",
+                            list.getId(), callback, response.getStatusInfo().getStatusCode(),
+                            response.getStatusInfo().getReasonPhrase());
                     // TODO: Tell discovery provider...
                     DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
                     discoveryProvider.deleteSubscription(notification.getSubscription().getId());
                 }
             }
-            catch (JAXBException | IOException | WebApplicationException ex) {
-                log.error("NotificationActor: failed notification {} to client {}" + list.getId(), callback, ex);
+            catch (IOException | WebApplicationException | JAXBException ex) {
+                log.error("NotificationActor: failed notification = {} to client = {}, ex = {}",
+                        list.getId(), callback, ex);
                 DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
                 discoveryProvider.deleteSubscription(notification.getSubscription().getId());
             }
             finally {
+                log.debug("NotificationActor: completed - subscriptionId = {}, requesterId = {}, callback = {}",
+                        notification.getSubscription().getId(),
+                        notification.getSubscription().getSubscription().getRequesterId(),
+                        notification.getSubscription().getSubscription().getCallback());
+
                 if (response != null) {
                     response.close();
                 }
