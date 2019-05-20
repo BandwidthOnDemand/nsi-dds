@@ -16,6 +16,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.dao.DdsConfiguration;
+import net.es.nsi.dds.dao.RemoteSubscription;
+import net.es.nsi.dds.dao.RemoteSubscriptionCache;
 import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.DomParser;
 import net.es.nsi.dds.jaxb.configuration.PeerURLType;
@@ -89,6 +91,20 @@ public class Portal {
             "  </tr>";
         final String subcriptionTableClose = "</table></p>\n";
 
+
+        final String remoteSubcriptionTableOpen =
+            "<h2>My Subscriptions</h2>\n" +
+            "<p>" +
+            "<table border=\"1\" style=\"width:100%\">\n" +
+            "  <tr>\n" +
+            "    <th>subscriptionId</th>\n" +
+            "    <th>Version</th>\n" +
+            "    <th>Created</th>\n" +
+            "    <th>LastSuccessfulAudit</th>\n" +
+            "    <th>Remote DDS URL</th>\n" +
+            "  </tr>";
+        final String remoteSubcriptionTableClose = "</table></p>\n";
+
         final String documentTableOpen =
             "<h2>Documents</h2>\n" +
             "<p>" +
@@ -108,6 +124,7 @@ public class Portal {
 
         // Get a handle to the DDS configuration information.
         DdsConfiguration config = (DdsConfiguration) ConfigurationManager.INSTANCE.getApplicationContext().getBean("ddsConfiguration");
+        RemoteSubscriptionCache cache = (RemoteSubscriptionCache) ConfigurationManager.INSTANCE.getApplicationContext().getBean("remoteSubscriptionCache");
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
         // Include the page header.
@@ -131,7 +148,7 @@ public class Portal {
         sb.append(subcriptionTableOpen);
         for (Subscription subscription : discoveryProvider.getSubscriptions()) {
             sb.append("<tr>\n");
-            sb.append("<td><href a=\"");
+            sb.append("<td><a href=\"");
                 sb.append(subscription.getSubscription().getHref());
                 sb.append("\">");
                 sb.append(subscription.getSubscription().getId());
@@ -142,6 +159,25 @@ public class Portal {
             sb.append("<tr>\n");
         }
         sb.append(subcriptionTableClose);
+
+        if (cache != null) {
+          sb.append(remoteSubcriptionTableOpen);
+          for (RemoteSubscription rm : cache.values()) {
+            sb.append("<tr>\n");
+            sb.append("<td><a href=\"");
+                sb.append(rm.getSubscription().getHref());
+                sb.append("\">");
+                sb.append(rm.getSubscription().getId());
+                sb.append("</a></td>");
+            sb.append("<td>"); sb.append(rm.getSubscription().getVersion()); sb.append("</td>");
+            sb.append("<td>"); sb.append(rm.getCreated()); sb.append("</td>");
+            sb.append("<td>"); sb.append(rm.getLastSuccessfulAudit()); sb.append("</td>");
+            sb.append("<td>"); sb.append(rm.getDdsURL()); sb.append("</td>");
+            sb.append("<tr>\n");
+
+          }
+          sb.append(remoteSubcriptionTableClose);
+        }
 
         // Finally we add the document information held within DDS.
         sb.append(documentTableOpen);

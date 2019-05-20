@@ -64,6 +64,13 @@ public class RemoteSubscription implements Serializable {
     }
 
     /**
+     * @return the created
+     */
+    public Date getCreated() {
+        return new Date(created.getTime());
+    }
+
+    /**
      * @return the lastModified
      */
     public Date getLastModified() {
@@ -84,7 +91,7 @@ public class RemoteSubscription implements Serializable {
         return new Date(lastAudit.getTime());
     }
 
-    public Date getLastSuccessfulAduit() {
+    public Date getLastSuccessfulAudit() {
         return new Date(lastSuccessfulAudit.getTime());
     }
 }
