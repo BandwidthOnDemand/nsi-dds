@@ -77,7 +77,8 @@ public class Gof3DiscoveryRouter extends UntypedActor {
         else if (msg instanceof Gof3DiscoveryMsg) {
             Gof3DiscoveryMsg incoming = (Gof3DiscoveryMsg) msg;
 
-            log.debug("onReceive: discovery update for nsaId=" + incoming.getNsaId());
+            log.debug("onReceive: discovery update for nsaId={}, nsaURL={}",
+                    incoming.getNsaId(), incoming.getNsaURL());
 
             discovery.put(incoming.getNsaURL(), incoming);
         }
