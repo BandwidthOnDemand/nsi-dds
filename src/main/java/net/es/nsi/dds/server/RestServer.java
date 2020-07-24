@@ -7,13 +7,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import javax.net.ssl.SSLContext;
 import net.es.nsi.dds.authorization.SecurityFilter;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.grizzly.ssl.SSLEngineConfigurator;
-import org.glassfish.jersey.filter.LoggingFilter;
+import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -89,7 +90,8 @@ public class RestServer {
 
         return rs.registerClasses(SecurityFilter.class)
                 .register(new MoxyXmlFeature())
-                .register(new LoggingFilter(java.util.logging.Logger.getLogger(RestServer.class.getName()), true));
+                .register(new LoggingFeature(java.util.logging.Logger.getLogger(RestServer.class.getName()),
+                        Level.ALL, LoggingFeature.Verbosity.PAYLOAD_ANY, 10000));
     }
 
     private URI getServerURI() {

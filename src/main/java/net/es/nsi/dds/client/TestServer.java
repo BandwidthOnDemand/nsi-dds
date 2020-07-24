@@ -5,10 +5,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.jaxb.dds.NotificationListType;
 import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.logging.LoggingFeature;
+import java.util.logging.Level;
 
 public enum TestServer {
     INSTANCE;
@@ -76,6 +77,7 @@ public enum TestServer {
                 .packages(packageName)
                 .register(DdsNotificationCallback.class) // Remove this if packages gets fixed.
                 .register(new MoxyXmlFeature())
-                .register(new LoggingFilter(java.util.logging.Logger.getGlobal(), true));
+                .register(new LoggingFeature(java.util.logging.Logger.getGlobal(), Level.INFO,
+                        LoggingFeature.Verbosity.PAYLOAD_ANY, 10000));
     }
 }

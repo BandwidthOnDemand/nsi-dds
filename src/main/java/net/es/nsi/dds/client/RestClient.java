@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.Client;
@@ -22,6 +23,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import net.es.nsi.dds.config.http.HttpsConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
+import net.es.nsi.dds.server.RestServer;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.NsiConstants;
 import org.apache.http.client.config.RequestConfig;
@@ -39,7 +41,6 @@ import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.RequestEntityProcessing;
-import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
@@ -133,7 +134,8 @@ public class RestClient {
 
         clientConfig.register(GZipEncoder.class);
         clientConfig.register(new MoxyXmlFeature());
-        clientConfig.register(new LoggingFilter(java.util.logging.Logger.getGlobal(), true));
+        clientConfig.register(new LoggingFeature(java.util.logging.Logger.getGlobal(), Level.ALL,
+                LoggingFeature.Verbosity.PAYLOAD_ANY, 10000));
         clientConfig.property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.CHUNKED);
 
         // Apache specific configuration.

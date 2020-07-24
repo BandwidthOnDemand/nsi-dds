@@ -110,8 +110,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
         // Read the NSA description into a string buffer to avoid parsing
         // errors on goofy characters.
         StringBuilder result = new StringBuilder();
-        try (ChunkedInput<String> chunkedInput = response.readEntity(new GenericType<ChunkedInput<String>>() {
-        })) {
+        try (ChunkedInput<String> chunkedInput = response.readEntity(new GenericType<ChunkedInput<String>>() {})) {
           String chunk;
           while ((chunk = chunkedInput.read()) != null) {
             result.append(chunk);
@@ -227,8 +226,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
         // Read the NML topology into a string buffer to avoid parsing
         // errors on goofy characters.
         StringBuilder result = new StringBuilder();
-        try (ChunkedInput<String> chunkedInput = response.readEntity(new GenericType<ChunkedInput<String>>() {
-        })) {
+        try (ChunkedInput<String> chunkedInput = response.readEntity(new GenericType<ChunkedInput<String>>() {})) {
           String chunk;
           while ((chunk = chunkedInput.read()) != null) {
             result.append(chunk);
