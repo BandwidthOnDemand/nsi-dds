@@ -13,8 +13,8 @@ import org.glassfish.jersey.SslConfigurator;
 public class HttpsConfig {
     private final ObjectFactory factory = new ObjectFactory();
 
-    private String basedir;
-    private SecureType config;
+    private String      basedir;
+    private SecureType  config;
 
     public HttpsConfig(SecureType config) throws IOException {
         if (config == null) {
@@ -73,4 +73,8 @@ public class HttpsConfig {
     public boolean isProduction() {
         return config.isProduction();
     }
+
+    public int getMaxConnPerRoute() { return config.getMaxConnPerRoute(); }
+
+    public int getMaxConnTotal() { return config.getMaxConnTotal(); }
 }

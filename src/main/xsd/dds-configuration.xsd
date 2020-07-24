@@ -96,6 +96,8 @@
             <xsd:element name="trustStore" type="tns:KeyStoreType" />
         </xsd:sequence>
         <xsd:attribute   name="production" type="xsd:boolean" default="true"/>
+        <xsd:attribute   name="maxConnPerRoute" type="xsd:int" default="20"/>
+        <xsd:attribute   name="maxConnTotal" type="xsd:int" default="80"/>
     </xsd:complexType>
 
     <xsd:complexType name="KeyStoreType">

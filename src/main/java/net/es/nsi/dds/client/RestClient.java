@@ -8,7 +8,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.Client;
@@ -23,7 +22,6 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBElement;
 import net.es.nsi.dds.config.http.HttpsConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
-import net.es.nsi.dds.server.RestServer;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.NsiConstants;
 import org.apache.http.client.config.RequestConfig;
@@ -41,6 +39,7 @@ import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.RequestEntityProcessing;
+import java.util.logging.Level;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
@@ -67,8 +66,12 @@ public class RestClient {
     private final static String TCP_CONNECT_REQUEST_TIMEOUT = "tcpConnectRequestTimeout";
     private final static int CONNECT_REQUEST_TIMEOUT = 30 * 1000;
 
+    // Connection provider pool configuration defaults.
+    private final static int MAX_CONNECTION_PER_ROUTE = 5;
+    private final static int MAX_CONNECTION_TOTAL = 50;
+
     public RestClient() {
-        ClientConfig clientConfig = configureClient();
+        ClientConfig clientConfig = configureClient(MAX_CONNECTION_PER_ROUTE, MAX_CONNECTION_TOTAL);
         client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
         client.property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_SERVER, "DEBUG");
     }
@@ -81,7 +84,7 @@ public class RestClient {
     public RestClient(DdsConfiguration config) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
         HttpsConfig cf = config.getClientConfig();
         if (cf == null) {
-            ClientConfig clientConfig = configureClient();
+            ClientConfig clientConfig = configureClient(MAX_CONNECTION_PER_ROUTE, MAX_CONNECTION_TOTAL);
             client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
         }
         else {
@@ -114,21 +117,27 @@ public class RestClient {
                 .build();
 
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(registry);
-        return getClientConfig(connectionManager);
+        return getClientConfig(connectionManager, config.getMaxConnPerRoute(), config.getMaxConnTotal());
+    }
+
+    public static ClientConfig configureClient(int maxPerRoute, int maxTotal) {
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        return getClientConfig(connectionManager, maxPerRoute, maxTotal);
     }
 
     public static ClientConfig configureClient() {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        return getClientConfig(connectionManager);
+        return getClientConfig(connectionManager, MAX_CONNECTION_PER_ROUTE, MAX_CONNECTION_TOTAL);
     }
 
-    public static ClientConfig getClientConfig(PoolingHttpClientConnectionManager connectionManager) {
+    public static ClientConfig getClientConfig(PoolingHttpClientConnectionManager connectionManager,
+                                               int maxPerRoute, int maxTotal) {
         ClientConfig clientConfig = new ClientConfig();
 
         // We want to use the Apache connector for chunk POST support.
         clientConfig.connectorProvider(new ApacheConnectorProvider());
-        connectionManager.setDefaultMaxPerRoute(20);
-        connectionManager.setMaxTotal(80);
+        connectionManager.setDefaultMaxPerRoute(maxPerRoute);
+        connectionManager.setMaxTotal(maxTotal);
         connectionManager.closeIdleConnections(30, TimeUnit.SECONDS);
         clientConfig.property(ApacheClientProperties.CONNECTION_MANAGER, connectionManager);
 
