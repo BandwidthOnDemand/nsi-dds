@@ -19,14 +19,6 @@
         <jung.version>2.0.1</jung.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>surfnet-public-releases</id>
-            <name>surfnet-public-releases</name>
-            <url>http://atlas.dlp.surfnet.nl/nexus/content/repositories/public-releases</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
