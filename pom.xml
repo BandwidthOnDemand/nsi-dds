@@ -4,11 +4,11 @@
 
     <groupId>net.es.nsi</groupId>
     <artifactId>nsi-dds</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <scm>
       <developerConnection>scm:git:https://github.com/BandwidthOnDemand/nsi-dds.git</developerConnection>
-      <tag>1.0.1</tag>
+      <tag>HEAD</tag>
     </scm>
 
     <properties>
