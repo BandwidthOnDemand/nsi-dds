@@ -12,5 +12,6 @@ config/repository/*.xml
 /src/test/resources/config/repository/
 /src/main/resources/git.properties
 *.swp
+.java-version
 
 src/main/resources/git.properties
