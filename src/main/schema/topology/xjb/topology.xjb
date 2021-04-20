@@ -1,10 +1,8 @@
 <jxb:bindings version="1.0"
   xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
-  jxb:extensionBindingPrefixes="xjc">
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-    <jxb:bindings schemaLocation="nmlbase.xsd" node="/xs:schema">
+    <jxb:bindings schemaLocation="../xsd/nmlbase.xsd" node="/xsd:schema">
         <jxb:schemaBindings>
             <jxb:nameXmlTransform>
             	<jxb:typeName prefix="Nml"/>
@@ -13,26 +11,26 @@
         </jxb:schemaBindings>
     </jxb:bindings>
 
-    <jxb:bindings schemaLocation="nsi-ext.xsd" node="/xs:schema">
+    <jxb:bindings schemaLocation="../xsd/nsi-ext.xsd" node="/xsd:schema">
         <jxb:schemaBindings>
             <jxb:nameXmlTransform>
                 <jxb:typeName prefix="Nml"/>
                 <jxb:anonymousTypeName prefix="Nml"/>
             </jxb:nameXmlTransform>
         </jxb:schemaBindings>
-        <jxb:bindings node=".//xs:element[@name='Service']">
+        <jxb:bindings node=".//xsd:element[@name='Service']">
                 <jxb:factoryMethod name="NsaService"/>
         </jxb:bindings>
     </jxb:bindings>
 
-    <jxb:bindings schemaLocation="nml-ethernet.xsd" node="/xs:schema">
+    <jxb:bindings schemaLocation="../xsd/nml-ethernet.xsd" node="/xsd:schema">
         <jxb:schemaBindings>
             <jxb:nameXmlTransform>
                 <jxb:typeName prefix="Eth"/>
                 <jxb:anonymousTypeName prefix="Eth"/>
             </jxb:nameXmlTransform>
         </jxb:schemaBindings>
-        <jxb:bindings node=".//xs:element[@name='label']">
+        <jxb:bindings node=".//xsd:element[@name='label']">
                 <jxb:factoryMethod name="EthLabel"/>
         </jxb:bindings>
     </jxb:bindings>

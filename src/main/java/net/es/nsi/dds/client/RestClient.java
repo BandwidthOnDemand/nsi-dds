@@ -8,8 +8,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestContext;
@@ -28,7 +28,6 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -39,7 +38,6 @@ import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.RequestEntityProcessing;
-import java.util.logging.Level;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
@@ -47,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The singleton class (bean) provides the DDS server's REST client for communication with remote DDS servers.
  *
  * @author hacksaw
  */
@@ -70,17 +69,44 @@ public class RestClient {
     private final static int MAX_CONNECTION_PER_ROUTE = 5;
     private final static int MAX_CONNECTION_TOTAL = 50;
 
+    /**
+     * Default constructor uses default configuration values.
+     */
     public RestClient() {
         ClientConfig clientConfig = configureClient(MAX_CONNECTION_PER_ROUTE, MAX_CONNECTION_TOTAL);
         client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
         client.property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_SERVER, "DEBUG");
     }
 
+    /**
+     * This constructor accepts a specific HttpsConfig.
+     *
+     * @param config The HttpsConfig to apply to the RestClient.
+     *
+     * @throws KeyStoreException
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws CertificateException
+     * @throws KeyManagementException
+     * @throws UnrecoverableKeyException
+     */
     public RestClient(HttpsConfig config) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
         ClientConfig clientConfig = configureSecureClient(config);
         client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
     }
 
+    /**
+     * This constructor accepts a full DDS configuration document.
+     *
+     * @param config The DDS configuration document.
+     *
+     * @throws KeyStoreException
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws CertificateException
+     * @throws KeyManagementException
+     * @throws UnrecoverableKeyException
+     */
     public RestClient(DdsConfiguration config) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
         HttpsConfig cf = config.getClientConfig();
         if (cf == null) {
@@ -93,11 +119,23 @@ public class RestClient {
         }
     }
 
+    /**
+     * We treat this RestClient as a singleton and this method provides the instance.
+     *
+     * @return instance of this singleton.
+     */
     public static RestClient getInstance() {
         RestClient restClient = SpringApplicationContext.getBean("restClient", RestClient.class);
         return restClient;
     }
 
+
+    /**
+     * Configure the client for TLS communications.
+     *
+     * @param config The HttpsConfig object providing SLL/TLS configuration information.
+     * @return a client configuration.
+     */
     public static ClientConfig configureSecureClient(HttpsConfig config) {
         HostnameVerifier hostnameVerifier;
         if (config.isProduction()) {
@@ -107,29 +145,45 @@ public class RestClient {
             hostnameVerifier = new NoopHostnameVerifier();
         }
 
-        SSLContext sslContext = config.getSSLContext();
-        LayeredConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
-        PlainConnectionSocketFactory socketFactory = PlainConnectionSocketFactory.getSocketFactory();
-
         final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", socketFactory)
-                .register("https", sslSocketFactory)
+                .register("http", new PlainConnectionSocketFactory())
+                .register("https", new SSLConnectionSocketFactory(config.getSSLContext(), hostnameVerifier))
                 .build();
 
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(registry);
         return getClientConfig(connectionManager, config.getMaxConnPerRoute(), config.getMaxConnTotal());
     }
 
+    /**
+     * Configure the client for insecure communications.
+     *
+     * @param maxPerRoute The max connections per destination.
+     * @param maxTotal The max connection total across all destinations.
+     * @return
+     */
     public static ClientConfig configureClient(int maxPerRoute, int maxTotal) {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         return getClientConfig(connectionManager, maxPerRoute, maxTotal);
     }
 
+    /**
+     * Configure the default client configuration.
+     *
+     * @return The default client configuration.
+     */
     public static ClientConfig configureClient() {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         return getClientConfig(connectionManager, MAX_CONNECTION_PER_ROUTE, MAX_CONNECTION_TOTAL);
     }
 
+    /**
+     * Creates a client configuration based on the provided configuration.
+     *
+     * @param connectionManager Connection manager used to configure the client configuration.
+     * @param maxPerRoute  The max connections per destination.
+     * @param maxTotal The max connection total across all destinations.
+     * @return The new client configuration.
+     */
     public static ClientConfig getClientConfig(PoolingHttpClientConnectionManager connectionManager,
                                                int maxPerRoute, int maxTotal) {
         ClientConfig clientConfig = new ClientConfig();
@@ -160,14 +214,25 @@ public class RestClient {
         return clientConfig;
     }
 
+    /**
+     * Getter returning the HTTP client.
+     *
+     * @return The HTTP client.
+     */
     public Client get() {
         return client;
     }
 
+    /**
+     * Close the associated HTTP client.
+     */
     public void close() {
         client.close();
     }
 
+    /**
+     * Filter to allow for an HTTP redirect on an HTTP operation.
+     */
     private static class FollowRedirectFilter implements ClientResponseFilter
     {
         private final static Logger log = LoggerFactory.getLogger(FollowRedirectFilter.class);
