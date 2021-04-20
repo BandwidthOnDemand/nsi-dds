@@ -10,12 +10,23 @@ import net.es.nsi.dds.jaxb.configuration.ObjectFactory;
 import net.es.nsi.dds.jaxb.configuration.SecureType;
 import org.glassfish.jersey.SslConfigurator;
 
+/**
+ * Convert security configuration from jaxb configuration file type to something usable by system.
+ *
+ * @author hacksaw
+ */
 public class HttpsConfig {
     private final ObjectFactory factory = new ObjectFactory();
 
     private String      basedir;
     private SecureType  config;
 
+    /**
+     * Convert provided jaxb security configuration object into an HttpConfig object.
+     *
+     * @param config
+     * @throws IOException
+     */
     public HttpsConfig(SecureType config) throws IOException {
         if (config == null) {
             throw new IllegalArgumentException("HttpConfig: server configuration not provided");
@@ -49,6 +60,13 @@ public class HttpsConfig {
         this.config = config;
     }
 
+    /**
+     * Get the absolute path for inPath.
+     *
+     * @param inPath
+     * @return
+     * @throws IOException
+     */
     private String getAbsolutePath(String inPath) throws IOException {
         Path outPath = Paths.get(inPath);
         if (!outPath.isAbsolute()) {
@@ -58,8 +76,13 @@ public class HttpsConfig {
         return outPath.toRealPath().toString();
     }
 
+    /**
+     * Get the default SSL context and add our specific configuration.
+     *
+     * @return New SSLContext for HTTP client.
+     */
     public SSLContext getSSLContext() {
-        SslConfigurator sslConfig = SslConfigurator.newInstance()
+        SslConfigurator sslConfig = SslConfigurator.newInstance(true)
             .trustStoreFile(config.getTrustStore().getFile())
             .trustStorePassword(config.getTrustStore().getPassword())
             .trustStoreType(config.getTrustStore().getType())
@@ -70,11 +93,26 @@ public class HttpsConfig {
         return sslConfig.createSSLContext();
     }
 
+    /**
+     * Is this server configured for production?
+     *
+     * @return true if configured for production.
+     */
     public boolean isProduction() {
         return config.isProduction();
     }
 
+    /**
+     * Get maximum connections per destination.
+     *
+     * @return
+     */
     public int getMaxConnPerRoute() { return config.getMaxConnPerRoute(); }
 
+    /**
+     * Get total number of connections across all destinations.
+     *
+     * @return
+     */
     public int getMaxConnTotal() { return config.getMaxConnTotal(); }
 }
