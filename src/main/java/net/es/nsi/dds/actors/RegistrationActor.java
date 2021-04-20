@@ -133,18 +133,21 @@ public class RegistrationActor extends UntypedActor {
 
         Response response = null;
         try {
-            log.debug("RegistrationActor: registering with remote DDS {}", remoteDdsURL);
+            log.debug("RegistrationActor.register: registering with remote DDS {}", remoteDdsURL);
+            
             String encoded = DdsParser.getInstance().subscriptionRequest2Xml(request);
             response = webTarget.request(NsiConstants.NSI_DDS_V1_XML)
                     .header(HttpHeaders.CONTENT_ENCODING, "gzip")
                     .post(Entity.entity(encoded, NsiConstants.NSI_DDS_V1_XML));
+
+            log.debug("RegistrationActor.register: result {} for {}", response.getStatusInfo(), remoteDdsURL);
 
             if (response.getStatus() == Response.Status.CREATED.getStatusCode()) {
                 // Looks like we were successful so save the subscription information.
                 SubscriptionType newSubscription = response.readEntity(SubscriptionType.class);
                 logger.log(DdsLogs.DDS_SUBSCRIPTION_CREATED, remoteDdsURL, newSubscription.getHref());
 
-                log.debug("RegistrationActor: registered with remote DDS {}, id={}", remoteDdsURL, newSubscription.getId());
+                log.debug("RegistrationActor.register: registered with remote DDS {}, id={}", remoteDdsURL, newSubscription.getId());
 
                 RemoteSubscription remoteSubscription = new RemoteSubscription();
                 remoteSubscription.setDdsURL(remoteDdsURL);
