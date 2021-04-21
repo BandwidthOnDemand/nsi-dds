@@ -913,6 +913,7 @@ public class DiscoveryService {
         try {
             String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);
             String encoded = DdsParser.getInstance().subscription2Xml(subscription.getSubscription());
+            log.debug("addSubscription: resonse\n{}", encoded);
             return Response.created(URI.create(subscription.getSubscription().getHref())).header("Last-Modified", date).entity(encoded).build();
         } catch (JAXBException | IOException ex) {
             WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/subscriptions", "Unable to format XML response " + ex.getMessage());

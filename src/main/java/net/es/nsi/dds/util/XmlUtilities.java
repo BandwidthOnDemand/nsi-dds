@@ -77,7 +77,7 @@ public class XmlUtilities {
                 jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
                 jaxbMarshaller.marshal(jaxbElement, writer);
                 result = writer.toString();
-            } catch (Exception e) {
+            } catch (JAXBException e) {
                 // Something went wrong so get out of here.
                 return null;
             }

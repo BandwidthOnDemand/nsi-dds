@@ -134,17 +134,16 @@ public class RegistrationActor extends UntypedActor {
         Response response = null;
         try {
             log.debug("RegistrationActor.register: registering with remote DDS {}", remoteDdsURL);
-            
+
             String encoded = DdsParser.getInstance().subscriptionRequest2Xml(request);
             response = webTarget.request(NsiConstants.NSI_DDS_V1_XML)
                     .header(HttpHeaders.CONTENT_ENCODING, "gzip")
                     .post(Entity.entity(encoded, NsiConstants.NSI_DDS_V1_XML));
 
-            log.debug("RegistrationActor.register: result {} for {}", response.getStatusInfo(), remoteDdsURL);
-
-            if (response.getStatus() == Response.Status.CREATED.getStatusCode()) {
+            if (response.getStatusInfo().getStatusCode() == Response.Status.CREATED.getStatusCode()) {
                 // Looks like we were successful so save the subscription information.
-                SubscriptionType newSubscription = response.readEntity(SubscriptionType.class);
+                SubscriptionType newSubscription = DdsParser.getInstance().xml2Subscription(response.readEntity(String.class));
+
                 logger.log(DdsLogs.DDS_SUBSCRIPTION_CREATED, remoteDdsURL, newSubscription.getHref());
 
                 log.debug("RegistrationActor.register: registered with remote DDS {}, id={}", remoteDdsURL, newSubscription.getId());
@@ -172,7 +171,7 @@ public class RegistrationActor extends UntypedActor {
             else {
                 log.error("RegistrationActor.register: failed to create subscription {}, result = {}", remoteDdsURL, response.getStatusInfo().getReasonPhrase());
 
-                ErrorType error = response.readEntity(ErrorType.class);
+                ErrorType error = DdsParser.getInstance().xml2Error(response.readEntity(String.class));
                 if (error != null) {
                     log.error("RegistrationActor.register: Error id={}, label={}, resource={}, description={}",
                             error.getId(), error.getLabel(), error.getResource(),
@@ -205,7 +204,7 @@ public class RegistrationActor extends UntypedActor {
 
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
                 // Looks like we were successful so save the subscription information.
-                SubscriptionListType subscriptions = response.readEntity(SubscriptionListType.class);
+                SubscriptionListType subscriptions = DdsParser.getInstance().xml2Subscriptions(response.readEntity(String.class));
 
                 // For each subscription returned registered to our nsaId we check to
                 // see if it is the one we just registered (current subscription).  If
@@ -224,7 +223,7 @@ public class RegistrationActor extends UntypedActor {
             }
             else {
                 log.error("Failed to retrieve list of subscriptions {}, result = {}", remoteDdsURL, response.getStatusInfo().getReasonPhrase());
-                ErrorType error = response.readEntity(ErrorType.class);
+                ErrorType error = DdsParser.getInstance().xml2Error(response.readEntity(String.class));
                 if (error != null) {
                     logger.error(DdsErrors.DDS_SUBSCRIPTION_GET_FAILED_DETAILED, webTarget.getUri().toASCIIString(), error.getId());
                 }
@@ -287,7 +286,7 @@ public class RegistrationActor extends UntypedActor {
                 // Save the new version even though we should have know about it.
                 remoteSubscription.setLastModified(response.getLastModified());
                 remoteSubscription.setLastSuccessfulAudit(new Date());
-                SubscriptionType update = response.readEntity(SubscriptionType.class);
+                SubscriptionType update = DdsParser.getInstance().xml2Subscription(response.readEntity(String.class));
                 remoteSubscription.setSubscription(update);
                 logger.log(DdsLogs.DDS_SUBSCRIPTION_UPDATE_DETECTED, absoluteURL, response.getLastModified().toString());
             }
@@ -304,7 +303,7 @@ public class RegistrationActor extends UntypedActor {
             // An unexpected error has occured.
             else {
                 // Some other error we cannot handle at the moment.
-                ErrorType error = response.readEntity(ErrorType.class);
+                ErrorType error = DdsParser.getInstance().xml2Error(response.readEntity(String.class));
                 if (error != null) {
                     logger.error(DdsErrors.DDS_SUBSCRIPTION_GET_FAILED_DETAILED, absoluteURL, error.getId());
                 }
@@ -350,9 +349,7 @@ public class RegistrationActor extends UntypedActor {
         String absoluteURL = webTarget.getUri().toASCIIString();
 
         boolean result = true;
-        Response response = null;
-        try {
-            response = webTarget.request(NsiConstants.NSI_DDS_V1_XML).delete();
+        try (Response response = webTarget.request(NsiConstants.NSI_DDS_V1_XML).delete()) {
 
             if (response.getStatus() == Response.Status.NO_CONTENT.getStatusCode()) {
                 // Successfully deleted the subscription.
@@ -363,7 +360,7 @@ public class RegistrationActor extends UntypedActor {
             }
             else {
                 log.error("RegistrationActor.delete: failed to delete subscription {}, result = {}", absoluteURL, response.getStatusInfo().getReasonPhrase());
-                ErrorType error = response.readEntity(ErrorType.class);
+                ErrorType error = DdsParser.getInstance().xml2Error(response.readEntity(String.class));
                 if (error != null) {
                     logger.error(DdsErrors.DDS_SUBSCRIPTION_DELETE_FAILED_DETAILED, absoluteURL, error.getId());
                 }
@@ -378,11 +375,6 @@ public class RegistrationActor extends UntypedActor {
             log.error("Failed to delete subscription {}", absoluteURL, ex);
             logger.error(DdsErrors.DDS_SUBSCRIPTION_DELETE_FAILED, absoluteURL);
             result = false;
-        }
-        finally {
-            if (response != null) {
-                response.close();
-            }
         }
         return result;
     }

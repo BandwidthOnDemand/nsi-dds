@@ -7,6 +7,7 @@ import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.jaxb.dds.CollectionType;
 import net.es.nsi.dds.jaxb.dds.DocumentListType;
 import net.es.nsi.dds.jaxb.dds.DocumentType;
+import net.es.nsi.dds.jaxb.dds.ErrorType;
 import net.es.nsi.dds.jaxb.dds.NotificationListType;
 import net.es.nsi.dds.jaxb.dds.NotificationType;
 import net.es.nsi.dds.jaxb.dds.ObjectFactory;
@@ -67,9 +68,17 @@ public class DdsParser extends JaxbParser {
         return this.jaxb2Xml(jaxb);
     }
 
+    public DocumentType xml2Document(String input) throws JAXBException, IllegalArgumentException {
+        return this.xml2Jaxb(DocumentType.class, input);
+    }
+
     public String documents2Xml(DocumentListType documents) throws JAXBException, IOException {
         JAXBElement<DocumentListType> jaxb = factory.createDocuments(documents);
         return this.jaxb2Xml(jaxb);
+    }
+
+    public DocumentListType xml2Documents(String input) throws JAXBException, IllegalArgumentException {
+        return this.xml2Jaxb(DocumentListType.class, input);
     }
 
     public String collection2Xml(CollectionType collection) throws JAXBException, IOException {
@@ -77,9 +86,17 @@ public class DdsParser extends JaxbParser {
         return this.jaxb2Xml(jaxb);
     }
 
+    public CollectionType xml2Collection(String input) throws JAXBException, IllegalArgumentException {
+        return this.xml2Jaxb(CollectionType.class, input);
+    }
+
     public String subscriptions2Xml(SubscriptionListType list) throws JAXBException, IOException {
         JAXBElement<SubscriptionListType> jaxb = factory.createSubscriptions(list);
         return this.jaxb2Xml(jaxb);
+    }
+
+    public SubscriptionListType xml2Subscriptions(String input) throws JAXBException, IllegalArgumentException {
+        return this.xml2Jaxb(SubscriptionListType.class, input);
     }
 
     public String subscription2Xml(SubscriptionType subscription) throws JAXBException, IOException {
@@ -87,9 +104,17 @@ public class DdsParser extends JaxbParser {
         return this.jaxb2Xml(jaxb);
     }
 
+    public SubscriptionType xml2Subscription(String input) throws JAXBException, IllegalArgumentException {
+        return this.xml2Jaxb(SubscriptionType.class, input);
+    }
+
     public String notifications2Xml(NotificationListType list) throws JAXBException, IOException {
         JAXBElement<NotificationListType> jaxb = factory.createNotifications(list);
         return this.jaxb2Xml(jaxb);
+    }
+
+    public NotificationListType xml2Notifications(String input) throws JAXBException, IllegalArgumentException {
+        return this.xml2Jaxb(NotificationListType.class, input);
     }
 
     public String notification2Xml(NotificationType notification) throws JAXBException, IOException {
@@ -97,9 +122,21 @@ public class DdsParser extends JaxbParser {
         return this.jaxb2Xml(jaxb);
     }
 
+    public NotificationType xml2Notification(String input) throws JAXBException, IllegalArgumentException {
+        return this.xml2Jaxb(NotificationType.class, input);
+    }
+
     public String subscriptionRequest2Xml(SubscriptionRequestType request) throws JAXBException, IOException {
         JAXBElement<SubscriptionRequestType> jaxb = factory.createSubscriptionRequest(request);
         return this.jaxb2Xml(jaxb);
+    }
+
+    public SubscriptionRequestType xml2SubscriptionRequest(String input) throws JAXBException, IllegalArgumentException {
+        return this.xml2Jaxb(SubscriptionRequestType.class, input);
+    }
+
+    public ErrorType xml2Error(String input) throws JAXBException, IllegalArgumentException {
+        return this.xml2Jaxb(ErrorType.class, input);
     }
 
     public String xmlFormatter(DocumentType document) throws JAXBException {
