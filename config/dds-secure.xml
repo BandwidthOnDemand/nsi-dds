@@ -61,6 +61,7 @@
         </secure>
     </server>
     
+    <!-- Set production="true" if host and certificate validation should be enforced. --> 
     <client production="true">
         <keyStore type="JKS">
             <file>config/keystore.jks</file>
@@ -72,13 +73,37 @@
         </trustStore>
     </client>
     
-    <accessControl enabled="true">
+    <!-- 
+        Set enabled="true" if you would like certificate DN authorization enforced.
+        
+        ** Read Access **
+        The specified DN can only read contents of the DDS.
+        
         <rule access="read">
-		<dn>EMAILADDRESS=bob@example.com, CN=Bobby Boogie, OU=Sciences Network, O=Example Networks, L=New York, ST=NY, C=US</dn>
+            <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
         </rule>
+            
+        ** Write Access **
+        The specified DN can read contents of the DDS, and write contents of the DDS
+        for a specific nsaId.
+        
         <rule access="write">
-                <dn>CN=nsi-aggr-west.es.net, OU=Domain Control Validated</dn>
-		<nsaId>urn:ogf:network:es.net:2013:nsa:nsi-aggr-west</nsaId>
+            <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
+            <nsaId>urn:ogf:network:es.net:2014:nsa:nsi-aggr-west</nsaId>
+        </rule>
+        
+        ** Admin Access **
+        The specified DN can read contents of the DDS, and write all contents of the
+        DDS including notifications.  DNs listed hear also have access to the DDS portal.
+        
+        <rule access="admin">
+            <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
+        </rule>
+    
+    --> 
+    <accessControl enabled="true">
+        <rule access="admin">
+            <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
         </rule>
     </accessControl>
 
