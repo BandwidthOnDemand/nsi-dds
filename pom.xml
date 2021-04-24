@@ -16,38 +16,21 @@
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <jersey.version>2.33</jersey.version>
+    <jersey.version>3.0.1</jersey.version> <!-- 2.33 -->
   </properties>
 
   <dependencies>
     <!-- Jersey for JAX-RS and HTTP container runtime. -->
     <dependency>
       <groupId>org.glassfish.jersey.containers</groupId>
-      <artifactId>jersey-container-grizzly2-servlet</artifactId>
+      <artifactId>jersey-container-grizzly2-http</artifactId>
       <version>${jersey.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.glassfish.jersey.media</groupId>
       <artifactId>jersey-media-moxy</artifactId>
-      <version>${jersey.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish.jersey.core</groupId>
-      <artifactId>jersey-common</artifactId>
-      <version>${jersey.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish.jersey.inject</groupId>
-      <artifactId>jersey-hk2</artifactId>
-      <version>${jersey.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish.jersey.ext</groupId>
-      <artifactId>jersey-proxy-client</artifactId>
       <version>${jersey.version}</version>
     </dependency>
 
@@ -58,13 +41,53 @@
     </dependency>
 
     <dependency>
-      <groupId>org.glassfish.jersey.test-framework.providers</groupId>
-      <artifactId>jersey-test-framework-provider-bundle</artifactId>
+      <groupId>org.glassfish.jersey.inject</groupId>
+      <artifactId>jersey-hk2</artifactId>
       <version>${jersey.version}</version>
-      <type>pom</type>
-      <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.glassfish.hk2</groupId>
+      <artifactId>hk2-metadata-generator</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-common</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+
+
+    <!-- Needed for our use of JAXB API bindings. -->
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+
+    <!-- Needed for REST API bindings. -->
+    <dependency>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
+      <version>3.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- JAXB Runtime -->
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+<!--
+<dependency>
+    <groupId>javax.xml.bind</groupId>
+    <artifactId>jaxb-api</artifactId>
+    <version>2.3.1</version>
+</dependency>
+-->
+    <!-- For transfer encoding support. -->
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>javax.mail-api</artifactId>
@@ -77,26 +100,39 @@
       <version>1.6.2</version>
     </dependency>
 
+    <!-- For priority annotations. -->
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.5.13</version>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+      <version>1.3.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
     </dependency>
 
     <!-- For spring beans to drive configuration loading. -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>4.3.30.RELEASE</version>
+      <version>5.3.5</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>4.3.30.RELEASE</version>
+      <version>5.3.5</version>
     </dependency>
 
-    <!-- The agent messaging infrestructure for internal communciations. -->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.13</version>
+    </dependency>
+
+    <!-- The agent messaging infrastructure for internal communications. -->
     <dependency>
       <groupId>com.typesafe.akka</groupId>
       <artifactId>akka-actor_2.10</artifactId>
@@ -217,12 +253,14 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- This is for xjc XML schema compiler. -->
     <dependency>
-      <groupId>org.glassfish.jaxb</groupId>
-      <artifactId>jaxb-runtime</artifactId>
-      <version>2.4.0-b180830.0438</version>
+      <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+      <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+      <version>${jersey.version}</version>
+      <scope>test</scope>
     </dependency>
+
+
   </dependencies>
 
   <build>
@@ -282,8 +320,8 @@
         <version>3.8.1</version>
         <configuration>
           <!-- Compatible down to java 1.8. Tested 1.8, 11, and 15. -->
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>15</source>
+          <target>15</target>
           <!-- <releaase>11</releaase> -->
           <compilerArgument>-Xlint:deprecation</compilerArgument>
         </configuration>
@@ -432,13 +470,22 @@
           <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-xjc</artifactId>
-            <version>2.4.0-b180830.0438</version>
+            <version>3.0.0</version>
+            <scope>compile</scope>
           </dependency>
-          <dependency>
 
-            <groupId>com.sun.activation</groupId>
-            <artifactId>jakarta.activation</artifactId>
-            <version>1.2.2</version>
+          <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>3.0.0</version>
+            <scope>compile</scope>
+          </dependency>
+
+          <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>3.0.0</version>
+            <scope>compile</scope>
           </dependency>
         </dependencies>
       </plugin>
@@ -455,12 +502,12 @@
               <goal>run</goal>
             </goals>
             <configuration>
-              <tasks>
+              <target>
                 <echo>Copying test files to unit test locations.</echo>
                 <copy todir="${project.basedir}/src/test/resources/config/cache">
                   <fileset dir="${project.basedir}/src/test/resources/test-cache" />
                 </copy>
-              </tasks>
+              </target>
             </configuration>
           </execution>
         </executions>
@@ -493,7 +540,7 @@
         <configuration>
           <argLine>--illegal-access=permit</argLine>
           <argLine>-Xmx1024m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true</argLine>
-          <argLine>-Djersey.config.test.container.port=8401</argLine>
+          <argLine>-Djersey.config.test.container.port=8801</argLine>
           <argLine>-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true</argLine>
         </configuration>
       </plugin>

@@ -1,9 +1,9 @@
 package net.es.nsi.dds.jaxb;
 
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.jaxb.dds.CollectionType;
 import net.es.nsi.dds.jaxb.dds.DocumentListType;
 import net.es.nsi.dds.jaxb.dds.DocumentType;
@@ -138,6 +138,12 @@ public class DdsParser extends JaxbParser {
     public ErrorType xml2Error(String input) throws JAXBException, IllegalArgumentException {
         return this.xml2Jaxb(ErrorType.class, input);
     }
+
+    public String error2Xml(ErrorType error) throws JAXBException, IOException {
+        JAXBElement<ErrorType> jaxb = factory.createError(error);
+        return this.jaxb2Xml(jaxb);
+    }
+
 
     public String xmlFormatter(DocumentType document) throws JAXBException {
         return this.jaxb2XmlFormatter(factory.createDocument(document));

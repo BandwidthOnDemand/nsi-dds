@@ -13,7 +13,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- *
+ * Decode a document from the encoded representation.
+ * 
  * @author hacksaw
  */
 public class Decoder {

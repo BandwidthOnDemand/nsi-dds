@@ -1,15 +1,15 @@
 package net.es.nsi.dds.gangofthree;
 
 import akka.actor.UntypedActor;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.JAXBException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.client.RestClient;

@@ -4,8 +4,8 @@
  */
 package net.es.nsi.dds.jersey;
 
+import jakarta.ws.rs.core.MediaType;
 import java.util.HashSet;
-import javax.ws.rs.core.MediaType;
 
 /**
  *

@@ -1,12 +1,12 @@
 package net.es.nsi.dds.provider;
 
+import jakarta.ws.rs.WebApplicationException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Date;
-import javax.ws.rs.WebApplicationException;
 import net.es.nsi.dds.api.DiscoveryError;
 import net.es.nsi.dds.api.Exceptions;
 import net.es.nsi.dds.jaxb.dds.DocumentType;

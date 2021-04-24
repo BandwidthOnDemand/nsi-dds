@@ -1,10 +1,11 @@
 package net.es.nsi.dds.lib;
 
+import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.security.KeyStoreException;
 import java.util.Date;
 import java.util.Optional;
-import javax.xml.bind.JAXBException;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -80,7 +81,7 @@ public class DocHelper {
             try {
                 SignatureFactory signatureFactory = new SignatureFactory(config.getSigningStore());
                 sig = Optional.of(signatureFactory.generateExternalSignature(doc.get(), config.getSigningAlias()));
-            } catch (XMLSignatureException | KeyStoreException | RuntimeException ex) {
+            } catch (XMLSignatureException | KeyStoreException | RuntimeException | NoSuchMethodException | InvocationTargetException ex) {
                 log.error("build: unable to create signature document", ex);
                 throw new IllegalArgumentException(ex);
             }
@@ -152,7 +153,7 @@ public class DocHelper {
             try {
                 SignatureFactory signatureFactory = new SignatureFactory(config.getSigningStore());
                 sig = Optional.of(signatureFactory.generateExternalSignature(doc.get(), config.getSigningAlias()));
-            } catch (XMLSignatureException | KeyStoreException | RuntimeException ex) {
+            } catch (XMLSignatureException | KeyStoreException | RuntimeException | NoSuchMethodException | InvocationTargetException ex) {
                 log.error("build: unable to create signature document", ex);
                 throw new IllegalArgumentException(ex);
             }

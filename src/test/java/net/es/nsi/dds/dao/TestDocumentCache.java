@@ -1,5 +1,6 @@
 package net.es.nsi.dds.dao;
 
+import jakarta.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -8,7 +9,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Collection;
-import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.provider.Document;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

@@ -1,11 +1,11 @@
 package net.es.nsi.dds.gangofthree;
 
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.jaxb.NmlParser;
 import net.es.nsi.dds.jaxb.nml.NmlNetworkObject;
 import net.es.nsi.dds.jaxb.nml.NmlSwitchingServiceType;

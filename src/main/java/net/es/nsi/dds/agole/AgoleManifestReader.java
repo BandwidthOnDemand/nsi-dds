@@ -1,15 +1,15 @@
 package net.es.nsi.dds.agole;
 
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.xml.bind.JAXBException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.jaxb.NmlParser;
@@ -193,7 +193,7 @@ public class AgoleManifestReader {
      * Returns a current version of the master topology, retrieving a new
      * version from the remote endpoint if available.
      *
-     * @throws javax.xml.bind.JAXBException
+     * @throws jakarta.xml.bind.JAXBException
      */
     public synchronized void loadManifest() throws NotFoundException, JAXBException {
 
@@ -219,7 +219,7 @@ public class AgoleManifestReader {
      * will be loaded only if there has yet to be a successful load.
      *
      * @return Master topology.
-     * @throws javax.xml.bind.JAXBException
+     * @throws jakarta.xml.bind.JAXBException
      */
     public TopologyManifest getManifest() throws NotFoundException, JAXBException {
         if (manifest == null) {
@@ -234,7 +234,7 @@ public class AgoleManifestReader {
      * was available from the remote endpoint if available.
      *
      * @return
-     * @throws javax.xml.bind.JAXBException
+     * @throws jakarta.xml.bind.JAXBException
      */
     public TopologyManifest getManifestIfModified() throws NotFoundException, JAXBException {
         TopologyManifest oldMasterTopology = manifest;

@@ -1,6 +1,7 @@
 package net.es.nsi.dds.dao;
 
 import com.google.common.base.Strings;
+import jakarta.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.authorization.AccessControlList;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.config.http.HttpConfig;

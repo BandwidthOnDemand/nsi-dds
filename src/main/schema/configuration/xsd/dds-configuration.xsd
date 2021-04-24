@@ -111,7 +111,7 @@
         </xsd:sequence>
         <xsd:attribute   name="type" type="xsd:string" default="JKS"/>
     </xsd:complexType>
-    
+
     <xsd:complexType name="SignatureStoreType">
         <xsd:annotation>
             <xsd:documentation xml:lang="en">
@@ -144,7 +144,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element name="dn"    type="tns:DistinguishedNameType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="dn"    type="tns:DistinguishedNameType" />
             <xsd:element name="nsaId" type="xsd:anyURI" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
         <xsd:attribute  name="access"  type="tns:AccessControlPermission"  default="read"/>
@@ -166,14 +166,14 @@
                 read - grants peer read-only access to documents within the document space.
                 write - grants read/write access to documents within the document space owned by specific NSA.
                 admin - grants read/write/admin access to the document space.
-
-                A peer DDS server is granted "write" access to its own nsaId for the purpose of subcription management.
+                peer - grants read/write/notification and subcription management capabiltiies for a peer NSA.
             </xsd:documentation>
         </xsd:annotation>
         <xsd:restriction base="xsd:string">
             <xsd:enumeration  value="read"/>
             <xsd:enumeration  value="write"/>
             <xsd:enumeration  value="admin"/>
+            <xsd:enumeration  value="peer"/>
         </xsd:restriction>
     </xsd:simpleType>
 

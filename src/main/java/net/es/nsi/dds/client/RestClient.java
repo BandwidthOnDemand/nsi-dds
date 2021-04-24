@@ -1,5 +1,15 @@
 package net.es.nsi.dds.client;
 
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.client.ClientResponseContext;
+import jakarta.ws.rs.client.ClientResponseFilter;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.GenericEntity;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.JAXBElement;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyManagementException;
@@ -10,16 +20,6 @@ import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.net.ssl.HostnameVerifier;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientResponseContext;
-import javax.ws.rs.client.ClientResponseFilter;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBElement;
 import net.es.nsi.dds.config.http.HttpsConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.spring.SpringApplicationContext;
@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
  * @author hacksaw
  */
 public class RestClient {
-    private final static Logger log = LoggerFactory.getLogger(RestClient.class);
     private final Client client;
 
     // Time for idle data timeout.
@@ -76,6 +75,7 @@ public class RestClient {
         ClientConfig clientConfig = configureClient(MAX_CONNECTION_PER_ROUTE, MAX_CONNECTION_TOTAL);
         client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
         client.property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_SERVER, "DEBUG");
+        client.property(LoggingFeature.LOGGING_FEATURE_VERBOSITY_CLIENT, LoggingFeature.Verbosity.PAYLOAD_ANY);
     }
 
     /**

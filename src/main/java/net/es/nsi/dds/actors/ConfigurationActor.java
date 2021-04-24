@@ -5,12 +5,12 @@
 package net.es.nsi.dds.actors;
 
 import akka.actor.UntypedActor;
+import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
-import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.messages.TimerMsg;
 import org.slf4j.Logger;

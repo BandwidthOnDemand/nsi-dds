@@ -1,7 +1,7 @@
 package net.es.nsi.dds.management;
 
 
-import javax.ws.rs.client.WebTarget;
+import jakarta.ws.rs.client.WebTarget;
 import net.es.nsi.dds.test.TestConfig;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

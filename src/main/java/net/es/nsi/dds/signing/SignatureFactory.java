@@ -1,6 +1,7 @@
 package net.es.nsi.dds.signing;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 /**
+ * Utility for signing XML DOM documents.
  *
  * @author hacksaw
  */
@@ -38,14 +40,14 @@ public class SignatureFactory {
     private final XMLSignatureFactory fac;
     private final KeyStoreHandler keyStoreHandler;
 
-    public SignatureFactory() throws KeyStoreException, RuntimeException {
+    public SignatureFactory() throws KeyStoreException, RuntimeException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
         // We are going to use the jsr105 provider to generate our digital signature.
         String providerName = System.getProperty("jsr105Provider", "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
 
         // Create a DOM XMLSignatureFactory that will be used to
         // generate the enveloped signature.
         try {
-            fac = XMLSignatureFactory.getInstance("DOM", (Provider) Class.forName(providerName).newInstance());
+            fac = XMLSignatureFactory.getInstance("DOM", (Provider) Class.forName(providerName).getDeclaredConstructor().newInstance());
         } catch (ClassNotFoundException | InstantiationException| IllegalAccessException ex) {
             log.error("SignatureFactory: could not instantiate a jsr105Provider", ex);
             throw new RuntimeException(ex);
@@ -59,14 +61,14 @@ public class SignatureFactory {
         }
     }
 
-    public SignatureFactory(KeyStoreHandler keyStoreHandler) throws RuntimeException {
+    public SignatureFactory(KeyStoreHandler keyStoreHandler) throws RuntimeException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
         // We are going to use the jsr105 provider to generate our digital signature.
         String providerName = System.getProperty("jsr105Provider", "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
 
         // Create a DOM XMLSignatureFactory that will be used to
         // generate the enveloped signature.
         try {
-            fac = XMLSignatureFactory.getInstance("DOM", (Provider) Class.forName(providerName).newInstance());
+            fac = XMLSignatureFactory.getInstance("DOM", (Provider) Class.forName(providerName).getDeclaredConstructor().newInstance());
         } catch (ClassNotFoundException | InstantiationException| IllegalAccessException ex) {
             log.error("SignatureFactory: could not instantiate a jsr105Provider", ex);
             throw new RuntimeException(ex);

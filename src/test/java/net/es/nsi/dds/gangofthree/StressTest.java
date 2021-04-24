@@ -1,15 +1,15 @@
 package net.es.nsi.dds.gangofthree;
 
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.client.TestServer;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;

@@ -1,9 +1,9 @@
 package net.es.nsi.dds.management;
 
 import com.google.common.base.Optional;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import net.es.nsi.dds.jaxb.management.AttributeType;
 import net.es.nsi.dds.jaxb.management.VersionType;
 import net.es.nsi.dds.test.TestConfig;

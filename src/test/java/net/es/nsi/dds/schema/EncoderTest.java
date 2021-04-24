@@ -1,8 +1,8 @@
 package net.es.nsi.dds.schema;
 
+import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.Optional;
-import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 import net.es.nsi.dds.jaxb.DdsParser;

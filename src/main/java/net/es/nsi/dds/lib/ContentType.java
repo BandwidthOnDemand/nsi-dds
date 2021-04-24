@@ -1,19 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.lib;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.IOUtils;
 
 /**
- *
+ * Decode document content based on encoding type.
+ * 
  * @author hacksaw
  */
 public class ContentType {
@@ -41,10 +38,10 @@ public class ContentType {
 
     public static String decode2String(String contentType, InputStream is) throws IOException {
         if (XGZIP.equalsIgnoreCase(contentType)) {
-            return IOUtils.toString(new GZIPInputStream(is));
+            return IOUtils.toString(new InputStreamReader(new GZIPInputStream(is)));
         }
         else {
-            return IOUtils.toString(is);
+            return IOUtils.toString(new InputStreamReader(is));
         }
     }
 

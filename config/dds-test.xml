@@ -46,9 +46,9 @@
     <cache>config/cache</cache>
     <repository>config/repository</repository>
     <expiryInterval>600</expiryInterval>
-    <baseURL>http://localhost:8401/dds</baseURL>
+    <baseURL>http://localhost:8801/dds</baseURL>
     <notificationSize>10</notificationSize>
-    <server address="localhost" port="8401" packageName="net.es.nsi.dds" />
+    <server address="localhost" port="8801" packageName="net.es.nsi.dds" />
 
     <!-- DDS service interfaces. -->
     <!-- <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://agg.netherlight.net/dds</peerURL> -->
@@ -82,7 +82,7 @@
         <password>changeit</password>
         <alias>macauley</alias>
     </signature>
-    
+
     <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://nsi-aggr-west.es.net/nsa-discovery</peerURL>
     <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://62.217.124.244:8080/nsi_discovery_geant_all.xml</peerURL>
     <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://pmri061.it.northwestern.edu:9443/NSI/discovery.xml</peerURL>

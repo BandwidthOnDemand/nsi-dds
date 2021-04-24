@@ -1,12 +1,11 @@
 package net.es.nsi.dds.schema;
 
+import jakarta.xml.bind.JAXBException;
+import java.io.IOException;
 import net.es.nsi.dds.jaxb.ConfigurationParser;
 import net.es.nsi.dds.jaxb.configuration.DdsConfigurationType;
-import org.junit.Test;
 import org.junit.Assert;
-
-import javax.xml.bind.JAXBException;
-import java.io.IOException;
+import org.junit.Test;
 
 public class DdsConfigurationTest {
     private static final String file1 = "src/test/resources/config/dds-schema-test.xml";

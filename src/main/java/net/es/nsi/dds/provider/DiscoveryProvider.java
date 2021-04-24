@@ -1,8 +1,8 @@
 package net.es.nsi.dds.provider;
 
+import jakarta.ws.rs.WebApplicationException;
 import java.util.Collection;
 import java.util.Date;
-import javax.ws.rs.WebApplicationException;
 import net.es.nsi.dds.jaxb.dds.DocumentType;
 import net.es.nsi.dds.jaxb.dds.FilterType;
 import net.es.nsi.dds.jaxb.dds.NotificationType;

@@ -1,5 +1,6 @@
 package net.es.nsi.dds.dao;
 
+import jakarta.xml.bind.JAXBException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,7 +12,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;

@@ -4,13 +4,13 @@
  */
 package net.es.nsi.dds.discovery;
 
+import jakarta.ws.rs.NotFoundException;
+import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.net.URI;
-import javax.ws.rs.NotFoundException;
-import javax.xml.bind.JAXBException;
-import net.es.nsi.dds.spring.SpringContext;
 import net.es.nsi.dds.agole.AgoleManifestReader;
 import net.es.nsi.dds.agole.TopologyManifest;
+import net.es.nsi.dds.spring.SpringContext;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -38,9 +38,9 @@ public class AgoleManifestReaderTest {
         SpringContext sc = SpringContext.getInstance();
         ApplicationContext context = sc.initContext("src/test/resources/config/AgoleManifestReaderTest.xml");
         AgoleManifestReader reader = (AgoleManifestReader) context.getBean("agoleManifestReader");
-        reader.setTarget("http://localhost:8401/www/master.xml");
+        reader.setTarget("http://localhost:8801/www/master.xml");
 
-        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:8401"));
+        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:8801"));
         StaticHttpHandler staticHttpHandler = new StaticHttpHandler("src/test/resources/config/www/");
         server.getServerConfiguration().addHttpHandler(staticHttpHandler, "/www");
 

@@ -19,13 +19,13 @@
  */
 package net.es.nsi.dds.gangofthree;
 
+import jakarta.xml.bind.JAXBElement;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
-import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import net.es.nsi.dds.jaxb.nml.NmlLabelGroupType;
 import net.es.nsi.dds.jaxb.nml.NmlLabelType;

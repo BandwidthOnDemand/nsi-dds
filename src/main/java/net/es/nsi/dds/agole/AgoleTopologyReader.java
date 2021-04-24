@@ -1,13 +1,13 @@
 package net.es.nsi.dds.agole;
 
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.JAXBException;
 import java.util.Date;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.jaxb.NmlParser;
 import net.es.nsi.dds.jaxb.nml.NmlNSAType;
@@ -57,7 +57,7 @@ public class AgoleTopologyReader {
      * Read the NML topology from target location using HTTP GET operation.
      *
      * @return The JAXB NSA element from the NML topology.
-     * @throws javax.xml.bind.JAXBException
+     * @throws jakarta.xml.bind.JAXBException
      */
     public NmlNSAType readNsaTopology() throws NotFoundException, IllegalStateException, JAXBException {
         // Use the REST client to retrieve the master topology as a string.

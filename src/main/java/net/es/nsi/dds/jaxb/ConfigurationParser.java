@@ -1,8 +1,8 @@
 package net.es.nsi.dds.jaxb;
 
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.jaxb.configuration.DdsConfigurationType;
 import net.es.nsi.dds.jaxb.configuration.ObjectFactory;
 

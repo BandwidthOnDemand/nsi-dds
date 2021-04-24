@@ -1,7 +1,7 @@
 package net.es.nsi.dds.gangofthree;
 
+import jakarta.xml.bind.JAXBElement;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;

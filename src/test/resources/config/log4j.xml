@@ -72,7 +72,7 @@
   <!-- Limit categories -->
   <!-- ================ -->
   <logger name="org.springframework">
-    <level value="WARN" />
+    <level value="DEBUG" />
   </logger>
 
   <logger name="org.eclipse">
@@ -87,12 +87,16 @@
     <level value="DEBUG" />
   </logger>
 
+  <logger name="org.glassfish.grizzly">
+    <level value="DEBUG" />
+  </logger>
+
   <logger name="org.hibernate">
-    <level value="WARN" />
+    <level value="DEBUG" />
   </logger>
 
   <!-- =============== -->
-  <!-- OpenDRAC Limits -->
+  <!-- Limits          -->
   <!-- =============== -->
 
   <logger name="net.es.nsi.dds">

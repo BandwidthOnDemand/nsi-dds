@@ -1,5 +1,12 @@
 package net.es.nsi.dds.discovery;
 
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericEntity;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyStoreException;
@@ -7,13 +14,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.client.TestServer;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;

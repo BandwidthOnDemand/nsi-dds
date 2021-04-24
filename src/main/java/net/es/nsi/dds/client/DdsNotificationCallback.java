@@ -1,14 +1,14 @@
 package net.es.nsi.dds.client;
 
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.api.Exceptions;
 import net.es.nsi.dds.jaxb.dds.NotificationListType;
 import net.es.nsi.dds.jaxb.dds.NotificationType;

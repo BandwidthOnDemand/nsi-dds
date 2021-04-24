@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.authorization;
 
 import com.google.common.base.Optional;
@@ -12,7 +7,6 @@ import java.net.URLEncoder;
 import java.util.concurrent.ConcurrentHashMap;
 import net.es.nsi.dds.jaxb.configuration.AccessControlPermission;
 import net.es.nsi.dds.jaxb.configuration.AccessControlType;
-import net.es.nsi.dds.jaxb.configuration.DistinguishedNameType;
 import net.es.nsi.dds.jaxb.configuration.RuleType;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameStyle;
@@ -42,22 +36,19 @@ public class AccessControlList {
     enabled = ac.isEnabled();
 
     for (RuleType rule : ac.getRule()) {
-      for (DistinguishedNameType dn : rule.getDn()) {
         try {
-          X500Name name = new X500Name(dn.getValue());
+          X500Name name = new X500Name(rule.getDn().getValue());
           String key = x500NameStyle.toString(name);
           if (accessControlList.put(key, rule) != null) {
             log.warn("AccessControlList: multiple DN entries for " + x500NameStyle.toString(name));
           }
 
-          log.debug("AccessControlList: converted {} to {}", dn.getValue(), key);
+          log.debug("AccessControlList: converted {} to {}", rule.getDn().getValue(), key);
         } catch (IllegalArgumentException ex) {
-          log.error("AccessControlList: badly formatted DN " + dn.getValue());
+          log.error("AccessControlList: badly formatted DN " + rule.getDn().getValue());
           throw ex;
         }
-      }
     }
-
   }
 
   /**
@@ -74,6 +65,7 @@ public class AccessControlList {
     // If DN validation is enabled then we need to validate this user
     // exists and has permissions to do what they are requesting.
     log.debug("isAuthorized: incoming {}, {} {}", dn, operation, resource);
+
     if (enabled) {
       // If there is no DN we fail the authentication.
       if (Strings.isNullOrEmpty(dn)) {
@@ -93,11 +85,11 @@ public class AccessControlList {
         AccessControlPermission access = result.get().getAccess();
         AccessLevels accessLevel = AccessLevels.valueOf(access.value().toLowerCase());
 
-        log.debug("isAuthorized: evaluating dn {}, permission {}", key, accessLevel);
+        log.debug("isAuthorized: evaluating dn {}, permission {}, based on {}", key, accessLevel, access.value().toLowerCase());
 
         // If the access level does not permit the operation we reject.
-        if (!accessLevel.isOperation(operation)) {
-          log.debug("isAuthorized: failed, dn {}, permission {}, operation {}", key, accessLevel, operation);
+        if (!accessLevel.isAllowed(operation)) {
+          log.debug("isAuthorized: failed dn {}, permission {}, operation {}", key, accessLevel, operation);
           return false;
         }
 
@@ -105,34 +97,37 @@ public class AccessControlList {
         // detailed decisions need to be performed in the operation
         // specific handlers.
         if (Strings.isNullOrEmpty(resource)) {
-          log.debug("isAuthorized: failed, dn {}, op {}, resource empty", dn, operation);
+          // In the future we may not require a reasource so may beed to change this.
+          log.debug("isAuthorized: failed {}, {}", dn, operation);
           return false;
         }
 
         switch (accessLevel) {
-          case admin:
-            // Admin can read/write everything.
-            return true;
-
-          case read:
-            // Read is allowed to access everything.
-            return true;
-
-          case write:
-            // Write permissions can only write their configured entries.
-            if (resource.contains("/subscriptions/")) {
+          case peer:
+            // A peer can create (post), read (get), modify (put), and delete (delete)
+            // their subscriptions.  The specific service logic will need to validate
+            // the entry being deleted is related to the requesting NSA.
+            if (resource.contains("/subscriptions")) {
               // Deligate to operation handlers.
               log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
               return true;
             }
 
-            if (resource.contains("/notifications/")) {
+            // A peer can deliver (post) notifications for document changes.
+            if (resource.contains("/notifications") && accessLevel.isPost(operation)) {
               // Deligate to operation handlers.
               log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
               return true;
             }
 
-            if (resource.contains("/documents/")) {
+            // A peer can read (get) all documents.
+            if (resource.contains("/documents") && accessLevel.isGet(operation)) {
+              log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
+              return true;
+            }
+
+            // But can only modify/delete it's own documents.
+            if (resource.contains("/documents")) {
               for (String nsaId : result.get().getNsaId()) {
                 try {
                   String uri = URLEncoder.encode(nsaId.trim(), "UTF-8");
@@ -147,17 +142,68 @@ public class AccessControlList {
               }
             }
 
-            log.debug("isAuthorized: failed, dn {}, op {}, resource empty", dn, operation);
+            log.debug("isAuthorized: failed {}, {}", dn, operation);
+            return false;
+
+          case admin:
+            // Admin can read/write everything.
+            return true;
+
+          case read:
+            // Read is allowed to access documents.
+            if (resource.contains("/documents") && accessLevel.isGet(operation)) {
+              log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
+              return true;
+            }
+
+            log.error("isAuthorized: read authorization failed, {}, {} {}", dn, operation, resource);
+            return false;
+
+          case write:
+            // Write permissions can only write their configured entries.
+            if (resource.contains("/subscriptions")) {
+              // Deligate to operation handlers.
+              log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
+              return true;
+            }
+
+            if (resource.contains("/notifications")) {
+              // Deligate to operation handlers.
+              log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
+              return true;
+            }
+
+            if (resource.contains("/documents") && accessLevel.isGet(operation)) {
+              log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
+              return true;
+            }
+
+            if (resource.contains("/documents")) {
+              for (String nsaId : result.get().getNsaId()) {
+                try {
+                  String uri = URLEncoder.encode(nsaId.trim(), "UTF-8");
+                  if (resource.contains(uri)) {
+                    log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
+                    return true;
+                  }
+                } catch (UnsupportedEncodingException ex) {
+                  log.error("isAuthorized: failed to encode nsiId " + nsaId);
+                  return false;
+                }
+              }
+            }
+
+            log.error("isAuthorized: failed rule check, {}, {}, {}", dn, operation);
             return false;
 
           default:
-            log.debug("isAuthorized: failed, dn {}, op {}, resource empty", dn, operation);
+            log.error("isAuthorized: failed invalid access level {}, {}", dn, operation);
             return false;
         }
       }
 
       // We did not find a matching DN in our access control list.
-      log.debug("isAuthorized: failed, dn {}, op {}, resource empty", dn, operation);
+      log.error("isAuthorized: failed to find dn {}, {}", dn, operation);
       return false;
     }
 

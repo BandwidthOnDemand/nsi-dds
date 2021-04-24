@@ -94,16 +94,27 @@
         
         ** Admin Access **
         The specified DN can read contents of the DDS, and write all contents of the
-        DDS including notifications.  DNs listed hear also have access to the DDS portal.
+        DDS including notifications.  DNs listed here also have access to the DDS portal.
         
         <rule access="admin">
+            <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
+        </rule>
+        
+        ** Peer Access **
+        The specified DN can read contents of the DDS, can create/modify/edit their own
+        susbscriptions, write contents of their own documents, and deliver notifications.
+        Add neId to restrict writing documents to the DNs listed here.
+        
+        <rule access="peer">
             <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
         </rule>
     
     --> 
     <accessControl enabled="true">
-        <rule access="admin">
+        <rule access="peer">
             <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
+            <nsaId>urn:ogf:network:es.net:2013:nsa:nsi-aggr-west</nsaId>
+            <nsaId>urn:ogf:network:es.net:2013:nsa</nsaId>
         </rule>
     </accessControl>
 

@@ -14,8 +14,8 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.grizzly.ssl.SSLEngineConfigurator;
-import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
@@ -88,10 +88,12 @@ public class RestServer {
             rs.register(intf);
         }
 
+      java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RestServer.class.getName());
+
         return rs.registerClasses(SecurityFilter.class)
                 .register(new MoxyXmlFeature())
-                .register(new LoggingFeature(java.util.logging.Logger.getLogger(RestServer.class.getName()),
-                        Level.ALL, LoggingFeature.Verbosity.PAYLOAD_ANY, 10000));
+                .register(new LoggingFeature(logger, Level.FINE, LoggingFeature.Verbosity.PAYLOAD_ANY, 10000));
+
     }
 
     private URI getServerURI() {
@@ -105,18 +107,27 @@ public class RestServer {
     public boolean start() throws IOException {
         if (!server.isPresent()) {
             if (secure) {
-                log.debug("RestServer: Creating secure server.");
-                server = Optional.of(GrizzlyHttpServerFactory.createHttpServer(
-                    getServerURI(), getResourceConfig(), true,
-                    new SSLEngineConfigurator(sslContext.get())
-                        .setNeedClientAuth(true).setClientMode(false)));
+                log.debug("RestServer: Creating secure server on {}", getServerURI());
+                server = Optional.of(
+                        GrizzlyHttpServerFactory.createHttpServer(
+                                getServerURI(),
+                                getResourceConfig(),
+                                true,
+                                new SSLEngineConfigurator(sslContext.get())
+                                        .setNeedClientAuth(true)
+                                        .setClientMode(false),
+                                false)
+                );
             }
             else {
-                log.debug("RestServer: Creating server.");
-                server = Optional.of(GrizzlyHttpServerFactory.createHttpServer(
-                    getServerURI(), getResourceConfig()));
+                log.debug("RestServer: Creating server on {}", getServerURI());
+                server = Optional.of(
+                        GrizzlyHttpServerFactory.createHttpServer(
+                                getServerURI(),
+                                getResourceConfig(),
+                                false)
+                );
             }
-
 
             NetworkListener listener = server.get().getListener("grizzly");
             server.get().getServerConfiguration().setMaxBufferedPostSize(server.get().getServerConfiguration().getMaxBufferedPostSize()*10);

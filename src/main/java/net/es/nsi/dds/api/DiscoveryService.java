@@ -1,29 +1,29 @@
 package net.es.nsi.dds.api;
 
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
-import javax.xml.bind.JAXBException;
 import net.es.nsi.dds.actors.RegistrationRouter;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.jaxb.DdsParser;
@@ -52,9 +52,12 @@ import org.slf4j.LoggerFactory;
  * @author hacksaw
  */
 @Path("/dds")
+@Consumes(MediaType.APPLICATION_XML)
 public class DiscoveryService {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final ObjectFactory factory = new ObjectFactory();
+
+    @Context SecurityContext securityContext;
 
     /**
      * Ping to see if the DDS service is operational.
@@ -69,12 +72,12 @@ public class DiscoveryService {
     public Response ping(@Context SecurityContext sc) throws Exception {
         log.debug("ping: PING!");
         if (sc == null) {
-            log.debug("Security Context is null.");
+            log.debug("ping: Security Context is null.");
         }
         else {
-            log.debug("authentication scheme=" + sc.getAuthenticationScheme());
+            log.debug("ping: authentication scheme = " + sc.getAuthenticationScheme());
             if (sc.getUserPrincipal() != null) {
-                log.debug("User principle=" + sc.getUserPrincipal().getName());
+                log.debug("ping: User principle=" + sc.getUserPrincipal().getName());
             }
         }
         return Response.ok().build();

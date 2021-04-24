@@ -5,11 +5,11 @@
 package net.es.nsi.dds.agole;
 
 import akka.actor.UntypedActor;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.xml.bind.JAXBException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.ws.rs.NotFoundException;
-import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.jaxb.nml.NmlLifeTimeType;

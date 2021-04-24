@@ -1,12 +1,12 @@
 package net.es.nsi.dds.provider;
 
 import akka.actor.Cancellable;
+import jakarta.ws.rs.WebApplicationException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.UUID;
-import javax.ws.rs.WebApplicationException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import net.es.nsi.dds.api.DiscoveryError;
 import net.es.nsi.dds.api.Exceptions;

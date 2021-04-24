@@ -1,7 +1,7 @@
 package net.es.nsi.dds.schema;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.NmlParser;
 import net.es.nsi.dds.jaxb.NsaParser;

@@ -4,9 +4,10 @@
  */
 package net.es.nsi.dds.test;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
+import java.io.IOException;
 import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.config.Properties;
@@ -36,7 +37,7 @@ public class TestConfig {
             System.setProperty(Properties.SYSTEM_PROPERTY_CONFIGDIR, CONFIG_DIR);
             ConfigurationManager.INSTANCE.initialize();
         }
-        catch (Exception ex) {
+        catch (IOException ex) {
             System.err.println("TestConfig: failed to initialize ConfigurationManager.");
             ex.printStackTrace();
         }

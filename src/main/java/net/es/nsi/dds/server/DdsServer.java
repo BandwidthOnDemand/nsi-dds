@@ -42,7 +42,7 @@ public class DdsServer {
                     server = new RestServer(config.getAddress(), config.getPort());
                 }
 
-                server.addInterface(EncodingFilter.class)
+               server.addInterface(EncodingFilter.class)
                       .addInterface(GZipEncoder.class)
                       .addInterface(DeflateEncoder.class)
                       .addInterface(DiscoveryService.class)
