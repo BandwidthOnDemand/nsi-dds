@@ -1,12 +1,12 @@
 package net.es.nsi.dds.lib;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeUtility;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeUtility;
 import org.apache.commons.io.IOUtils;
 
 /**

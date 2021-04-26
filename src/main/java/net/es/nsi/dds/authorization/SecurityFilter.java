@@ -1,5 +1,6 @@
 package net.es.nsi.dds.authorization;
 
+import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -9,7 +10,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.ext.Provider;
 import java.util.Optional;
-import javax.annotation.Priority;
 import net.es.nsi.dds.api.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

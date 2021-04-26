@@ -1,10 +1,10 @@
 package net.es.nsi.dds.lib;
 
 import com.google.common.base.Strings;
+import jakarta.mail.MessagingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import javax.mail.MessagingException;
 import javax.xml.parsers.ParserConfigurationException;
 import net.es.nsi.dds.jaxb.DomParser;
 import org.slf4j.Logger;
@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Decode a document from the encoded representation.
- * 
+ *
  * @author hacksaw
  */
 public class Decoder {
