@@ -100,11 +100,10 @@
             <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
         </rule>
         
-        ** Peer Access **
         The specified DN can read contents of the DDS, can create/modify/edit their own
-        susbscriptions, write contents of their own documents, and deliver notifications.
-        Add neId to restrict writing documents to the DNs listed here.
-        
+        subscriptions, write contents of their own documents, and deliver notifications.
+        Add `<nsaId>` to restrict direct writing of documents to the listed `<nsaId>`. 
+
         <rule access="peer">
             <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
         </rule>

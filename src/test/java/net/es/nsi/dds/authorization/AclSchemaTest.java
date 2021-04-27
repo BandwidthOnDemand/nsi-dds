@@ -57,7 +57,7 @@ public class AclSchemaTest {
 
         // Load DDS configuration file containing the ACL list.
         DdsConfiguration config = new DdsConfiguration();
-        config.setFilename("src/test/resources/config/dds.xml");
+        config.setFilename("src/test/resources/config/dds-secure.xml");
         config.load();
         provider = new DnAuthorizationProvider(config);
     }

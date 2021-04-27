@@ -53,7 +53,7 @@
         </static>
     </server>
     
-    <accessControl enabled="false">
+    <accessControl enabled="true">
         <rule access="read">
             <dn>CN=Go Daddy Secure Certificate Authority - G2, OU=http://certs.godaddy.com/repository/, O="GoDaddy.com, Inc.", L=Scottsdale, ST=Arizona, C=US</dn>
         </rule>

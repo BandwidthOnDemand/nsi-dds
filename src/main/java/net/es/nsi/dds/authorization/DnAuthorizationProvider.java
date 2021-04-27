@@ -42,7 +42,7 @@ public class DnAuthorizationProvider implements AuthorizationProvider {
                 X500Name principal = new X500Name(dn);
                 sb.append(x500NameStyle.toString(principal));
             }
-            
+
             sb.append(", ");
             sb.append(operation);
             sb.append(" ");
@@ -50,7 +50,12 @@ public class DnAuthorizationProvider implements AuthorizationProvider {
 
             log.info(sb.toString());
         }
-        
+
         return authorized;
+    }
+
+    @Override
+    public boolean isEnabled() {
+      return config.getAccessControlList().isEnabled();
     }
 }

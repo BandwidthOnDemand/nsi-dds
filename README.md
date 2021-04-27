@@ -29,8 +29,21 @@ Here is an example deployment diagram:
 ```
 On the front-end we have Apache httpd with mod_proxy configured to terminate HTTPS on the client side, and proxy HTTP via **localhost** to a protected HTTP port on the DDS server.  The DDS server itself can be configured to communicate with HTTPS back to the peer DDS server.  The peer DDS server dictates the use of HTTP versus HTTPS, but the local DDS server will need to have Java key and trust stores configured properly for SSL communications.
 
+```
+ Address A                                                                        Address B
+------------                                                                     -----------
+| Peer DDS |                      https://<Address B>/dds                        |   DDS   |
+|  Server  | ------------------------------------------------------------------> |  Server |
+------------                             secured                                 -----------
+     ^                                                                                |
+     |                            https://<Address A>/dds                             |
+     ----------------------------------------------------------------------------------
+                                         secured
+```
+The second supported deployment model is direct SSL communications exposed from the DDS Server.  The DDS server's SSL/TLS will be configured using the Java keystore, and authentication of the client is established using the Java truststore.  Authorization of the client is done using an internal mechanism specified in the configuration file (\<accessControl\> XML element).  This mechanism is described below, but in summary will allow an access control role of read, write, peer, or admin to be assigned for each client accessing the DDS server.
+
 ## Software prerequisites
-The `nsi-dds` has a runtime dependency on Java ([Oracle-JDK](https://jdk8.java.net/download.html) or OpenJDK), with a recommended version of 1.8 or later.  If the system does not contain the correct version of Java then a supported version needs to be installed.  
+The `nsi-dds` has a runtime dependency on Java ([Oracle-JDK](https://jdk8.java.net/download.html) or OpenJDK), with versions 1.8 through 15 supported.  If the system does not contain the correct version of Java then a supported version needs to be installed. 
 
 Maven is also required to build the `nsi-dds` module so install if not available on the system.
 
@@ -152,6 +165,94 @@ The following XML elements are supported in this configuration file:
     ```
 
 The `config/beans.xml` file contains a number of runtime configuration values for thread pool sizes and discovery audit timers.  These values should only be changed once you have a clear understanding of the different types of discovery mechanisms and their impact on the system.
+
+### Configuring authorization
+Authorization in the DDS is either enabled (`<accessControl enabled="true">`) or disabled (`<accessControl enabled="false">`).  If authorization is disabled then all authenticated incoming HTTPS are accepted.  If authorization is enabled then the rules described in the following sections apply.  Access control cannot be enforced on HTTP sessions which are not authenticated.
+
+#### Read Access
+The specified DN can read (GET) all document contents of the DDS without restriction.
+
+```
+        <rule access="read">
+            <dn>CN=Billy Joe Bob,OU=Gator Inc.,ST=FL,C=US</dn>
+        </rule>
+```
+
+#### Write Access
+The specified DN can read (GET) all document contents of the DDS without restriction, and write (POST/PUT/DELETE) document contents of the DDS for a specific `<nsaId>`.  Multiple `<nsaId>` elements can be specified if required.
+
+```
+        <rule access="write">
+            <dn>CN=sense-rm.es.net,OU=Domain Control Validated</dn>
+            <nsaId>urn:ogf:network:es.net:2014:nsa:sense-rm</nsaId>
+        </rule>
+```
+
+#### Peer Access
+The specified DN can read contents of the DDS, can create/modify/edit their own subscriptions, write contents of their own documents, and deliver notifications. Add `<nsaId>` to restrict direct writing of documents to the listed `<nsaId>`.
+
+```
+        <rule access="peer">
+            <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
+        </rule>
+```
+
+#### Admin Access
+The specified DN can read contents of the DDS, and write all contents of the DDS including notifications.  DNs listed here also have access to the DDS portal.
+
+```
+        <rule access="admin">
+            <dn>CN=Bobby Boogy,OU=Gator Inc.,ST=FL,C=US</dn>
+        </rule>
+```
+
+#### Assembled Example
+```
+    <!--
+        Set enabled="true" if you would like certificate DN authorization enforced.
+
+        ** Read Access **
+        The specified DN can only read contents of the DDS.
+
+        <rule access="read">
+            <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
+        </rule>
+
+        ** Write Access **
+        The specified DN can read contents of the DDS, and write contents of the DDS
+        for a specific nsaId.
+
+        <rule access="write">
+            <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
+            <nsaId>urn:ogf:network:es.net:2014:nsa:nsi-aggr-west</nsaId>
+        </rule>
+
+        ** Admin Access **
+        The specified DN can read contents of the DDS, and write all contents of the
+        DDS including notifications.  DNs listed here also have access to the DDS portal.
+
+        <rule access="admin">
+            <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
+        </rule>
+
+        ** Peer Access **
+        The specified DN can read contents of the DDS, can create/modify/edit their own
+        susbscriptions, write contents of their own documents, and deliver notifications.
+        Add neId to restrict writing documents to the DNs listed here.
+
+        <rule access="peer">
+            <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
+        </rule>
+
+    -->
+    <accessControl enabled="true">
+        <rule access="peer">
+            <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
+            <nsaId>urn:ogf:network:es.net:2013:nsa:nsi-aggr-west</nsaId>
+            <nsaId>urn:ogf:network:es.net:2013:nsa</nsaId>
+        </rule>
+    </accessControl>
+```
 
 ### Configure logging
 By default `nsi-dds` will log under the application home directory `/home/safnari/nsi-dds`.  If you would like to change this to log under the system `/var/log` directory then we need to modify the logging properties.

@@ -12,6 +12,7 @@ import net.es.nsi.dds.spring.SpringApplicationContext;
  */
 public interface AuthorizationProvider {
     boolean authorize(String dn, String operation, String resource);
+    boolean isEnabled();
 
     static AuthorizationProvider getInstance() {
         AuthorizationProvider provider = (AuthorizationProvider) SpringApplicationContext.getBean("authorizationProvider");
