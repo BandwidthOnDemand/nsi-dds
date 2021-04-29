@@ -87,7 +87,6 @@ public class DiscoveryService {
     @Path("/error")
     @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     public Response error() throws Exception {
-        log.debug("error: Bang!");
         return Response.serverError().build();
     }
 
