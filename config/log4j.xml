@@ -7,7 +7,7 @@
     <!-- ============================== -->
     <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p [%t] (%C:%L) - %m%n" />
+            <param name="ConversionPattern" value="%d %-5p [%t] - %m%n" />
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
             <param name="levelMin" value="DEBUG" />
@@ -24,7 +24,7 @@
         <param name="encoding" value="UTF-8" />
         <param name="File" value="${basedir}/var/log/nsi-dds/nsi-dds.err.log" />
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p [%t] (%C:%L) - %m%n" />
+            <param name="ConversionPattern" value="%d %-5p [%t] - %m%n" />
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
             <param name="levelMin" value="WARN" />
@@ -42,7 +42,7 @@
         <param name="encoding" value="UTF-8" />
         <param name="File" value="${basedir}/var/log/nsi-dds/nsi-dds.info.log" />
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p [%t] (%C:%L) - %m%n" />
+            <param name="ConversionPattern" value="%d %-5p [%t] - %m%n" />
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
             <param name="levelMin" value="INFO" />
@@ -59,7 +59,7 @@
         <param name="encoding" value="UTF-8" />
         <param name="File" value="${basedir}/var/log/nsi-dds/nsi-dds.debug.log" />
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p [%t] (%C:%L) - %m%n" />
+            <param name="ConversionPattern" value="%d %-5p [%t] - %m%n" />
         </layout>
         <filter class="org.apache.log4j.varia.LevelRangeFilter">
             <param name="levelMin" value="DEBUG" />

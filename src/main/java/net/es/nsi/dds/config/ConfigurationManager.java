@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.server.DdsServer;
 import net.es.nsi.dds.spring.SpringContext;
+import net.es.nsi.dds.util.Log4jHelper;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -51,7 +52,7 @@ public enum ConfigurationManager {
 
         if (!isInitialized()) {
             // Load and watch the log4j configuration file for changes.
-            DOMConfigurator.configureAndWatch(getLog4jConfig(configPath), 45 * 1000);
+            DOMConfigurator.configureAndWatch(Log4jHelper.getLog4jConfig(configPath), 45 * 1000);
             final org.slf4j.Logger log = LoggerFactory.getLogger(ConfigurationManager.class);
 
             Path path = Paths.get(configPath, "beans.xml");
@@ -78,15 +79,6 @@ public enum ConfigurationManager {
             setInitialized(true);
             log.info("Loaded configuration from: " + path.toString());
         }
-    }
-
-     private String getLog4jConfig(String configPath) throws IOException {
-        String log4jConfig = System.getProperty("log4j.configuration");
-        if (log4jConfig == null) {
-            Path realPath = Paths.get(configPath, "log4j.xml").toRealPath();
-            log4jConfig = realPath.toString();
-        }
-        return log4jConfig;
     }
 
     public ApplicationContext getApplicationContext() {

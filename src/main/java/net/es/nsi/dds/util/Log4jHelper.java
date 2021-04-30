@@ -15,7 +15,7 @@ import java.nio.file.Paths;
  */
 public class Log4jHelper {
     public static String getLog4jConfig(String configPath) throws IOException {
-        String log4jConfig = System.getProperty("log4j.configuration");
+        String log4jConfig = System.getProperty("log4j.configurationFile");
         if (log4jConfig == null) {
             Path realPath = Paths.get(configPath, "log4j.xml").toRealPath();
             log4jConfig = realPath.toString();
