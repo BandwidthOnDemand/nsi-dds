@@ -1,55 +1,43 @@
 package net.es.nsi.dds.discovery;
 
-import java.io.File;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import net.es.nsi.dds.actors.DdsActorSystem;
-import net.es.nsi.dds.spring.SpringContext;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
 
 /**
  *
  * @author hacksaw
  */
 public class TestURLEncode {
-    private static final String CONFIG_PATH_ARGNAME = "configdir";
-    private final static String CONFIG_DIR = "src/test/resources/config/";
-    private static final String DEFAULT_DDS_FILE = CONFIG_DIR + "dds.xml";
-    private static final String DDS_CONFIG_FILE_ARGNAME = "ddsConfigFile";
+    private static final String TYPE_URL_RAW = "application/vnd.ogf.nsi.topology.v2+xml";
+    private static final String TYPE_URL_ENCODED = "application%2Fvnd.ogf.nsi.topology.v2%2Bxml";
 
-    private static final String beanConfig = new StringBuilder(CONFIG_DIR).append("beans.xml").toString().replace("/", File.separator);
+    private static final String NSA_URL_RAW = "urn:ogf:network:dev.automation.surf.net:2017:nsa";
+    private static final String NSA_URL_ENCODED = "urn%3Aogf%3Anetwork%3Adev.automation.surf.net%3A2017%3Ansa";
+
+    private static final String TOP_URL_RAW = "urn:ogf:network:dev.automation.surf.net:2017:development";
+    private static final String TOP_URL_ENCODED = "urn%3Aogf%3Anetwork%3Adev.automation.surf.net%3A2017%3Adevelopment";
 
     @Test
     public void test() throws Exception {
 
+        String url = URLEncoder.encode(TYPE_URL_RAW, "UTF-8");
+        assertEquals(TYPE_URL_ENCODED, url);
 
-        String url = "application/vnd.ogf.nsi.topology.v2+xml";
-        System.out.println(url);
-        url = URLEncoder.encode(url, "UTF-8");
-        System.out.println(url);
         url = URLDecoder.decode(url, "UTF-8");
-        System.out.println(url);
+        assertEquals(TYPE_URL_RAW, url);
 
-        // Get a reference to the topology provider through spring.
-        System.setProperty(CONFIG_PATH_ARGNAME, CONFIG_DIR);
-        System.setProperty(DDS_CONFIG_FILE_ARGNAME, DEFAULT_DDS_FILE);
-        ApplicationContext context;
-        try {
-            context = SpringContext.getInstance().initContext(beanConfig);
-        }
-        catch (Exception ex) {
-            System.err.println("TestConfig: initContext failed");
-            ex.printStackTrace();
-            return;
-        }
+        url = URLEncoder.encode(NSA_URL_RAW, "UTF-8");
+        assertEquals(NSA_URL_ENCODED, url);
 
-        assertNotNull(context.getBean("remoteSubscriptionCache"));
-        assertNotNull(context.getBean("ddsConfiguration"));
-        assertNotNull(context.getBean("discoveryProvider"));
-        DdsActorSystem actorSystem = (DdsActorSystem) context.getBean("ddsActorSystem");
-        assertNotNull(actorSystem);
-        actorSystem.getActorSystem().shutdown();
+        url = URLDecoder.decode(url, "UTF-8");
+        assertEquals(NSA_URL_RAW, url);
+
+        url = URLEncoder.encode(TOP_URL_RAW, "UTF-8");
+        assertEquals(TOP_URL_ENCODED, url);
+
+        url = URLDecoder.decode(url, "UTF-8");
+        assertEquals(TOP_URL_RAW, url);
     }
 }
