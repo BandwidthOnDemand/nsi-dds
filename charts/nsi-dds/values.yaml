@@ -11,16 +11,20 @@ image:
   home: "/nsi-dds"
 
 startupProbe:
+  enabled: false
   scheme: "HTTP"
   path: "/dds/portal"
   failureThreshold: 30
   periodSeconds: 10
+  timeoutSeconds: 5
 
 livenessProbe:
+  enabled: false
   scheme: "HTTP"
   path: "/dds/portal"
   failureThreshold: 5
   periodSeconds: 6
+  timeoutSeconds: 5
 
 imagePullSecrets: []
 nameOverride: ""

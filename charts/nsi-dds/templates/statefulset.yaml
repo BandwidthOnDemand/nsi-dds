@@ -52,6 +52,7 @@ spec:
             - name: internal
               containerPort: {{ .Values.service.containerPort }}
               protocol: TCP
+          {{- if .Values.livenessProbe.enabled -}}
           livenessProbe:
             httpGet:
               scheme: {{ .Values.livenessProbe.scheme }}
@@ -59,6 +60,9 @@ spec:
               port: {{ .Values.service.containerPort }}
             failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.startupProbe.enabled -}}
           startupProbe:
             httpGet:
               scheme: {{ .Values.startupProbe.scheme }}
@@ -66,6 +70,8 @@ spec:
               port: {{ .Values.service.containerPort }}
             failureThreshold: {{ .Values.startupProbe.failureThreshold }}
             periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       securityContext:
