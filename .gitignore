@@ -13,5 +13,5 @@ config/repository/*.xml
 /src/main/resources/git.properties
 *.swp
 .java-version
-
 src/main/resources/git.properties
+charts/nsi-dds/config

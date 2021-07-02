@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "nsi-dds.fullname" . }}
+  labels:
+    {{- include "nsi-dds.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ .Chart.Name }}
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "nsi-dds.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "nsi-dds.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "nsi-dds.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["java"]
+          args: ["-Xmx1536m", 
+                 "-Djava.net.preferIPv4Stack=true",
+                 "-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true",
+                 {{ printf "-Djava.util.logging.config.file=%s/logging.properties" .Values.config.mountPath | quote }},
+                 {{ printf "-Dlog4j.configurationFile=%s/log4j.xml" .Values.config.mountPath | quote }},
+                 {{ printf "-Dbasedir=%s" .Values.image.home | quote }},
+                 "-jar", {{ printf "%s/dds.jar" .Values.image.home | quote }},
+                 "-ddsConfigFile", {{ printf "%s/dds.xml" .Values.config.mountPath | quote }}]
+          volumeMounts:
+            - name: {{ .Values.config.name }}
+              mountPath: {{ .Values.config.mountPath }}
+              readOnly: true
+            - name: {{ .Values.cache.name }}
+              mountPath: {{ .Values.cache.mountPath }}
+          ports:
+            - name: internal
+              containerPort: {{ .Values.service.containerPort }}
+              protocol: TCP
+          {{- if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              scheme: {{ .Values.livenessProbe.scheme }}
+              path: {{ .Values.livenessProbe.path }}
+              port: {{ .Values.service.containerPort }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.startupProbe.enabled }}
+          startupProbe:
+            httpGet:
+              scheme: {{ .Values.startupProbe.scheme }}
+              path: {{ .Values.startupProbe.path }}
+              port: {{ .Values.service.containerPort }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      volumes:
+        - name: {{ .Values.config.name }}
+          configMap:
+            name: {{ .Values.config.name }}
+        - name: {{ .Values.cache.name }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.cache.name }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
