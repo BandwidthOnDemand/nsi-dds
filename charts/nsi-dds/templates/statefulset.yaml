@@ -52,7 +52,7 @@ spec:
             - name: internal
               containerPort: {{ .Values.service.containerPort }}
               protocol: TCP
-          {{- if .Values.livenessProbe.enabled -}}
+          {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
               scheme: {{ .Values.livenessProbe.scheme }}
@@ -62,7 +62,7 @@ spec:
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
           {{- end }}
-          {{- if .Values.startupProbe.enabled -}}
+          {{- if .Values.startupProbe.enabled }}
           startupProbe:
             httpGet:
               scheme: {{ .Values.startupProbe.scheme }}
