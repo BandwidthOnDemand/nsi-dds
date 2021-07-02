@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.GenericEntity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
@@ -20,6 +21,7 @@ import java.util.Properties;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import net.es.nsi.dds.jaxb.ManagementParser;
 import net.es.nsi.dds.jaxb.management.AttributeType;
 import net.es.nsi.dds.jaxb.management.LogEnumType;
 import net.es.nsi.dds.jaxb.management.LogListType;
@@ -30,8 +32,8 @@ import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.util.NsiConstants;
 import org.apache.http.client.utils.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The implementation class for the REST-based management interface.
@@ -40,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 @Path("/dds/management")
 public class ManagementService {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
     private final DdsLogger ddsLogger = DdsLogger.getLogger();
     private final ObjectFactory managementFactory = new ObjectFactory();
 
@@ -53,7 +55,7 @@ public class ManagementService {
     @Path("/version")
     @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     public Response version() {
-        log.debug("version: PING!");
+        log.debug("ManagementService.version: PING!");
 
         final Properties properties = new Properties();
 
@@ -67,6 +69,8 @@ public class ManagementService {
             return Response.serverError().build();
         }
 
+        log.debug("ManagementService.version: loaded properties", properties.getProperty("git.commit.id"));
+
         VersionType result = managementFactory.createVersionType();
         for (Object key : properties.keySet()) {
             String type = (String) key;
@@ -77,6 +81,14 @@ public class ManagementService {
             attribute.setValue(value);
             result.getAttribute().add(attribute);
         }
+
+      try {
+        log.debug("ManagementService.version: built response:\n{}",
+                ManagementParser.getInstance().xmlFormatter(result));
+      } catch (JAXBException ex) {
+        log.error("ManagementService.version: could not convert version information into XML", ex);
+        return Response.serverError().build();
+      }
 
         return Response.ok().entity(new GenericEntity<JAXBElement<VersionType>>(managementFactory.createVersion(result)) {}).build();
     }

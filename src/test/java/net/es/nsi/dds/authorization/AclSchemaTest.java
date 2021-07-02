@@ -6,15 +6,15 @@ import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.dao.DdsConfiguration;
-import net.es.nsi.dds.util.Log4jHelper;
-import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Tests for the basic authorization mechanism implemented through XML
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * @author hacksaw
  */
 public class AclSchemaTest {
-    private Logger log;
+    private static Logger log;
     private DnAuthorizationProvider provider;
 
     // DBN
@@ -36,6 +36,13 @@ public class AclSchemaTest {
     private static final String DN7 = "emailAddress=bob@example.com, CN=Bobby Boogie, OU=Sprockets Manufacturing, O=Sprockets R Us, L=Ottawa, ST=ON, C=CA";
     private static final String DN8 = "C=NL, O=TERENA, CN=TERENA SSL CA, O=TERENA";
     private static final String DN9 = "CN=nsi-aggr-west.es.net,OU=Domain Control Validated";
+
+  @BeforeClass
+  public static void initialize() {
+    System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
+    log = LogManager.getLogger(AclSchemaTest.class);
+  }
+
 
     /**
      * All ACL schema for this test is held in the file "src/test/resources/config/dds.xml".
@@ -51,9 +58,6 @@ public class AclSchemaTest {
      */
     @Before
     public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException, IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
-        // Load and watch the log4j configuration file for changes.
-        DOMConfigurator.configureAndWatch(Log4jHelper.getLog4jConfig("src/test/resources/config/"), 45 * 1000);
-        log = LoggerFactory.getLogger(AclSchemaTest.class);
 
         // Load DDS configuration file containing the ACL list.
         DdsConfiguration config = new DdsConfiguration();
@@ -95,6 +99,7 @@ public class AclSchemaTest {
       //      <nsaId>urn:ogf:network:icair.org:2013:nsa</nsaId>
       //  </rule>
       assertTrue(provider.authorize(DN5, "GET", "/dds/documents"));
+      assertTrue(provider.authorize(DN5, "POST", "/dds/documents"));
       assertTrue(provider.authorize(DN6, "POST", "/dds/notifications"));
       assertTrue(provider.authorize(DN5, "POST", "/dds/subscriptions"));
       assertTrue(provider.authorize(DN5, "DELETE", "/dds/subscriptions/6aac04db-9065-4aae-9e97-b556defdfa89"));
@@ -128,10 +133,9 @@ public class AclSchemaTest {
       //    <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
       //</rule>
       assertFalse(provider.authorize(DN6, "DELETE", "/dds/documents/urn%3Aogf%3Anetwork%3Ageant.net%3A2013%3Ansa/vnd.ogf.nsi.topology.v2%2Bxml/urn%3Aogf%3Anetwork%3Apionier.net.pl%3A2013%3Atopology"));
-
+      assertFalse(provider.authorize(DN5, "POST", "/dds/documents/urn%3Aogf%3Anetwork%3Ageant.net%3A2013%3Ansa/vnd.ogf.nsi.topology.v2%2Bxml/urn%3Aogf%3Anetwork%3Apionier.net.pl%3A2013%3Atopology"));
       assertFalse(provider.authorize(DN2, "POOP", "/dds/documents/urn%3Aogf%3Anetwork%3Ageant.net%3A2013%3Ansa"));
       assertFalse(provider.authorize(DN5, "PUT", "/dds/documents/urn%3Aogf%3Anetwork%3Ageant.net%3A2013%3Ansa/vnd.ogf.nsi.topology.v2%2Bxml/urn%3Aogf%3Anetwork%3Apionier.net.pl%3A2013%3Atopology"));
-      assertFalse(provider.authorize(DN5, "POST", "/dds/documents"));
       assertFalse(provider.authorize(DN7, "PUT", "/dds/documents/urn%3Aogf%3Anetwork%3Ageant.net%3A2013%3Ansa/vnd.ogf.nsi.topology.v2%2Bxml/urn%3Aogf%3Anetwork%3Apionier.net.pl%3A2013%3Atopology"));
       assertFalse(provider.authorize(DN8, "GET", "/dds/documents"));
     }

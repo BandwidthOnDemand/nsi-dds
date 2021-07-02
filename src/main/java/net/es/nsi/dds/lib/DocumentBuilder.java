@@ -8,8 +8,8 @@ import net.es.nsi.dds.jaxb.dds.ContentType;
 import net.es.nsi.dds.jaxb.dds.DocumentType;
 import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.signing.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 
 /**
@@ -20,7 +20,7 @@ public class DocumentBuilder {
     public final static String ContentType = "application/x-gzip";
     public final static String ContentTransferEncoding = "base64";
 
-    private final static Logger log = LoggerFactory.getLogger(DocumentBuilder.class);
+    private final static Logger log = LogManager.getLogger(DocumentBuilder.class);
     private final ObjectFactory factory = new ObjectFactory();
 
     protected Optional<String> nsaId = Optional.empty();

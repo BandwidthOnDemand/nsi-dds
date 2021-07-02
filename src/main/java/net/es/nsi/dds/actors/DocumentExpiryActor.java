@@ -4,8 +4,8 @@ import akka.actor.UntypedActor;
 import java.util.concurrent.TimeUnit;
 import net.es.nsi.dds.dao.DocumentCache;
 import net.es.nsi.dds.messages.TimerMsg;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import scala.concurrent.duration.Duration;
 
 /**
@@ -15,7 +15,7 @@ import scala.concurrent.duration.Duration;
  */
 public class DocumentExpiryActor extends UntypedActor {
 
-  private final Logger log = LoggerFactory.getLogger(getClass());
+  private final Logger log = LogManager.getLogger(getClass());
   private final DdsActorSystem ddsActorSystem;
   private final DocumentCache documentCache;
   private long interval;

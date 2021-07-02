@@ -8,8 +8,8 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.ext.Provider;
 import java.util.Optional;
 import net.es.nsi.dds.api.Exceptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * A security filter inserted in the Grizzly request sequence that will perform authorization on secure requests.
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 @Priority(Priorities.AUTHORIZATION)
 public class SecurityFilter implements ContainerRequestFilter {
 
-  private final Logger log = LoggerFactory.getLogger(getClass());
+  private final Logger log = LogManager.getLogger(getClass());
 
   private final static String SSL_CLIENT_VERIFY = "SSL_CLIENT_VERIFY";
   private final static String SSL_CLIENT_S_DN   = "SSL_CLIENT_S_DN";

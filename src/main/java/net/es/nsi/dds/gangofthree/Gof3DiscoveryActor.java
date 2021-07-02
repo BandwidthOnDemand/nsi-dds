@@ -23,8 +23,8 @@ import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
 import org.apache.http.client.utils.DateUtils;
 import org.glassfish.jersey.client.ChunkedInput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Gof3DiscoveryActor extends UntypedActor {
 
-  private final Logger log = LoggerFactory.getLogger(getClass());
+  private final Logger log = LogManager.getLogger(getClass());
   private Client client;
 
   /**

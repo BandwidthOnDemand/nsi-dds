@@ -41,8 +41,8 @@ import org.glassfish.jersey.client.RequestEntityProcessing;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The singleton class (bean) provides the DDS server's REST client for communication with remote DDS servers.
@@ -235,7 +235,7 @@ public class RestClient {
      */
     private static class FollowRedirectFilter implements ClientResponseFilter
     {
-        private final static Logger log = LoggerFactory.getLogger(FollowRedirectFilter.class);
+        private final static Logger log = LogManager.getLogger(FollowRedirectFilter.class);
 
         @Override
         public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException

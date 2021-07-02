@@ -10,17 +10,18 @@ import net.es.nsi.dds.jaxb.configuration.AccessControlType;
 import net.es.nsi.dds.jaxb.configuration.RuleType;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
- * Implements access control functionality on a list of approved certificate DNs.
+ * Implements very basic access control functionality on a list of approved
+ * certificate DNs.
  *
  * @author hacksaw
  */
 public class AccessControlList {
 
-  private final Logger log = LoggerFactory.getLogger(getClass());
+  private final Logger log = LogManager.getLogger(getClass());
   private final boolean enabled;
 
   private final ConcurrentHashMap<String, RuleType> accessControlList;
@@ -52,9 +53,10 @@ public class AccessControlList {
   }
 
   /**
-   * This method is called by the Grizzly security filter to determine if the request operation should proceed or be
-   * rejected. The contents of the operation request is not inspected for operations like POST and PUT so this will need
-   * to be done in the operation specific logic.
+   * This method is called by the Grizzly security filter to determine if the
+   * request operation should proceed or be rejected. The contents of the
+   * operation request is not inspected for operations like POST and PUT so
+   * this will need to be done in the operation specific logic.
    *
    * @param dn The certificate subject DN of the requesting entity.
    * @param operation The HTTP operation being performed.
@@ -121,7 +123,7 @@ public class AccessControlList {
             }
 
             // A peer can read (get) all documents.
-            if (resource.contains("/documents") && accessLevel.isGet(operation)) {
+            if ((resource.contains("/documents") || resource.contains("/local")) && accessLevel.isGet(operation)) {
               log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
               return true;
             }
@@ -151,7 +153,7 @@ public class AccessControlList {
 
           case read:
             // Read is allowed to access documents.
-            if (resource.contains("/documents") && accessLevel.isGet(operation)) {
+            if ((resource.contains("/documents") || resource.contains("/local")) && accessLevel.isGet(operation)) {
               log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
               return true;
             }
@@ -160,25 +162,46 @@ public class AccessControlList {
             return false;
 
           case write:
-            // Write permissions can only write their configured entries.
+            // Write permissions can only write their associated resources.
+
+            // Subscription resource access control will be enforced in the
+            // operation handlers.
             if (resource.contains("/subscriptions")) {
               // Deligate to operation handlers.
               log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
               return true;
             }
 
+            // We only POST to notifications so access control will be enforced in the
+            // operation handlers.
             if (resource.contains("/notifications")) {
-              // Deligate to operation handlers.
-              log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
-              return true;
+              if (accessLevel.isPost(operation)) {
+                // Deligate to operation handlers.
+                log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
+                return true;
+              }
+
+              log.error("isAuthorized: failed {}, {} {}", dn, operation, resource);
+              return false;
             }
 
-            if (resource.contains("/documents") && accessLevel.isGet(operation)) {
-              log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
-              return true;
-            }
+            // Do initial access control on the documents resource.
+            if ((resource.contains("/documents") || resource.contains("/local"))) {
+              // Everyone can GET the documents resource.
+              if (accessLevel.isGet(operation)) {
+                log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
+                return true;
+              }
 
-            if (resource.contains("/documents")) {
+              // A POST is done on the document root so no NSA id is present.
+              if (accessLevel.isPost(operation) &&
+                      (resource.endsWith("/documents") || resource.endsWith("/documents/"))) {
+                // Make sure it is the root and not
+                log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
+                return true;
+              }
+
+              // For PUT, PATCH, and DELETE they need to modfy resources they own.
               for (String nsaId : result.get().getNsaId()) {
                 try {
                   String uri = URLEncoder.encode(nsaId.trim(), "UTF-8");
@@ -193,7 +216,11 @@ public class AccessControlList {
               }
             }
 
-            log.error("isAuthorized: failed rule check, {}, {}, {}", dn, operation);
+            if (resource.contains("/local")) {
+              //
+            }
+
+            log.error("isAuthorized: failed rule check, {}, {}, {}", dn, operation, resource);
             return false;
 
           default:

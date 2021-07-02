@@ -13,8 +13,8 @@ import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.messages.TimerMsg;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import scala.concurrent.duration.Duration;
 
 /**
@@ -24,7 +24,7 @@ import scala.concurrent.duration.Duration;
  */
 public class ConfigurationActor extends UntypedActor {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
     private final DdsActorSystem ddsActorSystem;
     private final DdsConfiguration discoveryConfiguration;
     private long interval;

@@ -5,7 +5,9 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
+    <!-- `<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" /> -->
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer" />
 
     <bean id="springApplicationContext" class="net.es.nsi.dds.spring.SpringApplicationContext" scope="singleton" />
 
@@ -16,7 +18,7 @@
     <bean id="restClient" class="net.es.nsi.dds.client.RestClient" scope="singleton">
         <constructor-arg index="0" ref="ddsConfiguration"/>
     </bean>
-    
+
     <bean id="authorizationProvider" class="net.es.nsi.dds.authorization.DnAuthorizationProvider" scope="singleton">
         <constructor-arg index="0" ref="ddsConfiguration"/>
     </bean>

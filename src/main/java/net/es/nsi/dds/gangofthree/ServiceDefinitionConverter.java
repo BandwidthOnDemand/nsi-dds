@@ -11,8 +11,8 @@ import net.es.nsi.dds.jaxb.nml.NmlSwitchingServiceType;
 import net.es.nsi.dds.jaxb.nml.NmlTopologyRelationType;
 import net.es.nsi.dds.jaxb.nml.NmlTopologyType;
 import net.es.nsi.dds.jaxb.nml.ServiceDefinitionType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *
@@ -25,7 +25,7 @@ public class ServiceDefinitionConverter {
     private static final String OldServiceType3 = "http://services.ogf.org/nsi/2013/12/definitions/EVTS.A-GOLE";
     private static final String NewServiceType = "http://services.ogf.org/nsi/2013/12/descriptions/EVTS.A-GOLE";
 
-    private final static Logger log = LoggerFactory.getLogger(ServiceDefinitionConverter.class);
+    private final static Logger log = LogManager.getLogger(ServiceDefinitionConverter.class);
 
     public static boolean convert(NmlTopologyType nml) {
         boolean modified;

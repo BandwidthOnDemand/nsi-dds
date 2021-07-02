@@ -6,8 +6,8 @@ import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.zip.GZIPOutputStream;
 import net.es.nsi.dds.jaxb.DomParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 
 /**
@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
  * @author hacksaw
  */
 public class Encoder {
-    private final static Logger log = LoggerFactory.getLogger(Encoder.class);
+    private final static Logger log = LogManager.getLogger(Encoder.class);
 
     public static String encode(Document doc) throws IOException {
         if (doc == null) {

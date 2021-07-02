@@ -17,15 +17,15 @@ import net.es.nsi.dds.jaxb.management.LogEnumType;
 import net.es.nsi.dds.jaxb.management.LogType;
 import net.es.nsi.dds.jaxb.management.ObjectFactory;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *
  * @author hacksaw
  */
 public class DdsLogger {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LogManager.getLogger(getClass());
     private static final String NSI_ROOT_LOGS = "/logs/";
     private static final int MAX_LOG_SIZE = 2000;
 

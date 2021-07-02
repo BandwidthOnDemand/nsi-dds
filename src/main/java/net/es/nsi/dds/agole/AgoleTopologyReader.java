@@ -15,8 +15,8 @@ import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import org.apache.http.client.utils.DateUtils;
 import org.glassfish.jersey.client.ChunkedInput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class reads a remote XML formatted NML topology and creates simple
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @author hacksaw
  */
 public class AgoleTopologyReader {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
     private final DdsLogger topologyLogger = DdsLogger.getLogger();
     private String target;
     private long lastModifiedTime;

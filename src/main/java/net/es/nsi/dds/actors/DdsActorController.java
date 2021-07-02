@@ -12,8 +12,8 @@ import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.spring.SpringExtension;
 import net.es.nsi.dds.spring.SpringExtension.SpringExt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -24,7 +24,7 @@ import org.springframework.context.ApplicationContextAware;
  * @author hacksaw
  */
 public class DdsActorController implements ApplicationContextAware {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
 
     // Configuration reader.
     private final DdsActorSystem ddsActorSystem;

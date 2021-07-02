@@ -10,12 +10,16 @@ import java.io.IOException;
 import java.net.URI;
 import net.es.nsi.dds.agole.AgoleManifestReader;
 import net.es.nsi.dds.agole.TopologyManifest;
+import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.spring.SpringContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
@@ -24,51 +28,57 @@ import org.springframework.context.ApplicationContext;
  * @author hacksaw
  */
 public class AgoleManifestReaderTest {
-    private static final String CONFIG_PATH = "configPath";
-    private final static String CONFIG_DIR = "src/test/resources/config/";
-    private static final String DEFAULT_DDS_FILE = CONFIG_DIR + "dds.xml";
-    private static final String DDS_CONFIG_FILE_ARGNAME = "ddsConfigFile";
 
-    @Test
-    public void loadMasterList() {
-        System.setProperty(CONFIG_PATH, CONFIG_DIR);
-        System.setProperty(DDS_CONFIG_FILE_ARGNAME, DEFAULT_DDS_FILE);
+  private static final String CONFIG_PATH = "configPath";
+  private final static String CONFIG_DIR = "src/test/resources/config/";
+  private static final String DEFAULT_DDS_FILE = CONFIG_DIR + "dds.xml";
+  private static final String DDS_CONFIG_FILE_ARGNAME = "ddsConfigFile";
+  private static Logger log;
 
-        // Initialize the Spring context to load our dependencies.
-        SpringContext sc = SpringContext.getInstance();
-        ApplicationContext context = sc.initContext("src/test/resources/config/AgoleManifestReaderTest.xml");
-        AgoleManifestReader reader = (AgoleManifestReader) context.getBean("agoleManifestReader");
-        reader.setTarget("http://localhost:8801/www/master.xml");
+  @BeforeClass
+  public static void initialize() {
+    System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
+    log = LogManager.getLogger(AgoleManifestReaderTest.class);
+  }
 
-        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:8801"));
-        StaticHttpHandler staticHttpHandler = new StaticHttpHandler("src/test/resources/config/www/");
-        server.getServerConfiguration().addHttpHandler(staticHttpHandler, "/www");
+  @Test
+  public void loadMasterList() {
+    System.setProperty(CONFIG_PATH, CONFIG_DIR);
+    System.setProperty(DDS_CONFIG_FILE_ARGNAME, DEFAULT_DDS_FILE);
 
-        try {
-            server.start();
+    // Initialize the Spring context to load our dependencies.
+    SpringContext sc = SpringContext.getInstance();
+    ApplicationContext context = sc.initContext("src/test/resources/config/AgoleManifestReaderTest.xml");
+    AgoleManifestReader reader = (AgoleManifestReader) context.getBean("agoleManifestReader");
+    reader.setTarget("http://localhost:8801/www/master.xml");
 
-            // Retrieve a copy of the centralized master topology list.
-            TopologyManifest master = reader.getManifest();
+    HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:8801"));
+    StaticHttpHandler staticHttpHandler = new StaticHttpHandler("src/test/resources/config/www/");
+    server.getServerConfiguration().addHttpHandler(staticHttpHandler, "/www");
 
-            assertTrue(master != null);
+    try {
+      server.start();
 
-            System.out.println("Master id: " + master.getId() + ", version=" + master.getVersion());
+      // Retrieve a copy of the centralized master topology list.
+      TopologyManifest master = reader.getManifest();
 
-            // Test to see if the Netherlight entry is present.
-            assertTrue(master.getTopologyURL("urn:ogf:network:netherlight.net:2013:topology:a-gole:testbed") != null);
+      assertTrue(master != null);
 
-            // We should not see a change in version.
-            master = reader.getManifestIfModified();
+      log.debug("Master id: {}, version={}", master.getId(), master.getVersion());
 
-            assertTrue(master == null);
-        }
-        catch (IOException | NotFoundException | JAXBException ex) {
-            System.err.println("Failed to load master topology list from: " + reader.getTarget());
-            ex.printStackTrace();
-            fail();
-        }
-        finally {
-            server.shutdownNow();
-        }
+      // Test to see if the Netherlight entry is present.
+      assertTrue(master.getTopologyURL("urn:ogf:network:netherlight.net:2013:topology:a-gole:testbed") != null);
+
+      // We should not see a change in version.
+      master = reader.getManifestIfModified();
+
+      assertTrue(master == null);
+    } catch (IOException | NotFoundException | JAXBException ex) {
+      log.error("Failed to load master topology list from: {)", reader.getTarget());
+      ex.printStackTrace();
+      fail();
+    } finally {
+      server.shutdownNow();
     }
+  }
 }

@@ -1,113 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
-    
-    <!-- ============================== -->
-    <!-- Append messages to the console -->
-    <!-- ============================== -->
-    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p [%t] - %m%n" />
-        </layout>
-        <filter class="org.apache.log4j.varia.LevelRangeFilter">
-            <param name="levelMin" value="DEBUG" />
-            <param name="levelMax" value="ERROR" />
-        </filter>
-    </appender>
+<Configuration status="DEBUG" strict="true" monitorInterval="30"
+    xmlns="http://logging.apache.org/log4j/2.0/config"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://logging.apache.org/log4j/2.0/config
+    https://raw.githubusercontent.com/apache/logging-log4j2/master/log4j-core/src/main/resources/Log4j-config.xsd">
 
-    <!-- ============================== -->
-    <!-- Append messages to log file -->
-    <!-- ============================== -->
-    <appender name="ERR_FILE" class="org.apache.log4j.RollingFileAppender">
-        <param name="MaxFileSize" value="100MB" />
-        <param name="MaxBackupIndex" value="10"/>
-        <param name="encoding" value="UTF-8" />
-        <param name="File" value="${basedir}/var/log/nsi-dds/nsi-dds.err.log" />
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p [%t] - %m%n" />
-        </layout>
-        <filter class="org.apache.log4j.varia.LevelRangeFilter">
-            <param name="levelMin" value="WARN" />
-            <param name="levelMax" value="ERROR" />
-        </filter>
-    </appender>
-    
-    
-    <!-- ============================== -->
-    <!-- Append messages to log file -->
-    <!-- ============================== -->
-    <appender name="INFO_FILE" class="org.apache.log4j.RollingFileAppender">
-        <param name="MaxFileSize" value="100MB" />
-        <param name="MaxBackupIndex" value="10"/>
-        <param name="encoding" value="UTF-8" />
-        <param name="File" value="${basedir}/var/log/nsi-dds/nsi-dds.info.log" />
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p [%t] - %m%n" />
-        </layout>
-        <filter class="org.apache.log4j.varia.LevelRangeFilter">
-            <param name="levelMin" value="INFO" />
-            <param name="levelMax" value="ERROR" />
-        </filter>
-    </appender>
-    
-    <!-- ============================== -->
-    <!-- Append messages to log file -->
-    <!-- ============================== -->
-    <appender name="DEBUG_FILE" class="org.apache.log4j.RollingFileAppender">
-        <param name="MaxFileSize" value="100MB" />
-        <param name="MaxBackupIndex" value="10"/>
-        <param name="encoding" value="UTF-8" />
-        <param name="File" value="${basedir}/var/log/nsi-dds/nsi-dds.debug.log" />
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p [%t] - %m%n" />
-        </layout>
-        <filter class="org.apache.log4j.varia.LevelRangeFilter">
-            <param name="levelMin" value="DEBUG" />
-            <param name="levelMax" value="ERROR" />
-        </filter>
-    </appender>
-    
-    <!-- ================ -->
-    <!-- Limit categories -->
-    <!-- ================ -->
-    <logger name="org.springframework">
-        <level value="DEBUG" />
-    </logger>
-    
-    <logger name="org.eclipse">
-        <level value="DEBUG" />
-    </logger>
-    
-    <logger name="org.apache">
-        <level value="DEBUG" />
-    </logger>
-    
-    <logger name="org.glassfish.jersey">
-        <level value="DEBUG" />
-    </logger>
-    
-    <logger name="org.glassfish.grizzly">
-        <level value="DEBUG" />
-    </logger>
-    
-    <logger name="org.hibernate">
-        <level value="DEBUG" />
-    </logger>
+    <Appenders>
+        <Console name="LogToConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
 
-    <logger name="net.es.nsi.dds">
-        <level value="DEBUG" />
-    </logger>
-    
-    <!-- ======================= -->
-    <!-- Setup the Root logger -->
-    <!-- ======================= -->
-    <root>
-        <level value="DEBUG" />
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="INFO_FILE" />
-        <appender-ref ref="ERR_FILE" />
-        <appender-ref ref="DEBUG_FILE" />
-    </root>
-    
-</log4j:configuration>
+    <Loggers>
+        <Logger name="org.springframework" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+
+        <Logger name="org.eclipse" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+<!--
+        <Logger name="org.apache" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+-->
+        <Logger name="org.glassfish.jersey" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+
+        <Logger name="org.glassfish.grizzly" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+
+        <Logger name="org.hibernate" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+
+        <Logger name="net.es.nsi.dds" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+        <Root level="debug">
+            <AppenderRef ref="LogToConsole"/>
+        </Root>
+    </Loggers>
+</Configuration>
 

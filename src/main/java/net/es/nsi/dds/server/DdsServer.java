@@ -10,13 +10,13 @@ import net.es.nsi.dds.spring.SpringApplicationContext;
 import org.glassfish.jersey.message.DeflateEncoder;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.server.filter.EncodingFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class DdsServer {
     private static final int FILE_CACHE_MAX_AGE = 3600;
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
     private final HttpConfig config;
     private RestServer server = null;
 

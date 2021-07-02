@@ -58,15 +58,10 @@ public class NmlEthernet {
   public final static String VLAN = "vlan";
 
   // Ethernet port metrics.
-  @lombok.Builder.Default
   private Optional<Long> granularity = Optional.empty();
-  @lombok.Builder.Default
   private Optional<Long> maximumReservableCapacity = Optional.empty();
-  @lombok.Builder.Default
   private Optional<Long> minimumReservableCapacity = Optional.empty();
-  @lombok.Builder.Default
   private Optional<Integer> interfaceMTU = Optional.empty();
-  @lombok.Builder.Default
   private Optional<Long> capacity = Optional.empty();
 
   public NmlEthernet() {

@@ -15,7 +15,7 @@ public class Properties {
     public static final String SYSTEM_PROPERTY_CONFIGFILE = "ddsConfigFile";
 
     public static final String SYSTEM_PROPERTY_DEBUG = "debug";
-    public static final String SYSTEM_PROPERTY_LOG4J = "log4j.configuration";
+    public static final String SYSTEM_PROPERTY_LOG4J = "log4j.configurationFile";
     public static final String SYSTEM_PROPERTY_SSL_KEYSTORE = "javax.net.ssl.keyStore";
     public static final String SYSTEM_PROPERTY_SSL_KEYSTORE_PASSWORD = "javax.net.ssl.keyStorePassword";
     public static final String SYSTEM_PROPERTY_SSL_KEYSTORE_TYPE = "javax.net.ssl.keyStoreType";

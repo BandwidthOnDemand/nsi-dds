@@ -14,8 +14,8 @@ import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.jaxb.dds.SubscriptionRequestType;
 import net.es.nsi.dds.jaxb.dds.SubscriptionType;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *
@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public class Subscription implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
     private static final String SUBSCRIPTIONS_URL = "subscriptions";
     private static final ObjectFactory factory = new ObjectFactory();
     private String id;

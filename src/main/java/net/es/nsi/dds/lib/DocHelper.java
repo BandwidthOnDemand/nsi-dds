@@ -23,15 +23,15 @@ import net.es.nsi.dds.provider.DdsProvider;
 import net.es.nsi.dds.signing.SignatureFactory;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *
  * @author hacksaw
  */
 public class DocHelper {
-    private final static Logger log = LoggerFactory.getLogger(DocHelper.class);
+    private final static Logger log = LogManager.getLogger(DocHelper.class);
     private final static net.es.nsi.dds.jaxb.dds.ObjectFactory ddsFactory = new net.es.nsi.dds.jaxb.dds.ObjectFactory();
     private final static net.es.nsi.dds.jaxb.nsa.ObjectFactory nsaFactory = new net.es.nsi.dds.jaxb.nsa.ObjectFactory();
     private final static net.es.nsi.dds.jaxb.nml.ObjectFactory nmlFactory = new net.es.nsi.dds.jaxb.nml.ObjectFactory();

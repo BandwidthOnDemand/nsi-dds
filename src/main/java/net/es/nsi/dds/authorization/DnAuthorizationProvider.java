@@ -5,11 +5,11 @@ import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class DnAuthorizationProvider implements AuthorizationProvider {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
     private final DdsConfiguration config;
 
     public DnAuthorizationProvider(DdsConfiguration config) {

@@ -4,9 +4,12 @@ import com.google.common.base.Optional;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.jaxb.management.AttributeType;
 import net.es.nsi.dds.jaxb.management.VersionType;
 import net.es.nsi.dds.test.TestConfig;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -20,20 +23,24 @@ import org.junit.Test;
 public class VersionTest {
     private static TestConfig testConfig;
     private static WebTarget management;
+    private static Logger log;
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        System.out.println("*************************************** TimersTest oneTimeSetUp ***********************************");
+        System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
+        log = LogManager.getLogger(VersionTest.class);
+
+        log.debug("*************************************** TimersTest oneTimeSetUp ***********************************");
         testConfig = new TestConfig();
         management = testConfig.getTarget().path("dds").path("management");
-        System.out.println("*************************************** TimersTest oneTimeSetUp done ***********************************");
+        log.debug("*************************************** TimersTest oneTimeSetUp done ***********************************");
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
-        System.out.println("*************************************** TimersTest oneTimeTearDown ***********************************");
+        log.debug("*************************************** TimersTest oneTimeTearDown ***********************************");
         testConfig.shutdown();
-        System.out.println("*************************************** TimersTest oneTimeTearDown done ***********************************");
+        log.debug("*************************************** TimersTest oneTimeTearDown done ***********************************");
     }
 
     @Test

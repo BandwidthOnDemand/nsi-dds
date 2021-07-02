@@ -1,59 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+<Configuration status="DEBUG" strict="true" monitorInterval="30"
+    xmlns="http://logging.apache.org/log4j/2.0/config"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://logging.apache.org/log4j/2.0/config
+    https://raw.githubusercontent.com/apache/logging-log4j2/master/log4j-core/src/main/resources/Log4j-config.xsd">
 
-    <!-- ============================== -->
-    <!-- Append messages to the console -->
-    <!-- ============================== -->
-    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p [%t] - %m%n" />
-        </layout>
-        <filter class="org.apache.log4j.varia.LevelRangeFilter">
-            <param name="levelMin" value="DEBUG" />
-            <param name="levelMax" value="ERROR" />
-        </filter>
-    </appender>
+    <Appenders>
+        <Console name="LogToConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
 
+    <Loggers>
+        <Logger name="org.springframework" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
 
-    <!-- ================ -->
-    <!-- Limit categories -->
-    <!-- ================ -->
-    <logger name="org.springframework">
-        <level value="DEBUG" />
-    </logger>
+        <Logger name="org.eclipse" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
 
-    <logger name="org.eclipse">
-        <level value="DEBUG" />
-    </logger>
+        <Logger name="org.apache" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
 
-    <logger name="org.apache">
-        <level value="DEBUG" />
-    </logger>
+        <Logger name="org.glassfish.jersey" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
 
-    <logger name="org.glassfish.jersey">
-        <level value="DEBUG" />
-    </logger>
+        <Logger name="org.glassfish.grizzly" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
 
-    <logger name="org.glassfish.grizzly">
-        <level value="DEBUG" />
-    </logger>
+        <Logger name="org.hibernate" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
 
-    <logger name="org.hibernate">
-        <level value="DEBUG" />
-    </logger>
+        <Logger name="net.es.nsi.dds" level="debug" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
 
-    <logger name="net.es.nsi.dds">
-        <level value="DEBUG" />
-    </logger>
-
-    <!-- ======================= -->
-    <!-- Setup the Root logger -->
-    <!-- ======================= -->
-    <root>
-        <level value="DEBUG" />
-        <appender-ref ref="CONSOLE" />
-    </root>
-
-</log4j:configuration>
+        <Root level="debug">
+            <AppenderRef ref="LogToConsole"/>
+        </Root>
+    </Loggers>
+</Configuration>
 

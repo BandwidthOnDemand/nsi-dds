@@ -26,8 +26,8 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 
 /**
@@ -36,7 +36,7 @@ import org.w3c.dom.Document;
  * @author hacksaw
  */
 public class SignatureFactory {
-    private final Logger log = LoggerFactory.getLogger(SignatureFactory.class);
+    private final Logger log = LogManager.getLogger(SignatureFactory.class);
     private final XMLSignatureFactory fac;
     private final KeyStoreHandler keyStoreHandler;
 

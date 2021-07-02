@@ -20,8 +20,8 @@ import net.es.nsi.dds.jaxb.dds.DocumentType;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * DocumentCache encapsulates DDS document storage through an in memory map
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @author hacksaw
  */
 public class DocumentCache {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
 
     // The holder of our configuration.
     private final DdsProfile ddsProfile;

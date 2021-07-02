@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.client.TestServer;
+import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.jaxb.DdsParser;
@@ -36,6 +37,8 @@ import net.es.nsi.dds.jaxb.nsa.NsaType;
 import net.es.nsi.dds.test.TestConfig;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ChunkedInput;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -61,10 +64,14 @@ public class DiscoveryTest {
   private static WebTarget target;
   private static WebTarget discovery;
   private static String callbackURL;
+  private static Logger log;
 
   @BeforeClass
   public static void oneTimeSetUp() {
-    System.out.println("*************************************** DiscoveryTest oneTimeSetUp ***********************************");
+    System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
+    log = LogManager.getLogger(DiscoveryTest.class);
+
+    log.debug("*************************************** DiscoveryTest oneTimeSetUp ***********************************");
 
     try {
       // Load a copy of the test DDS configuration and clear the document
@@ -80,27 +87,27 @@ public class DiscoveryTest {
 
       callbackURL = new URL(testServer.getURL(), "dds/callback").toString();
     } catch (IllegalArgumentException | JAXBException | IOException | IllegalStateException | KeyStoreException | NoSuchAlgorithmException | CertificateException ex) {
-      System.err.println("oneTimeSetUp: failed to start HTTP server " + ex.getLocalizedMessage());
+      log.error("oneTimeSetUp: failed to start HTTP server " + ex.getLocalizedMessage());
       fail();
     }
 
     testConfig = new TestConfig();
     target = testConfig.getTarget();
     discovery = target.path("dds");
-    System.out.println("*************************************** DiscoveryTest oneTimeSetUp done ***********************************");
+    log.debug("*************************************** DiscoveryTest oneTimeSetUp done ***********************************");
   }
 
   @AfterClass
   public static void oneTimeTearDown() {
-    System.out.println("*************************************** DiscoveryTest oneTimeTearDown ***********************************");
+    log.debug("*************************************** DiscoveryTest oneTimeTearDown ***********************************");
     testConfig.shutdown();
     try {
       TestServer.INSTANCE.shutdown();
     } catch (IllegalStateException ex) {
-      System.err.println("oneTimeTearDown: test server shutdown failed." + ex.getLocalizedMessage());
+      log.error("oneTimeTearDown: test server shutdown failed." + ex.getLocalizedMessage());
       fail();
     }
-    System.out.println("*************************************** DiscoveryTest oneTimeTearDown done ***********************************");
+    log.debug("*************************************** DiscoveryTest oneTimeTearDown done ***********************************");
   }
 
   /**
@@ -108,18 +115,18 @@ public class DiscoveryTest {
    */
   @Test
   public void aPing() throws InterruptedException, JAXBException {
-    System.out.println("******* Running aPing test");
+    log.debug("******* Running aPing test");
 
     // Simple ping to determine if interface is available.
     WebTarget path = discovery.path("ping");
 
-    System.out.println("Path: " + path.toString());
+    log.debug("Path: " + path.toString());
 
     try (Response response = path.request(MediaType.APPLICATION_XML).get()) {
       if (Response.Status.OK.getStatusCode() != response.getStatus() && response.hasEntity()) {
         // We propably have an error message returned so dump it for debugging.
         String entity = response.readEntity(String.class);
-        System.out.println("Entity: \n" + entity);
+        log.debug("Entity: \n" + entity);
 
         // Read the error into an ErrorType strucutre.
         ErrorType error = DdsParser.getInstance().xml2Error(entity);
@@ -128,7 +135,7 @@ public class DiscoveryTest {
       }
       assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     } finally {
-      System.out.println("******* Done aPing test");
+      log.debug("******* Done aPing test");
     }
   }
 
@@ -139,7 +146,7 @@ public class DiscoveryTest {
    */
   @Test
   public void bLoadDocuments() throws Exception {
-    System.out.println("******* Running aLoadDocuments test");
+    log.debug("******* Running aLoadDocuments test");
     // For each document file in the document directory load into discovery service.
     for (String file : FileUtilities.getXmlFileList(DOCUMENT_DIR)) {
       DocumentType document = DdsParser.getInstance().readDocument(file);
@@ -153,7 +160,7 @@ public class DiscoveryTest {
         }
       }
     }
-    System.out.println("******* Done aLoadDocuments test");
+    log.debug("******* Done aLoadDocuments test");
   }
 
   /**
@@ -163,7 +170,7 @@ public class DiscoveryTest {
    */
   @Test
   public void cDocumentsFull() throws Exception {
-    System.out.println("************************** Running cDocumentsFull test ********************************");
+    log.debug("************************** Running cDocumentsFull test ********************************");
     // Get a list of all documents with full contents.
     Response response = discovery.path("documents").request(NsiConstants.NSI_DDS_V1_XML).get();
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -173,7 +180,7 @@ public class DiscoveryTest {
     DocumentListType chunk;
     DocumentListType documents = null;
     while ((chunk = chunkedInput.read()) != null) {
-      System.out.println("Chunk received...");
+      log.debug("Chunk received...");
       documents = chunk;
     }
     response.close();
@@ -181,7 +188,7 @@ public class DiscoveryTest {
     assertNotNull(documents);
 
     for (DocumentType document : documents.getDocument()) {
-      System.out.println("cDocumentsFull: " + document.getNsa() + ", " + document.getType() + ", " + document.getId() + ", href=" + document.getHref());
+      log.debug("cDocumentsFull: " + document.getNsa() + ", " + document.getType() + ", " + document.getId() + ", href=" + document.getHref());
       assertFalse(document.getContent().getValue().isEmpty());
 
       response = testConfig.getClient().target(document.getHref()).request(NsiConstants.NSI_DDS_V1_XML).get();
@@ -213,7 +220,7 @@ public class DiscoveryTest {
 
       assertTrue(found);
     }
-    System.out.println("************************** Running cDocumentsFull test ********************************");
+    log.debug("************************** Running cDocumentsFull test ********************************");
   }
 
   /**
@@ -223,7 +230,7 @@ public class DiscoveryTest {
    */
   @Test
   public void dDocumentsSummary() throws Exception {
-    System.out.println("************************** Running dDocumentsSummary test ********************************");
+    log.debug("************************** Running dDocumentsSummary test ********************************");
     // Get a list of all documents with summary contents.
     Response response = discovery.path("documents").queryParam("summary", "true").request(NsiConstants.NSI_DDS_V1_XML).get();
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -232,7 +239,7 @@ public class DiscoveryTest {
     assertNotNull(documents);
 
     for (DocumentType document : documents.getDocument()) {
-      System.out.println("dDocumentsSummary: " + document.getNsa() + ", " + document.getType() + ", " + document.getId() + ", href=" + document.getHref());
+      log.debug("dDocumentsSummary: " + document.getNsa() + ", " + document.getType() + ", " + document.getId() + ", href=" + document.getHref());
       assertTrue(document.getContent() == null || Strings.isNullOrEmpty(document.getContent().getValue()));
 
       // Read the direct href and get summary contents.
@@ -248,7 +255,7 @@ public class DiscoveryTest {
 
   @Test
   public void eDocumentNotFound() throws Exception {
-    System.out.println("************************** Running eDocumentNotFound test ********************************");
+    log.debug("************************** Running eDocumentNotFound test ********************************");
     // We want a NOT_FOUND for a nonexistent nsa resource on document path.
     Response response = discovery.path("documents").path("invalidNsaValue").request(NsiConstants.NSI_DDS_V1_XML).get();
     assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
@@ -262,12 +269,12 @@ public class DiscoveryTest {
 
     assertNotNull(documents);
     assertTrue(documents.getDocument().isEmpty());
-    System.out.println("************************** Done eDocumentNotFound test ********************************");
+    log.debug("************************** Done eDocumentNotFound test ********************************");
   }
 
   @Test
   public void fLocalDocuments() throws Exception {
-    System.out.println("************************** Running fLocalDocuments test ********************************");
+    log.debug("************************** Running fLocalDocuments test ********************************");
     // Get a list of all documents with full contents.
     Response response = discovery.path("local").request(NsiConstants.NSI_DDS_V1_XML).get();
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -277,7 +284,7 @@ public class DiscoveryTest {
       DocumentListType chunk;
       documents = null;
       while ((chunk = chunkedInput.read()) != null) {
-        System.out.println("Chunk received...");
+        log.debug("Chunk received...");
         documents = chunk;
       }
     }
@@ -285,7 +292,7 @@ public class DiscoveryTest {
     assertNotNull(documents);
 
     for (DocumentType document : documents.getDocument()) {
-      System.out.println("Local NSA Id compare: localId=" + DdsConfiguration.getInstance().getNsaId() + ", document=" + document.getNsa());
+      log.debug("Local NSA Id compare: localId=" + DdsConfiguration.getInstance().getNsaId() + ", document=" + document.getNsa());
       assertEquals(document.getNsa(), DdsConfiguration.getInstance().getNsaId());
 
       response = discovery.path("local").path(URLEncoder.encode(document.getType(), "UTF-8")).request(NsiConstants.NSI_DDS_V1_XML).get();
@@ -300,12 +307,12 @@ public class DiscoveryTest {
         assertEquals(document.getType(), d.getType());
       }
     }
-    System.out.println("************************** Done fLocalDocuments test ********************************");
+    log.debug("************************** Done fLocalDocuments test ********************************");
   }
 
   @Test
   public void fUpdateDocuments() throws Exception {
-    System.out.println("************************** Running fUpdateDocuments test ********************************");
+    log.debug("************************** Running fUpdateDocuments test ********************************");
     // For each document file in the document directory load into discovery service.
     for (String file : FileUtilities.getXmlFileList(DOCUMENT_DIR)) {
       DocumentType document = DdsParser.getInstance().readDocument(file);
@@ -324,7 +331,7 @@ public class DiscoveryTest {
         }
       }
 
-      System.out.println("fUpdateDocuments: updating document " + document.getId());
+      log.debug("fUpdateDocuments: updating document " + document.getId());
 
       JAXBElement<DocumentType> jaxbRequest = factory.createDocument(document);
       Response response = discovery.path("documents")
@@ -337,12 +344,12 @@ public class DiscoveryTest {
       assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
       response.close();
     }
-    System.out.println("************************** Done fUpdateDocuments test ********************************");
+    log.debug("************************** Done fUpdateDocuments test ********************************");
   }
 
   @Test
   public void gAddNotification() throws Exception {
-    System.out.println("************************** Running gAddNotification test ********************************");
+    log.debug("************************** Running gAddNotification test ********************************");
     // Register for ALL document event types.
     SubscriptionRequestType subscription = factory.createSubscriptionRequestType();
     subscription.setRequesterId("urn:ogf:network:es.net:2013:nsa");
@@ -371,12 +378,12 @@ public class DiscoveryTest {
     response.close();
     assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-    System.out.println("************************** Done gAddNotification test ********************************");
+    log.debug("************************** Done gAddNotification test ********************************");
   }
 
   @Test
   public void hNotification() throws Exception {
-    System.out.println("************************** Running hNotification test ********************************");
+    log.debug("************************** Running hNotification test ********************************");
     // Register for ALL document event types.
     SubscriptionRequestType subscription = factory.createSubscriptionRequestType();
     subscription.setRequesterId("urn:ogf:network:es.net:2013:nsa");
@@ -411,9 +418,9 @@ public class DiscoveryTest {
     assertNotNull(notifications);
     notifications = TestServer.INSTANCE.pollDdsNotification();
     while (notifications != null) {
-      System.out.println("hNotification: providerId=" + notifications.getProviderId() + ", subscriptionId=" + notifications.getId());
+      log.debug("hNotification: providerId=" + notifications.getProviderId() + ", subscriptionId=" + notifications.getId());
       for (NotificationType notification : notifications.getNotification()) {
-        System.out.println("hNotification: event=" + notification.getEvent() + ", documentId=" + notification.getDocument().getId());
+        log.debug("hNotification: event=" + notification.getEvent() + ", documentId=" + notification.getDocument().getId());
       }
       notifications = TestServer.INSTANCE.pollDdsNotification();
     }
@@ -433,9 +440,9 @@ public class DiscoveryTest {
     assertNotNull(notifications);
     notifications = TestServer.INSTANCE.pollDdsNotification();
     while (notifications != null) {
-      System.out.println("hNotification: providerId=" + notifications.getProviderId() + ", subscriptionId=" + notifications.getId());
+      log.debug("hNotification: providerId=" + notifications.getProviderId() + ", subscriptionId=" + notifications.getId());
       for (NotificationType notification : notifications.getNotification()) {
-        System.out.println("hNotification: event=" + notification.getEvent() + ", documentId=" + notification.getDocument().getId());
+        log.debug("hNotification: event=" + notification.getEvent() + ", documentId=" + notification.getDocument().getId());
       }
       notifications = TestServer.INSTANCE.pollDdsNotification();
     }
@@ -443,7 +450,7 @@ public class DiscoveryTest {
     response = testConfig.getClient().target(result.getHref()).request(NsiConstants.NSI_DDS_V1_XML).delete();
     response.close();
     assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    System.out.println("************************** Done hNotification test ********************************");
+    log.debug("************************** Done hNotification test ********************************");
   }
 
   @Test
@@ -473,7 +480,7 @@ public class DiscoveryTest {
     assertFalse(documents.getDocument().isEmpty());
 
     for (DocumentType document : documents.getDocument()) {
-      System.out.println("readDocumentType: reading document " + document.getId());
+      log.debug("readDocumentType: reading document " + document.getId());
       response = testConfig.getClient().target(document.getHref()).request(NsiConstants.NSI_DDS_V1_XML).get();
       assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
       response.close();

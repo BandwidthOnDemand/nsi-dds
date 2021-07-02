@@ -1,5 +1,6 @@
 package net.es.nsi.dds.api;
 
+import com.google.common.base.Strings;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
@@ -44,8 +45,8 @@ import net.es.nsi.dds.provider.Subscription;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
 import org.apache.http.client.utils.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *
@@ -54,10 +55,10 @@ import org.slf4j.LoggerFactory;
 @Path("/dds")
 @Consumes(MediaType.APPLICATION_XML)
 public class DiscoveryService {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
     private final ObjectFactory factory = new ObjectFactory();
 
-    @Context SecurityContext securityContext;
+    //@Context SecurityContext securityContext;
 
     /**
      * Ping to see if the DDS service is operational.
@@ -847,7 +848,7 @@ public class DiscoveryService {
                 }
 
                 results.getSubscription().add(subscription.getSubscription());
-                log.debug("getSubscriptions: {}", subscription.getSubscription().getId());
+                log.debug("getSubscriptions: requesterId={}, subscriptionId={}", requesterId, subscription.getSubscription().getId());
             }
         }
 
@@ -915,11 +916,11 @@ public class DiscoveryService {
         try {
             String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);
             String encoded = DdsParser.getInstance().subscription2Xml(subscription.getSubscription());
-            log.debug("addSubscription: resonse\n{}", encoded);
+            log.debug("addSubscription: response\n{}", encoded);
             return Response.created(URI.create(subscription.getSubscription().getHref())).header("Last-Modified", date).entity(encoded).build();
         } catch (JAXBException | IOException ex) {
             WebApplicationException invalidXmlException = Exceptions.invalidXmlException("/subscriptions", "Unable to format XML response " + ex.getMessage());
-            log.error("getSubscriptions: Failed to format outgoing response.", invalidXmlException);
+            log.error("addSubscription: Failed to format outgoing response.", invalidXmlException);
             throw invalidXmlException;
         }
     }
@@ -929,6 +930,7 @@ public class DiscoveryService {
      *
      * @param id
      * @param ifModifiedSince
+     * @param sc
      * @return
      * @throws WebApplicationException
      */
@@ -937,14 +939,19 @@ public class DiscoveryService {
     @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
     public Response getSubscription(
             @PathParam("id") String id,
-            @HeaderParam("If-Modified-Since") String ifModifiedSince) throws WebApplicationException {
+            @HeaderParam("If-Modified-Since") String ifModifiedSince,
+            @Context SecurityContext sc) throws WebApplicationException {
 
-        log.debug("getSubscriptions: id={}", id);
+        if (sc.getUserPrincipal() != null) {
+          log.debug("getSubscription: User principle=" + sc.getUserPrincipal().getName());
+        }
+
+
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
         Date lastDiscovered = null;
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
+        if (!Strings.isNullOrEmpty(ifModifiedSince)) {
             lastDiscovered = DateUtils.parseDate(ifModifiedSince);
         }
 
@@ -953,8 +960,11 @@ public class DiscoveryService {
 
         if (subscription == null) {
             // We found matching but it was not modified.
+            log.debug("getSubscriptions: found id={} but not modified", id);
             return Response.notModified().build();
         }
+
+        log.debug("getSubscriptions: found id={}, requesterId={}", id, subscription.getSubscription().getRequesterId());
 
         try {
             String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);

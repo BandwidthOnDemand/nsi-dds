@@ -2,7 +2,10 @@ package net.es.nsi.dds.management;
 
 
 import jakarta.ws.rs.client.WebTarget;
+import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.test.TestConfig;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,20 +22,24 @@ import org.junit.Test;
 public class StatusTest {
     private static TestConfig testConfig;
     private static WebTarget management;
+    private static Logger log;
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        System.out.println("*************************************** StatusTest oneTimeSetUp ***********************************");
+        System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
+        log = LogManager.getLogger(StatusTest.class);
+
+        log.debug("*************************************** StatusTest oneTimeSetUp ***********************************");
         testConfig = new TestConfig();
         management = testConfig.getTarget().path("dds").path("management").path("status");
-        System.out.println("*************************************** StatusTest oneTimeSetUp done ***********************************");
+        log.debug("*************************************** StatusTest oneTimeSetUp done ***********************************");
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
-        System.out.println("*************************************** StatusTest oneTimeTearDown ***********************************");
+        log.debug("*************************************** StatusTest oneTimeTearDown ***********************************");
         testConfig.shutdown();
-        System.out.println("*************************************** StatusTest oneTimeTearDown done ***********************************");
+        log.debug("*************************************** StatusTest oneTimeTearDown done ***********************************");
     }
 
     @Test
@@ -42,8 +49,8 @@ public class StatusTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
         StatusType status = response.readEntity(StatusType.class);
-        System.out.println("Status code = " + status.getStatus());
+        log.debug("Status code = " + status.getStatus());
         assertEquals(TopologyStatusType.COMPLETED, status.getStatus());
-        System.out.println("Topology status code = " + status.getStatus().value());*/
+        log.debug("Topology status code = " + status.getStatus().value());*/
     }
 }

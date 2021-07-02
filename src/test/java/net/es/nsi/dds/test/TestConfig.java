@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.test;
 
 import jakarta.ws.rs.client.Client;
@@ -11,6 +7,8 @@ import java.io.IOException;
 import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.config.Properties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 
 /**
@@ -26,19 +24,21 @@ public class TestConfig {
     private final Client client;
     private final WebTarget target;
 
+    private final Logger log = LogManager.getLogger(getClass());
+
     public TestConfig() {
         System.setProperty(CONFIG_PATH, CONFIG_DIR);
         System.setProperty(DDS_CONFIG_FILE_ARGNAME, DEFAULT_DDS_FILE);
         try {
             if (ConfigurationManager.INSTANCE.isInitialized()) {
-                System.out.println("TestConfig: ConfigurationManager already initialized so shutting down.");
+                log.info("TestConfig: ConfigurationManager already initialized so shutting down.");
                 ConfigurationManager.INSTANCE.shutdown();
             }
             System.setProperty(Properties.SYSTEM_PROPERTY_CONFIGDIR, CONFIG_DIR);
             ConfigurationManager.INSTANCE.initialize();
         }
         catch (IOException ex) {
-            System.err.println("TestConfig: failed to initialize ConfigurationManager.");
+            log.error("TestConfig: failed to initialize ConfigurationManager.");
             ex.printStackTrace();
         }
 

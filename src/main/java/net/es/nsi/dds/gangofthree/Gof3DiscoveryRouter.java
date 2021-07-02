@@ -25,8 +25,8 @@ import net.es.nsi.dds.jaxb.configuration.PeerURLType;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.messages.TimerMsg;
 import net.es.nsi.dds.util.NsiConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import scala.concurrent.duration.Duration;
 
 /**
@@ -35,7 +35,7 @@ import scala.concurrent.duration.Duration;
  */
 public class Gof3DiscoveryRouter extends UntypedActor {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
     private final DdsActorSystem ddsActorSystem;
     private final DdsConfiguration discoveryConfiguration;
     private int poolSize;

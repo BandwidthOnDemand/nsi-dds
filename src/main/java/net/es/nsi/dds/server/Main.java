@@ -13,7 +13,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is the main execution thread for the NSI Document Distribution Service.
@@ -24,8 +23,6 @@ import org.slf4j.LoggerFactory;
  * @author hacksaw
  */
 public class Main extends ResourceConfig {
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Main.class);
-
     // Command line arguments.
     public static final String DDS_ARGNAME_BASEDIR = "base";
     public static final String DDS_ARGNAME_CONFIGDIR = "config";
@@ -66,9 +63,9 @@ public class Main extends ResourceConfig {
             new Thread() {
                 @Override
                 public void run() {
-                    log.info("Shutting down DDS...");
+                    System.out.println("Shutting down DDS...");
                     DdsServer.getInstance().shutdown();
-                    log.info("...Shutdown complete.");
+                    System.out.println("...Shutdown complete.");
                     Main.setKeepRunning(false);
                 }
             }
@@ -158,7 +155,7 @@ public class Main extends ResourceConfig {
         try {
             basedir = Paths.get(basedir).toRealPath().toString();
         } catch (IOException ex) {
-            log.error("Base directory not found " + basedir, ex);
+            System.err.printf("Base directory not found %s, ex = %s\n", basedir, ex);
             throw ex;
         }
 
@@ -186,7 +183,7 @@ public class Main extends ResourceConfig {
         try {
             configdir = configPath.toRealPath().toString();
         } catch (IOException ex) {
-            log.error("Configuration directory not found " + configdir, ex);
+            System.err.printf("Configuration directory not found %s, ex = %s\n", configdir, ex);
             throw ex;
         }
 
@@ -214,7 +211,7 @@ public class Main extends ResourceConfig {
         try {
             ddsFile = ddsPath.toRealPath().toString();
         } catch (IOException ex) {
-            log.error("DDS configuration file not found " + ddsFile, ex);
+            System.err.printf("DDS configuration file not found %s, ex = %s\n", ddsFile, ex);
             throw ex;
         }
 

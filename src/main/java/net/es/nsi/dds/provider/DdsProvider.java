@@ -37,8 +37,8 @@ import net.es.nsi.dds.messages.DocumentEvent;
 import net.es.nsi.dds.messages.SubscriptionEvent;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DdsProvider implements DiscoveryProvider {
 
-  private final Logger log = LoggerFactory.getLogger(getClass());
+  private final Logger log = LogManager.getLogger(getClass());
   private final ObjectFactory factory = new ObjectFactory();
 
   // Configuration reader.
@@ -143,8 +143,14 @@ public class DdsProvider implements DiscoveryProvider {
 
     Subscription subscription = subscriptions.remove(id);
     if (subscription == null) {
+      log.debug("DdsProvider.deleteSubscription: id={} does not exist", id);
       throw Exceptions.doesNotExistException(DiscoveryError.SUBCRIPTION_DOES_NOT_EXIST, "id", id);
     }
+
+    log.debug("DdsProvider.deleteSubscription: requesterId={}, id={}, version={}",
+            subscription.getSubscription().getRequesterId(),
+            subscription.getSubscription().getId(),
+            subscription.getSubscription().getVersion());
 
     if (subscription.getAction() != null) {
       subscription.getAction().cancel();
@@ -205,16 +211,19 @@ public class DdsProvider implements DiscoveryProvider {
 
     Subscription subscription = subscriptions.get(id);
     if (subscription == null) {
+      log.debug("DdsProvider.getSubscription: id={} not found", id);
       throw Exceptions.doesNotExistException(DiscoveryError.SUBCRIPTION_DOES_NOT_EXIST, "id", id);
     }
 
     // Check to see if the document was modified after provided date.
     if (lastModified != null
             && lastModified.compareTo(subscription.getLastModified()) >= 0) {
+      log.debug("DdsProvider.getSubscription: id={} not modified", id);
       // NULL will represent not modified.
       return null;
     }
 
+    log.debug("DdsProvider.getSubscription: id={} found", id);
     return subscription;
   }
 

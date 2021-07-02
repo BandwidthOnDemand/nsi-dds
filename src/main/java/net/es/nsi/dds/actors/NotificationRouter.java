@@ -24,8 +24,8 @@ import net.es.nsi.dds.messages.SubscriptionEvent;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.provider.Subscription;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import scala.concurrent.duration.Duration;
 
 /**
@@ -35,7 +35,7 @@ import scala.concurrent.duration.Duration;
  * @author hacksaw
  */
 public class NotificationRouter extends UntypedActor {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
     private final DdsActorSystem ddsActorSystem;
     private final DdsConfiguration discoveryConfiguration;
     private final DiscoveryProvider discoveryProvider;
@@ -129,8 +129,9 @@ public class NotificationRouter extends UntypedActor {
         Collection<Document> documents = documentCache.values();
 
         // Clean up our trigger event.
-        log.debug("routeSubscriptionEvent: requesterId={}, event={}, documents={}, postSize={}, action={}",
+        log.debug("routeSubscriptionEvent: requesterId={}, id={}, event={}, documents={}, postSize={}, action={}",
                 se.getSubscription().getSubscription().getRequesterId(),
+                se.getSubscription().getSubscription().getId(),
                 se.getEvent(), documents.size(), notificationSize,
                 se.getSubscription().getAction().isCancelled());
         se.getSubscription().setAction(null);

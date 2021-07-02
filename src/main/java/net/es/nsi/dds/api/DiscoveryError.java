@@ -7,8 +7,8 @@ import java.util.Map;
 import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.dds.ErrorType;
 import net.es.nsi.dds.jaxb.dds.ObjectFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Defines the error values for the DDS logging system.
@@ -44,7 +44,7 @@ public enum DiscoveryError {
   // Mark the end.
   END(9999, "END", "END");
 
-  private final static Logger log = LoggerFactory.getLogger(DiscoveryError.class);
+  private final static Logger log = LogManager.getLogger(DiscoveryError.class);
 
   private final int code;
   private final String label;

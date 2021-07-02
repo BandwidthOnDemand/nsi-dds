@@ -18,8 +18,8 @@ import net.es.nsi.dds.jaxb.nml.NmlTopologyType;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import org.apache.http.client.utils.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class reads a remote XML formatted NML topology containing the list of
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * @author hacksaw
  */
 public class AgoleManifestReader {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
     private final DdsLogger topologyLogger = DdsLogger.getLogger();
 
     private final static QName _isReference_QNAME = new QName("http://schemas.ogf.org/nsi/2013/09/topology#", "isReference");

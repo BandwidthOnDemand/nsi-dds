@@ -3,7 +3,6 @@ package net.es.nsi.dds.actors;
 import akka.actor.UntypedActor;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -20,8 +19,8 @@ import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.messages.Notification;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The Notification Actor delivers notifications to a specific DDS peer based
@@ -31,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NotificationActor extends UntypedActor {
 
-  private final Logger log = LoggerFactory.getLogger(getClass());
+  private final Logger log = LogManager.getLogger(getClass());
   private final ObjectFactory factory = new ObjectFactory();
   private final String providerId;
   private final RestClient restClient;
@@ -65,20 +64,16 @@ public class NotificationActor extends UntypedActor {
     // We only accept Notification messages.
     if (msg instanceof Notification) {
       Notification notification = (Notification) msg;
-      log.debug("NotificationActor: subscriptionId = {}, requesterId = {}",
-              notification.getSubscription().getId(),
-              notification.getSubscription().getSubscription().getRequesterId());
-
-      NotificationListType list = getNotificationList(notification);
+      String requesterId = notification.getSubscription().getSubscription().getRequesterId();
+      String id = notification.getSubscription().getId();
       String callback = notification.getSubscription().getSubscription().getCallback();
-      Client client = restClient.get();
-
-      final WebTarget webTarget = client.target(callback);
       String mediaType = notification.getSubscription().getEncoding();
 
-      log.debug("NotificationActor: sending mediaType={}, subscriptionId={}, callback={}",
-              mediaType, notification.getSubscription().getId(),
-              notification.getSubscription().getSubscription().getCallback());
+      log.debug("NotificationActor: sending requesterId={}, id={}, mediaType={}, callback={}",
+              requesterId, id, mediaType, callback);
+
+      NotificationListType list = getNotificationList(notification);
+      final WebTarget webTarget = restClient.get().target(callback);
 
       Response response = null;
       boolean error = false;
@@ -105,20 +100,23 @@ public class NotificationActor extends UntypedActor {
                 list.getId(), callback, ex);
         error = true;
       } finally {
-        log.debug("NotificationActor: completed - subscriptionId = {}, requesterId = {}, callback = {}",
-                notification.getSubscription().getId(),
-                notification.getSubscription().getSubscription().getRequesterId(),
-                notification.getSubscription().getSubscription().getCallback());
+        log.debug("NotificationActor: finally - requesterId = {}, id = {}, callback = {}",
+                requesterId, id, callback);
 
         if (response != null) {
           response.close();
         }
 
         if (error) {
+          log.error("NotificationActor: deleting requesterId={}, id={}, callback={}",
+              requesterId, id, callback);
           DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
           discoveryProvider.deleteSubscription(notification.getSubscription().getId());
         }
       }
+
+      log.debug("NotificationActor: notification sent requesterId={}, id={}, callback={}",
+              requesterId, id, callback);
     } else {
       unhandled(msg);
     }

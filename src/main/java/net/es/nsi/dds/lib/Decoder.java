@@ -7,8 +7,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import javax.xml.parsers.ParserConfigurationException;
 import net.es.nsi.dds.jaxb.DomParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
  * @author hacksaw
  */
 public class Decoder {
-    private final static Logger log = LoggerFactory.getLogger(Decoder.class);
+    private final static Logger log = LogManager.getLogger(Decoder.class);
 
     public static InputStream decode(String contentTransferEncoding,
             String contentType, String source) throws IOException  {

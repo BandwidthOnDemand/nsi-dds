@@ -6,9 +6,8 @@ import java.nio.file.Paths;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.server.DdsServer;
 import net.es.nsi.dds.spring.SpringContext;
-import net.es.nsi.dds.util.Log4jHelper;
-import org.apache.log4j.xml.DOMConfigurator;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -25,6 +24,8 @@ public enum ConfigurationManager {
     private static ApplicationContext context;
 
     private boolean initialized = false;
+
+    private final Logger log = LogManager.getLogger(getClass());
 
     /**
      * @return the initialized
@@ -51,10 +52,6 @@ public enum ConfigurationManager {
         String configPath = System.getProperty(Properties.SYSTEM_PROPERTY_CONFIGDIR);
 
         if (!isInitialized()) {
-            // Load and watch the log4j configuration file for changes.
-            DOMConfigurator.configureAndWatch(Log4jHelper.getLog4jConfig(configPath), 45 * 1000);
-            final org.slf4j.Logger log = LoggerFactory.getLogger(ConfigurationManager.class);
-
             Path path = Paths.get(configPath, "beans.xml");
             Path realPath;
             try {
@@ -75,7 +72,7 @@ public enum ConfigurationManager {
             // Start the discovery process.
             discoveryProvider = (DiscoveryProvider) context.getBean("discoveryProvider");
             discoveryProvider.start();
-
+            
             setInitialized(true);
             log.info("Loaded configuration from: " + path.toString());
         }

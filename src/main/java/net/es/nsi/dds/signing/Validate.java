@@ -9,8 +9,8 @@ import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -20,7 +20,7 @@ import org.w3c.dom.NodeList;
  * validate the signature is contained in a KeyValue KeyInfo.
  */
 public class Validate {
-    private final static Logger log = LoggerFactory.getLogger(Validate.class);
+    private final static Logger log = LogManager.getLogger(Validate.class);
 
     public static boolean validateEnveloped(Document doc) throws Exception {
 

@@ -4,45 +4,49 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.jaxb.management.LogListType;
 import net.es.nsi.dds.jaxb.management.LogType;
 import net.es.nsi.dds.test.TestConfig;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ChunkedInput;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author hacksaw
  */
 public class LogsTest {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static Logger logger;
     private static TestConfig testConfig;
     private static WebTarget management;
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        System.out.println("*************************************** LogsTest oneTimeSetUp ***********************************");
+        System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
+        logger = LogManager.getLogger(LogsTest.class);
+
+        logger.debug("*************************************** LogsTest oneTimeSetUp ***********************************");
         testConfig = new TestConfig();
         management = testConfig.getTarget().path("dds").path("management");
-        System.out.println("*************************************** LogsTest oneTimeSetUp done ***********************************");
+        logger.debug("*************************************** LogsTest oneTimeSetUp done ***********************************");
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
-        System.out.println("*************************************** LogsTest oneTimeTearDown ***********************************");
+        logger.debug("*************************************** LogsTest oneTimeTearDown ***********************************");
         testConfig.shutdown();
-        System.out.println("*************************************** LogsTest oneTimeTearDown done ***********************************");
+        logger.debug("*************************************** LogsTest oneTimeTearDown done ***********************************");
     }
 
     @Test
     public void getAllLogs() {
-        log.debug("getAllLogs: entering...");
+        logger.debug("getAllLogs: entering...");
 
         Response response = management.path("logs").request(MediaType.APPLICATION_JSON).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -51,7 +55,7 @@ public class LogsTest {
         LogListType chunk;
         LogListType finalTopology = null;
         while ((chunk = chunkedInput.read()) != null) {
-            System.out.println("Chunk received...");
+            logger.debug("Chunk received...");
             finalTopology = chunk;
         }
         response.close();
@@ -63,7 +67,7 @@ public class LogsTest {
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
             LogType readLog = response.readEntity(LogType.class);
-            System.out.println("Read log: " + readLog.getId());
+            logger.debug("Read log: " + readLog.getId());
             response.close();
 
             // Limit the number we retrieve otherwise build will take forever.
@@ -76,7 +80,7 @@ public class LogsTest {
 
     @Test
     public void getTypeFilteredLogs() {
-        log.debug("getTypeFilteredLogs: entering...");
+        logger.debug("getTypeFilteredLogs: entering...");
 
         Response response = management.path("logs").queryParam("type", "Log").queryParam("code", "1001").request(MediaType.APPLICATION_JSON).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -85,7 +89,7 @@ public class LogsTest {
         LogListType chunk;
         LogListType finalTopology = null;
         while ((chunk = chunkedInput.read()) != null) {
-            System.out.println("Chunk received...");
+            logger.debug("Chunk received...");
             finalTopology = chunk;
         }
         response.close();
@@ -95,7 +99,7 @@ public class LogsTest {
 
     @Test
     public void getLabelFilteredLogs() {
-        log.debug("getLabelFilteredLogs: entering...");
+        logger.debug("getLabelFilteredLogs: entering...");
 
         Response response = management.path("logs").queryParam("label", "AUDIT_SUCCESSFUL").request(MediaType.APPLICATION_JSON).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -111,7 +115,7 @@ public class LogsTest {
             LogListType chunk;
             LogListType finalTopology = null;
             while ((chunk = chunkedInput.read()) != null) {
-                System.out.println("Chunk received...");
+                logger.debug("Chunk received...");
                 finalTopology = chunk;
             }
             response.close();
@@ -122,7 +126,7 @@ public class LogsTest {
 
     @Test
     public void badFilter() {
-        log.debug("badFilter: entering...");
+        logger.debug("badFilter: entering...");
 
         Response response = management.path("logs").queryParam("code", "1001").request(MediaType.APPLICATION_JSON).get();
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());

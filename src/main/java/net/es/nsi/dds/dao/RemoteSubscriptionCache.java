@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import net.es.nsi.dds.spring.SpringApplicationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RemoteSubscriptionCache {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
     // In-memory subscription cache indexed by subscriptionId.
     private final Map<String, RemoteSubscription> remoteSubscriptions = new ConcurrentHashMap<>();
 

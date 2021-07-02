@@ -5,15 +5,15 @@
 package net.es.nsi.dds.util;
 
 import java.net.URI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *
  * @author hacksaw
  */
 public class UrlHelper {
-    private static final Logger log = LoggerFactory.getLogger(UrlHelper.class);
+    private static final Logger log = LogManager.getLogger(UrlHelper.class);
 
     public static boolean isAbsolute(String uri) {
         try {
