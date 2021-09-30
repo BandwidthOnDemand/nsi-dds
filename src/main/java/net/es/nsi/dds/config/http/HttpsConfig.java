@@ -3,6 +3,7 @@ package net.es.nsi.dds.config.http;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.AlgorithmConstraints;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLParameters;
 import net.es.nsi.dds.config.Properties;
@@ -93,13 +94,24 @@ public class HttpsConfig {
       log.debug("default cipher: {}", cipher);
     }
 
+    AlgorithmConstraints algorithmConstraints = supportedSSLParameters.getAlgorithmConstraints();
+    log.debug("algorithmConstraints: {}", algorithmConstraints.toString());
+
+    for (String proto : supportedSSLParameters.getApplicationProtocols()) {
+      log.debug("application protocol: {}", proto);
+    }
+
+    log.debug("Default provider: {}, {}", defaultContext.getProvider().getName(), defaultContext.getProvider().getInfo());
+
     SslConfigurator sslConfig = SslConfigurator.newInstance(true)
             .trustStoreFile(config.getTrustStore().getFile())
             .trustStorePassword(config.getTrustStore().getPassword())
             .trustStoreType(config.getTrustStore().getType())
+            .trustManagerFactoryProvider(defaultContext.getProvider().getName())
             .keyStoreFile(config.getKeyStore().getFile())
             .keyPassword(config.getKeyStore().getPassword())
             .keyStoreType(config.getKeyStore().getType())
+            .keyManagerFactoryProvider(defaultContext.getProvider().getName())
             .securityProtocol("TLS");
     SSLContext newContext = sslConfig.createSSLContext();
     for (String cipher : cipherSuites) {
