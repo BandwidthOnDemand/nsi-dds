@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.logging.Level;
 import javax.net.ssl.SSLContext;
 import net.es.nsi.dds.authorization.SecurityFilter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
@@ -18,8 +20,6 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  *
@@ -116,7 +116,7 @@ public class RestServer {
                                 new SSLEngineConfigurator(sslContext.get())
                                         .setNeedClientAuth(true)
                                         .setClientMode(false),
-                                false)
+                                 false)
                 );
             }
             else {

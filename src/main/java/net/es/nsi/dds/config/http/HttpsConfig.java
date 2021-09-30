@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.jaxb.configuration.KeyStoreType;
 import net.es.nsi.dds.jaxb.configuration.ObjectFactory;
 import net.es.nsi.dds.jaxb.configuration.SecureType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.SslConfigurator;
 
 /**
@@ -16,6 +19,7 @@ import org.glassfish.jersey.SslConfigurator;
  * @author hacksaw
  */
 public class HttpsConfig {
+  private final Logger log = LogManager.getLogger(getClass());
     private final ObjectFactory factory = new ObjectFactory();
 
     private String      basedir;
@@ -76,13 +80,20 @@ public class HttpsConfig {
         return outPath.toRealPath().toString();
     }
 
-    /**
-     * Get the default SSL context and add our specific configuration.
-     *
-     * @return New SSLContext for HTTP client.
-     */
-    public SSLContext getSSLContext() {
-        SslConfigurator sslConfig = SslConfigurator.newInstance(true)
+  /**
+   * Get the default SSL context and add our specific configuration.
+   *
+   * @return New SSLContext for HTTP client.
+   */
+  public SSLContext getSSLContext() {
+    SSLContext defaultContext = SslConfigurator.getDefaultContext();
+    SSLParameters supportedSSLParameters = defaultContext.getSupportedSSLParameters();
+    String[] cipherSuites = supportedSSLParameters.getCipherSuites();
+    for (String cipher : cipherSuites) {
+      log.debug("default cipher: {}", cipher);
+    }
+
+    SslConfigurator sslConfig = SslConfigurator.newInstance(true)
             .trustStoreFile(config.getTrustStore().getFile())
             .trustStorePassword(config.getTrustStore().getPassword())
             .trustStoreType(config.getTrustStore().getType())
@@ -90,8 +101,13 @@ public class HttpsConfig {
             .keyPassword(config.getKeyStore().getPassword())
             .keyStoreType(config.getKeyStore().getType())
             .securityProtocol("TLS");
-        return sslConfig.createSSLContext();
+    SSLContext newContext = sslConfig.createSSLContext();
+    for (String cipher : cipherSuites) {
+      log.debug("new cipher: {}", cipher);
     }
+    return newContext;
+    //return SslConfigurator.getDefaultContext();
+  }
 
     /**
      * Is this server configured for production?
