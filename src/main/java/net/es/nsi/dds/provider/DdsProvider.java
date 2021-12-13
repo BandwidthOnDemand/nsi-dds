@@ -37,8 +37,8 @@ import net.es.nsi.dds.messages.DocumentEvent;
 import net.es.nsi.dds.messages.SubscriptionEvent;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -118,6 +118,9 @@ public class DdsProvider implements DiscoveryProvider {
     // Save the subscription.
     subscriptions.put(subscription.getId(), subscription);
 
+    log.debug("DdsProvider.addSubscription: requesterId={}, id={}",
+            request.getRequesterId(), subscription.getId());
+
     // Now we need to schedule the send of the initial set of matching
     // documents in a notification to this subscription.  We delay the
     // send so that the requester has time to return and store the
@@ -162,7 +165,7 @@ public class DdsProvider implements DiscoveryProvider {
 
   @Override
   public Subscription editSubscription(String id, SubscriptionRequestType request, String encoding) throws WebApplicationException {
-    log.debug("DdsProvider.editSubscription: id=" + id);
+    log.debug("DdsProvider.editSubscription: requesterId={}, id={}", request.getRequesterId(), id);
 
     // Make sure we have all needed parameters.
     if (id == null || id.isEmpty()) {
