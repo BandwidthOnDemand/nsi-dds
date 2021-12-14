@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.AlgorithmConstraints;
+import java.security.Provider;
+import java.security.Security;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLParameters;
 import net.es.nsi.dds.config.Properties;
@@ -87,6 +89,10 @@ public class HttpsConfig {
    * @return New SSLContext for HTTP client.
    */
   public SSLContext getSSLContext() {
+    for (Provider provider : Security.getProviders()) {
+      log.debug("SSLContext: {}, {}", provider.getName(), provider.getInfo());
+    }
+    
     SSLContext defaultContext = SslConfigurator.getDefaultContext();
     dumpSSLContext("defaultContext", defaultContext);
     SslConfigurator sslConfig = SslConfigurator.newInstance(true)
