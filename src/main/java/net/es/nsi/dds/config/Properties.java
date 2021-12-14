@@ -13,6 +13,7 @@ public class Properties {
     public static final String SYSTEM_PROPERTY_BASEDIR = "basedir";
     public static final String SYSTEM_PROPERTY_CONFIGDIR = "configdir";
     public static final String SYSTEM_PROPERTY_CONFIGFILE = "ddsConfigFile";
+    public static final String SYSTEM_PROPERTY_PIDFILE = "pidFile";
 
     public static final String SYSTEM_PROPERTY_DEBUG = "debug";
     public static final String SYSTEM_PROPERTY_LOG4J = "log4j.configurationFile";

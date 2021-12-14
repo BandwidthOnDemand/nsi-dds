@@ -68,6 +68,8 @@ public class RestClient {
     private final static int MAX_CONNECTION_PER_ROUTE = 5;
     private final static int MAX_CONNECTION_TOTAL = 50;
 
+    private final static Logger log = LogManager.getLogger(RestClient.class);
+
     /**
      * Default constructor uses default configuration values.
      */
@@ -108,6 +110,7 @@ public class RestClient {
      * @throws UnrecoverableKeyException
      */
     public RestClient(DdsConfiguration config) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+      log.debug("RestClient: Initializing");
         HttpsConfig cf = config.getClientConfig();
         if (cf == null) {
             ClientConfig clientConfig = configureClient(MAX_CONNECTION_PER_ROUTE, MAX_CONNECTION_TOTAL);
@@ -129,7 +132,6 @@ public class RestClient {
         return restClient;
     }
 
-
     /**
      * Configure the client for TLS communications.
      *
@@ -147,7 +149,7 @@ public class RestClient {
 
         //String[] supportedProtocols = { SSLConnectionSocketFactory.TLS };
         //String[] supportedCipherSuites = { };
-        //supportedProtocols, supportedCipherSuites, 
+        //supportedProtocols, supportedCipherSuites,
 
         final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", new PlainConnectionSocketFactory())
@@ -239,7 +241,7 @@ public class RestClient {
      */
     private static class FollowRedirectFilter implements ClientResponseFilter
     {
-        private final static Logger log = LogManager.getLogger(FollowRedirectFilter.class);
+      private final static Logger log = LogManager.getLogger(FollowRedirectFilter.class);
 
         @Override
         public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException

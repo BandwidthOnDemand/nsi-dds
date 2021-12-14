@@ -88,21 +88,7 @@ public class HttpsConfig {
    */
   public SSLContext getSSLContext() {
     SSLContext defaultContext = SslConfigurator.getDefaultContext();
-    SSLParameters supportedSSLParameters = defaultContext.getSupportedSSLParameters();
-    String[] cipherSuites = supportedSSLParameters.getCipherSuites();
-    for (String cipher : cipherSuites) {
-      log.debug("default cipher: {}", cipher);
-    }
-
-    AlgorithmConstraints algorithmConstraints = supportedSSLParameters.getAlgorithmConstraints();
-    log.debug("algorithmConstraints: {}", algorithmConstraints.toString());
-
-    for (String proto : supportedSSLParameters.getApplicationProtocols()) {
-      log.debug("application protocol: {}", proto);
-    }
-
-    log.debug("Default provider: {}, {}", defaultContext.getProvider().getName(), defaultContext.getProvider().getInfo());
-
+    dumpSSLContext("defaultContext", defaultContext);
     SslConfigurator sslConfig = SslConfigurator.newInstance(true)
             .trustStoreFile(config.getTrustStore().getFile())
             .trustStorePassword(config.getTrustStore().getPassword())
@@ -114,11 +100,28 @@ public class HttpsConfig {
             .keyManagerFactoryProvider(defaultContext.getProvider().getName())
             .securityProtocol("TLS");
     SSLContext newContext = sslConfig.createSSLContext();
-    for (String cipher : cipherSuites) {
-      log.debug("new cipher: {}", cipher);
-    }
+    dumpSSLContext("newContext", newContext);
     return newContext;
     //return SslConfigurator.getDefaultContext();
+  }
+
+  public void dumpSSLContext(String prefix, SSLContext c) {
+    SSLParameters supportedSSLParameters = c.getSupportedSSLParameters();
+    String[] cipherSuites = supportedSSLParameters.getCipherSuites();
+    for (String cipher : cipherSuites) {
+      log.debug("{}: default cipher = {}", prefix, cipher);
+    }
+
+    AlgorithmConstraints algorithmConstraints = supportedSSLParameters.getAlgorithmConstraints();
+    if (algorithmConstraints != null) {
+      log.debug("{}: algorithmConstraints = {}", prefix, algorithmConstraints.toString());
+    }
+
+    for (String proto : supportedSSLParameters.getApplicationProtocols()) {
+      log.debug("{}: application protocol = {}", prefix, proto);
+    }
+
+    log.debug("{}: Default provider = {}, {}", prefix, c.getProvider().getName(), c.getProvider().getInfo());
   }
 
     /**
