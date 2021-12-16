@@ -101,7 +101,7 @@ public class HttpsConfigTest {
   public void testP12() throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
     log.debug("******* Running testP12 *******");
 
-    SecureType config = getConfigJKS();
+    SecureType config = getConfigP12();
     HttpsConfig https = new HttpsConfig(config);
     assertNotNull(https);
     https.getSSLContext();

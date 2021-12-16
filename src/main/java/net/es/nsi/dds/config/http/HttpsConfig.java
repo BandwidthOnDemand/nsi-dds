@@ -26,6 +26,7 @@ import net.es.nsi.dds.jaxb.configuration.ObjectFactory;
 import net.es.nsi.dds.jaxb.configuration.SecureType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import org.glassfish.jersey.SslConfigurator;
 
@@ -128,35 +129,54 @@ public class HttpsConfig {
           KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
 
     // If the BouncyCastle provider is not register we need to add it in.
-    try {
-      SSLContext.getInstance("TLS", "BCJSSE");
-    } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
-      Security.addProvider(new BouncyCastleJsseProvider());
+    log.debug("Add provider");
+
+    if (Security.getProvider("BC") == null) {
+      log.debug("Adding BouncyCastleProvider provider");
+      Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
+
+    if (Security.getProvider("BCJSSE") == null) {
+      log.debug("Adding BouncyCastleJsseProvider provider");
+      Security.insertProviderAt(new BouncyCastleJsseProvider(), 1);
+    }
+
+    log.debug("Add provider done");
 
     // Log what security providers are available to us.
     for (Provider provider : Security.getProviders()) {
       log.debug("initializeSSLContext: Provider - {}, {}", provider.getName(), provider.getInfo());
     }
 
-    // For giggles lets dumpt the default context.
-    dumpSSLContext("initializeSSLContext: defaultContext", SslConfigurator.getDefaultContext());
-
     try {
+      log.debug("get provider");
       // Configure the SSL context.
       SSLContext ctx = SSLContext.getInstance("TLS", "BCJSSE");
+      log.debug("got provider");
 
+      log.debug("Build keymanagers");
       KeyManagerFactory keyMgrFact = KeyManagerFactory.getInstance("PKIX", "BCJSSE");
       keyMgrFact.init(getKeyStore(st.getKeyStore()), st.getKeyStore().getPassword().toCharArray());
 
       TrustManagerFactory trustMgrFact = TrustManagerFactory.getInstance("PKIX", "BCJSSE");
       trustMgrFact.init(getKeyStore(st.getTrustStore()));
+      log.debug("Done keymanagers");
 
+      log.debug("Initialize provider");
       ctx.init(keyMgrFact.getKeyManagers(), trustMgrFact.getTrustManagers(), SecureRandom.getInstanceStrong());
+      log.debug("Initialize provider done");
 
-      dumpSSLContext("initializeSSLContext: BCJSSE", ctx);
+
+      // Now set BouncyCastle as the default provider.
+      log.debug("set default provider");
+      SSLContext.setDefault(ctx);
+      log.debug("done setting default provider");
+
+      // For giggles lets dump the default context.
+      dumpSSLContext("initializeSSLContext: defaultContext", SslConfigurator.getDefaultContext());
       return ctx;
-    } catch (KeyManagementException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException | IOException | CertificateException | UnrecoverableKeyException ex) {
+    } catch (KeyManagementException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException
+            | IOException | CertificateException | UnrecoverableKeyException ex) {
       log.error("initializeSSLContext: could not find SSL provider", ex);
       throw ex;
     }
