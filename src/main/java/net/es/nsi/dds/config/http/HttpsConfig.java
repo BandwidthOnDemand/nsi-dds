@@ -90,7 +90,7 @@ public class HttpsConfig {
 
     this.config = config;
 
-    sslContext = initializeSSLContext(config);
+    //sslContext = initializeSSLContext(config);
   }
 
   /**
@@ -230,7 +230,8 @@ public class HttpsConfig {
    * @return New SSLContext for HTTP client.
    */
   public SSLContext getSSLContext() {
-    return sslContext;
+    return SslConfigurator.getDefaultContext();
+    //return sslContext;
   }
 
   /**
