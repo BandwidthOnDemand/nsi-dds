@@ -53,7 +53,12 @@ public class HttpsConfig {
       throw new IllegalArgumentException("HttpConfig: server configuration not provided");
     }
 
-    Security.addProvider(new BouncyCastleJsseProvider());
+    // If the BouncyCastle provider is not register we need to add it in.
+    try {
+      SSLContext.getInstance("TLS", "BCJSSE");
+    } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
+      Security.addProvider(new BouncyCastleJsseProvider());
+    }
 
     // We will use the application basedir to fully qualify any relative paths.
     basedir = System.getProperty(Properties.SYSTEM_PROPERTY_BASEDIR);
@@ -168,7 +173,7 @@ public class HttpsConfig {
   }
 
   public void dumpSSLContext(String prefix, SSLContext c) {
-    log.debug("{} - Default provider = {}, {}", prefix, c.getProvider().getName(), c.getProvider().getInfo());
+    log.debug("{} - Provider = {}, {}", prefix, c.getProvider().getName(), c.getProvider().getInfo());
 
     SSLParameters supportedSSLParameters = c.getSupportedSSLParameters();
     String[] cipherSuites = supportedSSLParameters.getCipherSuites();
