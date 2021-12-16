@@ -2,6 +2,7 @@ package net.es.nsi.dds.config.http;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -89,7 +90,27 @@ public class HttpsConfig {
 
     this.config = config;
 
-    sslContext = initializeSSLContext(config);
+    //sslContext = initializeSSLContext(config);
+
+        // If the BouncyCastle provider is not register we need to add it in.
+    log.debug("Add provider");
+
+    if (Security.getProvider("BC") == null) {
+      log.debug("Adding BouncyCastleProvider provider");
+      Security.insertProviderAt(new BouncyCastleProvider(), 1);
+    }
+
+    if (Security.getProvider("BCJSSE") == null) {
+      log.debug("Adding BouncyCastleJsseProvider provider");
+      Security.insertProviderAt(new BouncyCastleJsseProvider(), 1);
+    }
+
+    log.debug("Add provider done");
+
+    // Log what security providers are available to us.
+    for (Provider provider : Security.getProviders()) {
+      log.debug("initializeSSLContext: Provider - {}, {}", provider.getName(), provider.getInfo());
+    }
 
   }
 
@@ -194,6 +215,10 @@ public class HttpsConfig {
   private KeyStore getKeyStore(KeyStoreType ks) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
     // Open specified keystore.
     File file = new File(ks.getFile());
+    if (!file.exists()) {
+      log.error("[getKeyStore] file {} does not exist.", ks.getFile());
+      throw new FileNotFoundException(String.format("[getKeyStore] file {} does not exist", ks.getFile()));
+    }
     InputStream stream = new FileInputStream(file);
     KeyStore keyStore = KeyStore.getInstance(ks.getType());
     keyStore.load(stream, ks.getPassword().toCharArray());
@@ -225,24 +250,34 @@ public class HttpsConfig {
    *
    * @return New SSLContext for HTTP client.
    */
-  public SSLContext getSSLContext() {
-    return sslContext;
-
-    /*
+  public SSLContext getSSLContext() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException {
+    //return sslContext;
+log.debug("1");
     SslConfigurator sslConfig = SslConfigurator.newInstance(true)
             .trustStoreFile(config.getTrustStore().getFile())
             .trustStorePassword(config.getTrustStore().getPassword())
             .trustStoreType(config.getTrustStore().getType())
-            .trustManagerFactoryProvider(defaultContext.getProvider().getName())
+            .trustStore(getKeyStore(config.getTrustStore()))
+            .trustManagerFactoryAlgorithm("PKIX")
+            .trustManagerFactoryProvider("BCJSSE")
             .keyStoreFile(config.getKeyStore().getFile())
             .keyPassword(config.getKeyStore().getPassword())
             .keyStoreType(config.getKeyStore().getType())
-            .keyManagerFactoryProvider(defaultContext.getProvider().getName())
+            .keyManagerFactoryAlgorithm("PKIX")
+            .keyManagerFactoryProvider("BCJSSE")
+            .keyStore(getKeyStore(config.getKeyStore()))
             .securityProtocol("TLS");
+log.debug("2");
     SSLContext newContext = sslConfig.createSSLContext();
-    dumpSSLContext("newContext", newContext);
+    log.debug("3");
+    newContext.init(null, null, null);
+    log.debug("4");
+    SSLContext.setDefault(newContext);
+    log.debug("5");
+    dumpSSLContext("getSSLContext", newContext);
+    log.debug("6");
     return newContext;
-    return SslConfigurator.getDefaultContext();*/
+    //return SslConfigurator.getDefaultContext();*/
   }
 
   /**
