@@ -4,6 +4,12 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.config.Properties;
@@ -26,7 +32,7 @@ public class TestConfig {
 
     private final Logger log = LogManager.getLogger(getClass());
 
-    public TestConfig() {
+    public TestConfig() throws IllegalStateException, KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, CertificateException, UnrecoverableKeyException {
         System.setProperty(CONFIG_PATH, CONFIG_DIR);
         System.setProperty(DDS_CONFIG_FILE_ARGNAME, DEFAULT_DDS_FILE);
         try {

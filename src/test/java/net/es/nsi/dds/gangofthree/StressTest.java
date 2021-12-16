@@ -7,8 +7,11 @@ import jakarta.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import net.es.nsi.dds.client.TestServer;
 import net.es.nsi.dds.config.Properties;
@@ -56,14 +59,18 @@ public class StressTest {
       TestServer.INSTANCE.start(testServer);
 
       callbackURL = new URL(testServer.getURL(), "dds/callback").toString();
-    } catch (IllegalArgumentException | JAXBException | IOException | IllegalStateException | KeyStoreException | NoSuchAlgorithmException | CertificateException ex) {
+
+      testConfig = new TestConfig();
+      target = testConfig.getTarget();
+      discovery = target.path("dds");
+
+    } catch (IllegalArgumentException | JAXBException | IOException | IllegalStateException | KeyStoreException
+            | NoSuchAlgorithmException | CertificateException | KeyManagementException | NoSuchProviderException
+            | UnrecoverableKeyException ex) {
       log.error("oneTimeSetUp: failed to start HTTP server " + ex.getLocalizedMessage());
       fail();
     }
 
-    testConfig = new TestConfig();
-    target = testConfig.getTarget();
-    discovery = target.path("dds");
     log.debug("*************************************** StressTest oneTimeSetUp done ***********************************");
   }
 
@@ -73,7 +80,7 @@ public class StressTest {
     testConfig.shutdown();
     try {
       TestServer.INSTANCE.shutdown();
-    } catch (Exception ex) {
+    } catch (IllegalStateException ex) {
       log.error("oneTimeTearDown: test server shutdown failed." + ex.getLocalizedMessage());
       fail();
     }

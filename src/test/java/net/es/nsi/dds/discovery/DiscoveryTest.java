@@ -13,8 +13,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.client.TestServer;
@@ -67,7 +70,7 @@ public class DiscoveryTest {
   private static Logger log;
 
   @BeforeClass
-  public static void oneTimeSetUp() {
+  public static void oneTimeSetUp() throws IllegalStateException, KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, CertificateException, UnrecoverableKeyException {
     System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
     log = LogManager.getLogger(DiscoveryTest.class);
 

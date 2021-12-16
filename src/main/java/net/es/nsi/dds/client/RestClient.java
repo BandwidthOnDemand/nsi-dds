@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
@@ -91,8 +92,9 @@ public class RestClient {
      * @throws CertificateException
      * @throws KeyManagementException
      * @throws UnrecoverableKeyException
+     * @throws java.security.NoSuchProviderException
      */
-    public RestClient(HttpsConfig config) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+    public RestClient(HttpsConfig config) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException, NoSuchProviderException {
         ClientConfig clientConfig = configureSecureClient(config);
         client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
     }
@@ -108,8 +110,9 @@ public class RestClient {
      * @throws CertificateException
      * @throws KeyManagementException
      * @throws UnrecoverableKeyException
+     * @throws java.security.NoSuchProviderException
      */
-    public RestClient(DdsConfiguration config) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+    public RestClient(DdsConfiguration config) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException, NoSuchProviderException {
       log.debug("RestClient: Initializing");
         HttpsConfig cf = config.getClientConfig();
         if (cf == null) {
@@ -137,8 +140,15 @@ public class RestClient {
      *
      * @param config The HttpsConfig object providing SLL/TLS configuration information.
      * @return a client configuration.
+     * @throws java.security.KeyManagementException
+     * @throws java.security.NoSuchAlgorithmException
+     * @throws java.security.NoSuchProviderException
+     * @throws java.security.KeyStoreException
+     * @throws java.io.IOException
+     * @throws java.security.cert.CertificateException
+     * @throws java.security.UnrecoverableKeyException
      */
-    public static ClientConfig configureSecureClient(HttpsConfig config) {
+    public static ClientConfig configureSecureClient(HttpsConfig config) throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
         HostnameVerifier hostnameVerifier;
         if (config.isProduction()) {
             hostnameVerifier = new DefaultHostnameVerifier();

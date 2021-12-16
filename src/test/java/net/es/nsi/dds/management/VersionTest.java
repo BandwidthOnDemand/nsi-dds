@@ -4,6 +4,12 @@ import com.google.common.base.Optional;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.jaxb.management.AttributeType;
 import net.es.nsi.dds.jaxb.management.VersionType;
@@ -26,7 +32,8 @@ public class VersionTest {
     private static Logger log;
 
     @BeforeClass
-    public static void oneTimeSetUp() {
+    public static void oneTimeSetUp() throws IllegalStateException, KeyManagementException, NoSuchAlgorithmException,
+            NoSuchProviderException, KeyStoreException, CertificateException, UnrecoverableKeyException {
         System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
         log = LogManager.getLogger(VersionTest.class);
 
