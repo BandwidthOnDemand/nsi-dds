@@ -90,28 +90,7 @@ public class HttpsConfig {
 
     this.config = config;
 
-    //sslContext = initializeSSLContext(config);
-
-        // If the BouncyCastle provider is not register we need to add it in.
-    log.debug("Add provider");
-
-    if (Security.getProvider("BC") == null) {
-      log.debug("Adding BouncyCastleProvider provider");
-      Security.insertProviderAt(new BouncyCastleProvider(), 1);
-    }
-
-    if (Security.getProvider("BCJSSE") == null) {
-      log.debug("Adding BouncyCastleJsseProvider provider");
-      Security.insertProviderAt(new BouncyCastleJsseProvider(), 1);
-    }
-
-    log.debug("Add provider done");
-
-    // Log what security providers are available to us.
-    for (Provider provider : Security.getProviders()) {
-      log.debug("initializeSSLContext: Provider - {}, {}", provider.getName(), provider.getInfo());
-    }
-
+    sslContext = initializeSSLContext(config);
   }
 
   /**
@@ -250,34 +229,8 @@ public class HttpsConfig {
    *
    * @return New SSLContext for HTTP client.
    */
-  public SSLContext getSSLContext() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException {
-    //return sslContext;
-log.debug("1");
-    SslConfigurator sslConfig = SslConfigurator.newInstance(true)
-            .trustStoreFile(config.getTrustStore().getFile())
-            .trustStorePassword(config.getTrustStore().getPassword())
-            .trustStoreType(config.getTrustStore().getType())
-            .trustStore(getKeyStore(config.getTrustStore()))
-            .trustManagerFactoryAlgorithm("PKIX")
-            .trustManagerFactoryProvider("BCJSSE")
-            .keyStoreFile(config.getKeyStore().getFile())
-            .keyPassword(config.getKeyStore().getPassword())
-            .keyStoreType(config.getKeyStore().getType())
-            .keyManagerFactoryAlgorithm("PKIX")
-            .keyManagerFactoryProvider("BCJSSE")
-            .keyStore(getKeyStore(config.getKeyStore()))
-            .securityProtocol("TLS");
-log.debug("2");
-    SSLContext newContext = sslConfig.createSSLContext();
-    log.debug("3");
-    newContext.init(null, null, null);
-    log.debug("4");
-    SSLContext.setDefault(newContext);
-    log.debug("5");
-    dumpSSLContext("getSSLContext", newContext);
-    log.debug("6");
-    return newContext;
-    //return SslConfigurator.getDefaultContext();*/
+  public SSLContext getSSLContext() {
+    return sslContext;
   }
 
   /**
