@@ -7,8 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,8 +35,8 @@ import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.signing.KeyStoreHandler;
 import net.es.nsi.dds.spring.SpringApplicationContext;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -94,7 +97,9 @@ public class DdsConfiguration {
         this.filename = filename;
     }
 
-    public synchronized void load() throws IllegalArgumentException, JAXBException, IOException, FileNotFoundException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
+    public synchronized void load() throws IllegalArgumentException, JAXBException, IOException,
+            FileNotFoundException, KeyStoreException, NoSuchAlgorithmException, CertificateException,
+            KeyManagementException, NoSuchProviderException, UnrecoverableKeyException {
         LogType errorAudit;
 
         // Make sure the condifuration file is set.

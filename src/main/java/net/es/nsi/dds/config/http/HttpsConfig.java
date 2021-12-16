@@ -41,23 +41,24 @@ public class HttpsConfig {
 
   private String basedir;
   private SecureType config;
+  private SSLContext sslContext;
 
   /**
    * Convert provided jaxb security configuration object into an HttpConfig object.
    *
    * @param config
+   * @throws java.security.KeyManagementException
+   * @throws java.security.NoSuchAlgorithmException
+   * @throws java.security.NoSuchProviderException
+   * @throws java.security.KeyStoreException
    * @throws IOException
+   * @throws java.security.cert.CertificateException
+   * @throws java.security.UnrecoverableKeyException
    */
-  public HttpsConfig(SecureType config) throws IOException {
+  public HttpsConfig(SecureType config) throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException,
+          KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
     if (config == null) {
       throw new IllegalArgumentException("HttpConfig: server configuration not provided");
-    }
-
-    // If the BouncyCastle provider is not register we need to add it in.
-    try {
-      SSLContext.getInstance("TLS", "BCJSSE");
-    } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
-      Security.addProvider(new BouncyCastleJsseProvider());
     }
 
     // We will use the application basedir to fully qualify any relative paths.
@@ -86,6 +87,9 @@ public class HttpsConfig {
     trustStore.setFile(getAbsolutePath(trustStore.getFile()));
 
     this.config = config;
+
+    sslContext = initializeSSLContext(config);
+
   }
 
   /**
@@ -105,9 +109,11 @@ public class HttpsConfig {
   }
 
   /**
-   * Get the default SSL context and add our specific configuration.Question: Do we really need this? Should we not let JVM parameters control this? If so we could remove all SSL
- configuration from the application.
+   * Get the default SSL context and add our specific configuration.
    *
+   * Question: Do we really need this? Should we not let JVM parameters
+   * control this? If so we could remove all SSL configuration from the
+   * application.
    *
    * @return New SSLContext for HTTP client.
    * @throws java.security.KeyManagementException
@@ -118,33 +124,89 @@ public class HttpsConfig {
    * @throws java.security.cert.CertificateException
    * @throws java.security.UnrecoverableKeyException
    */
-  public SSLContext getSSLContext() throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException,
+  private SSLContext initializeSSLContext(SecureType st) throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException,
           KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
+
+    // If the BouncyCastle provider is not register we need to add it in.
+    try {
+      SSLContext.getInstance("TLS", "BCJSSE");
+    } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
+      Security.addProvider(new BouncyCastleJsseProvider());
+    }
 
     // Log what security providers are available to us.
     for (Provider provider : Security.getProviders()) {
-      log.debug("getSSLContext: Provider - {}, {}", provider.getName(), provider.getInfo());
+      log.debug("initializeSSLContext: Provider - {}, {}", provider.getName(), provider.getInfo());
     }
 
-    dumpSSLContext("getSSLContext: defaultContext", SslConfigurator.getDefaultContext());
+    // For giggles lets dumpt the default context.
+    dumpSSLContext("initializeSSLContext: defaultContext", SslConfigurator.getDefaultContext());
 
     try {
-      SSLContext sslContext = SSLContext.getInstance("TLS", "BCJSSE");
+      // Configure the SSL context.
+      SSLContext ctx = SSLContext.getInstance("TLS", "BCJSSE");
 
       KeyManagerFactory keyMgrFact = KeyManagerFactory.getInstance("PKIX", "BCJSSE");
-      keyMgrFact.init(getKeyStore(config.getKeyStore()), config.getKeyStore().getPassword().toCharArray());
+      keyMgrFact.init(getKeyStore(st.getKeyStore()), st.getKeyStore().getPassword().toCharArray());
 
       TrustManagerFactory trustMgrFact = TrustManagerFactory.getInstance("PKIX", "BCJSSE");
-      trustMgrFact.init(getKeyStore(config.getTrustStore()));
+      trustMgrFact.init(getKeyStore(st.getTrustStore()));
 
-      sslContext.init(keyMgrFact.getKeyManagers(), trustMgrFact.getTrustManagers(), SecureRandom.getInstanceStrong());
+      ctx.init(keyMgrFact.getKeyManagers(), trustMgrFact.getTrustManagers(), SecureRandom.getInstanceStrong());
 
-      dumpSSLContext("getSSLContext: BCJSSE", sslContext);
-      return sslContext;
+      dumpSSLContext("initializeSSLContext: BCJSSE", ctx);
+      return ctx;
     } catch (KeyManagementException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException | IOException | CertificateException | UnrecoverableKeyException ex) {
-      log.error("getSSLContext: could not find SSL provider", ex);
+      log.error("initializeSSLContext: could not find SSL provider", ex);
       throw ex;
     }
+  }
+
+  /**
+   *
+   * @param ks
+   * @return
+   * @throws KeyStoreException
+   * @throws IOException
+   * @throws NoSuchAlgorithmException
+   * @throws CertificateException
+   */
+  private KeyStore getKeyStore(KeyStoreType ks) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+    // Open specified keystore.
+    File file = new File(ks.getFile());
+    InputStream stream = new FileInputStream(file);
+    KeyStore keyStore = KeyStore.getInstance(ks.getType());
+    keyStore.load(stream, ks.getPassword().toCharArray());
+    return keyStore;
+  }
+
+  /**
+   *
+   * @param prefix
+   * @param c
+   */
+  private void dumpSSLContext(String prefix, SSLContext c) {
+    log.debug("{} - Provider = {}, {}", prefix, c.getProvider().getName(), c.getProvider().getInfo());
+
+    SSLParameters supportedSSLParameters = c.getSupportedSSLParameters();
+    String[] cipherSuites = supportedSSLParameters.getCipherSuites();
+    for (String cipher : cipherSuites) {
+      log.debug("{} - default cipher = {}", prefix, cipher);
+    }
+
+    for (String proto : supportedSSLParameters.getApplicationProtocols()) {
+      log.debug("{} - application protocol = {}", prefix, proto);
+    }
+  }
+
+
+  /**
+   * Get the default SSL context.
+   *
+   * @return New SSLContext for HTTP client.
+   */
+  public SSLContext getSSLContext() {
+    return sslContext;
 
     /*
     SslConfigurator sslConfig = SslConfigurator.newInstance(true)
@@ -161,29 +223,6 @@ public class HttpsConfig {
     dumpSSLContext("newContext", newContext);
     return newContext;
     return SslConfigurator.getDefaultContext();*/
-  }
-
-  public KeyStore getKeyStore(KeyStoreType ks) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
-    // Open specified keystore.
-    File file = new File(ks.getFile());
-    InputStream stream = new FileInputStream(file);
-    KeyStore keyStore = KeyStore.getInstance(ks.getType());
-    keyStore.load(stream, ks.getPassword().toCharArray());
-    return keyStore;
-  }
-
-  public void dumpSSLContext(String prefix, SSLContext c) {
-    log.debug("{} - Provider = {}, {}", prefix, c.getProvider().getName(), c.getProvider().getInfo());
-
-    SSLParameters supportedSSLParameters = c.getSupportedSSLParameters();
-    String[] cipherSuites = supportedSSLParameters.getCipherSuites();
-    for (String cipher : cipherSuites) {
-      log.debug("{} - default cipher = {}", prefix, cipher);
-    }
-
-    for (String proto : supportedSSLParameters.getApplicationProtocols()) {
-      log.debug("{} - application protocol = {}", prefix, proto);
-    }
   }
 
   /**

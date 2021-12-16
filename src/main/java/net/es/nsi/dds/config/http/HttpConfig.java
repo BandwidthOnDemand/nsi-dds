@@ -8,6 +8,12 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.jaxb.configuration.SecureType;
 import net.es.nsi.dds.jaxb.configuration.ServerType;
@@ -34,7 +40,8 @@ public class HttpConfig {
         this.packageName = Optional.fromNullable(Strings.emptyToNull(packageName));
     }
 
-    public HttpConfig(ServerType config) throws IOException {
+    public HttpConfig(ServerType config) throws IOException, KeyManagementException, NoSuchAlgorithmException,
+            NoSuchProviderException, KeyStoreException, CertificateException, UnrecoverableKeyException {
         if (config == null) {
             throw new IllegalArgumentException("HttpConfig: server configuration not provided");
         }

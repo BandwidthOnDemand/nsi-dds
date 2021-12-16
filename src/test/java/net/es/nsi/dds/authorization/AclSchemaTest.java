@@ -3,8 +3,11 @@ package net.es.nsi.dds.authorization;
 import jakarta.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.dao.DdsConfiguration;
@@ -55,9 +58,14 @@ public class AclSchemaTest {
      * @throws KeyStoreException
      * @throws NoSuchAlgorithmException
      * @throws CertificateException
+     * @throws java.security.KeyManagementException
+     * @throws java.security.NoSuchProviderException
+     * @throws java.security.UnrecoverableKeyException
      */
     @Before
-    public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException, IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
+    public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException,
+            IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException,
+            KeyManagementException, NoSuchProviderException, UnrecoverableKeyException {
 
         // Load DDS configuration file containing the ACL list.
         DdsConfiguration config = new DdsConfiguration();
