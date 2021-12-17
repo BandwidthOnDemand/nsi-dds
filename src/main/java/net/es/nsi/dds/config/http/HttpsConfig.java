@@ -90,29 +90,7 @@ public class HttpsConfig {
 
     this.config = config;
 
-    //sslContext = initializeSSLContext(config);
-
-        // If the BouncyCastle provider is not register we need to add it in.
-    log.debug("Add provider");
-
-    if (Security.getProvider("BC") == null) {
-      log.debug("Adding BouncyCastleProvider provider");
-      Security.insertProviderAt(new BouncyCastleProvider(), 1);
-    }
-
-    if (Security.getProvider("BCJSSE") == null) {
-      log.debug("Adding BouncyCastleJsseProvider provider");
-      Security.insertProviderAt(new BouncyCastleJsseProvider(), 1);
-    }
-
-    log.debug("Add provider done");
-
-    // Log what security providers are available to us.
-    for (Provider provider : Security.getProviders()) {
-      log.debug("initializeSSLContext: Provider - {}, {}", provider.getName(), provider.getInfo());
-    }
-
-    dumpSSLContext("initializeSSLContext: defaultContext", SslConfigurator.getDefaultContext());
+    sslContext = initializeSSLContext(config);
   }
 
   /**
@@ -185,7 +163,7 @@ public class HttpsConfig {
       log.debug("Done keymanagers");
 
       log.debug("Initialize provider");
-      ctx.init(keyMgrFact.getKeyManagers(), trustMgrFact.getTrustManagers(), SecureRandom.getInstanceStrong());
+      ctx.init(keyMgrFact.getKeyManagers(), trustMgrFact.getTrustManagers(), new SecureRandom());
       log.debug("Initialize provider done");
 
 
