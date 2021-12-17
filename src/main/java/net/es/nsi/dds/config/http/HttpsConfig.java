@@ -27,8 +27,6 @@ import net.es.nsi.dds.jaxb.configuration.ObjectFactory;
 import net.es.nsi.dds.jaxb.configuration.SecureType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import org.glassfish.jersey.SslConfigurator;
 
 /**
@@ -127,7 +125,7 @@ public class HttpsConfig {
    */
   private SSLContext initializeSSLContext(SecureType st) throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException,
           KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
-
+/*
     // If the BouncyCastle provider is not register we need to add it in.
     log.debug("Add provider");
 
@@ -142,7 +140,7 @@ public class HttpsConfig {
     }
 
     log.debug("Add provider done");
-
+*/
     // Log what security providers are available to us.
     for (Provider provider : Security.getProviders()) {
       log.debug("initializeSSLContext: Provider - {}, {}", provider.getName(), provider.getInfo());
@@ -151,14 +149,14 @@ public class HttpsConfig {
     try {
       log.debug("get provider");
       // Configure the SSL context.
-      SSLContext ctx = SSLContext.getInstance("TLS", "BCJSSE");
+      SSLContext ctx = SSLContext.getInstance("TLS");
       log.debug("got provider");
 
       log.debug("Build keymanagers");
-      KeyManagerFactory keyMgrFact = KeyManagerFactory.getInstance("PKIX", "BCJSSE");
+      KeyManagerFactory keyMgrFact = KeyManagerFactory.getInstance("SunX509");
       keyMgrFact.init(getKeyStore(st.getKeyStore()), st.getKeyStore().getPassword().toCharArray());
 
-      TrustManagerFactory trustMgrFact = TrustManagerFactory.getInstance("PKIX", "BCJSSE");
+      TrustManagerFactory trustMgrFact = TrustManagerFactory.getInstance("SunX509");
       trustMgrFact.init(getKeyStore(st.getTrustStore()));
       log.debug("Done keymanagers");
 
@@ -175,7 +173,7 @@ public class HttpsConfig {
       // For giggles lets dump the default context.
       dumpSSLContext("initializeSSLContext: defaultContext", SslConfigurator.getDefaultContext());
       return ctx;
-    } catch (KeyManagementException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException
+    } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException
             | IOException | CertificateException | UnrecoverableKeyException ex) {
       log.error("initializeSSLContext: could not find SSL provider", ex);
       throw ex;
@@ -198,9 +196,11 @@ public class HttpsConfig {
       log.error("[getKeyStore] file {} does not exist.", ks.getFile());
       throw new FileNotFoundException(String.format("[getKeyStore] file {} does not exist", ks.getFile()));
     }
-    InputStream stream = new FileInputStream(file);
-    KeyStore keyStore = KeyStore.getInstance(ks.getType());
-    keyStore.load(stream, ks.getPassword().toCharArray());
+    KeyStore keyStore;
+    try (InputStream stream = new FileInputStream(file)) {
+      keyStore = KeyStore.getInstance(ks.getType());
+      keyStore.load(stream, ks.getPassword().toCharArray());
+    }
     return keyStore;
   }
 
