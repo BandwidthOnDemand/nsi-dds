@@ -27,42 +27,76 @@ import net.es.nsi.dds.jaxb.configuration.ObjectFactory;
 import net.es.nsi.dds.jaxb.configuration.SecureType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import org.glassfish.jersey.SslConfigurator;
 
 /**
- * Convert security configuration from jaxb configuration file type to something usable by system.
+ * A singleton to manage the HTTPS security context.
  *
  * @author hacksaw
  */
-public class HttpsConfig {
+public enum HttpsContext {
+  INSTANCE;
 
   private final Logger log = LogManager.getLogger(getClass());
   private final ObjectFactory factory = new ObjectFactory();
 
-  private String basedir;
-  private SecureType config;
   private SSLContext sslContext;
+  private boolean isProduction;
 
   /**
-   * Convert provided jaxb security configuration object into an HttpConfig object.
+   * Construct an HttpConfig object.
+   */
+  private HttpsContext() {
+    log.debug("[HttpsContext]: constructor invoked");
+
+    // If the BouncyCastle provider is not register add it in.
+    if (Security.getProvider("BC") == null) {
+      log.debug("Adding BouncyCastleProvider provider");
+      Security.addProvider(new BouncyCastleProvider());
+    }
+
+    // If the BouncyCastle JSSE provider is not register add it in.
+    if (Security.getProvider("BCJSSE") == null) {
+      log.debug("Adding BouncyCastleJsseProvider provider");
+      Security.addProvider(new BouncyCastleJsseProvider());
+    }
+
+    log.debug("[HttpsContext]: constructor complete");
+  }
+
+  /**
+   *
+   * @return
+   */
+  public static HttpsContext getInstance() {
+    return INSTANCE;
+  }
+
+  /**
+   * Convert security configuration from jaxb configuration file type to something usable by system.
    *
    * @param config
-   * @throws java.security.KeyManagementException
-   * @throws java.security.NoSuchAlgorithmException
-   * @throws java.security.NoSuchProviderException
-   * @throws java.security.KeyStoreException
+   * @throws KeyManagementException
+   * @throws NoSuchAlgorithmException
+   * @throws NoSuchProviderException
+   * @throws KeyStoreException
    * @throws IOException
-   * @throws java.security.cert.CertificateException
-   * @throws java.security.UnrecoverableKeyException
+   * @throws CertificateException
+   * @throws UnrecoverableKeyException
    */
-  public HttpsConfig(SecureType config) throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException,
-          KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
+  public synchronized void load(SecureType config) throws KeyManagementException, NoSuchAlgorithmException,
+          NoSuchProviderException, KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
+
+    log.debug("[HttpsContext].load invoked");
+
     if (config == null) {
-      throw new IllegalArgumentException("HttpConfig: server configuration not provided");
+      throw new IllegalArgumentException("[HttpsContext].load: server configuration not provided");
     }
 
     // We will use the application basedir to fully qualify any relative paths.
-    basedir = System.getProperty(Properties.SYSTEM_PROPERTY_BASEDIR);
+    String basedir = System.getProperty(Properties.SYSTEM_PROPERTY_BASEDIR);
 
     // Determine the keystore configuration.
     KeyStoreType keyStore = config.getKeyStore();
@@ -74,7 +108,7 @@ public class HttpsConfig {
       keyStore.setType(System.getProperty(Properties.SYSTEM_PROPERTY_SSL_KEYSTORE_TYPE, Properties.DEFAULT_SSL_KEYSTORE_TYPE));
     }
 
-    keyStore.setFile(getAbsolutePath(keyStore.getFile()));
+    keyStore.setFile(getAbsolutePath(basedir, keyStore.getFile()));
 
     KeyStoreType trustStore = config.getTrustStore();
     if (trustStore == null) {
@@ -84,21 +118,22 @@ public class HttpsConfig {
       trustStore.setType(System.getProperty(Properties.SYSTEM_PROPERTY_SSL_TRUSTSTORE_TYPE, Properties.DEFAULT_SSL_TRUSTSTORE_TYPE));
     }
 
-    trustStore.setFile(getAbsolutePath(trustStore.getFile()));
+    trustStore.setFile(getAbsolutePath(basedir, trustStore.getFile()));
 
-    this.config = config;
-
-    sslContext = initializeSSLContext(config);
+    sslContext = initContext(config);
+    isProduction = config.isProduction();
+    log.debug("[HttpsContext].load: done.");
   }
 
   /**
    * Get the absolute path for inPath.
    *
+   * @param basedir
    * @param inPath
    * @return
    * @throws IOException
    */
-  private String getAbsolutePath(String inPath) throws IOException {
+  private String getAbsolutePath(String basedir, String inPath) throws IOException {
     Path outPath = Paths.get(inPath);
     if (!outPath.isAbsolute()) {
       outPath = Paths.get(basedir, inPath);
@@ -123,27 +158,12 @@ public class HttpsConfig {
    * @throws java.security.cert.CertificateException
    * @throws java.security.UnrecoverableKeyException
    */
-  private SSLContext initializeSSLContext(SecureType st) throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException,
+  private SSLContext initContext(SecureType st) throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException,
           KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
-/*
-    // If the BouncyCastle provider is not register we need to add it in.
-    log.debug("Add provider");
 
-    if (Security.getProvider("BC") == null) {
-      log.debug("Adding BouncyCastleProvider provider");
-      Security.insertProviderAt(new BouncyCastleProvider(), 1);
-    }
-
-    if (Security.getProvider("BCJSSE") == null) {
-      log.debug("Adding BouncyCastleJsseProvider provider");
-      Security.insertProviderAt(new BouncyCastleJsseProvider(), 1);
-    }
-
-    log.debug("Add provider done");
-*/
     // Log what security providers are available to us.
     for (Provider provider : Security.getProviders()) {
-      log.debug("initializeSSLContext: Provider - {}, {}", provider.getName(), provider.getInfo());
+      log.debug("[HttpsContext].initContext: Provider - {}, {}", provider.getName(), provider.getInfo());
     }
 
     try {
@@ -153,10 +173,10 @@ public class HttpsConfig {
       log.debug("got provider");
 
       log.debug("Build keymanagers");
-      KeyManagerFactory keyMgrFact = KeyManagerFactory.getInstance("SunX509");
+      KeyManagerFactory keyMgrFact = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
       keyMgrFact.init(getKeyStore(st.getKeyStore()), st.getKeyStore().getPassword().toCharArray());
 
-      TrustManagerFactory trustMgrFact = TrustManagerFactory.getInstance("SunX509");
+      TrustManagerFactory trustMgrFact = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
       trustMgrFact.init(getKeyStore(st.getTrustStore()));
       log.debug("Done keymanagers");
 
@@ -171,11 +191,11 @@ public class HttpsConfig {
       log.debug("done setting default provider");
 
       // For giggles lets dump the default context.
-      dumpSSLContext("initializeSSLContext: defaultContext", SslConfigurator.getDefaultContext());
+      dumpSSLContext("[HttpsContext].initContext: defaultContext", SslConfigurator.getDefaultContext());
       return ctx;
     } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException
             | IOException | CertificateException | UnrecoverableKeyException ex) {
-      log.error("initializeSSLContext: could not find SSL provider", ex);
+      log.error("[HttpsContext].initContext: could not find SSL provider", ex);
       throw ex;
     }
   }
@@ -193,8 +213,8 @@ public class HttpsConfig {
     // Open specified keystore.
     File file = new File(ks.getFile());
     if (!file.exists()) {
-      log.error("[getKeyStore] file {} does not exist.", ks.getFile());
-      throw new FileNotFoundException(String.format("[getKeyStore] file {} does not exist", ks.getFile()));
+      log.error("[HttpsContext].getKeyStore: file {} does not exist.", ks.getFile());
+      throw new FileNotFoundException(String.format("[HttpsContext].getKeyStore: file {} does not exist", ks.getFile()));
     }
     KeyStore keyStore;
     try (InputStream stream = new FileInputStream(file)) {
@@ -230,8 +250,8 @@ public class HttpsConfig {
    * @return New SSLContext for HTTP client.
    */
   public SSLContext getSSLContext() {
-    return SslConfigurator.getDefaultContext();
-    //return sslContext;
+    //return SslConfigurator.getDefaultContext();
+    return sslContext;
   }
 
   /**
@@ -240,24 +260,6 @@ public class HttpsConfig {
    * @return true if configured for production.
    */
   public boolean isProduction() {
-    return config.isProduction();
-  }
-
-  /**
-   * Get maximum connections per destination.
-   *
-   * @return
-   */
-  public int getMaxConnPerRoute() {
-    return config.getMaxConnPerRoute();
-  }
-
-  /**
-   * Get total number of connections across all destinations.
-   *
-   * @return
-   */
-  public int getMaxConnTotal() {
-    return config.getMaxConnTotal();
+    return isProduction;
   }
 }

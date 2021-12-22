@@ -63,14 +63,19 @@ public class AclSchemaTest {
      * @throws java.security.UnrecoverableKeyException
      */
     @Before
-    public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException,
-            IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException,
-            KeyManagementException, NoSuchProviderException, UnrecoverableKeyException {
+    public void setUp() throws Exception {
 
         // Load DDS configuration file containing the ACL list.
         DdsConfiguration config = new DdsConfiguration();
         config.setFilename("src/test/resources/config/dds-secure.xml");
-        config.load();
+        try {
+          config.load();
+        } catch (JAXBException | IOException | IllegalArgumentException | KeyManagementException | KeyStoreException
+                | NoSuchAlgorithmException | NoSuchProviderException | UnrecoverableKeyException
+                | CertificateException | java.lang.NullPointerException ex) {
+          log.error("AclSchemaTest: DdsConfiguration load failed", ex);
+          throw ex;
+        }
         provider = new DnAuthorizationProvider(config);
     }
 

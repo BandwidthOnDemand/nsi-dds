@@ -18,18 +18,19 @@ public class DdsConfigurationTest {
 
         // Test the defaults.
         Assert.assertNotNull(dds.getClient());
-        Assert.assertTrue(dds.getClient().isProduction());
-        Assert.assertEquals(20, dds.getClient().getMaxConnPerRoute());
-        Assert.assertEquals(80, dds.getClient().getMaxConnTotal());
+        Assert.assertFalse(dds.getClient().isSecure());
+        Assert.assertEquals(5, dds.getClient().getMaxConnPerRoute());
+        Assert.assertEquals(60, dds.getClient().getMaxConnTotal());
 
     }
 
+    @Test
     public void load2() throws JAXBException, IOException {
         // Read the test file.
         DdsConfigurationType dds = ConfigurationParser.getInstance().readConfiguration(file2);
 
         Assert.assertNotNull(dds.getClient());
-        Assert.assertFalse(dds.getClient().isProduction());
+        Assert.assertTrue(dds.getClient().isSecure());
         Assert.assertEquals(5, dds.getClient().getMaxConnPerRoute());
         Assert.assertEquals(50, dds.getClient().getMaxConnTotal());
 

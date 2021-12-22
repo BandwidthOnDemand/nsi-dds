@@ -23,8 +23,8 @@ import org.junit.Test;
  *
  * @author hacksaw
  */
-public class HttpsConfigTest {
-  private static final Logger log = LogManager.getLogger(HttpsConfigTest.class);
+public class HttpsContextTest {
+  private static final Logger log = LogManager.getLogger(HttpsContextTest.class);
 
   @BeforeClass
   public static void setUpClass() throws Exception {
@@ -56,8 +56,6 @@ public class HttpsConfigTest {
     truststore.setType("JKS");
 
     config.setProduction(Boolean.TRUE);
-    config.setMaxConnPerRoute(10);
-    config.setMaxConnTotal(100);
     config.setKeyStore(keystore);
     config.setTrustStore(truststore);
 
@@ -78,8 +76,6 @@ public class HttpsConfigTest {
     truststore.setType("PKCS12");
 
     config.setProduction(Boolean.TRUE);
-    config.setMaxConnPerRoute(10);
-    config.setMaxConnTotal(100);
     config.setKeyStore(keystore);
     config.setTrustStore(truststore);
 
@@ -91,9 +87,11 @@ public class HttpsConfigTest {
     log.debug("******* Running testJKS *******");
 
     SecureType config = getConfigJKS();
-    HttpsConfig https = new HttpsConfig(config);
+    HttpsContext https = HttpsContext.getInstance();
     assertNotNull(https);
-    https.getSSLContext();
+    https.load(config);
+    assertNotNull(https.getSSLContext());
+
     log.debug("******* Done testJKS *******");
   }
 
@@ -102,9 +100,10 @@ public class HttpsConfigTest {
     log.debug("******* Running testP12 *******");
 
     SecureType config = getConfigP12();
-    HttpsConfig https = new HttpsConfig(config);
+    HttpsContext https = HttpsContext.getInstance();
     assertNotNull(https);
-    https.getSSLContext();
+    https.load(config);
+    assertNotNull(https.getSSLContext());
 
     log.debug("******* Done testP12 *******");
   }

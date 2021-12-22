@@ -7,14 +7,15 @@
     <repository>src/test/resources/config/repository</repository>
     <expiryInterval>600</expiryInterval>
     <baseURL>http://localhost:8401/dds</baseURL>
-    <server address="localhost" port="8401" packageName="net.es.nsi.dds">
+
+    <server address="localhost" port="8401" packageName="net.es.nsi.dds" secure="false">
         <static>
             <path>src/test/resources/config/www</path>
             <relative>/www</relative>
         </static>
     </server>
 
-    <client production="false" maxConnPerRoute="5" maxConnTotal="50" />
+    <client maxConnPerRoute="5" maxConnTotal="50" secure="true" />
 
     <accessControl enabled="true">
         <rule access="read">

@@ -46,13 +46,27 @@
     <repository>src/test/resources/config/repository</repository>
     <expiryInterval>600</expiryInterval>
     <baseURL>http://localhost:8801/dds</baseURL>
-    <server address="localhost" port="8801" packageName="net.es.nsi.dds">
+
+    <server address="localhost" port="8801" packageName="net.es.nsi.dds" secure="true">
         <static>
             <path>src/test/resources/config/www</path>
             <relative>/www</relative>
         </static>
     </server>
-    
+
+    <client maxConnPerRoute="10" maxConnTotal="60" secure="true" />
+
+    <secure production="true">
+      <keyStore type="JKS">
+        <file>src/test/resources/config/server.jks</file>
+        <password>changeit</password>
+      </keyStore>
+      <trustStore type="JKS">
+        <file>src/test/resources/config/truststore.jks</file>
+        <password>changeit</password>
+      </trustStore>
+    </secure>
+
     <accessControl enabled="true">
         <rule access="read">
             <dn>CN=Go Daddy Secure Certificate Authority - G2, OU=http://certs.godaddy.com/repository/, O="GoDaddy.com, Inc.", L=Scottsdale, ST=Arizona, C=US</dn>

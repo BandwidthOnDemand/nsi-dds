@@ -22,13 +22,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import net.es.nsi.dds.authorization.AccessControlList;
 import net.es.nsi.dds.config.Properties;
-import net.es.nsi.dds.config.http.HttpConfig;
-import net.es.nsi.dds.config.http.HttpsConfig;
+import net.es.nsi.dds.config.http.HttpsContext;
 import net.es.nsi.dds.jaxb.ConfigurationParser;
 import net.es.nsi.dds.jaxb.configuration.AccessControlType;
+import net.es.nsi.dds.jaxb.configuration.ClientType;
 import net.es.nsi.dds.jaxb.configuration.DdsConfigurationType;
 import net.es.nsi.dds.jaxb.configuration.ObjectFactory;
 import net.es.nsi.dds.jaxb.configuration.PeerURLType;
+import net.es.nsi.dds.jaxb.configuration.ServerType;
 import net.es.nsi.dds.jaxb.configuration.SignatureStoreType;
 import net.es.nsi.dds.jaxb.management.LogType;
 import net.es.nsi.dds.management.logs.DdsErrors;
@@ -74,8 +75,8 @@ public class DdsConfiguration {
     private long expiryInterval = EXPIRE_INTERVAL_DEFAULT;
     private int actorPool = ACTORPOOL_DEFAULT_SIZE;
     private int notificationSize;
-    private HttpConfig httpConfig = null;
-    private Optional<HttpsConfig> clientConfig = Optional.empty();
+    private ClientType clientConfig = null;
+    private ServerType serverConfig = null;
     private AccessControlList accessControlList;
     private Map<String, PeerURLType> discoveryURL = new ConcurrentHashMap<>();
 
@@ -87,14 +88,6 @@ public class DdsConfiguration {
     public static DdsConfiguration getInstance() {
         DdsConfiguration configurationReader = SpringApplicationContext.getBean("ddsConfiguration", DdsConfiguration.class);
         return configurationReader;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
     }
 
     public synchronized void load() throws IllegalArgumentException, JAXBException, IOException,
@@ -210,10 +203,16 @@ public class DdsConfiguration {
             setNotificationSize(config.getNotificationSize());
         }
 
-        httpConfig = new HttpConfig(config.getServer());
-        if (config.getClient() != null) {
-            clientConfig = Optional.of(new HttpsConfig(config.getClient()));
+        // If there is an SSL context then we process it.
+        if (config.getSecure() != null) {
+          HttpsContext.getInstance().load(config.getSecure());
         }
+
+        // The HTTP client will use this configuration for initialization.
+        clientConfig = config.getClient();
+
+        // The HTTP server will use this configuration for initialization.
+        serverConfig = config.getServer();
 
         Optional<AccessControlType> accessControl = Optional.ofNullable(config.getAccessControl());
         if (!accessControl.isPresent()) {
@@ -252,6 +251,14 @@ public class DdsConfiguration {
         }
 
         return path.toString();
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public boolean isDocumentsConfigured() {
@@ -403,16 +410,12 @@ public class DdsConfiguration {
         this.notificationSize = notificationSize;
     }
 
-    public void setHttpConfig(HttpConfig httpConfig) {
-        this.httpConfig = httpConfig;
+    public ServerType getServerConfig() {
+        return serverConfig;
     }
 
-    public HttpConfig getHttpConfig() {
-        return httpConfig;
-    }
-
-    public HttpsConfig getClientConfig() {
-        return clientConfig.orElse(null);
+    public ClientType getClientConfig() {
+        return clientConfig;
     }
 
     public AccessControlList getAccessControlList() {
