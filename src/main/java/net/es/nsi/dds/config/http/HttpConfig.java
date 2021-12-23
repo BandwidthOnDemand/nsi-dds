@@ -117,7 +117,7 @@ public class HttpConfig {
      * @return the staticPath
      */
     public String getStaticPath() {
-        return staticPath.get();
+        return staticPath.orElse(null);
     }
 
     /**
