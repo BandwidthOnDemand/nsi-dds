@@ -3,10 +3,12 @@ package net.es.nsi.dds.authorization;
 import jakarta.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +25,7 @@ import org.junit.Test;
  * @author hacksaw
  */
 public class AclSchemaTest {
-    private static Logger log;
+    private static final Logger log = LogManager.getLogger(AclSchemaTest.class);
     private DnAuthorizationProvider provider;
 
     // DBN
@@ -39,8 +41,6 @@ public class AclSchemaTest {
 
   @BeforeClass
   public static void initialize() {
-    System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
-    log = LogManager.getLogger(AclSchemaTest.class);
   }
 
 
@@ -55,14 +55,24 @@ public class AclSchemaTest {
      * @throws KeyStoreException
      * @throws NoSuchAlgorithmException
      * @throws CertificateException
+     * @throws java.security.KeyManagementException
+     * @throws java.security.NoSuchProviderException
+     * @throws java.security.UnrecoverableKeyException
      */
     @Before
-    public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException, IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
+    public void setUp() throws Exception {
 
         // Load DDS configuration file containing the ACL list.
         DdsConfiguration config = new DdsConfiguration();
         config.setFilename("src/test/resources/config/dds-secure.xml");
-        config.load();
+        try {
+          config.load();
+        } catch (JAXBException | IOException | IllegalArgumentException | KeyManagementException | KeyStoreException
+                | NoSuchAlgorithmException | NoSuchProviderException | UnrecoverableKeyException
+                | CertificateException | java.lang.NullPointerException ex) {
+          log.error("AclSchemaTest: DdsConfiguration load failed", ex);
+          throw ex;
+        }
         provider = new DnAuthorizationProvider(config);
     }
 

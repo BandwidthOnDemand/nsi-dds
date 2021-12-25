@@ -8,28 +8,29 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class DdsConfigurationTest {
-    private static final String file1 = "src/test/resources/config/dds-schema-test.xml";
-    private static final String file2 = "src/test/resources/config/dds-schema-test2.xml";
+    private static final String FILE_1 = "src/test/resources/config/dds-schema-test.xml";
+    private static final String FILE_2 = "src/test/resources/config/dds-schema-test2.xml";
 
     @Test
     public void load1() throws JAXBException, IOException {
         // Read the test file.
-        DdsConfigurationType dds = ConfigurationParser.getInstance().readConfiguration(file1);
+        DdsConfigurationType dds = ConfigurationParser.getInstance().readConfiguration(FILE_1);
 
         // Test the defaults.
         Assert.assertNotNull(dds.getClient());
-        Assert.assertTrue(dds.getClient().isProduction());
-        Assert.assertEquals(20, dds.getClient().getMaxConnPerRoute());
-        Assert.assertEquals(80, dds.getClient().getMaxConnTotal());
+        Assert.assertFalse(dds.getClient().isSecure());
+        Assert.assertEquals(5, dds.getClient().getMaxConnPerRoute());
+        Assert.assertEquals(60, dds.getClient().getMaxConnTotal());
 
     }
 
+    @Test
     public void load2() throws JAXBException, IOException {
         // Read the test file.
-        DdsConfigurationType dds = ConfigurationParser.getInstance().readConfiguration(file2);
+        DdsConfigurationType dds = ConfigurationParser.getInstance().readConfiguration(FILE_2);
 
         Assert.assertNotNull(dds.getClient());
-        Assert.assertFalse(dds.getClient().isProduction());
+        Assert.assertTrue(dds.getClient().isSecure());
         Assert.assertEquals(5, dds.getClient().getMaxConnPerRoute());
         Assert.assertEquals(50, dds.getClient().getMaxConnTotal());
 

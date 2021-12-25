@@ -5,8 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Collection;
 import net.es.nsi.dds.config.Properties;
@@ -35,7 +38,9 @@ public class TestDocumentCache {
   }
 
   @Before
-  public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException, IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
+  public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException,
+          IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException, KeyManagementException,
+          NoSuchProviderException, UnrecoverableKeyException {
     config = new DdsConfiguration();
     config.setFilename("src/test/resources/config/dds.xml");
     config.load();

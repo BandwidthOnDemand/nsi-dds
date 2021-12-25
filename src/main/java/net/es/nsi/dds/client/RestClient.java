@@ -15,13 +15,15 @@ import java.io.InputStream;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.net.ssl.HostnameVerifier;
-import net.es.nsi.dds.config.http.HttpsConfig;
+import net.es.nsi.dds.config.http.HttpsContext;
 import net.es.nsi.dds.dao.DdsConfiguration;
+import net.es.nsi.dds.jaxb.configuration.ClientType;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.NsiConstants;
 import org.apache.http.client.config.RequestConfig;
@@ -65,8 +67,8 @@ public class RestClient {
     private final static int CONNECT_REQUEST_TIMEOUT = 30 * 1000;
 
     // Connection provider pool configuration defaults.
-    private final static int MAX_CONNECTION_PER_ROUTE = 5;
-    private final static int MAX_CONNECTION_TOTAL = 50;
+    private final static int MAX_CONNECTION_PER_ROUTE = 10;
+    private final static int MAX_CONNECTION_TOTAL = 80;
 
     private final static Logger log = LogManager.getLogger(RestClient.class);
 
@@ -81,23 +83,6 @@ public class RestClient {
     }
 
     /**
-     * This constructor accepts a specific HttpsConfig.
-     *
-     * @param config The HttpsConfig to apply to the RestClient.
-     *
-     * @throws KeyStoreException
-     * @throws IOException
-     * @throws NoSuchAlgorithmException
-     * @throws CertificateException
-     * @throws KeyManagementException
-     * @throws UnrecoverableKeyException
-     */
-    public RestClient(HttpsConfig config) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
-        ClientConfig clientConfig = configureSecureClient(config);
-        client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
-    }
-
-    /**
      * This constructor accepts a full DDS configuration document.
      *
      * @param config The DDS configuration document.
@@ -108,18 +93,22 @@ public class RestClient {
      * @throws CertificateException
      * @throws KeyManagementException
      * @throws UnrecoverableKeyException
+     * @throws java.security.NoSuchProviderException
      */
-    public RestClient(DdsConfiguration config) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
-      log.debug("RestClient: Initializing");
-        HttpsConfig cf = config.getClientConfig();
-        if (cf == null) {
+    public RestClient(DdsConfiguration config) throws KeyStoreException, IOException, NoSuchAlgorithmException,
+            CertificateException, KeyManagementException, UnrecoverableKeyException, NoSuchProviderException {
+        log.debug("RestClient: Initializing");
+
+        if (config.getClientConfig() == null) {
             ClientConfig clientConfig = configureClient(MAX_CONNECTION_PER_ROUTE, MAX_CONNECTION_TOTAL);
             client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
         }
         else {
-            ClientConfig clientConfig = configureSecureClient(cf);
+            ClientConfig clientConfig = configureClient(config.getClientConfig());
             client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
         }
+
+        log.debug("RestClient: Initialized");
     }
 
     /**
@@ -135,12 +124,22 @@ public class RestClient {
     /**
      * Configure the client for TLS communications.
      *
-     * @param config The HttpsConfig object providing SLL/TLS configuration information.
+     * @param config The HttpsContext object providing SLL/TLS configuration information.
      * @return a client configuration.
+     * @throws java.security.KeyManagementException
+     * @throws java.security.NoSuchAlgorithmException
+     * @throws java.security.NoSuchProviderException
+     * @throws java.security.KeyStoreException
+     * @throws java.io.IOException
+     * @throws java.security.cert.CertificateException
+     * @throws java.security.UnrecoverableKeyException
      */
-    public static ClientConfig configureSecureClient(HttpsConfig config) {
+    public static ClientConfig configureSecureClient(ClientType config) throws KeyManagementException,
+            NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, IOException, CertificateException,
+            UnrecoverableKeyException {
         HostnameVerifier hostnameVerifier;
-        if (config.isProduction()) {
+        HttpsContext context = HttpsContext.getInstance();
+        if (context.isProduction()) {
             hostnameVerifier = new DefaultHostnameVerifier();
         }
         else {
@@ -153,7 +152,7 @@ public class RestClient {
 
         final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", new PlainConnectionSocketFactory())
-                .register("https", new SSLConnectionSocketFactory(config.getSSLContext(), hostnameVerifier))
+                .register("https", new SSLConnectionSocketFactory(context.getSSLContext(), hostnameVerifier))
                 .build();
 
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(registry);
@@ -170,6 +169,30 @@ public class RestClient {
     public static ClientConfig configureClient(int maxPerRoute, int maxTotal) {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         return getClientConfig(connectionManager, maxPerRoute, maxTotal);
+    }
+
+    /**
+     * Configure the client configuration for insecure communications.
+     *
+     * @param config
+     * @return The default client configuration.
+     * @throws java.security.KeyManagementException
+     * @throws java.security.NoSuchAlgorithmException
+     * @throws java.security.NoSuchProviderException
+     * @throws java.security.KeyStoreException
+     * @throws java.io.IOException
+     * @throws java.security.cert.CertificateException
+     * @throws java.security.UnrecoverableKeyException
+     */
+    public static ClientConfig configureClient(ClientType config) throws KeyManagementException,
+            NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, IOException,
+            CertificateException, UnrecoverableKeyException {
+      if (config.isSecure()) {
+        return configureSecureClient(config);
+      } else {
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        return getClientConfig(connectionManager, config.getMaxConnPerRoute(), config.getMaxConnTotal());
+      }
     }
 
     /**

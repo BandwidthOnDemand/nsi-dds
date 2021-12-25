@@ -46,13 +46,15 @@
     <repository>src/test/resources/config/repository</repository>
     <expiryInterval>600</expiryInterval>
     <baseURL>http://localhost:8801/dds</baseURL>
-    <server address="localhost" port="8801" packageName="net.es.nsi.dds">
+    <server address="localhost" port="8801" packageName="net.es.nsi.dds" secure="false">
         <static>
             <path>src/test/resources/config/www</path>
             <relative>/www</relative>
         </static>
     </server>
-    
+
+    <client maxConnPerRoute="10" maxConnTotal="60" secure="false" />
+
     <accessControl enabled="false">
         <rule access="read">
             <dn>CN=Go Daddy Secure Certificate Authority - G2, OU=http://certs.godaddy.com/repository/, O="GoDaddy.com, Inc.", L=Scottsdale, ST=Arizona, C=US</dn>

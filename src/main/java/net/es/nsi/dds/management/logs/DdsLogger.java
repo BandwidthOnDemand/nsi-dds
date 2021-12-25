@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.management.logs;
 
 import java.util.AbstractQueue;
@@ -17,8 +13,8 @@ import net.es.nsi.dds.jaxb.management.LogEnumType;
 import net.es.nsi.dds.jaxb.management.LogType;
 import net.es.nsi.dds.jaxb.management.ObjectFactory;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *

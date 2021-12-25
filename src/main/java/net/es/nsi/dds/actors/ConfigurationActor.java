@@ -3,8 +3,11 @@ package net.es.nsi.dds.actors;
 import akka.actor.UntypedActor;
 import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
+import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
 import net.es.nsi.dds.dao.DdsConfiguration;
@@ -43,7 +46,9 @@ public class ConfigurationActor extends UntypedActor {
             try {
                 discoveryConfiguration.load();
             }
-            catch (IllegalArgumentException | JAXBException | IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException ex) {
+            catch (IllegalArgumentException | JAXBException | IOException | KeyStoreException
+                    | NoSuchAlgorithmException | CertificateException | KeyManagementException 
+                    | NoSuchProviderException | UnrecoverableKeyException ex) {
                 log.error("onReceive: Configuration load failed.", ex);
             }
 

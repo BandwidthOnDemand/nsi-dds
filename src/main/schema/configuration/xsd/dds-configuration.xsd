@@ -55,20 +55,21 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element name="nsaId" type="xsd:anyURI"/>
-            <xsd:element name="documents" type="xsd:string" minOccurs="0"/>
-            <xsd:element name="cache" type="xsd:string" minOccurs="0"/>
-            <xsd:element name="repository" type="xsd:string" minOccurs="0"/>
-            <xsd:element name="auditInterval" type="xsd:long" minOccurs="0" />
-            <xsd:element name="expiryInterval" type="xsd:long" default="86400" />
-            <xsd:element name="actorPool" type="xsd:int" minOccurs="0" />
-            <xsd:element name="baseURL" type="xsd:anyURI"/>
+            <xsd:element name="nsaId"           type="xsd:anyURI"/>
+            <xsd:element name="documents"       type="xsd:string" minOccurs="0"/>
+            <xsd:element name="cache"           type="xsd:string" minOccurs="0"/>
+            <xsd:element name="repository"      type="xsd:string" minOccurs="0"/>
+            <xsd:element name="auditInterval"   type="xsd:long" minOccurs="0" />
+            <xsd:element name="expiryInterval"  type="xsd:long" default="86400" />
+            <xsd:element name="actorPool"       type="xsd:int" minOccurs="0" />
+            <xsd:element name="baseURL"         type="xsd:anyURI"/>
             <xsd:element name="notificationSize" type="xsd:int" default="10" />
-            <xsd:element name="server" type="tns:ServerType" minOccurs="0" />
-            <xsd:element name="client" type="tns:SecureType" minOccurs="0" />
-            <xsd:element name="signature" type="tns:SignatureStoreType" minOccurs="0" />
-            <xsd:element name="accessControl" type="tns:AccessControlType" minOccurs="0" />
-            <xsd:element name="peerURL" type="tns:PeerURLType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="server"          type="tns:ServerType" minOccurs="0" />
+            <xsd:element name="client"          type="tns:ClientType" minOccurs="0" />
+            <xsd:element name="secure"          type="tns:SecureType" minOccurs="0"/>
+            <xsd:element name="signature"       type="tns:SignatureStoreType" minOccurs="0" />
+            <xsd:element name="accessControl"   type="tns:AccessControlType" minOccurs="0" />
+            <xsd:element name="peerURL"         type="tns:PeerURLType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -78,12 +79,22 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element name="secure" type="tns:SecureType" minOccurs="0"/>
-            <xsd:element name="static" type="tns:StaticType" minOccurs="0"/>
+            <xsd:element name="static"          type="tns:StaticType" minOccurs="0"/>
         </xsd:sequence>
-        <xsd:attribute   name="address"     use="required" type="xsd:string" />
-        <xsd:attribute   name="port"        use="required" type="xsd:string" />
-        <xsd:attribute   name="packageName" use="required" type="xsd:string" />
+        <xsd:attribute   name="address"         use="required" type="xsd:string" />
+        <xsd:attribute   name="port"            use="required" type="xsd:string" />
+        <xsd:attribute   name="packageName"     use="required" type="xsd:string" />
+        <xsd:attribute   name="secure"          type="xsd:boolean" default="false" />
+    </xsd:complexType>
+
+    <xsd:complexType name="ClientType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute   name="maxConnPerRoute" type="xsd:int" default="10"/>
+        <xsd:attribute   name="maxConnTotal"    type="xsd:int" default="80"/>
+        <xsd:attribute   name="secure"          type="xsd:boolean" default="false" />
     </xsd:complexType>
 
     <xsd:complexType name="SecureType">
@@ -92,12 +103,10 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element name="keyStore" type="tns:KeyStoreType" />
-            <xsd:element name="trustStore" type="tns:KeyStoreType" />
+            <xsd:element name="keyStore"    type="tns:KeyStoreType" />
+            <xsd:element name="trustStore"  type="tns:KeyStoreType" />
         </xsd:sequence>
-        <xsd:attribute   name="production" type="xsd:boolean" default="true"/>
-        <xsd:attribute   name="maxConnPerRoute" type="xsd:int" default="20"/>
-        <xsd:attribute   name="maxConnTotal" type="xsd:int" default="80"/>
+        <xsd:attribute   name="production"  type="xsd:boolean" default="true"/>
     </xsd:complexType>
 
     <xsd:complexType name="KeyStoreType">
@@ -106,10 +115,10 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element name="file" type="xsd:string" />
-            <xsd:element name="password" type="xsd:string" />
+            <xsd:element name="file"      type="xsd:string" />
+            <xsd:element name="password"  type="xsd:string" />
         </xsd:sequence>
-        <xsd:attribute   name="type" type="xsd:string" default="JKS"/>
+        <xsd:attribute   name="type"      type="xsd:string" default="JKS"/>
     </xsd:complexType>
 
     <xsd:complexType name="SignatureStoreType">
@@ -122,7 +131,7 @@
                 <xsd:sequence>
                     <xsd:element name="alias" type="xsd:string" />
                 </xsd:sequence>
-                <xsd:attribute name="sign" type="xsd:boolean" default="false"/>
+                <xsd:attribute name="sign"    type="xsd:boolean" default="false"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

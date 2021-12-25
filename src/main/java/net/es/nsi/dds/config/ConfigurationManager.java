@@ -3,6 +3,12 @@ package net.es.nsi.dds.config;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.server.DdsServer;
 import net.es.nsi.dds.spring.SpringContext;
@@ -46,9 +52,15 @@ public enum ConfigurationManager {
      * configPath.
      *
      * @env configdir The path containing all the needed configuration files.
+     * @throws KeyManagementException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException
+     * @throws KeyStoreException
+     * @throws CertificateException
+     * @throws UnrecoverableKeyException
      * @throws IOException If there is an error loading bean configuration file.
      */
-    public synchronized void initialize() throws IOException {
+    public synchronized void initialize() throws IOException, IllegalStateException, KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, CertificateException, UnrecoverableKeyException {
         String configPath = System.getProperty(Properties.SYSTEM_PROPERTY_CONFIGDIR);
 
         if (!isInitialized()) {
@@ -67,12 +79,18 @@ public enum ConfigurationManager {
 
             // Get references to the spring controlled beans.
             ddsServer = (DdsServer) context.getBean("ddsServer");
-            ddsServer.start();
+
+            try {
+              ddsServer.start();
+            } catch (IOException | IllegalStateException | KeyManagementException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException | CertificateException | UnrecoverableKeyException ex) {
+              log.error("[ConfigurationManager] initialize() failed to start DDS server", ex);
+              throw ex;
+            }
 
             // Start the discovery process.
             discoveryProvider = (DiscoveryProvider) context.getBean("discoveryProvider");
             discoveryProvider.start();
-            
+
             setInitialized(true);
             log.info("Loaded configuration from: " + path.toString());
         }

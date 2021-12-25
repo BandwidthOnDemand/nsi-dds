@@ -9,8 +9,11 @@ import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
+import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,7 @@ import org.junit.Test;
  * @author hacksaw
  */
 public class TestDocumentRepository {
+
   private final static HttpConfig testServer = new HttpConfig("localhost", "8402", "net.es.nsi.dds.client");
   private final static String DOCUMENT_DIR = "src/test/resources/documents/";
   private final static ObjectFactory factory = new ObjectFactory();
@@ -52,14 +56,13 @@ public class TestDocumentRepository {
   }
 
   @Before
-  public void oneTimeSetUp() throws IOException {
+  public void oneTimeSetUp() {
     log.debug("*************************************** TestDocumentRepository oneTimeSetUp ***********************************");
 
-    testConfig = new TestConfig();
-    target = testConfig.getTarget();
-    discovery = target.path("dds");
-
     try {
+      testConfig = new TestConfig();
+      target = testConfig.getTarget();
+      discovery = target.path("dds");
       // Load a copy of the test DDS configuration and clear the document
       // repository for this test.
       ddsConfig = new DdsConfiguration();
@@ -70,8 +73,10 @@ public class TestDocumentRepository {
 
       // Configure the local test client callback server.
       TestServer.INSTANCE.start(testServer);
-    } catch (IllegalArgumentException | JAXBException | IOException | IllegalStateException | KeyStoreException | NoSuchAlgorithmException | CertificateException ex) {
-      log.error("oneTimeSetUp: failed to start HTTP server {}", ex.getLocalizedMessage());
+    } catch (IllegalArgumentException | JAXBException | IOException | IllegalStateException | KeyStoreException
+            | NoSuchAlgorithmException | CertificateException | KeyManagementException | NoSuchProviderException
+            | UnrecoverableKeyException ex) {
+      log.error("oneTimeSetUp: failed to start HTTP server", ex);
       fail();
     }
 

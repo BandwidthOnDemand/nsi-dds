@@ -1,6 +1,5 @@
 package net.es.nsi.dds.config.http;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -8,8 +7,14 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.util.Optional;
 import net.es.nsi.dds.config.Properties;
-import net.es.nsi.dds.jaxb.configuration.SecureType;
 import net.es.nsi.dds.jaxb.configuration.ServerType;
 import net.es.nsi.dds.jaxb.configuration.StaticType;
 
@@ -21,20 +26,20 @@ public class HttpConfig {
     private Optional<String> address;
     private Optional<String> port;
     private Optional<String> packageName;
-    private Optional<String> staticPath = Optional.absent();
-    private Optional<String> relativePath = Optional.absent();
+    private Optional<String> staticPath = Optional.empty();
+    private Optional<String> relativePath = Optional.empty();
     private boolean secure = false;
-    private Optional<SecureType> secureConfig = Optional.absent();
-    private Optional<HttpsConfig> httpsConfig = Optional.absent();
     private String basedir;
 
     public HttpConfig(String address, String port, String packageName) {
-        this.address = Optional.fromNullable(Strings.emptyToNull(address));
-        this.port = Optional.fromNullable(Strings.emptyToNull(port));
-        this.packageName = Optional.fromNullable(Strings.emptyToNull(packageName));
+        this.address = Optional.ofNullable(Strings.emptyToNull(address));
+        this.port = Optional.ofNullable(Strings.emptyToNull(port));
+        this.packageName = Optional.ofNullable(Strings.emptyToNull(packageName));
     }
 
-    public HttpConfig(ServerType config) throws IOException {
+    public HttpConfig(ServerType config) throws IOException, KeyManagementException,
+            NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, CertificateException,
+            UnrecoverableKeyException {
         if (config == null) {
             throw new IllegalArgumentException("HttpConfig: server configuration not provided");
         }
@@ -43,29 +48,26 @@ public class HttpConfig {
         basedir = System.getProperty(Properties.SYSTEM_PROPERTY_BASEDIR);
 
         // These two parameters must be present.
-        address = Optional.fromNullable(Strings.emptyToNull(config.getAddress()));
-        port = Optional.fromNullable(Strings.emptyToNull(config.getPort()));
-        packageName = Optional.fromNullable(Strings.emptyToNull(config.getPackageName()));
+        address = Optional.ofNullable(Strings.emptyToNull(config.getAddress()));
+        port = Optional.ofNullable(Strings.emptyToNull(config.getPort()));
+        packageName = Optional.ofNullable(Strings.emptyToNull(config.getPackageName()));
 
         // staticPath is optional, and only provided if an HTTP server should
         // also be started for static content.
-        Optional<StaticType> aStatic = Optional.fromNullable(config.getStatic());
+        Optional<StaticType> aStatic = Optional.ofNullable(config.getStatic());
         if (aStatic.isPresent()) {
-            staticPath = Optional.fromNullable(Strings.emptyToNull(aStatic.get().getPath()));
-            relativePath = Optional.fromNullable(Strings.emptyToNull(aStatic.get().getRelative()));
+            staticPath = Optional.ofNullable(Strings.emptyToNull(aStatic.get().getPath()));
+            relativePath = Optional.ofNullable(Strings.emptyToNull(aStatic.get().getRelative()));
             if(staticPath.isPresent()) {
-                staticPath = Optional.fromNullable(getAbsolutePath(staticPath.get()));
+                staticPath = Optional.ofNullable(getAbsolutePath(staticPath.get()));
             }
         }
 
         // Server secure settings are optional, and only provided if standalone
         // HTTPS capabilities are needed.
-        secureConfig = Optional.fromNullable(config.getSecure());
-        if (secureConfig.isPresent()) {
+        if (config.isSecure()) {
             secure = true;
-            httpsConfig = Optional.of(new HttpsConfig(secureConfig.get()));
         }
-
     }
 
     private String getAbsolutePath(String inPath) throws IOException {
@@ -79,10 +81,10 @@ public class HttpConfig {
 
     public URI getURI() {
         if (secure) {
-            return URI.create("https://" + address.or(DEFAULT_ADDRESS) + ":" + port.or(DEFAULT_PORT));
+            return URI.create("https://" + address.orElse(DEFAULT_ADDRESS) + ":" + port.orElse(DEFAULT_PORT));
         }
 
-        return URI.create("http://" + address.or(DEFAULT_ADDRESS) + ":" + port.or(DEFAULT_PORT));
+        return URI.create("http://" + address.orElse(DEFAULT_ADDRESS) + ":" + port.orElse(DEFAULT_PORT));
     }
 
     public URL getURL() throws MalformedURLException {
@@ -90,11 +92,11 @@ public class HttpConfig {
     }
 
     public String getAddress() {
-        return address.or(DEFAULT_ADDRESS);
+        return address.orElse(DEFAULT_ADDRESS);
     }
 
     public String getPort() {
-        return port.or(DEFAULT_PORT);
+        return port.orElse(DEFAULT_PORT);
     }
 
     /**
@@ -108,32 +110,28 @@ public class HttpConfig {
      * @return the packageName
      */
     public String getPackageName() {
-        return packageName.or(DEFAULT_PACKAGENAME);
+        return packageName.orElse(DEFAULT_PACKAGENAME);
     }
 
     /**
      * @return the staticPath
      */
     public String getStaticPath() {
-        return staticPath.orNull();
+        return staticPath.orElse(null);
     }
 
     /**
      * @return the wwwPath
      */
     public String getRelativePath() {
-        return relativePath.orNull();
+        return relativePath.orElse(null);
     }
 
     public boolean isSecure() {
         return secure;
     }
 
-    public SecureType getSecureConfig() {
-        return secureConfig.orNull();
-    }
-
-    public HttpsConfig getHttpsConfig() {
-        return httpsConfig.orNull();
+    public HttpsContext getHttpsContext() {
+        return HttpsContext.getInstance();
     }
 }

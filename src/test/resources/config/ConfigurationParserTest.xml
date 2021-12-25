@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tns:dds xmlns:tns="http://schemas.es.net/nsi/2014/03/dds/configuration"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <nsaId>urn:ogf:network:netherlight.net:2013:nsa:bod</nsaId>
     <documents>src/test/resources/config/documents</documents>
     <cache>src/test/resources/config/cache</cache>
     <repository>src/test/resources/config/repository</repository>
     <expiryInterval>600</expiryInterval>
-    <baseURL>http://localhost:8401/dds</baseURL>
+    <baseURL>http://localhost:8801/dds</baseURL>
 
-    <server address="localhost" port="8401" packageName="net.es.nsi.dds" secure="false">
+    <server address="localhost" port="8801" packageName="net.es.nsi.dds" secure="true">
         <static>
             <path>src/test/resources/config/www</path>
             <relative>/www</relative>
         </static>
     </server>
 
-    <client maxConnPerRoute="5" maxConnTotal="50" secure="true" />
+    <client maxConnPerRoute="10" maxConnTotal="60" secure="true" />
+
+    <secure production="true">
+      <keyStore type="JKS">
+        <file>src/test/resources/config/server.jks</file>
+        <password>changeit</password>
+      </keyStore>
+      <trustStore type="JKS">
+        <file>src/test/resources/config/truststore.jks</file>
+        <password>changeit</password>
+      </trustStore>
+    </secure>
 
     <accessControl enabled="true">
         <rule access="read">
@@ -32,12 +43,16 @@
         </rule>
         <rule access="write">
             <dn>emailAddress=opennsa@northwestern.edu, OU=iCAIR - StarLight, L=Chicago, O=Northwestern U IT, ST=Illinois, C=US</dn>
-            <dn>1.2.840.113549.1.9.1=#16186F70656E6E7361406E6F7274687765737465726E2E656475, OU=iCAIR - StarLight, L=Chicago, O=Northwestern U IT, ST=Illinois, C=US</dn>
             <nsaId>urn:ogf:network:icair.org:2013:nsa</nsaId>
+        </rule>
+        <rule access="peer">
+            <dn>CN=nsi-aggr-west.es.net,OU=Domain Control Validated</dn>
+            <nsaId>urn:ogf:network:es.net:2013:nsa:nsi-aggr-west</nsaId>
+            <nsaId>urn:ogf:network:es.net:2013:nsa</nsaId>
         </rule>
     </accessControl>
 
-    <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">http://localhost:8401/dds</peerURL>
+    <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">http://localhost:8801/dds</peerURL>
     <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://bod.acc.dlp.surfnet.nl/nsa-discovery</peerURL>
     <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">https://nsi-dev.nordu.net:9443/NSI/discovery.xml</peerURL>
     <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://62.217.124.244:8080/nsi_discovery_geant.xml</peerURL>
