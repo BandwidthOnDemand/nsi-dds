@@ -67,17 +67,19 @@ public enum HttpsContext {
   }
 
   /**
+   * Get the single instance of the HttpsContext object.
    *
-   * @return
+   * @return The current HttpsContext object.
    */
   public static HttpsContext getInstance() {
     return INSTANCE;
   }
 
   /**
-   * Convert security configuration from jaxb configuration file type to something usable by system.
+   * Convert security configuration from JAXB configuration file type to something usable by system.
    *
-   * @param config
+   * @param config The JAXB SecureType object containing the TLS configuration information.
+   *
    * @throws KeyManagementException
    * @throws NoSuchAlgorithmException
    * @throws NoSuchProviderException
@@ -112,6 +114,7 @@ public enum HttpsContext {
 
     KeyStoreType trustStore = config.getTrustStore();
     if (trustStore == null) {
+      // Check to see if the truststore was provided on the commandline.
       trustStore = factory.createKeyStoreType();
       trustStore.setFile(System.getProperty(Properties.SYSTEM_PROPERTY_SSL_TRUSTSTORE, Properties.DEFAULT_SSL_TRUSTSTORE));
       trustStore.setPassword(System.getProperty(Properties.SYSTEM_PROPERTY_SSL_TRUSTSTORE_PASSWORD, Properties.DEFAULT_SSL_TRUSTSTORE_PASSWORD));
@@ -120,8 +123,12 @@ public enum HttpsContext {
 
     trustStore.setFile(getAbsolutePath(basedir, trustStore.getFile()));
 
+    // Initialize the SSL context.
     sslContext = initContext(config);
+
+    // Production boolean controls the hostverifier used during SSL setup.
     isProduction = config.isProduction();
+
     log.debug("[HttpsContext].load: done.");
   }
 
@@ -145,11 +152,8 @@ public enum HttpsContext {
   /**
    * Get the default SSL context and add our specific configuration.
    *
-   * Question: Do we really need this? Should we not let JVM parameters
-   * control this? If so we could remove all SSL configuration from the
-   * application.
-   *
    * @return New SSLContext for HTTP client.
+   *
    * @throws java.security.KeyManagementException
    * @throws java.security.NoSuchAlgorithmException
    * @throws java.security.NoSuchProviderException
@@ -158,8 +162,8 @@ public enum HttpsContext {
    * @throws java.security.cert.CertificateException
    * @throws java.security.UnrecoverableKeyException
    */
-  private SSLContext initContext(SecureType st) throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException,
-          KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
+  private SSLContext initContext(SecureType st) throws KeyManagementException, NoSuchAlgorithmException,
+          NoSuchProviderException, KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
 
     // Log what security providers are available to us.
     for (Provider provider : Security.getProviders()) {
@@ -167,28 +171,22 @@ public enum HttpsContext {
     }
 
     try {
-      log.debug("get provider");
       // Configure the SSL context.
       SSLContext ctx = SSLContext.getInstance("TLS");
-      log.debug("got provider");
 
-      log.debug("Build keymanagers");
+      // Initialize the KeyManagerFactory with provided configuration.
       KeyManagerFactory keyMgrFact = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
       keyMgrFact.init(getKeyStore(st.getKeyStore()), st.getKeyStore().getPassword().toCharArray());
 
+      // Initialize the TrustManagerFactory with provided configuration.
       TrustManagerFactory trustMgrFact = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
       trustMgrFact.init(getKeyStore(st.getTrustStore()));
-      log.debug("Done keymanagers");
 
-      log.debug("Initialize provider");
+      // Initialize the SSL context with key managers.
       ctx.init(keyMgrFact.getKeyManagers(), trustMgrFact.getTrustManagers(), new SecureRandom());
-      log.debug("Initialize provider done");
 
-
-      // Now set BouncyCastle as the default provider.
-      log.debug("set default provider");
+      // Set this newly configured provider as the default provider.
       SSLContext.setDefault(ctx);
-      log.debug("done setting default provider");
 
       // For giggles lets dump the default context.
       dumpSSLContext("[HttpsContext].initContext: defaultContext", SslConfigurator.getDefaultContext());
@@ -201,6 +199,7 @@ public enum HttpsContext {
   }
 
   /**
+   * Get a instance of a keystore based on requested type and initializes with the provide keystore file.
    *
    * @param ks
    * @return
@@ -225,9 +224,10 @@ public enum HttpsContext {
   }
 
   /**
+   * Debug class that will dump information relating to the provided SSLContext.
    *
-   * @param prefix
-   * @param c
+   * @param prefix - prefix pre-pended to the debug string.
+   * @param c - SSLContext to dump to debug.
    */
   private void dumpSSLContext(String prefix, SSLContext c) {
     log.debug("{} - Provider = {}, {}", prefix, c.getProvider().getName(), c.getProvider().getInfo());
@@ -245,12 +245,11 @@ public enum HttpsContext {
 
 
   /**
-   * Get the default SSL context.
+   * Get the SSL context.
    *
    * @return New SSLContext for HTTP client.
    */
   public SSLContext getSSLContext() {
-    //return SslConfigurator.getDefaultContext();
     return sslContext;
   }
 

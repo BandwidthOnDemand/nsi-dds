@@ -8,13 +8,13 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class DdsConfigurationTest {
-    private static final String file1 = "src/test/resources/config/dds-schema-test.xml";
-    private static final String file2 = "src/test/resources/config/dds-schema-test2.xml";
+    private static final String FILE_1 = "src/test/resources/config/dds-schema-test.xml";
+    private static final String FILE_2 = "src/test/resources/config/dds-schema-test2.xml";
 
     @Test
     public void load1() throws JAXBException, IOException {
         // Read the test file.
-        DdsConfigurationType dds = ConfigurationParser.getInstance().readConfiguration(file1);
+        DdsConfigurationType dds = ConfigurationParser.getInstance().readConfiguration(FILE_1);
 
         // Test the defaults.
         Assert.assertNotNull(dds.getClient());
@@ -27,7 +27,7 @@ public class DdsConfigurationTest {
     @Test
     public void load2() throws JAXBException, IOException {
         // Read the test file.
-        DdsConfigurationType dds = ConfigurationParser.getInstance().readConfiguration(file2);
+        DdsConfigurationType dds = ConfigurationParser.getInstance().readConfiguration(FILE_2);
 
         Assert.assertNotNull(dds.getClient());
         Assert.assertTrue(dds.getClient().isSecure());

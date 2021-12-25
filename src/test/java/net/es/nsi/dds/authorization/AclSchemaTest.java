@@ -9,7 +9,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,7 +25,7 @@ import org.junit.Test;
  * @author hacksaw
  */
 public class AclSchemaTest {
-    private static Logger log;
+    private static final Logger log = LogManager.getLogger(AclSchemaTest.class);
     private DnAuthorizationProvider provider;
 
     // DBN
@@ -42,8 +41,6 @@ public class AclSchemaTest {
 
   @BeforeClass
   public static void initialize() {
-    System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
-    log = LogManager.getLogger(AclSchemaTest.class);
   }
 
 

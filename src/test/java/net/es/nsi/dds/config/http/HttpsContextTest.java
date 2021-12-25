@@ -1,19 +1,15 @@
 package net.es.nsi.dds.config.http;
 
-import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
+import javax.net.ssl.SSLContext;
 import net.es.nsi.dds.jaxb.configuration.KeyStoreType;
 import net.es.nsi.dds.jaxb.configuration.SecureType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -83,28 +79,34 @@ public class HttpsContextTest {
   }
 
   @Test
-  public void testJKS() throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
-    log.debug("******* Running testJKS *******");
+  public void testJKS() throws Exception {
+    log.debug("HttpsContextTest: testJKS start");
 
     SecureType config = getConfigJKS();
     HttpsContext https = HttpsContext.getInstance();
     assertNotNull(https);
     https.load(config);
-    assertNotNull(https.getSSLContext());
+    assertTrue(https.isProduction());
+    SSLContext sslContext = https.getSSLContext();
+    assertNotNull(sslContext);
+    assertEquals(sslContext.getProtocol(), "TLS");
 
-    log.debug("******* Done testJKS *******");
+    log.debug("HttpsContextTest: testJKS done");
   }
 
   @Test
-  public void testP12() throws KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
-    log.debug("******* Running testP12 *******");
+  public void testP12() throws Exception {
+    log.debug("HttpsContextTest: testP12 start");
 
     SecureType config = getConfigP12();
     HttpsContext https = HttpsContext.getInstance();
     assertNotNull(https);
     https.load(config);
-    assertNotNull(https.getSSLContext());
+    assertTrue(https.isProduction());
+    SSLContext sslContext = https.getSSLContext();
+    assertNotNull(sslContext);
+    assertEquals(sslContext.getProtocol(), "TLS");
 
-    log.debug("******* Done testP12 *******");
+    log.debug("HttpsContextTest: testP12 done");
   }
 }

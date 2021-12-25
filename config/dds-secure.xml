@@ -48,21 +48,17 @@
     <expiryInterval>600</expiryInterval>
     <baseURL>https://example.net:8401/dds</baseURL>
     
-    <server address="example.net" port="8401" packageName="net.es.nsi.dds">
-        <secure production="true">
-            <keyStore type="JKS">
-                <file>config/keystore.jks</file>
-                <password>changeit</password>
-            </keyStore>
-            <trustStore type="JKS">
-                <file>config/truststore.jks</file>
-                <password>changeit</password>
-            </trustStore>
-        </secure>
+    <server address="example.net" port="8401" packageName="net.es.nsi.dds" secure="true">
+        <static>
+            <path>src/test/resources/config/www</path>
+            <relative>/www</relative>
+        </static>
     </server>
+
+    <client maxConnPerRoute="10" maxConnTotal="60" secure="true" />
     
     <!-- Set production="true" if host and certificate validation should be enforced. --> 
-    <client production="true">
+    <secure production="true">
         <keyStore type="JKS">
             <file>config/keystore.jks</file>
             <password>changeit</password>
@@ -71,7 +67,7 @@
             <file>config/truststore.jks</file>
             <password>changeit</password>
         </trustStore>
-    </client>
+    </secure>
     
     <!-- 
         Set enabled="true" if you would like certificate DN authorization enforced.
