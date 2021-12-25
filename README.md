@@ -299,9 +299,36 @@ If you are using a standard `nsi-safnari` deployment then you will want to confi
     -Djavax.net.ssl.keyStore=$KEYSTORE \
     -Djavax.net.ssl.keyStorePassword=$PASSWORD \
 ```
- 
- Additional configuration options will be provided in the future.
 
+Alternatively, you can specify the TLS configuration in the `dds.xml` configuration file as follows:
+
+```
+    <!-- Set the server context. -->
+    <server address="example.net" port="8401" packageName="net.es.nsi.dds" secure="true">
+        <static>
+            <path>src/test/resources/config/www</path>
+            <relative>/www</relative>
+        </static>
+    </server>
+
+    <!-- Set the client context. -->
+    <client maxConnPerRoute="10" maxConnTotal="60" secure="true" />
+
+    <!-- Set production="true" if host and certificate validation should be enforced. -->
+    <secure production="true">
+        <keyStore type="JKS">
+            <file>config/keystore.jks</file>
+            <password>changeit</password>
+        </keyStore>
+        <trustStore type="JKS">
+            <file>config/truststore.jks</file>
+            <password>changeit</password>
+        </trustStore>
+    </secure>
+```
+
+In both the `<server/>` and `<client/>` elements you can now specify `secure="true"` to enable SSL/TLS intependently.  The `<secure/>` element provides the SSL/TLS configuration information used by both the server and client if `secure="true"`.  As of `ns-dds-1.2.0` the `<secure/>` element has been promoted from a child elemen of `<server/>` and `<client/>` to a standalone element used by both `<server/>` and `<client/>` when needed.
+  
 ## Command line parameters
 
 ```
