@@ -1,5 +1,6 @@
 package net.es.nsi.dds.jaxb;
 
+import java.io.File;
 import java.util.List;
 import net.es.nsi.dds.jaxb.configuration.AccessControlType;
 import net.es.nsi.dds.jaxb.configuration.ClientType;
@@ -21,6 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
+ * Test package for ConfigurationParser.
  *
  * @author hacksaw
  */
@@ -58,6 +60,8 @@ public class ConfigurationParserTest {
 
   /**
    * Test of readConfiguration method, of class ConfigurationParser.
+   *
+   * @throws java.lang.Exception
    */
   @Test
   public void testReadConfiguration() throws Exception {
@@ -151,6 +155,8 @@ public class ConfigurationParserTest {
 
   /**
    * Test of writeConfiguration method, of class ConfigurationParser.
+   *
+   * @throws java.lang.Exception
    */
   @Test
   public void testWriteConfiguration() throws Exception {
@@ -167,16 +173,19 @@ public class ConfigurationParserTest {
     result.getSecure().setProduction(Boolean.FALSE);
 
     // Now write this out to disk.
-    parser.writeConfiguration("/tmp/ConfigurationParserTest.xml", result);
+    File file = File.createTempFile("dds-", ".xml", new File("/tmp"));
+    log.debug("ConfigurationParserTest: creating {}", file.getAbsolutePath());
+    parser.writeConfiguration(result, file);
 
     // Now read it back in.
-    DdsConfigurationType newResult = parser.readConfiguration("/tmp/ConfigurationParserTest.xml");
+    DdsConfigurationType newResult = parser.readConfiguration(file.getAbsolutePath());
     assertNotNull(newResult);
 
     assertEquals("new NSA id", newResult.getNsaId());
     assertFalse(newResult.getSecure().isProduction());
 
-    log.debug("ConfigurationParserTest: writeConfiguration start");
-  }
+    file.delete();
 
+    log.debug("ConfigurationParserTest: writeConfiguration done");
+  }
 }

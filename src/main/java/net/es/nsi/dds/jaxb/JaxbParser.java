@@ -22,8 +22,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 
 /**
@@ -89,14 +89,26 @@ public class JaxbParser {
      */
     public void writeFile(JAXBElement<?> jaxbElement, String file) throws JAXBException, IOException {
         File fd = new File(file);
-        if (!fd.exists()) {
-            log.debug("Creating file " + fd.getAbsolutePath());
-            FileUtils.touch(fd);
+        writeFile(jaxbElement, fd);
+    }
+
+    /**
+     * Write the JAXB object to the specified file.
+     *
+     * @param jaxbElement The JAXB element to write to file.
+     * @param file The File to place marshaled JAXB object.
+     * @throws JAXBException Could not convert the JAXB object to an XML document.
+     * @throws IOException The specified file could not be created.
+     */
+    public void writeFile(JAXBElement<?> jaxbElement, File file) throws JAXBException, IOException {
+        if (!file.exists()) {
+            log.debug("Creating file " + file.getAbsolutePath());
+            FileUtils.touch(file);
         }
 
-        // Parse the specified file.
+        // Write the specified file.
         try (FileOutputStream fileOutputStream = new FileOutputStream(file); BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream)) {
-            marshaller().marshal(jaxbElement, fileOutputStream);
+            marshaller().marshal(jaxbElement, bufferedOutputStream);
         }
     }
 

@@ -2,6 +2,7 @@ package net.es.nsi.dds.jaxb;
 
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
+import java.io.File;
 import java.io.IOException;
 import net.es.nsi.dds.jaxb.configuration.DdsConfigurationType;
 import net.es.nsi.dds.jaxb.configuration.ObjectFactory;
@@ -40,7 +41,13 @@ public class ConfigurationParser extends JaxbParser {
         return getInstance().parseFile(DdsConfigurationType.class, filename);
     }
 
-    public void writeConfiguration(String file, DdsConfigurationType config) throws JAXBException, IOException {
+    public void writeConfiguration(DdsConfigurationType config, String file) throws JAXBException, IOException {
+        // Parse the specified file.
+        JAXBElement<DdsConfigurationType> element = factory.createDds(config);
+        getInstance().writeFile(element, file);
+    }
+
+    public void writeConfiguration(DdsConfigurationType config, File file) throws JAXBException, IOException {
         // Parse the specified file.
         JAXBElement<DdsConfigurationType> element = factory.createDds(config);
         getInstance().writeFile(element, file);
