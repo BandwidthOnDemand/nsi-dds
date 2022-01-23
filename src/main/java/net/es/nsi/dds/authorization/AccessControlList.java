@@ -8,10 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.es.nsi.dds.jaxb.configuration.AccessControlPermission;
 import net.es.nsi.dds.jaxb.configuration.AccessControlType;
 import net.es.nsi.dds.jaxb.configuration.RuleType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameStyle;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Implements very basic access control functionality on a list of approved
@@ -106,6 +106,20 @@ public class AccessControlList {
 
         switch (accessLevel) {
           case peer:
+            // A peer can ping and request an example error.
+            if ((resource.contains("/ping") || resource.contains("/error")) && accessLevel.isGet(operation)) {
+              // Deligate to operation handlers.
+              log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
+              return true;
+            }
+
+            // A peer can read the root resource.
+            if (resource.equals("dds/") && accessLevel.isGet(operation)) {
+              // Deligate to operation handlers.
+              log.debug("isAuthorized: authorized {}, {} {}", dn, operation, resource);
+              return true;
+            }
+
             // A peer can create (post), read (get), modify (put), and delete (delete)
             // their subscriptions.  The specific service logic will need to validate
             // the entry being deleted is related to the requesting NSA.
