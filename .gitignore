@@ -15,3 +15,6 @@ config/repository/*.xml
 .java-version
 src/main/resources/git.properties
 charts/nsi-dds/config
+/nbproject/
+.DS_Store
+
