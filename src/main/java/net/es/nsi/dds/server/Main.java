@@ -3,20 +3,11 @@ package net.es.nsi.dds.server;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.config.Properties;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
@@ -89,7 +80,7 @@ public class Main extends ResourceConfig {
    */
   private static void processOptions(String[] args) throws ParseException, IOException {
     // Parse the command line options.
-    CommandLineParser parser = new GnuParser();
+    CommandLineParser parser = new DefaultParser();
 
     Options options = getOptions();
     CommandLine cmd;
@@ -237,7 +228,7 @@ public class Main extends ResourceConfig {
     // Get the application base directory.
     String pidFile = System.getProperty(Properties.SYSTEM_PROPERTY_PIDFILE);
     pidFile = cmd.getOptionValue(DDS_ARGNAME_PIDFILE, pidFile);
-    int pid = getPid();
+    long pid = ProcessHandle.current().pid();
     if (pidFile == null || pidFile.isEmpty() || pid == -1) {
       return;
     }
@@ -256,43 +247,6 @@ public class Main extends ResourceConfig {
     }
 
     return;
-  }
-
-  /**
-   * Get our process pid.
-   *
-   * @return pid
-   */
-  private static int getPid() {
-    RuntimeMXBean mxBean = ManagementFactory.getRuntimeMXBean();
-    try {
-      return getProcessId(mxBean);
-    } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException
-            | NoSuchMethodException | InvocationTargetException ex) {
-      System.err.printf("Error: Could not determine pid, ex = %s\n", ex.toString());
-      return -1;
-    }
-  }
-
-  /**
-   * Get the process pid from MXBean.
-   *
-   * @param mxBean
-   * @return
-   * @throws NoSuchFieldException
-   * @throws IllegalArgumentException
-   * @throws IllegalAccessException
-   * @throws NoSuchMethodException
-   * @throws InvocationTargetException
-   */
-  private static int getProcessId(RuntimeMXBean mxBean) throws NoSuchFieldException, IllegalArgumentException,
-          IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-    java.lang.reflect.Field jvm = mxBean.getClass().getDeclaredField("jvm");
-    jvm.setAccessible(true);
-    Object mgmt = jvm.get(mxBean);
-    java.lang.reflect.Method pid_method = mgmt.getClass().getDeclaredMethod("getProcessId");
-    pid_method.setAccessible(true);
-    return (int) pid_method.invoke(mgmt);
   }
 
   /**
