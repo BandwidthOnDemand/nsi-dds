@@ -1,6 +1,8 @@
 package net.es.nsi.dds.actors;
 
 import akka.actor.UntypedActor;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
@@ -32,8 +34,6 @@ import net.es.nsi.dds.messages.RegistrationEvent.Event;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.UrlHelper;
 import org.apache.http.client.utils.DateUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * The Registration Actor handles local DDS subscription registrations to peer
@@ -44,7 +44,7 @@ import org.apache.logging.log4j.LogManager;
 public class RegistrationActor extends UntypedActor {
     private static final String NOTIFICATIONS_URL = "notifications";
 
-    private final Logger log = LogManager.getLogger(getClass());
+    private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsLogger logger = DdsLogger.getLogger();
 
     private final ObjectFactory factory = new ObjectFactory();

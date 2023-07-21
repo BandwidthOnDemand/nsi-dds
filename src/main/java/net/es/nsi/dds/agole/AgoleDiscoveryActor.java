@@ -5,6 +5,8 @@
 package net.es.nsi.dds.agole;
 
 import akka.actor.UntypedActor;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.xml.bind.JAXBException;
 import java.util.ArrayList;
@@ -27,8 +29,6 @@ import net.es.nsi.dds.jaxb.nsa.PeersWithType;
 import net.es.nsi.dds.lib.DocHelper;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  *
@@ -36,7 +36,7 @@ import org.apache.logging.log4j.LogManager;
  */
 public class AgoleDiscoveryActor extends UntypedActor {
 
-    private final Logger log = LogManager.getLogger(getClass());
+    private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final net.es.nsi.dds.jaxb.nsa.ObjectFactory nsaFactory = new net.es.nsi.dds.jaxb.nsa.ObjectFactory();
     private final net.es.nsi.dds.jaxb.nml.ObjectFactory nmlFactory = new net.es.nsi.dds.jaxb.nml.ObjectFactory();
 

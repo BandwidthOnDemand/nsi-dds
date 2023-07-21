@@ -1,6 +1,8 @@
 package net.es.nsi.dds.gangofthree;
 
 import akka.actor.UntypedActor;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.WebTarget;
@@ -23,8 +25,6 @@ import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
 import org.apache.http.client.utils.DateUtils;
 import org.glassfish.jersey.client.ChunkedInput;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  *
@@ -32,7 +32,8 @@ import org.apache.logging.log4j.LogManager;
  */
 public class Gof3DiscoveryActor extends UntypedActor {
 
-  private final Logger log = LogManager.getLogger(getClass());
+  private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
+
   private Client client;
 
   /**
@@ -53,7 +54,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
       Gof3DiscoveryMsg message = (Gof3DiscoveryMsg) msg;
 
       // Read the NSA discovery document.
-      if (discoverNSA(message) == false) {
+      if (!discoverNSA(message)) {
         // No update so return.
         return;
       }
@@ -80,9 +81,9 @@ public class Gof3DiscoveryActor extends UntypedActor {
    * @return Returns true if the NSA document was successfully discovered, false otherwise.
    */
   private boolean discoverNSA(Gof3DiscoveryMsg message) {
-    log.debug("discoverNSA: nsa=" + message.getNsaURL() + ", lastModifiedTime=" + new Date(message.getNsaLastModifiedTime()));
+    log.debug("discoverNSA: nsa= {}, lastModifiedTime= {}",
+            message.getNsaURL(), new Date(message.getNsaLastModifiedTime()));
 
-    //Client client = ClientBuilder.newClient(clientConfig);
     long time = message.getNsaLastModifiedTime();
     Response response = null;
     try {
@@ -152,7 +153,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
 
         XMLGregorianCalendar cal = XmlUtilities.longToXMLGregorianCalendar(time);
 
-        if (DocHelper.addNsaDocument(nsa, cal) == false) {
+        if (!DocHelper.addNsaDocument(nsa, cal)) {
           log.debug("discoverNSA: addNsaDocument() returned false " + message.getNsaURL());
           return false;
         }
@@ -166,16 +167,16 @@ public class Gof3DiscoveryActor extends UntypedActor {
         return false;
       }
     } catch (IllegalStateException ex) {
-      log.error("discoverNSA: failed to retrieve NSA document from endpoint " + message.getNsaURL(), ex);
+      log.error("discoverNSA: failed to retrieve NSA document from endpoint {}, ex = {}", message.getNsaURL(), ex);
       return false;
     } catch (JAXBException ex) {
-      log.error("discoverNSA: invalid document returned from endpoint " + message.getNsaURL(), ex);
+      log.error("discoverNSA: invalid document returned from endpoint {}, ex = {}", message.getNsaURL(), ex);
       return false;
     } catch (DatatypeConfigurationException ex) {
-      log.error("discoverNSA: NSA document failed to create lastModified " + message.getNsaURL(), ex);
+      log.error("discoverNSA: NSA document failed to create lastModified {}, ex = {}", message.getNsaURL(), ex);
       return false;
     } catch (IllegalArgumentException ex) {
-      log.error("discoverNSA: Failed to create NSA description document for {} ", message.getNsaURL(), ex);
+      log.error("discoverNSA: Failed to create NSA description document for {}, ex = {} ", message.getNsaURL(), ex);
     } catch (ProcessingException ex) {
       log.error("discoverNSA: SSL exception retrieving NSA description document for {}, ex = {} ",
               message.getNsaURL(), ex);

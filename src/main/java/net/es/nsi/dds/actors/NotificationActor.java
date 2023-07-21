@@ -1,6 +1,8 @@
 package net.es.nsi.dds.actors;
 
 import akka.actor.UntypedActor;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Entity;
@@ -19,8 +21,6 @@ import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.messages.Notification;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * The Notification Actor delivers notifications to a specific DDS peer based
@@ -30,7 +30,7 @@ import org.apache.logging.log4j.LogManager;
  */
 public class NotificationActor extends UntypedActor {
 
-  private final Logger log = LogManager.getLogger(getClass());
+  private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
   private final ObjectFactory factory = new ObjectFactory();
   private final String providerId;
   private final RestClient restClient;
