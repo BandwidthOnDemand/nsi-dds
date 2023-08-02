@@ -2,11 +2,12 @@ package net.es.nsi.dds.actors;
 
 import akka.actor.UntypedActor;
 import java.util.concurrent.TimeUnit;
+
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.messages.TimerMsg;
 import net.es.nsi.dds.provider.DdsProvider;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import scala.concurrent.duration.Duration;
 
 /**
@@ -17,7 +18,7 @@ import scala.concurrent.duration.Duration;
  */
 public class LocalDocumentActor extends UntypedActor {
 
-  private final Logger log = LogManager.getLogger(getClass());
+  private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
   private final DdsActorSystem ddsActorSystem;
   private final DdsConfiguration discoveryConfiguration;
   private long interval;

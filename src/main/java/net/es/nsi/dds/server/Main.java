@@ -3,9 +3,6 @@ package net.es.nsi.dds.server;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import net.es.nsi.dds.config.ConfigurationManager;
@@ -231,7 +228,8 @@ public class Main extends ResourceConfig {
   private static void processPidFile(CommandLine cmd) throws IOException {
     // Get the application base directory.
     String pidFile = cmd.getOptionValue(DDS_ARGNAME_PIDFILE, System.getProperty(Properties.SYSTEM_PROPERTY_PIDFILE));
-    int pid = getPid();
+    pidFile = cmd.getOptionValue(DDS_ARGNAME_PIDFILE, pidFile);
+    long pid = ProcessHandle.current().pid();
     if (pidFile == null || pidFile.isEmpty() || pid == -1) {
       return;
     }
@@ -250,43 +248,6 @@ public class Main extends ResourceConfig {
     }
 
     return;
-  }
-
-  /**
-   * Get our process pid.
-   *
-   * @return pid
-   */
-  private static int getPid() {
-    RuntimeMXBean mxBean = ManagementFactory.getRuntimeMXBean();
-    try {
-      return getProcessId(mxBean);
-    } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException
-            | NoSuchMethodException | InvocationTargetException ex) {
-      System.err.printf("Error: Could not determine pid, ex = %s\n", ex);
-      return -1;
-    }
-  }
-
-  /**
-   * Get the process pid from MXBean.
-   *
-   * @param mxBean
-   * @return
-   * @throws NoSuchFieldException
-   * @throws IllegalArgumentException
-   * @throws IllegalAccessException
-   * @throws NoSuchMethodException
-   * @throws InvocationTargetException
-   */
-  private static int getProcessId(RuntimeMXBean mxBean) throws NoSuchFieldException, IllegalArgumentException,
-          IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-    java.lang.reflect.Field jvm = mxBean.getClass().getDeclaredField("jvm");
-    jvm.setAccessible(true);
-    Object mgmt = jvm.get(mxBean);
-    java.lang.reflect.Method pid_method = mgmt.getClass().getDeclaredMethod("getProcessId");
-    pid_method.setAccessible(true);
-    return (int) pid_method.invoke(mgmt);
   }
 
   /**

@@ -4,6 +4,8 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.Terminated;
 import akka.actor.UntypedActor;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import akka.routing.ActorRefRoutee;
 import akka.routing.RoundRobinRoutingLogic;
 import akka.routing.Routee;
@@ -22,8 +24,6 @@ import net.es.nsi.dds.messages.RegistrationEvent;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.NsiConstants;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import scala.concurrent.duration.Duration;
 
 /**
@@ -32,7 +32,7 @@ import scala.concurrent.duration.Duration;
  */
 public class RegistrationRouter extends UntypedActor {
 
-    private final Logger log = LogManager.getLogger(getClass());
+    private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsActorSystem ddsActorSystem;
     private final DdsConfiguration discoveryConfiguration;
     private int poolSize = 5;

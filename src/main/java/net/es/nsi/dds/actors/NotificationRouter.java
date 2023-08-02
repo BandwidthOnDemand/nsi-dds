@@ -5,6 +5,8 @@ import akka.actor.Cancellable;
 import akka.actor.Props;
 import akka.actor.Terminated;
 import akka.actor.UntypedActor;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import akka.routing.ActorRefRoutee;
 import akka.routing.RoundRobinRoutingLogic;
 import akka.routing.Routee;
@@ -24,8 +26,6 @@ import net.es.nsi.dds.messages.SubscriptionEvent;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.provider.Subscription;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import scala.concurrent.duration.Duration;
 
 /**
@@ -35,7 +35,7 @@ import scala.concurrent.duration.Duration;
  * @author hacksaw
  */
 public class NotificationRouter extends UntypedActor {
-    private final Logger log = LogManager.getLogger(getClass());
+    private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsActorSystem ddsActorSystem;
     private final DdsConfiguration discoveryConfiguration;
     private final DiscoveryProvider discoveryProvider;
@@ -129,11 +129,13 @@ public class NotificationRouter extends UntypedActor {
         Collection<Document> documents = documentCache.values();
 
         // Clean up our trigger event.
-        log.debug("routeSubscriptionEvent: requesterId={}, id={}, event={}, documents={}, postSize={}, action={}",
+        log.debug("routeSubscriptionEvent: requesterId={}, id={}, action={}",
                 se.getSubscription().getSubscription().getRequesterId(),
                 se.getSubscription().getSubscription().getId(),
-                se.getEvent(), documents.size(), notificationSize,
                 se.getSubscription().getAction().isCancelled());
+        log.debug("routeSubscriptionEvent: event={}, documents={}, postSize={}",
+                se.getSubscription().getSubscription().getId(),
+                se.getEvent(), documents.size(), notificationSize);
         se.getSubscription().setAction(null);
 
         // Send documents in chunks of 10.

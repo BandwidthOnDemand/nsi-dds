@@ -8,6 +8,8 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.Terminated;
 import akka.actor.UntypedActor;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import akka.routing.ActorRefRoutee;
 import akka.routing.RoundRobinRoutingLogic;
 import akka.routing.Routee;
@@ -25,8 +27,6 @@ import net.es.nsi.dds.jaxb.configuration.PeerURLType;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.messages.TimerMsg;
 import net.es.nsi.dds.util.NsiConstants;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import scala.concurrent.duration.Duration;
 
 /**
@@ -35,7 +35,7 @@ import scala.concurrent.duration.Duration;
  */
 public class Gof3DiscoveryRouter extends UntypedActor {
 
-    private final Logger log = LogManager.getLogger(getClass());
+    private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsActorSystem ddsActorSystem;
     private final DdsConfiguration discoveryConfiguration;
     private int poolSize;
@@ -72,7 +72,9 @@ public class Gof3DiscoveryRouter extends UntypedActor {
 
         if (msg instanceof TimerMsg) {
             routeTimerEvent();
-            ddsActorSystem.getActorSystem().scheduler().scheduleOnce(Duration.create(getInterval(), TimeUnit.SECONDS), this.getSelf(), message, ddsActorSystem.getActorSystem().dispatcher(), null);
+            ddsActorSystem.getActorSystem().scheduler()
+                    .scheduleOnce(Duration.create(getInterval(), TimeUnit.SECONDS),
+                            this.getSelf(), message, ddsActorSystem.getActorSystem().dispatcher(), null);
         }
         else if (msg instanceof Gof3DiscoveryMsg) {
             Gof3DiscoveryMsg incoming = (Gof3DiscoveryMsg) msg;
