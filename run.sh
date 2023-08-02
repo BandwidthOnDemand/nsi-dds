@@ -24,6 +24,7 @@ java -Xmx1024m -Djava.net.preferIPv4Stack=true  \
     -Dbasedir="$BASEDIR" \
 	-Djava.util.logging.config.file="$BASEDIR/config/logging.properties" \
 	-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true \
+        -Djava.naming.factory.initial=com.sun.jndi.ldap.LdapCtxFactory \
 	-Dlog4j.configurationFile=$BASEDIR/config/log4j.xml \
 	-jar target/dds.jar \
 	$*

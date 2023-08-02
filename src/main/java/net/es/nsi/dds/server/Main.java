@@ -10,13 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.config.Properties;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
@@ -89,7 +83,7 @@ public class Main extends ResourceConfig {
    */
   private static void processOptions(String[] args) throws ParseException, IOException {
     // Parse the command line options.
-    CommandLineParser parser = new GnuParser();
+    CommandLineParser parser = new DefaultParser();
 
     Options options = getOptions();
     CommandLine cmd;
@@ -207,8 +201,8 @@ public class Main extends ResourceConfig {
    * @throws IOException
    */
   private static String getConfigFile(CommandLine cmd, String configdir) throws IOException {
-    String ddsFile = System.getProperty(Properties.SYSTEM_PROPERTY_CONFIGFILE);
-    ddsFile = cmd.getOptionValue(DDS_ARGNAME_CONFIGFILE, ddsFile);
+    String ddsFile = cmd.getOptionValue(DDS_ARGNAME_CONFIGFILE,
+        System.getProperty(Properties.SYSTEM_PROPERTY_CONFIGFILE));
     Path ddsPath;
     if (ddsFile == null || ddsFile.isEmpty()) {
       ddsPath = Paths.get(configdir, DEFAULT_DDS_FILE);
@@ -216,14 +210,15 @@ public class Main extends ResourceConfig {
       ddsPath = Paths.get(ddsFile);
     }
 
+    String result;
     try {
-      ddsFile = ddsPath.toRealPath().toString();
+      result = ddsPath.toRealPath().toString();
     } catch (IOException ex) {
       System.err.printf("Error: DDS configuration file not found %s, ex = %s\n", ddsFile, ex);
       throw ex;
     }
 
-    return ddsFile;
+    return result;
   }
 
   /**
@@ -235,8 +230,7 @@ public class Main extends ResourceConfig {
    */
   private static void processPidFile(CommandLine cmd) throws IOException {
     // Get the application base directory.
-    String pidFile = System.getProperty(Properties.SYSTEM_PROPERTY_PIDFILE);
-    pidFile = cmd.getOptionValue(DDS_ARGNAME_PIDFILE, pidFile);
+    String pidFile = cmd.getOptionValue(DDS_ARGNAME_PIDFILE, System.getProperty(Properties.SYSTEM_PROPERTY_PIDFILE));
     int pid = getPid();
     if (pidFile == null || pidFile.isEmpty() || pid == -1) {
       return;
@@ -269,7 +263,7 @@ public class Main extends ResourceConfig {
       return getProcessId(mxBean);
     } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException
             | NoSuchMethodException | InvocationTargetException ex) {
-      System.err.printf("Error: Could not determine pid, ex = %s\n", ex.toString());
+      System.err.printf("Error: Could not determine pid, ex = %s\n", ex);
       return -1;
     }
   }

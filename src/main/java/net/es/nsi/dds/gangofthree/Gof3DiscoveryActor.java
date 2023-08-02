@@ -53,7 +53,7 @@ public class Gof3DiscoveryActor extends UntypedActor {
       Gof3DiscoveryMsg message = (Gof3DiscoveryMsg) msg;
 
       // Read the NSA discovery document.
-      if (discoverNSA(message) == false) {
+      if (!discoverNSA(message)) {
         // No update so return.
         return;
       }

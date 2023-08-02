@@ -24,6 +24,7 @@ java -Xmx1025m -Djava.net.preferIPv4Stack=true  \
 	-Dapp.home="$BASEDIR" \
 	-Dbasedir="$BASEDIR" \
 	-Djava.util.logging.config.file="$BASEDIR/config/logging.properties" \
+        -Djava.naming.factory.initial=com.sun.jndi.ldap.LdapCtxFactory \
 	-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true \
         -Djersey.config.server.tracing.type=ALL \
         -Djersey.config.server.tracing.threshold=VERBOSE \

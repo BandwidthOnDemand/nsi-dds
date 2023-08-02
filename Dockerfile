@@ -1,4 +1,4 @@
-FROM maven:3-openjdk-15 AS MAVEN_BUILD
+FROM maven:3-openjdk-17 AS MAVEN_BUILD
 
 ENV BUILD_HOME /home/safnari
 
@@ -7,7 +7,7 @@ WORKDIR $HOME
 COPY . .
 RUN mvn clean install -Dmaven.test.skip=true -Ddocker.nocache
  
-FROM openjdk:15
+FROM openjdk:17
 
 ENV HOME /nsi-dds
 USER 1000:1000
@@ -19,6 +19,7 @@ EXPOSE 8401/tcp
 CMD java \
     -Xmx1024m -Djava.net.preferIPv4Stack=true  \
     -Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true \
+    -Djava.naming.factory.initial=com.sun.jndi.ldap.LdapCtxFactory \
     -Djava.util.logging.config.file=/nsi-dds/config/logging.properties \
     -Dbasedir=/nsi-dds \
     -jar /nsi-dds/dds.jar
