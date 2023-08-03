@@ -19,7 +19,6 @@ EXPOSE 8401/tcp
 CMD java \
     -Xmx1024m -Djava.net.preferIPv4Stack=true  \
     -Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true \
-    -Djava.naming.factory.initial=com.sun.jndi.ldap.LdapCtxFactory \
     -Djava.util.logging.config.file=/nsi-dds/config/logging.properties \
     -Dbasedir=/nsi-dds \
     -jar /nsi-dds/dds.jar

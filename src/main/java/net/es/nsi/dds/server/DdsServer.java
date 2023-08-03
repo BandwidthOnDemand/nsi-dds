@@ -18,12 +18,14 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.message.DeflateEncoder;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.server.filter.EncodingFilter;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * Class implementing the NSI DDS protocol server.
  *
  * @author hacksaw
  */
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class DdsServer {
     private static final int FILE_CACHE_MAX_AGE = 3600;
 
