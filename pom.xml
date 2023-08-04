@@ -108,12 +108,12 @@
       <version>2.0.1</version>
     </dependency>
 
-    <!-- JAXB Runtime -->
+    <!-- JAXB Runtime
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>3.0.0</version>
-    </dependency>
+      <version>4.0.3</version>
+    </dependency>-->
 
     <!-- For spring beans to drive configuration loading. -->
     <dependency>
@@ -129,15 +129,15 @@
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.ldap</groupId>
-      <artifactId>spring-ldap-core</artifactId>
-      <version>3.1.0</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>4.5.14</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- The agent messaging infrastructure for internal communications. -->
@@ -535,27 +535,7 @@
           </execution>
         </executions>
       </plugin>
-
-      <!-- puts all code & libraries in one jar -->
-      <plugin>
-        <groupId>com.jolira</groupId>
-        <artifactId>onejar-maven-plugin</artifactId>
-        <version>1.4.4</version>
-        <executions>
-          <execution>
-            <id>DDS</id>
-            <configuration>
-              <mainClass>net.es.nsi.dds.server.Main</mainClass>
-              <classifier>onejar</classifier>
-              <filename>dds.jar</filename>
-            </configuration>
-            <goals>
-              <goal>one-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -573,6 +553,41 @@
           <argLine>-Djersey.config.test.container.port=8801</argLine>
           <argLine>-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true</argLine>
           <argLine>-Dlog4j.configurationFile=./src/test/resources/config/log4j.xml</argLine>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
+              <mainClass>net.es.nsi.dds.server.Main</mainClass>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
 
