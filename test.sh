@@ -32,6 +32,6 @@ java -Xmx1025m -Djava.net.preferIPv4Stack=true  \
         -Djavax.net.ssl.keyStorePassword=$PASSWORD \
         -Djavax.net.ssl.trustStore=$TRUSTSTORE \
         -Djavax.net.ssl.trustStorePassword=$PASSWORD \
-	-jar target/dds.jar \
+	-jar target/nsi-dds-1.3.0-RELEASE.jar \
 	-ddsConfigFile config/dds.xml \
 	$*

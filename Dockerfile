@@ -12,7 +12,7 @@ FROM openjdk:17
 ENV HOME /nsi-dds
 USER 1000:1000
 WORKDIR $HOME
-COPY --from=MAVEN_BUILD $HOME/target/dds.jar .
+COPY --from=MAVEN_BUILD $HOME/target/nsi-dds-1.3.0-RELEASE.jar ./dds.jar
 COPY --from=MAVEN_BUILD $HOME/config ./config
 
 EXPOSE 8401/tcp
