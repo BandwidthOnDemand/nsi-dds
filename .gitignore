@@ -7,6 +7,7 @@ nsi-pce.iml
 .idea
 *.iml
 config/cache/*.xml
+compose/nsi-dds-config/cache/
 config/repository/*.xml
 /src/test/resources/config/cache/
 /src/test/resources/config/repository/

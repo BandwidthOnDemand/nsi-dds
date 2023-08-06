@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ns0:document xmlns:ns0="http://schemas.ogf.org/nsi/2014/02/discovery/types" id="urn:ogf:network:dockertest.net:2021:nsa" href="http://nsi-dds:8401/dds/documents/urn%3Aogf%3Anetwork%3Adockertest.net%3A2021%3Ansa/vnd.ogf.nsi.nsa.v1%2Bxml/urn%3Aogf%3Anetwork%3Adockertest.net%3A2021%3Ansa" version="2023-08-06T19:57:22Z" expires="2024-08-05T19:57:24.193Z">
-   <nsa>urn:ogf:network:dockertest.net:2021:nsa</nsa>
-   <type>vnd.ogf.nsi.nsa.v1+xml</type>
-   <content contentType="application/x-gzip" contentTransferEncoding="base64">H4sIAAAAAAAA/72TUU/bMBSF/0rl1ym2k5TRWk4QmjSJFzap3R54M/FNatHYlu0G+u93E9qIDTR44i3y9Tnnyz2JvHrq94sBQjTOViSnnCzANk4b21Xk1/Z7tiJXtbSRCxvVAi/biE+8IruUvGAsNjvoVaSua6kLHbPRsILnS8YLpk1sHHof8VSRWZxX5BCsMJBa4VVQfRQ4woEYGhV0thwhzpeLOcm6oA/UQmJW9RC9aiCOUSXLC9bZeO80sj95EyBWpODFMuOrjF9s87W4uBTFkubr8o4sjH7OR2KBbo8uPAjtmgcICWIaAwSKczExz5vBo3Ly+3r2K+4ILgZR6jfUcoKsZXRtelQBfj/71D882NvNdcazziTJ/h3LmFRIW4PStwJRMM/lif1G1x95m+S827vuiGCzThqbILS4yFqmo4daeb83jUqIwgarp1KxUNpEOhTUBzcYDeFLdMpLNinkLkBbnxoqV/oSVmVZ8vtcrPmKs9vNDYsQBjN29W1TSDbdl+xF8rsQofsb5LPzT9nnDY4E+HV+HOB/dVDb7+nk9hqsBZUOARZjTkVe9xHcHujh5zVhqDv9ofUf1ImE69EDAAA=</content>
-</ns0:document>
