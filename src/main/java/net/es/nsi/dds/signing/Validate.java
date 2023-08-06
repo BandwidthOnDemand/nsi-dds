@@ -9,8 +9,8 @@ import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+
+import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -19,8 +19,8 @@ import org.w3c.dom.NodeList;
  * Signature using the JSR 105 API. It assumes the key needed to
  * validate the signature is contained in a KeyValue KeyInfo.
  */
+@Slf4j
 public class Validate {
-    private final static Logger log = LogManager.getLogger(Validate.class);
 
     public static boolean validateEnveloped(Document doc) throws Exception {
 

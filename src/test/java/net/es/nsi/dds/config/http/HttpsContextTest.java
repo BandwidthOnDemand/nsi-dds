@@ -1,10 +1,10 @@
 package net.es.nsi.dds.config.http;
 
 import javax.net.ssl.SSLContext;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.jaxb.configuration.KeyStoreType;
 import net.es.nsi.dds.jaxb.configuration.SecureType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -19,8 +19,8 @@ import org.junit.Test;
  *
  * @author hacksaw
  */
+@Slf4j
 public class HttpsContextTest {
-  private static final Logger log = LogManager.getLogger(HttpsContextTest.class);
 
   @BeforeClass
   public static void setUpClass() throws Exception {

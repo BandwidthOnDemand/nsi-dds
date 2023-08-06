@@ -4,16 +4,16 @@
  */
 package net.es.nsi.dds.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.net.URI;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 public class UrlHelper {
-    private static final Logger log = LogManager.getLogger(UrlHelper.class);
 
     public static boolean isAbsolute(String uri) {
         try {

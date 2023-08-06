@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.authorization.AccessControlList;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.config.http.HttpsContext;
@@ -36,15 +38,13 @@ import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.signing.KeyStoreHandler;
 import net.es.nsi.dds.spring.SpringApplicationContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 public class DdsConfiguration {
-    private final Logger log = LogManager.getLogger(getClass());
     private final DdsLogger ddsLogger = DdsLogger.getLogger();
     private final ObjectFactory factory = new ObjectFactory();
 

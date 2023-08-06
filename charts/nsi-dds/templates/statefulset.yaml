@@ -38,7 +38,7 @@ spec:
                  "-Djava.net.preferIPv4Stack=true",
                  "-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true",
                  {{ printf "-Djava.util.logging.config.file=%s/logging.properties" .Values.config.mountPath | quote }},
-                 {{ printf "-Dlog4j.configurationFile=%s/log4j.xml" .Values.config.mountPath | quote }},
+                 {{ printf "-Dlogback.configurationFile=%s/logback.xml" .Values.config.mountPath | quote }},
                  {{ printf "-Dbasedir=%s" .Values.image.home | quote }},
                  "-jar", {{ printf "%s/dds.jar" .Values.image.home | quote }},
                  "-ddsConfigFile", {{ printf "%s/dds.xml" .Values.config.mountPath | quote }}]

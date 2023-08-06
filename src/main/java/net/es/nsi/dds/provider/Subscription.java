@@ -8,14 +8,14 @@ import java.net.URL;
 import java.util.Date;
 import java.util.UUID;
 import javax.xml.datatype.DatatypeConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.es.nsi.dds.api.DiscoveryError;
 import net.es.nsi.dds.api.Exceptions;
 import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.jaxb.dds.SubscriptionRequestType;
 import net.es.nsi.dds.jaxb.dds.SubscriptionType;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  *
@@ -23,8 +23,7 @@ import org.apache.logging.log4j.LogManager;
  */
 public class Subscription implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    private final Logger log = LogManager.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(Subscription.class);
     private static final String SUBSCRIPTIONS_URL = "subscriptions";
     private static final ObjectFactory factory = new ObjectFactory();
     private String id;
@@ -34,7 +33,7 @@ public class Subscription implements Serializable {
     private Cancellable action;
 
     public Subscription(SubscriptionRequestType request, String encoding, String baseURL) throws WebApplicationException {
-        // The unique subcription id is defined on the server side.
+        // The unique subscription id is defined on the server side.
         id = UUID.randomUUID().toString();
 
         // This is the encoding in which the client would like notifications sent.
@@ -53,7 +52,7 @@ public class Subscription implements Serializable {
             subscription.setVersion(XmlUtilities.xmlGregorianCalendar());
         } catch (DatatypeConfigurationException ex) {
             // Log and eat the error.
-            log.error("addSubscription: failed to set version", ex);
+            log.error("addSubscription: failed to set version");
         }
 
         // Validate the callback parameter was provided.

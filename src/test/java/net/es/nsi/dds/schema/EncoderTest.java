@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Optional;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.NsaParser;
@@ -14,26 +16,17 @@ import net.es.nsi.dds.jaxb.nsa.NsaType;
 import net.es.nsi.dds.lib.DocumentBuilder;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 public class EncoderTest {
 
   private final static net.es.nsi.dds.jaxb.dds.ObjectFactory ddsFactory = new net.es.nsi.dds.jaxb.dds.ObjectFactory();
   private final static net.es.nsi.dds.jaxb.nsa.ObjectFactory nsaFactory = new net.es.nsi.dds.jaxb.nsa.ObjectFactory();
-  private static Logger log;
-
-  @BeforeClass
-  public static void initialize() {
-    System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
-    log = LogManager.getLogger(EncoderTest.class);
-  }
 
   @Test
   public void encodeNsaDocument() throws DatatypeConfigurationException, IllegalArgumentException, IOException, JAXBException, ParserConfigurationException {

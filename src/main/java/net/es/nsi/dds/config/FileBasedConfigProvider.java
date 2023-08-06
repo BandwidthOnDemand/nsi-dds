@@ -1,16 +1,15 @@
 package net.es.nsi.dds.config;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * 
  * @author hacksaw
  */
+@Slf4j
 public abstract class FileBasedConfigProvider implements ConfigProvider {
-    private final Logger log = LogManager.getLogger(getClass());
-    
     private String filename;
 
     private long timeStamp = 0;

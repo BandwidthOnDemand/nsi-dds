@@ -8,6 +8,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.xml.bind.JAXBException;
 import java.util.Date;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.jaxb.NmlParser;
 import net.es.nsi.dds.jaxb.nml.NmlNSAType;
@@ -15,8 +17,6 @@ import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import org.apache.http.client.utils.DateUtils;
 import org.glassfish.jersey.client.ChunkedInput;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * This class reads a remote XML formatted NML topology and creates simple
@@ -25,8 +25,8 @@ import org.apache.logging.log4j.LogManager;
  *
  * @author hacksaw
  */
+@Slf4j
 public class AgoleTopologyReader {
-    private final Logger log = LogManager.getLogger(getClass());
     private final DdsLogger topologyLogger = DdsLogger.getLogger();
     private String target;
     private long lastModifiedTime;

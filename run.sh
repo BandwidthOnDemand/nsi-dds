@@ -21,9 +21,9 @@ TRUSTSTORE=$BASEDIR/config/truststore.jks
 PASSWORD="changeit"
 
 java -Xmx1024m -Djava.net.preferIPv4Stack=true  \
-    -Dbasedir="$BASEDIR" \
+  -Dbasedir="$BASEDIR" \
 	-Djava.util.logging.config.file="$BASEDIR/config/logging.properties" \
 	-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true \
-	-Dlog4j.configurationFile=$BASEDIR/config/log4j.xml \
+  -Dlogback.configurationFile="$BASEDIR/config/logback.xml" \
 	-jar target/nsi-dds-1.3.0-RELEASE.jar \
 	$*

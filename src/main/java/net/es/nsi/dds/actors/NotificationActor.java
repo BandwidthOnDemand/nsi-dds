@@ -1,6 +1,6 @@
 package net.es.nsi.dds.actors;
 
-import akka.actor.UntypedActor;
+import akka.actor.UntypedAbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import jakarta.ws.rs.ProcessingException;
@@ -21,6 +21,8 @@ import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.messages.Notification;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.util.XmlUtilities;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * The Notification Actor delivers notifications to a specific DDS peer based
@@ -28,7 +30,9 @@ import net.es.nsi.dds.util.XmlUtilities;
  *
  * @author hacksaw
  */
-public class NotificationActor extends UntypedActor {
+@Component
+@Scope("prototype")
+public class NotificationActor extends UntypedAbstractActor {
 
   private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
   private final ObjectFactory factory = new ObjectFactory();

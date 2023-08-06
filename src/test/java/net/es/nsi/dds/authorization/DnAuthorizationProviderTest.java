@@ -1,8 +1,7 @@
 package net.es.nsi.dds.authorization;
 
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.dao.DdsConfiguration;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,10 +13,8 @@ import org.mockito.MockitoAnnotations;
  *
  * @author hacksaw
  */
+@Slf4j
 public class DnAuthorizationProviderTest {
-
-  private static final Logger log = LogManager.getLogger(DnAuthorizationProviderTest.class);
-
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.openMocks(this);

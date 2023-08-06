@@ -6,26 +6,24 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.jaxb.nml.NmlNetworkObject;
 import net.es.nsi.dds.jaxb.nml.NmlSwitchingServiceType;
 import net.es.nsi.dds.jaxb.nml.NmlTopologyRelationType;
 import net.es.nsi.dds.jaxb.nml.NmlTopologyType;
 import net.es.nsi.dds.jaxb.nml.ServiceDefinitionType;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 public class ServiceDefinitionConverter {
-
     private static final String OldServiceType1 = "http://services.ogf.org/nsi/2013/07/definitions/EVTS.A-GOLE";
     private static final String OldServiceType2 = "http://services.ogf.org/nsi/2013/07/descriptions/EVTS.A-GOLE";
     private static final String OldServiceType3 = "http://services.ogf.org/nsi/2013/12/definitions/EVTS.A-GOLE";
     private static final String NewServiceType = "http://services.ogf.org/nsi/2013/12/descriptions/EVTS.A-GOLE";
-
-    private final static Logger log = LogManager.getLogger(ServiceDefinitionConverter.class);
 
     public static boolean convert(NmlTopologyType nml) {
         boolean modified;

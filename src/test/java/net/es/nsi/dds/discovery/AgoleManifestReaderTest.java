@@ -8,18 +8,16 @@ import jakarta.ws.rs.NotFoundException;
 import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.net.URI;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.agole.AgoleManifestReader;
 import net.es.nsi.dds.agole.TopologyManifest;
-import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.spring.SpringContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
@@ -27,19 +25,13 @@ import org.springframework.context.ApplicationContext;
  *
  * @author hacksaw
  */
+@Slf4j
 public class AgoleManifestReaderTest {
 
   private static final String CONFIG_PATH = "configPath";
   private final static String CONFIG_DIR = "src/test/resources/config/";
   private static final String DEFAULT_DDS_FILE = CONFIG_DIR + "dds.xml";
   private static final String DDS_CONFIG_FILE_ARGNAME = "ddsConfigFile";
-  private static Logger log;
-
-  @BeforeClass
-  public static void initialize() {
-    System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
-    log = LogManager.getLogger(AgoleManifestReaderTest.class);
-  }
 
   @Test
   public void loadMasterList() {
@@ -74,7 +66,7 @@ public class AgoleManifestReaderTest {
 
       assertTrue(master == null);
     } catch (IOException | NotFoundException | JAXBException ex) {
-      log.error("Failed to load master topology list from: {)", reader.getTarget());
+      log.error("Failed to load master topology list from: {}", reader.getTarget());
       ex.printStackTrace();
       fail();
     } finally {

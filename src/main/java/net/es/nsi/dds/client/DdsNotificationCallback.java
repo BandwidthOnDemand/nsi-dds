@@ -9,22 +9,21 @@ import jakarta.ws.rs.core.Response;
 import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.api.Exceptions;
 import net.es.nsi.dds.jaxb.dds.NotificationListType;
 import net.es.nsi.dds.jaxb.dds.NotificationType;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 @Path("/dds/")
 public class DdsNotificationCallback {
-    private final Logger log = LogManager.getLogger(getClass());
-
     @POST
     @Path("/callback")
     @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })

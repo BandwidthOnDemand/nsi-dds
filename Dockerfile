@@ -21,6 +21,7 @@ CMD java \
     -Xmx1024m -Djava.net.preferIPv4Stack=true  \
     -Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true \
     -Djava.util.logging.config.file=/nsi-dds/config/logging.properties \
+    -Dlogback.configurationFile=/nsi-dds/config/logback.xml \
     -cp /nsi-dds/lib \
     -Dbasedir=/nsi-dds \
     -jar /nsi-dds/dds.jar

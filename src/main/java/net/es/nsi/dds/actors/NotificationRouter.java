@@ -4,7 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.Cancellable;
 import akka.actor.Props;
 import akka.actor.Terminated;
-import akka.actor.UntypedActor;
+import akka.actor.UntypedAbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.routing.ActorRefRoutee;
@@ -26,6 +26,8 @@ import net.es.nsi.dds.messages.SubscriptionEvent;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.provider.Subscription;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
 
 /**
@@ -34,7 +36,9 @@ import scala.concurrent.duration.Duration;
  *
  * @author hacksaw
  */
-public class NotificationRouter extends UntypedActor {
+@Component
+@Scope("prototype")
+public class NotificationRouter extends UntypedAbstractActor {
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsActorSystem ddsActorSystem;
     private final DdsConfiguration discoveryConfiguration;

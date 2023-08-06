@@ -9,23 +9,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.jaxb.management.LogEnumType;
 import net.es.nsi.dds.jaxb.management.LogType;
 import net.es.nsi.dds.jaxb.management.ObjectFactory;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 public class DdsLogger {
-    private final Logger logger = LogManager.getLogger(getClass());
     private static final String NSI_ROOT_LOGS = "/logs/";
     private static final int MAX_LOG_SIZE = 2000;
 
-    private ObjectFactory logFactory = new ObjectFactory();
+    private final ObjectFactory logFactory = new ObjectFactory();
 
     private long logId = 0;
     private long subLogId = 0;
@@ -34,8 +34,8 @@ public class DdsLogger {
 
     private XMLGregorianCalendar auditTimeStamp = null;
 
-    private Map<String, LogType> logsMap = new ConcurrentHashMap<>();
-    private AbstractQueue<LogType> logsQueue = new ConcurrentLinkedQueue<>();
+    private final Map<String, LogType> logsMap = new ConcurrentHashMap<>();
+    private final AbstractQueue<LogType> logsQueue = new ConcurrentLinkedQueue<>();
 
     /**
      * Private constructor prevents instantiation from other classes.
@@ -168,14 +168,14 @@ public class DdsLogger {
      * @throws DatatypeConfigurationException if there is an error converting data.
      */
     public LogType log(DdsLogs tLog, String resource, String description) {
-        LogType log = createEntry();
-        log.setType(LogEnumType.LOG);
-        log.setCode(tLog.getCode());
-        log.setLabel(tLog.getLabel());
-        log.setDescription(description);
-        log.setResource(resource);
-        logger.info(createLog(log));
-        return log;
+        LogType l = createEntry();
+        l.setType(LogEnumType.LOG);
+        l.setCode(tLog.getCode());
+        l.setLabel(tLog.getLabel());
+        l.setDescription(description);
+        l.setResource(resource);
+        log.info(createLog(l));
+        return l;
     }
 
     /**
@@ -187,14 +187,14 @@ public class DdsLogger {
      * @throws DatatypeConfigurationException if there is an error converting data.
      */
     public LogType log(DdsLogs tLog, String resource) {
-        LogType log = createEntry();
-        log.setType(LogEnumType.LOG);
-        log.setCode(tLog.getCode());
-        log.setLabel(tLog.getLabel());
-        log.setDescription(String.format(tLog.getDescription(), resource));
-        log.setResource(resource);
-        logger.info(createLog(log));
-        return log;
+        LogType l = createEntry();
+        l.setType(LogEnumType.LOG);
+        l.setCode(tLog.getCode());
+        l.setLabel(tLog.getLabel());
+        l.setDescription(String.format(tLog.getDescription(), resource));
+        l.setResource(resource);
+        log.info(createLog(l));
+        return l;
     }
 
     public LogType error(DdsErrors tError, String resource) {
@@ -204,7 +204,7 @@ public class DdsLogger {
         error.setLabel(tError.getLabel());
         error.setDescription(String.format(tError.getDescription(), resource));
         error.setResource(resource);
-        logger.error(createLog(error));
+        log.error(createLog(error));
         return error;
     }
 
@@ -215,7 +215,7 @@ public class DdsLogger {
         error.setLabel(tError.getLabel());
         error.setDescription(String.format(tError.getDescription(), secondaryResource));
         error.setResource(primaryResource);
-        logger.error(createLog(error));
+        log.error(createLog(error));
         return error;
     }
 
@@ -236,7 +236,7 @@ public class DdsLogger {
                 error.setLabel(lastError.getLabel());
                 error.setDescription(String.format(lastError.getDescription(), "Repeated " + count + " times"));
                 error.setResource(lastRootResource);
-                logger.error(createLog(error));
+                log.error(createLog(error));
             }
 
             lastError = tError;
@@ -250,7 +250,7 @@ public class DdsLogger {
         error.setLabel(tError.getLabel());
         error.setDescription(String.format(tError.getDescription(), secondaryResource));
         error.setResource(primaryResource);
-        logger.error(createLog(error));
+        log.error(createLog(error));
     }
 
     public void errorSummary(DdsErrors tError, String rootResource, String primaryResource) {
@@ -266,7 +266,7 @@ public class DdsLogger {
                 error.setLabel(lastError.getLabel());
                 error.setDescription(lastError.getDescription() + "(Repeated " + count + " times)");
                 error.setResource(lastRootResource);
-                logger.error(createLog(error));
+                log.error(createLog(error));
             }
 
             lastError = tError;
@@ -280,31 +280,31 @@ public class DdsLogger {
         error.setLabel(tError.getLabel());
         error.setDescription(tError.getDescription());
         error.setResource(primaryResource);
-        logger.error(createLog(error));
+        log.error(createLog(error));
     }
 
     public LogType logAudit(DdsLogs tLog, String resource, String description) {
-        LogType log = createEntry();
-        log.setType(LogEnumType.LOG);
-        log.setAudit(auditTimeStamp);
-        log.setCode(tLog.getCode());
-        log.setLabel(tLog.getLabel());
-        log.setDescription(description);
-        log.setResource(resource);
-        logger.info(createLog(log));
-        return log;
+        LogType l = createEntry();
+        l.setType(LogEnumType.LOG);
+        l.setAudit(auditTimeStamp);
+        l.setCode(tLog.getCode());
+        l.setLabel(tLog.getLabel());
+        l.setDescription(description);
+        l.setResource(resource);
+        log.info(createLog(l));
+        return l;
     }
 
     public LogType logAudit(DdsLogs tLog, String resource) {
-        LogType log = createEntry();
-        log.setType(LogEnumType.LOG);
-        log.setAudit(auditTimeStamp);
-        log.setCode(tLog.getCode());
-        log.setLabel(tLog.getLabel());
-        log.setDescription(tLog.getDescription());
-        log.setResource(resource);
-        logger.info(createLog(log));
-        return log;
+        LogType l = createEntry();
+        l.setType(LogEnumType.LOG);
+        l.setAudit(auditTimeStamp);
+        l.setCode(tLog.getCode());
+        l.setLabel(tLog.getLabel());
+        l.setDescription(tLog.getDescription());
+        l.setResource(resource);
+        log.info(createLog(l));
+        return l;
     }
 
     public LogType errorAudit(DdsErrors tError, String resource) {
@@ -315,7 +315,7 @@ public class DdsLogger {
         error.setLabel(tError.getLabel());
         error.setDescription(tError.getDescription());
         error.setResource(resource);
-        logger.error(createLog(error));
+        log.error(createLog(error));
         return error;
     }
 
@@ -327,7 +327,7 @@ public class DdsLogger {
         error.setLabel(tError.getLabel());
         error.setDescription(String.format(tError.getDescription(), secondaryResource));
         error.setResource(primaryResource);
-        logger.error(createLog(error));
+        log.error(createLog(error));
         return error;
     }
 
@@ -352,20 +352,20 @@ public class DdsLogger {
         return logsMap.get(id);
     }
 
-    private String createLog(LogType log) {
-        logEntry(log);
-        return logToString(log);
+    private String createLog(LogType l) {
+        logEntry(l);
+        return logToString(l);
     }
 
     private final static String LOG_FORMAT = "code: %d, label: %s, resource: %s, description: %s";
-    public String logToString(LogType log) {
+    public String logToString(LogType logType) {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb);
-        formatter.format(LOG_FORMAT, log.getCode(), log.getLabel(), log.getResource(), log.getDescription());
+        formatter.format(LOG_FORMAT, logType.getCode(), logType.getLabel(), logType.getResource(), logType.getDescription());
 
-        if (log.getAudit() != null) {
+        if (logType.getAudit() != null) {
             sb.append(", audit: ");
-            sb.append(log.getAudit().toString());
+            sb.append(logType.getAudit().toString());
         }
         return sb.toString();
     }

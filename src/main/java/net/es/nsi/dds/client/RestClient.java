@@ -21,6 +21,8 @@ import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.net.ssl.HostnameVerifier;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.config.http.HttpsContext;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.jaxb.configuration.ClientType;
@@ -35,8 +37,6 @@ import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
@@ -51,6 +51,7 @@ import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
  *
  * @author hacksaw
  */
+@Slf4j
 public class RestClient {
     private final Client client;
 
@@ -69,8 +70,6 @@ public class RestClient {
     // Connection provider pool configuration defaults.
     private final static int MAX_CONNECTION_PER_ROUTE = 10;
     private final static int MAX_CONNECTION_TOTAL = 80;
-
-    private final static Logger log = LogManager.getLogger(RestClient.class);
 
     /**
      * Default constructor uses default configuration values.
@@ -262,10 +261,9 @@ public class RestClient {
     /**
      * Filter to allow for an HTTP redirect on an HTTP operation.
      */
+    @Slf4j
     private static class FollowRedirectFilter implements ClientResponseFilter
     {
-      private final static Logger log = LogManager.getLogger(FollowRedirectFilter.class);
-
         @Override
         public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException
         {

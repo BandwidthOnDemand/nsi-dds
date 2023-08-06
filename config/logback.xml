@@ -5,11 +5,33 @@
             <level>DEBUG</level>
         </filter>
         <encoder>
-            <pattern>[%date{ISO8601}] [%level] [%logger] [%marker] [%thread] - %msg MDC: {%mdc}%n</pattern>
+            <pattern>[%date{ISO8601}] [%level] [%logger] [%marker] [%thread] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>var/log/nsi-dds/nsi-dds.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>var/log/nsi-dds/nsi-dds.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+
+            <!-- keep 5 days worth of history capped at 1GB total size -->
+            <maxHistory>5</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>150MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>[%date{ISO8601}] [%level] [%logger] [%marker] [%thread] - %msg%n</pattern>
         </encoder>
     </appender>
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
     </root>
 </configuration>

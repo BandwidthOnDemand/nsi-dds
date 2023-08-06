@@ -12,10 +12,10 @@ import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Collection;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.provider.Document;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -26,16 +26,9 @@ import org.junit.Test;
  *
  * @author hacksaw
  */
+@Slf4j
 public class TestDocumentCache {
-
   private DdsConfiguration config;
-  private static Logger log;
-
-  @BeforeClass
-  public static void initialize() {
-    System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
-    log = LogManager.getLogger(TestDocumentCache.class);
-  }
 
   @Before
   public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException,

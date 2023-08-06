@@ -14,6 +14,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import javax.xml.transform.TransformerException;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.dao.RemoteSubscription;
@@ -28,8 +30,6 @@ import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.provider.Subscription;
 import net.es.nsi.dds.util.NsiConstants;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * This is an absolute hack.  I couldn't get the Jersey JSP configuration to
@@ -37,10 +37,9 @@ import org.apache.logging.log4j.LogManager;
  *
  * @author hacksaw
  */
+@Slf4j
 @Path("/dds/portal")
 public class Portal {
-     private final Logger log = LogManager.getLogger(getClass());
-
     @GET
     @Produces({ MediaType.TEXT_HTML })
     public Response portal() throws Exception {

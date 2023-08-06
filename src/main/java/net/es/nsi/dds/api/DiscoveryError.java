@@ -4,17 +4,18 @@ import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import java.util.HashMap;
 import java.util.Map;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.dds.ErrorType;
 import net.es.nsi.dds.jaxb.dds.ObjectFactory;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Defines the error values for the DDS logging system.
  *
  * @author hacksaw
  */
+@Slf4j
 public enum DiscoveryError {
   // Authentication/authorization errors.
   UNAUTHORIZED(401, "UNAUTHORIZED", "Supplied credentials did not have needed level of authorization (%s)."),
@@ -43,8 +44,6 @@ public enum DiscoveryError {
 
   // Mark the end.
   END(9999, "END", "END");
-
-  private final static Logger log = LogManager.getLogger(DiscoveryError.class);
 
   private final int code;
   private final String label;

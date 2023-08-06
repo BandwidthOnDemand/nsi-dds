@@ -10,6 +10,8 @@ import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.parsers.ParserConfigurationException;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.jaxb.NmlParser;
 import net.es.nsi.dds.jaxb.NsaParser;
@@ -23,15 +25,13 @@ import net.es.nsi.dds.provider.DdsProvider;
 import net.es.nsi.dds.signing.SignatureFactory;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 public class DocHelper {
-    private final static Logger log = LogManager.getLogger(DocHelper.class);
     private final static net.es.nsi.dds.jaxb.dds.ObjectFactory ddsFactory = new net.es.nsi.dds.jaxb.dds.ObjectFactory();
     private final static net.es.nsi.dds.jaxb.nsa.ObjectFactory nsaFactory = new net.es.nsi.dds.jaxb.nsa.ObjectFactory();
     private final static net.es.nsi.dds.jaxb.nml.ObjectFactory nmlFactory = new net.es.nsi.dds.jaxb.nml.ObjectFactory();

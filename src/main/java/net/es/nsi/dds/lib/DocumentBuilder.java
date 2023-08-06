@@ -3,24 +3,24 @@ package net.es.nsi.dds.lib;
 import java.io.IOException;
 import java.util.Optional;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.dao.IllegalArgumentExceptionSupplier;
 import net.es.nsi.dds.jaxb.dds.ContentType;
 import net.es.nsi.dds.jaxb.dds.DocumentType;
 import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.signing.Validate;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 public class DocumentBuilder {
     public final static String ContentType = "application/x-gzip";
     public final static String ContentTransferEncoding = "base64";
 
-    private final static Logger log = LogManager.getLogger(DocumentBuilder.class);
     private final ObjectFactory factory = new ObjectFactory();
 
     protected Optional<String> nsaId = Optional.empty();

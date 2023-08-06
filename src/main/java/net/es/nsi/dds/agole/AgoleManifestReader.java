@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.xml.namespace.QName;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.jaxb.NmlParser;
 import net.es.nsi.dds.jaxb.nml.NmlNetworkObject;
@@ -18,8 +20,6 @@ import net.es.nsi.dds.jaxb.nml.NmlTopologyType;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import org.apache.http.client.utils.DateUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * This class reads a remote XML formatted NML topology containing the list of
@@ -28,8 +28,8 @@ import org.apache.logging.log4j.LogManager;
  *
  * @author hacksaw
  */
+@Slf4j
 public class AgoleManifestReader {
-    private final Logger log = LogManager.getLogger(getClass());
     private final DdsLogger topologyLogger = DdsLogger.getLogger();
 
     private final static QName _isReference_QNAME = new QName("http://schemas.ogf.org/nsi/2013/09/topology#", "isReference");

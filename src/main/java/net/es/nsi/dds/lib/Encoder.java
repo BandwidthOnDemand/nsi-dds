@@ -5,17 +5,17 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.zip.GZIPOutputStream;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.jaxb.DomParser;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 public class Encoder {
-    private final static Logger log = LogManager.getLogger(Encoder.class);
 
     public static String encode(Document doc) throws IOException {
         if (doc == null) {

@@ -47,7 +47,7 @@
     <dependency>
       <groupId>org.glassfish.jersey.inject</groupId>
       <artifactId>jersey-hk2</artifactId>
-      <version>3.0.4</version>
+      <version>3.1.3</version>
             <exclusions>
         <exclusion>
           <groupId>org.glassfish.hk2.external</groupId>
@@ -108,13 +108,6 @@
       <version>2.0.1</version>
     </dependency>
 
-    <!-- JAXB Runtime
-    <dependency>
-      <groupId>org.glassfish.jaxb</groupId>
-      <artifactId>jaxb-runtime</artifactId>
-      <version>4.0.3</version>
-    </dependency>-->
-
     <!-- For spring beans to drive configuration loading. -->
     <dependency>
       <groupId>org.springframework</groupId>
@@ -140,13 +133,6 @@
       </exclusions>
     </dependency>
 
-    <!-- The agent messaging infrastructure for internal communications. -->
-    <dependency>
-      <groupId>com.typesafe.akka</groupId>
-      <artifactId>akka-actor_2.10</artifactId>
-      <version>2.3.16</version>
-    </dependency>
-
     <!-- Needed for certificate DN manipulation. -->
     <dependency>
       <groupId>org.bouncycastle</groupId>
@@ -166,29 +152,29 @@
       <version>1.70</version>
     </dependency>
 
-    <!-- Log4j for logging. -->
+    <!-- The agent messaging infrastructure for internal communications. -->
     <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <version>2.17.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>2.17.2</version>
+      <groupId>com.typesafe.akka</groupId>
+      <artifactId>akka-actor_2.12</artifactId>
+      <version>2.7.0</version>
     </dependency>
 
     <dependency>
       <groupId>com.typesafe.akka</groupId>
-      <artifactId>akka-slf4j_2.10</artifactId>
-      <version>2.3.16</version>
+      <artifactId>akka-slf4j_2.12</artifactId>
+      <version>2.7.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.7</version>
     </dependency>
 
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.2.12</version>
+      <version>1.4.9</version>
     </dependency>
 
     <!-- Google JSON parsers for reading configuration data from files. -->
@@ -242,7 +228,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>[1.18.20,)</version>
+      <version>[1.18.28,)</version>
     </dependency>
 
     <!-- These are for unit tests. -->
@@ -552,7 +538,8 @@
           <argLine>-Xmx1024m -Djava.net.preferIPv4Stack=true</argLine>
           <argLine>-Djersey.config.test.container.port=8801</argLine>
           <argLine>-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true</argLine>
-          <argLine>-Dlog4j.configurationFile=./src/test/resources/config/log4j.xml</argLine>
+          <argLine>-Dlogback.configurationFile=./src/test/resources/config/logback.xml</argLine>
+          <argLine>-Djava.util.logging.config.file=./src/test/resources/config/logging.properties</argLine>
         </configuration>
       </plugin>
 

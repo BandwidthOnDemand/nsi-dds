@@ -1,6 +1,6 @@
 package net.es.nsi.dds.gangofthree;
 
-import akka.actor.UntypedActor;
+import akka.actor.UntypedAbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import jakarta.ws.rs.ProcessingException;
@@ -25,12 +25,16 @@ import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
 import org.apache.http.client.utils.DateUtils;
 import org.glassfish.jersey.client.ChunkedInput;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author hacksaw
  */
-public class Gof3DiscoveryActor extends UntypedActor {
+@Component
+@Scope("prototype")
+public class Gof3DiscoveryActor extends UntypedAbstractActor {
 
   private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 

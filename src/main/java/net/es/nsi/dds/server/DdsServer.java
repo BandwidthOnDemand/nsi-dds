@@ -7,14 +7,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.api.DiscoveryService;
 import net.es.nsi.dds.api.Portal;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.management.api.ManagementService;
 import net.es.nsi.dds.spring.SpringApplicationContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.message.DeflateEncoder;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.server.filter.EncodingFilter;
@@ -25,11 +25,11 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  *
  * @author hacksaw
  */
+@Slf4j
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class DdsServer {
     private static final int FILE_CACHE_MAX_AGE = 3600;
 
-    private final Logger log = LogManager.getLogger(getClass());
     private final HttpConfig http;
     private RestServer server = null;
 
@@ -108,7 +108,7 @@ public class DdsServer {
                         log.debug("DDSServer.start: Waiting for Grizzly to start ...");
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
-                        log.debug("Sleep interupted while waiting for DDS server to start", ex);
+                        log.debug("Sleep interrupted while waiting for DDS server to start", ex);
                     }
                 }
                 log.debug("DDSServer.start: Started Grizzly.");

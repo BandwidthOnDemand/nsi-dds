@@ -2,6 +2,8 @@ package net.es.nsi.dds.jaxb;
 
 import java.io.File;
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.jaxb.configuration.AccessControlType;
 import net.es.nsi.dds.jaxb.configuration.ClientType;
 import net.es.nsi.dds.jaxb.configuration.DdsConfigurationType;
@@ -9,8 +11,6 @@ import net.es.nsi.dds.jaxb.configuration.PeerURLType;
 import net.es.nsi.dds.jaxb.configuration.SecureType;
 import net.es.nsi.dds.jaxb.configuration.ServerType;
 import net.es.nsi.dds.jaxb.configuration.StaticType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -26,8 +26,8 @@ import org.junit.Test;
  *
  * @author hacksaw
  */
+@Slf4j
 public class ConfigurationParserTest {
-  private static final Logger log = LogManager.getLogger("ConfigurationParserTest");
 
   public ConfigurationParserTest() {
   }

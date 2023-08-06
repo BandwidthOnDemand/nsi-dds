@@ -7,17 +7,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.spring.SpringApplicationContext;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 public class RemoteSubscriptionCache {
-
-    private final Logger log = LogManager.getLogger(getClass());
     // In-memory subscription cache indexed by subscriptionId.
     private final Map<String, RemoteSubscription> remoteSubscriptions = new ConcurrentHashMap<>();
 

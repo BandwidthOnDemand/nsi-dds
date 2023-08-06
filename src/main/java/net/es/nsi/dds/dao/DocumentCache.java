@@ -15,13 +15,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.dds.DocumentType;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * DocumentCache encapsulates DDS document storage through an in memory map
@@ -30,9 +30,8 @@ import org.apache.logging.log4j.LogManager;
  *
  * @author hacksaw
  */
+@Slf4j
 public class DocumentCache {
-    private final Logger log = LogManager.getLogger(getClass());
-
     // The holder of our configuration.
     private final DdsProfile ddsProfile;
 

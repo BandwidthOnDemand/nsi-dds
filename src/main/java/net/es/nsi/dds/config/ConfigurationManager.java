@@ -9,11 +9,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.server.DdsServer;
 import net.es.nsi.dds.spring.SpringContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -22,16 +22,14 @@ import org.springframework.context.ApplicationContext;
  * to drive initialization and created singletons for the key services.
  * @author hacksaw
  */
+@Slf4j
 public enum ConfigurationManager {
     INSTANCE;
 
     private static DdsServer ddsServer;
     private static DiscoveryProvider discoveryProvider;
     private static ApplicationContext context;
-
     private boolean initialized = false;
-
-    private final Logger log = LogManager.getLogger(getClass());
 
     /**
      * @return the initialized
@@ -114,7 +112,7 @@ public enum ConfigurationManager {
         return discoveryProvider;
     }
 
-    public void shutdown() {
+    public void shutdown() throws InterruptedException {
         if (discoveryProvider != null) {
             discoveryProvider.shutdown();
         }

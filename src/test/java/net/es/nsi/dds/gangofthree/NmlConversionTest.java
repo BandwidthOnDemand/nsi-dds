@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.jaxb.NmlParser;
 import net.es.nsi.dds.jaxb.nml.NmlNetworkObject;
@@ -13,8 +15,6 @@ import net.es.nsi.dds.jaxb.nml.NmlSwitchingServiceType;
 import net.es.nsi.dds.jaxb.nml.NmlTopologyRelationType;
 import net.es.nsi.dds.jaxb.nml.NmlTopologyType;
 import net.es.nsi.dds.jaxb.nml.ServiceDefinitionType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -24,25 +24,8 @@ import org.junit.Test;
  *
  * @author hacksaw
  */
+@Slf4j
 public class NmlConversionTest {
-
-  private static Logger log;
-
-  @BeforeClass
-  public static void initialize() {
-    System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
-    log = LogManager.getLogger(NmlConversionTest.class);
-  }
-
-  @Before
-  public void setUp() throws IllegalArgumentException, JAXBException, FileNotFoundException, NullPointerException, IOException {
-    log.debug("*************************************** NmlConversionTest oneTimeSetUp ***********************************");
-    // Load and watch the log4j configuration file for changes.
-    // DOMConfigurator.configureAndWatch(Log4jHelper.getLog4jConfig("src/test/resources/config/"), 45 * 1000);
-    log = LogManager.getLogger(NmlConversionTest.class);
-    log.debug("*************************************** NmlConversionTest oneTimeSetUp Done ***********************************");
-  }
-
   @Test
   public void serviceTypeInSD() throws JAXBException, IOException {
     log.debug("*************************************** serviceTypeInSD: start");

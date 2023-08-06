@@ -10,17 +10,18 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.client.RestClient;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.config.Properties;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 public class TestConfig {
     private static final String CONFIG_PATH = "configPath";
     private final static String CONFIG_DIR = "src/test/resources/config/";
@@ -29,8 +30,6 @@ public class TestConfig {
 
     private final Client client;
     private final WebTarget target;
-
-    private final Logger log = LogManager.getLogger(getClass());
 
     public TestConfig() throws IllegalStateException, KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, CertificateException, UnrecoverableKeyException {
         System.setProperty(CONFIG_PATH, CONFIG_DIR);
@@ -43,7 +42,7 @@ public class TestConfig {
             System.setProperty(Properties.SYSTEM_PROPERTY_CONFIGDIR, CONFIG_DIR);
             ConfigurationManager.INSTANCE.initialize();
         }
-        catch (IOException ex) {
+        catch (IOException | InterruptedException ex) {
             log.error("TestConfig: failed to initialize ConfigurationManager.");
             ex.printStackTrace();
         }
@@ -54,7 +53,7 @@ public class TestConfig {
         target = client.target(ConfigurationManager.INSTANCE.getDdsServer().getUrl());
     }
 
-    public void shutdown() {
+    public void shutdown() throws InterruptedException {
         ConfigurationManager.INSTANCE.shutdown();
         client.close();
     }

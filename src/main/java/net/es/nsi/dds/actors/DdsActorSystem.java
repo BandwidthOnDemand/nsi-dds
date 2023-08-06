@@ -2,8 +2,8 @@ package net.es.nsi.dds.actors;
 
 import akka.actor.ActorSystem;
 import static net.es.nsi.dds.spring.SpringExtension.SpringExtProvider;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -12,10 +12,8 @@ import org.springframework.context.ApplicationContextAware;
  *
  * @author hacksaw
  */
+@Slf4j
 public class DdsActorSystem implements ApplicationContextAware {
-
-  private final Logger log = LogManager.getLogger(getClass());
-
   private ActorSystem actorSystem;
   private ApplicationContext applicationContext;
 

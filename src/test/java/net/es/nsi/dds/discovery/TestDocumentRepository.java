@@ -17,27 +17,26 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.client.TestServer;
-import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.dds.DocumentType;
 import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.test.TestConfig;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 public class TestDocumentRepository {
 
   private final static HttpConfig testServer = new HttpConfig("localhost", "8402", "net.es.nsi.dds.client");
@@ -47,13 +46,6 @@ public class TestDocumentRepository {
   private static TestConfig testConfig;
   private static WebTarget target;
   private static WebTarget discovery;
-  private static Logger log;
-
-  @BeforeClass
-  public static void initialize() {
-    System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
-    log = LogManager.getLogger(TestDocumentRepository.class);
-  }
 
   @Before
   public void oneTimeSetUp() {
@@ -84,7 +76,7 @@ public class TestDocumentRepository {
   }
 
   @After
-  public void oneTimeTearDown() {
+  public void oneTimeTearDown() throws InterruptedException {
     log.debug("*************************************** TestDocumentRepository oneTimeTearDown ***********************************");
     testConfig.shutdown();
     try {

@@ -1,12 +1,11 @@
 package net.es.nsi.dds.authorization;
 
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.jaxb.configuration.AccessControlPermission;
 import net.es.nsi.dds.jaxb.configuration.AccessControlType;
 import net.es.nsi.dds.jaxb.configuration.DistinguishedNameType;
 import net.es.nsi.dds.jaxb.configuration.ObjectFactory;
 import net.es.nsi.dds.jaxb.configuration.RuleType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -18,8 +17,8 @@ import org.junit.Test;
  *
  * @author hacksaw
  */
+@Slf4j
 public class AccessControlListTest {
-  private static final Logger log = LogManager.getLogger(AccessControlListTest.class);
   private final ObjectFactory factory = new ObjectFactory();
   private AccessControlType acl_enabled;
   private AccessControlType acl_disabled;

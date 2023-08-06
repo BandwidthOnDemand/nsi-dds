@@ -1,10 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.es.nsi.dds.agole;
 
-import akka.actor.UntypedActor;
+import akka.actor.UntypedAbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import jakarta.ws.rs.NotFoundException;
@@ -29,12 +25,16 @@ import net.es.nsi.dds.jaxb.nsa.PeersWithType;
 import net.es.nsi.dds.lib.DocHelper;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author hacksaw
  */
-public class AgoleDiscoveryActor extends UntypedActor {
+@Component
+@Scope("prototype")
+public class AgoleDiscoveryActor extends UntypedAbstractActor {
 
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final net.es.nsi.dds.jaxb.nsa.ObjectFactory nsaFactory = new net.es.nsi.dds.jaxb.nsa.ObjectFactory();

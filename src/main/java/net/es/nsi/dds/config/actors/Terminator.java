@@ -6,15 +6,20 @@ package net.es.nsi.dds.config.actors;
 
 import akka.actor.ActorRef;
 import akka.actor.Terminated;
-import akka.actor.UntypedActor;
+import akka.actor.UntypedAbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import scala.concurrent.Future;
 
 /**
  *
  * @author hacksaw
  */
-public class Terminator extends UntypedActor {
+@Component
+@Scope("prototype")
+public class Terminator extends UntypedAbstractActor {
 
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final ActorRef ref;
@@ -25,10 +30,14 @@ public class Terminator extends UntypedActor {
     }
 
     @Override
-    public void onReceive(Object msg) {
+    public void onReceive(Object msg) throws InterruptedException {
         if (msg instanceof Terminated) {
             log.info("{} has terminated, shutting down system", ref.path());
-            getContext().system().shutdown();
+            Future<Terminated> terminate = getContext().system().terminate();
+            while (!terminate.isCompleted()) {
+                log.info("Terminating ...");
+                Thread.sleep(1000);
+            }
         } else {
             unhandled(msg);
         }

@@ -21,9 +21,9 @@ import java.util.Optional;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 
 /**
@@ -31,9 +31,8 @@ import org.w3c.dom.Document;
  *
  * @author hacksaw
  */
+@Slf4j
 public class JaxbParser {
-    // Get a logger just in case we encounter a problem.
-    private final Logger log = LogManager.getLogger(getClass());
     private JAXBContext jc = null;
 
     /**

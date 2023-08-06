@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.actors.DdsActorController;
 import net.es.nsi.dds.api.DiscoveryError;
 import net.es.nsi.dds.api.Exceptions;
@@ -37,16 +39,13 @@ import net.es.nsi.dds.messages.DocumentEvent;
 import net.es.nsi.dds.messages.SubscriptionEvent;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 public class DdsProvider implements DiscoveryProvider {
-
-  private final Logger log = LogManager.getLogger(getClass());
   private final ObjectFactory factory = new ObjectFactory();
 
   // Configuration reader.
@@ -697,7 +696,7 @@ public class DdsProvider implements DiscoveryProvider {
   }
 
   @Override
-  public void shutdown() {
+  public void shutdown() throws InterruptedException {
     ddsActorController.shutdown();
   }
 

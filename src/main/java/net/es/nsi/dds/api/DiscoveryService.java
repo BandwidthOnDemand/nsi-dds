@@ -25,6 +25,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.actors.RegistrationRouter;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.jaxb.DdsParser;
@@ -45,17 +47,15 @@ import net.es.nsi.dds.provider.Subscription;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
 import org.apache.http.client.utils.DateUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 @Path("/dds")
 @Consumes(MediaType.APPLICATION_XML)
 public class DiscoveryService {
-    private final Logger log = LogManager.getLogger(getClass());
     private final ObjectFactory factory = new ObjectFactory();
 
     //@Context SecurityContext securityContext;

@@ -7,10 +7,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.test.TestConfig;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,17 +19,14 @@ import org.junit.Test;
  *
  * @author hacksaw
  */
+@Slf4j
 public class TimersTest {
     private static TestConfig testConfig;
     private static WebTarget management;
-    private static Logger log;
 
     @BeforeClass
     public static void oneTimeSetUp() throws IllegalStateException, KeyManagementException, NoSuchAlgorithmException,
             NoSuchProviderException, KeyStoreException, CertificateException, UnrecoverableKeyException {
-        System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
-        log = LogManager.getLogger(TimersTest.class);
-
         log.debug("*************************************** TimersTest oneTimeSetUp ***********************************");
         testConfig = new TestConfig();
         management = testConfig.getTarget().path("dds").path("management");
@@ -37,7 +34,7 @@ public class TimersTest {
     }
 
     @AfterClass
-    public static void oneTimeTearDown() {
+    public static void oneTimeTearDown() throws InterruptedException {
         log.debug("*************************************** TimersTest oneTimeTearDown ***********************************");
         testConfig.shutdown();
         log.debug("*************************************** TimersTest oneTimeTearDown done ***********************************");

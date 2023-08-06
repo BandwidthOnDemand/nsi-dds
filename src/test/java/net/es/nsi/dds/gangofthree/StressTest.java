@@ -13,19 +13,20 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.client.TestServer;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.discovery.FileUtilities;
 import net.es.nsi.dds.test.TestConfig;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+@Slf4j
 public class StressTest {
 
   private final static HttpConfig testServer = new HttpConfig("localhost", "8402", "net.es.nsi.dds.client");
@@ -37,13 +38,9 @@ public class StressTest {
   private static WebTarget target;
   private static WebTarget discovery;
   private static String callbackURL;
-  private static Logger log;
 
   @BeforeClass
   public static void oneTimeSetUp() {
-    System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
-    log = LogManager.getLogger(StressTest.class);
-
     log.debug("*************************************** StressTest oneTimeSetUp ***********************************");
 
     try {
@@ -75,7 +72,7 @@ public class StressTest {
   }
 
   @AfterClass
-  public static void oneTimeTearDown() {
+  public static void oneTimeTearDown() throws InterruptedException {
     log.debug("*************************************** StressTest oneTimeTearDown ***********************************");
     testConfig.shutdown();
     try {

@@ -21,6 +21,8 @@ import java.util.Properties;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.jaxb.ManagementParser;
 import net.es.nsi.dds.jaxb.management.AttributeType;
 import net.es.nsi.dds.jaxb.management.LogEnumType;
@@ -32,17 +34,15 @@ import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.util.NsiConstants;
 import org.apache.http.client.utils.DateUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * The implementation class for the REST-based management interface.
  *
  * @author hacksaw
  */
+@Slf4j
 @Path("/dds/management")
 public class ManagementService {
-    private final Logger log = LogManager.getLogger(getClass());
     private final DdsLogger ddsLogger = DdsLogger.getLogger();
     private final ObjectFactory managementFactory = new ObjectFactory();
 

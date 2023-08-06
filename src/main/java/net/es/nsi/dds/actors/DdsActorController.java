@@ -3,29 +3,30 @@ package net.es.nsi.dds.actors;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Cancellable;
+import akka.actor.Terminated;
 import jakarta.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.spring.SpringExtension;
 import net.es.nsi.dds.spring.SpringExtension.SpringExt;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import scala.concurrent.Future;
 
 /**
  * This is a controller class that initializes the actor system.
  *
  * @author hacksaw
  */
+@Slf4j
 public class DdsActorController implements ApplicationContextAware {
-    private final Logger log = LogManager.getLogger(getClass());
-
     // Configuration reader.
     private final DdsActorSystem ddsActorSystem;
     private final DdsConfiguration configReader;
@@ -88,8 +89,12 @@ public class DdsActorController implements ApplicationContextAware {
             ref.tell(msg, null);
         });
     }
-    public void shutdown() {
+    public void shutdown() throws InterruptedException {
         log.info("DdsActorController: Shutting down actor system...");
-        ddsActorSystem.getActorSystem().shutdown();
+        Future<Terminated> terminate = ddsActorSystem.getActorSystem().terminate();
+        while (!terminate.isCompleted()) {
+            log.info("Terminating ...");
+            Thread.sleep(1000);
+        }
     }
 }

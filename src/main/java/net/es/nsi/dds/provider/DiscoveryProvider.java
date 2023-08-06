@@ -17,7 +17,7 @@ public interface DiscoveryProvider {
 
     public void init() throws Exception;
     public void start();
-    public void shutdown();
+    public void shutdown() throws InterruptedException;
 
     public Subscription addSubscription(SubscriptionRequestType request, String encoding);
     public Subscription deleteSubscription(String id) throws WebApplicationException;

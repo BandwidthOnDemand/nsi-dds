@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.config.Properties;
 import org.apache.commons.cli.*;

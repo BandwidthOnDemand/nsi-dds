@@ -3,7 +3,7 @@ package net.es.nsi.dds.actors;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.Terminated;
-import akka.actor.UntypedActor;
+import akka.actor.UntypedAbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.routing.ActorRefRoutee;
@@ -24,13 +24,17 @@ import net.es.nsi.dds.messages.RegistrationEvent;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.NsiConstants;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
 
 /**
  *
  * @author hacksaw
  */
-public class RegistrationRouter extends UntypedActor {
+@Component
+@Scope("prototype")
+public class RegistrationRouter extends UntypedAbstractActor {
 
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsActorSystem ddsActorSystem;

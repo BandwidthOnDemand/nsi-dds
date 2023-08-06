@@ -20,8 +20,9 @@ import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.client.TestServer;
-import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.jaxb.DdsParser;
@@ -40,8 +41,6 @@ import net.es.nsi.dds.jaxb.nsa.NsaType;
 import net.es.nsi.dds.test.TestConfig;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ChunkedInput;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -54,6 +53,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+@Slf4j
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DiscoveryTest {
 
@@ -67,13 +67,9 @@ public class DiscoveryTest {
   private static WebTarget target;
   private static WebTarget discovery;
   private static String callbackURL;
-  private static Logger log;
 
   @BeforeClass
   public static void oneTimeSetUp() throws IllegalStateException, KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, CertificateException, UnrecoverableKeyException {
-    System.setProperty(Properties.SYSTEM_PROPERTY_LOG4J, "src/test/resources/config/log4j.xml");
-    log = LogManager.getLogger(DiscoveryTest.class);
-
     log.debug("*************************************** DiscoveryTest oneTimeSetUp ***********************************");
 
     try {
@@ -101,7 +97,7 @@ public class DiscoveryTest {
   }
 
   @AfterClass
-  public static void oneTimeTearDown() {
+  public static void oneTimeTearDown() throws InterruptedException {
     log.debug("*************************************** DiscoveryTest oneTimeTearDown ***********************************");
     testConfig.shutdown();
     try {

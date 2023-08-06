@@ -21,12 +21,13 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManagerFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.es.nsi.dds.config.Properties;
 import net.es.nsi.dds.jaxb.configuration.KeyStoreType;
 import net.es.nsi.dds.jaxb.configuration.ObjectFactory;
 import net.es.nsi.dds.jaxb.configuration.SecureType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import org.glassfish.jersey.SslConfigurator;
@@ -39,7 +40,8 @@ import org.glassfish.jersey.SslConfigurator;
 public enum HttpsContext {
   INSTANCE;
 
-  private final Logger log = LogManager.getLogger(getClass());
+  private final Logger log = LoggerFactory.getLogger(HttpsContext.class);
+
   private final ObjectFactory factory = new ObjectFactory();
 
   private SSLContext sslContext;
@@ -48,7 +50,7 @@ public enum HttpsContext {
   /**
    * Construct an HttpConfig object.
    */
-  private HttpsContext() {
+  HttpsContext() {
     log.debug("[HttpsContext]: constructor invoked");
 
     // If the BouncyCastle provider is not register add it in.

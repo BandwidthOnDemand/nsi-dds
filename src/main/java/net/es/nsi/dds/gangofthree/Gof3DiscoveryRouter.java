@@ -7,7 +7,7 @@ package net.es.nsi.dds.gangofthree;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.Terminated;
-import akka.actor.UntypedActor;
+import akka.actor.UntypedAbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.routing.ActorRefRoutee;
@@ -27,13 +27,17 @@ import net.es.nsi.dds.jaxb.configuration.PeerURLType;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.messages.TimerMsg;
 import net.es.nsi.dds.util.NsiConstants;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
 
 /**
  *
  * @author hacksaw
  */
-public class Gof3DiscoveryRouter extends UntypedActor {
+@Component
+@Scope("prototype")
+public class Gof3DiscoveryRouter extends UntypedAbstractActor {
 
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsActorSystem ddsActorSystem;

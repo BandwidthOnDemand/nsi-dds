@@ -9,19 +9,19 @@ import jakarta.ws.rs.core.Response;
 import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.dds.ErrorType;
 import net.es.nsi.dds.jaxb.dds.ObjectFactory;
 import net.es.nsi.dds.provider.InvalidVersionException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author hacksaw
  */
+@Slf4j
 public class Exceptions {
-  private static final Logger log = LogManager.getLogger(Exceptions.class);
   private static final ObjectFactory factory = new ObjectFactory();
 
   private static String format(ErrorType error) {

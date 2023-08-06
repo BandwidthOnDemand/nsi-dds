@@ -1,6 +1,6 @@
 package net.es.nsi.dds.actors;
 
-import akka.actor.UntypedActor;
+import akka.actor.UntypedAbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import jakarta.xml.bind.JAXBException;
@@ -14,6 +14,8 @@ import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.messages.TimerMsg;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
 
 /**
@@ -21,7 +23,9 @@ import scala.concurrent.duration.Duration;
  *
  * @author hacksaw
  */
-public class ConfigurationActor extends UntypedActor {
+@Component
+@Scope("prototype")
+public class ConfigurationActor extends UntypedAbstractActor {
 
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsActorSystem ddsActorSystem;
