@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import net.es.nsi.dds.actors.DdsActorSystem;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.jaxb.configuration.PeerURLType;
+import net.es.nsi.dds.messages.Message;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.messages.TimerMsg;
 import net.es.nsi.dds.util.NsiConstants;
@@ -38,7 +39,6 @@ import scala.concurrent.duration.Duration;
 @Component
 @Scope("prototype")
 public class Gof3DiscoveryRouter extends UntypedAbstractActor {
-
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsActorSystem ddsActorSystem;
     private final DdsConfiguration discoveryConfiguration;
@@ -66,16 +66,20 @@ public class Gof3DiscoveryRouter extends UntypedAbstractActor {
 
     @Override
     public void onReceive(Object msg) {
-        TimerMsg message = new TimerMsg();
+        log.debug("[Gof3DiscoveryRouter] onReceive {}", Message.getDebug(msg));
 
         // Check to see if we got the go ahead to start registering.
         if (msg instanceof StartMsg) {
             // Create a Register event to start us off.
-            msg = message;
+            log.debug("[Gof3DiscoveryRouter] timer event.");
+            StartMsg sm = (StartMsg) msg;
+            msg = new TimerMsg(sm.getInitiator(), sm.getPath());
         }
 
         if (msg instanceof TimerMsg) {
             routeTimerEvent();
+
+            TimerMsg message = new TimerMsg("Gof3DiscoveryRouter", this.self().path());
             ddsActorSystem.getActorSystem().scheduler()
                     .scheduleOnce(Duration.create(getInterval(), TimeUnit.SECONDS),
                             this.getSelf(), message, ddsActorSystem.getActorSystem().dispatcher(), null);
@@ -83,22 +87,25 @@ public class Gof3DiscoveryRouter extends UntypedAbstractActor {
         else if (msg instanceof Gof3DiscoveryMsg) {
             Gof3DiscoveryMsg incoming = (Gof3DiscoveryMsg) msg;
 
-            log.debug("onReceive: discovery update for nsaId={}, nsaURL={}",
+            log.debug("[Gof3DiscoveryRouter] discovery update for nsaId={}, nsaURL={}",
                     incoming.getNsaId(), incoming.getNsaURL());
 
             discovery.put(incoming.getNsaURL(), incoming);
         }
         else if (msg instanceof Terminated) {
-            log.debug("onReceive: terminate event.");
-            router = router.removeRoutee(((Terminated) msg).actor());
+            Terminated terminated = ((Terminated) msg);
+            log.error("[Gof3DiscoveryRouter] terminate event for {}", terminated.actor().path());
+            router = router.removeRoutee(terminated.actor());
             ActorRef r = getContext().actorOf(Props.create(Gof3DiscoveryActor.class));
             getContext().watch(r);
             router = router.addRoutee(new ActorRefRoutee(r));
         }
         else {
-            log.error("onReceive: unhandled event.");
+            log.error("[Gof3DiscoveryRouter] unhandled event {}", Message.getDebug(msg));
             unhandled(msg);
         }
+
+        log.debug("[Gof3DiscoveryRouter] onReceive done.");
     }
 
     private void routeTimerEvent() {
@@ -113,7 +120,7 @@ public class Gof3DiscoveryRouter extends UntypedAbstractActor {
 
             Gof3DiscoveryMsg msg = discovery.get(url.getValue());
             if (msg == null) {
-                msg = new Gof3DiscoveryMsg();
+                msg = new Gof3DiscoveryMsg("Gof3DiscoveryRouter", this.self().path());
                 msg.setNsaURL(url.getValue());
             }
 

@@ -69,7 +69,7 @@ public class ManagementService {
             return Response.serverError().build();
         }
 
-        log.debug("ManagementService.version: loaded properties", properties.getProperty("git.commit.id"));
+        log.debug("ManagementService.version: loaded properties {}", properties.getProperty("git.commit.id"));
 
         VersionType result = managementFactory.createVersionType();
         for (Object key : properties.keySet()) {

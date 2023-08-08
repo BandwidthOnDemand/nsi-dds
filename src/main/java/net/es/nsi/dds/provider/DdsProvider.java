@@ -124,7 +124,7 @@ public class DdsProvider implements DiscoveryProvider {
     // documents in a notification to this subscription.  We delay the
     // send so that the requester has time to return and store the
     // subscription identifier.
-    SubscriptionEvent se = new SubscriptionEvent();
+    SubscriptionEvent se = new SubscriptionEvent("DdsProvider.addSubscription");
     se.setEvent(SubscriptionEvent.Event.New);
     se.setSubscription(subscription);
     Cancellable scheduleOnce = ddsActorController.scheduleNotification(se, 5);
@@ -351,7 +351,7 @@ public class DdsProvider implements DiscoveryProvider {
     }
 
     // Route a new document event.
-    DocumentEvent de = new DocumentEvent();
+    DocumentEvent de = new DocumentEvent("DdsProvider:addDocument");
     de.setEvent(DocumentEventType.NEW);
     de.setDocument(document);
     ddsActorController.sendNotification(de);
@@ -410,7 +410,7 @@ public class DdsProvider implements DiscoveryProvider {
     }
 
     // Route a update document event.
-    DocumentEvent de = new DocumentEvent();
+    DocumentEvent de = new DocumentEvent("DdsProvider:deleteDocument");
     de.setEvent(DocumentEventType.UPDATED);
     de.setDocument(newDoc);
     ddsActorController.sendNotification(de);
@@ -477,7 +477,7 @@ public class DdsProvider implements DiscoveryProvider {
     log.debug("updateDocument: updated documentId=" + documentId);
 
     // Route a update document event.
-    DocumentEvent de = new DocumentEvent();
+    DocumentEvent de = new DocumentEvent("DdsProvider:updateDocument");
     de.setEvent(DocumentEventType.UPDATED);
     de.setDocument(newDoc);
     ddsActorController.sendNotification(de);

@@ -266,14 +266,15 @@ public class DocumentCache {
         Collection<Document> values = Collections.unmodifiableCollection(new ArrayList<>(documents.values()));
         for (Document document : values) {
             // We need to determine if this document is still valid
-            // before proceding.
+            // before proceeding.
             DocumentType doc = document.getDocument();
             XMLGregorianCalendar expires = doc.getExpires();
             if (expires != null) {
                 Date expiresTime = expires.toGregorianCalendar().getTime();
                 if (expiresTime.before(now)) {
                     // This document is old and no longer valid.
-                    log.debug("[DocumentCache] document has expired " + document.getId() + ", expires=" + expires.toGregorianCalendar().getTime().toString());
+                    log.debug("[DocumentCache] document has expired " + document.getId() + ", expires=" +
+                        expires.toGregorianCalendar().getTime());
                     this.remove(document.getId());
                 }
             }

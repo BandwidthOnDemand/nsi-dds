@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 
 /**
+ * In-memory subscription cache indexed by subscriptionId.
  *
  * @author hacksaw
  */

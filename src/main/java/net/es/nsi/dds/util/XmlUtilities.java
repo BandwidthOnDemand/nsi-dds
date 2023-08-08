@@ -111,7 +111,7 @@ public class XmlUtilities {
 
     private static Reader getReader(InputStream is) throws IOException {
         Reader reader = new BufferedReader(new InputStreamReader(is));
-        char c[] = "<?".toCharArray();
+        char[] c = "<?".toCharArray();
         int pos = 0;
         reader.mark(LOOKAHEAD);
         while (true) {

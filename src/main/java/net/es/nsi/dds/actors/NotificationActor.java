@@ -18,6 +18,7 @@ import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.dds.NotificationListType;
 import net.es.nsi.dds.jaxb.dds.NotificationType;
 import net.es.nsi.dds.jaxb.dds.ObjectFactory;
+import net.es.nsi.dds.messages.Message;
 import net.es.nsi.dds.messages.Notification;
 import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.util.XmlUtilities;
@@ -65,6 +66,8 @@ public class NotificationActor extends UntypedAbstractActor {
    */
   @Override
   public void onReceive(Object msg) {
+    log.debug("[NotificationActor] onReceive {}", Message.getDebug(msg));
+
     // We only accept Notification messages.
     if (msg instanceof Notification) {
       Notification notification = (Notification) msg;
@@ -73,7 +76,7 @@ public class NotificationActor extends UntypedAbstractActor {
       String callback = notification.getSubscription().getSubscription().getCallback();
       String mediaType = notification.getSubscription().getEncoding();
 
-      log.debug("NotificationActor: sending requesterId={}, id={}, mediaType={}, callback={}",
+      log.debug("[NotificationActor] sending requesterId={}, id={}, mediaType={}, callback={}",
               requesterId, id, mediaType, callback);
 
       NotificationListType list = getNotificationList(notification);
@@ -87,24 +90,24 @@ public class NotificationActor extends UntypedAbstractActor {
                 .post(Entity.entity(encoded, mediaType));
 
         if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
-          log.debug("NotificationActor: sent notitifcation = {} to client = {}, result = {}",
+          log.debug("[NotificationActor] sent notification = {} to client = {}, result = {}",
                   list.getId(), callback, response.getStatusInfo().getReasonPhrase());
         } else {
-          log.error("NotificationActor: failed notification = {} to client = {}, code = {}, result = {}",
+          log.error("[NotificationActor] failed notification = {} to client = {}, code = {}, result = {}",
                   list.getId(), callback, response.getStatusInfo().getStatusCode(),
                   response.getStatusInfo().getReasonPhrase());
           // TODO: Tell discovery provider...
           error = true;
         }
-      } catch (IOException | JAXBException | WebApplicationException | ProcessingException ex) {
+      } catch (Exception ex) {
         // Do not change this to specific Exceptions unless you keep the
         // generic catch due to underlying SSL exceptions from the SSL
         // provider.
-        log.error("NotificationActor: failed notification = {} to client = {}, ex = {}",
+        log.error("[NotificationActor] failed notification = {} to client = {}, ex = {}",
                 list.getId(), callback, ex);
         error = true;
       } finally {
-        log.debug("NotificationActor: finally - requesterId = {}, id = {}, callback = {}",
+        log.debug("[NotificationActor] finally - requesterId = {}, id = {}, callback = {}",
                 requesterId, id, callback);
 
         if (response != null) {
@@ -112,25 +115,34 @@ public class NotificationActor extends UntypedAbstractActor {
         }
 
         if (error) {
-          log.error("NotificationActor: deleting requesterId={}, id={}, callback={}",
+          log.error("[NotificationActor] deleting requesterId={}, id={}, callback={}",
               requesterId, id, callback);
           DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
           discoveryProvider.deleteSubscription(notification.getSubscription().getId());
         }
       }
 
-      log.debug("NotificationActor: notification sent requesterId={}, id={}, callback={}",
+      log.debug("[NotificationActor] notification sent requesterId={}, id={}, callback={}",
               requesterId, id, callback);
     } else {
+      log.error("[NotificationActor] onReceive unhandled message {} {}", this.getSender(), Message.getDebug(msg));
       unhandled(msg);
     }
+
+    log.debug("[NotificationActor] onReceive done.");
   }
 
+  /**
+   * Return the list of notification targets.
+   *
+   * @param notification
+   * @return
+   */
   private NotificationListType getNotificationList(Notification notification) {
     NotificationListType list = factory.createNotificationListType();
 
     notification.getDocuments().stream().map((document) -> {
-      log.debug("NotificationActor: documentId={}", document.getDocument().getId());
+      log.debug("[NotificationActor] getNotificationList documentId={}", document.getDocument().getId());
       return document;
     }).map((document) -> {
       NotificationType notify = factory.createNotificationType();
@@ -140,7 +152,7 @@ public class NotificationActor extends UntypedAbstractActor {
         XMLGregorianCalendar discovered = XmlUtilities.longToXMLGregorianCalendar(document.getLastDiscovered().getTime());
         notify.setDiscovered(discovered);
       } catch (Exception ex) {
-        log.error("NotificationActor: discovered date conversion failed", ex);
+        log.error("[NotificationActor] getNotificationList discovered date conversion failed", ex);
       }
       return notify;
     }).forEach((notify) -> {

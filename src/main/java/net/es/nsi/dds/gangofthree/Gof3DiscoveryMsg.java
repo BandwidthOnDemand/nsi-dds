@@ -4,6 +4,10 @@
  */
 package net.es.nsi.dds.gangofthree;
 
+import akka.actor.ActorPath;
+import lombok.ToString;
+import net.es.nsi.dds.messages.Message;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
@@ -15,13 +19,26 @@ import java.util.concurrent.ConcurrentSkipListSet;
  *
  * @author hacksaw
  */
-public class Gof3DiscoveryMsg implements Serializable {
+@ToString(callSuper=true)
+public class Gof3DiscoveryMsg extends Message implements Serializable {
     private static final long serialVersionUID = 1L;
     private long interation = 0;
     private String nsaURL;
     private long nsaLastModifiedTime = 0;
     private String nsaId;
     private final Map<String, Long> topology = new ConcurrentHashMap<>(); // key = topologyURL, Long == topologyLastModifiedTime
+
+    public Gof3DiscoveryMsg() {
+        super();
+    }
+
+    public Gof3DiscoveryMsg(String initiator) {
+        super(initiator);
+    }
+
+    public Gof3DiscoveryMsg(String initiator, ActorPath path) {
+        super(initiator, path);
+    }
 
     /**
      * @return the nsaURL

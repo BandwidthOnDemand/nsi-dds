@@ -28,6 +28,7 @@ import net.es.nsi.dds.management.api.ProviderStatus;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.management.logs.DdsLogs;
+import net.es.nsi.dds.messages.Message;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.messages.TimerMsg;
 import net.es.nsi.dds.util.NsiConstants;
@@ -42,7 +43,6 @@ import scala.concurrent.duration.Duration;
 @Component
 @Scope("prototype")
 public class AgoleDiscoveryRouter extends UntypedAbstractActor {
-
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsLogger topologyLogger = DdsLogger.getLogger();
     private ProviderStatus manifestStatus = null;
@@ -78,7 +78,7 @@ public class AgoleDiscoveryRouter extends UntypedAbstractActor {
             manifestReader.setTarget(peerURL.get().getValue());
         }
         else {
-            log.info("AgoleDiscoveryRouter: No AGOLE URL provisioned so disabling audit.");
+            log.info("[AgoleDiscoveryRouter] No AGOLE URL provisioned so disabling audit.");
             return;
         }
 
@@ -93,39 +93,43 @@ public class AgoleDiscoveryRouter extends UntypedAbstractActor {
 
     @Override
     public void onReceive(Object msg) {
-        TimerMsg message = new TimerMsg();
+        log.debug("[AgoleDiscoveryRouter] onReceive {}", Message.getDebug(msg));
 
         // Check to see if we got the go ahead to start registering.
         if (msg instanceof StartMsg) {
             // Create a Register event to start us off.
-            msg = message;
             if (!isConfigured) {
-                log.info("onReceive: StartMsg no AGOLE URL provisioned so disabling audit.");
+                log.info("[AgoleDiscoveryRouter] StartMsg no AGOLE URL provisioned so disabling audit.");
                 return;
             }
+
+            StartMsg sm = (StartMsg) msg;
+            msg = new TimerMsg(sm.getInitiator(), sm.getPath());
         }
 
         if (msg instanceof TimerMsg) {
-            log.debug("onReceive: timer event.");
+            log.debug("[AgoleDiscoveryRouter] timer event.");
             if (!isConfigured) {
-                log.info("onReceive: TimerMsg no AGOLE URL provisioned so disabling audit.");
+                log.info("[AgoleDiscoveryRouter] TimerMsg no AGOLE URL provisioned so disabling audit.");
                 return;
             }
             if (readManifest() != null) {
                 routeTimerEvent();
             }
 
-            ddsActorSystem.getActorSystem().scheduler().scheduleOnce(Duration.create(getInterval(), TimeUnit.SECONDS), this.getSelf(), message, ddsActorSystem.getActorSystem().dispatcher(), null);
+            TimerMsg message = new TimerMsg("AgoleDiscoveryRouter", this.self().path());
+            ddsActorSystem.getActorSystem().scheduler()
+                .scheduleOnce(Duration.create(getInterval(), TimeUnit.SECONDS), this.self(), message,
+                    ddsActorSystem.getActorSystem().dispatcher(), null);
         }
         else if (msg instanceof AgoleDiscoveryMsg) {
             AgoleDiscoveryMsg incoming = (AgoleDiscoveryMsg) msg;
-
-            log.debug("onReceive: discovery update for nsaId={}", incoming.getNsaId());
-
+            log.debug("[AgoleDiscoveryRouter] discovery update for nsaId={}", incoming.getNsaId());
             discovery.put(incoming.getTopologyURL(), incoming);
         }
         else if (msg instanceof Terminated) {
-            log.debug("onReceive: terminate event.");
+            Terminated terminated = ((Terminated) msg);
+            log.error("[AgoleDiscoveryRouter] terminate event for {}", terminated.actor().path());
             if (router != null) {
                 router = router.removeRoutee(((Terminated) msg).actor());
                 ActorRef r = getContext().actorOf(Props.create(AgoleDiscoveryActor.class));
@@ -134,9 +138,11 @@ public class AgoleDiscoveryRouter extends UntypedAbstractActor {
             }
         }
         else {
-            log.debug("onReceive: unhandled event.");
+            log.error("[RegistrationRouter] unhandled event {}", Message.getDebug(msg));
             unhandled(msg);
         }
+
+        log.debug("[AgoleDiscoveryRouter] onReceive done.");
     }
 
     private TopologyManifest readManifest() {

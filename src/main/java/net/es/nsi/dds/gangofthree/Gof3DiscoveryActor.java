@@ -21,6 +21,9 @@ import net.es.nsi.dds.jaxb.nml.NmlTopologyType;
 import net.es.nsi.dds.jaxb.nsa.InterfaceType;
 import net.es.nsi.dds.jaxb.nsa.NsaType;
 import net.es.nsi.dds.lib.DocHelper;
+import net.es.nsi.dds.messages.Message;
+import net.es.nsi.dds.messages.StartMsg;
+import net.es.nsi.dds.messages.TimerMsg;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
 import org.apache.http.client.utils.DateUtils;
@@ -54,12 +57,15 @@ public class Gof3DiscoveryActor extends UntypedAbstractActor {
    */
   @Override
   public void onReceive(Object msg) {
+    log.debug("[Gof3DiscoveryActor] onReceive {}", Message.getDebug(msg));
+
     if (msg instanceof Gof3DiscoveryMsg) {
       Gof3DiscoveryMsg message = (Gof3DiscoveryMsg) msg;
 
       // Read the NSA discovery document.
       if (!discoverNSA(message)) {
         // No update so return.
+        log.debug("[Gof3DiscoveryActor] no new NSA document {}", message.getNsaURL());
         return;
       }
 
@@ -74,8 +80,11 @@ public class Gof3DiscoveryActor extends UntypedAbstractActor {
       // Send an updated discovery message back to the router.
       getSender().tell(message, getSelf());
     } else {
+      log.error("[Gof3DiscoveryActor] unhandled message {}", Message.getDebug(msg));
       unhandled(msg);
     }
+
+    log.debug("[Gof3DiscoveryActor] onReceive done.");
   }
 
   /**

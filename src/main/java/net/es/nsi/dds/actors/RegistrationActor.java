@@ -8,8 +8,6 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
-import jakarta.xml.bind.JAXBException;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
@@ -29,6 +27,7 @@ import net.es.nsi.dds.jaxb.dds.SubscriptionType;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.management.logs.DdsLogs;
+import net.es.nsi.dds.messages.Message;
 import net.es.nsi.dds.messages.RegistrationEvent;
 import net.es.nsi.dds.messages.RegistrationEvent.Event;
 import net.es.nsi.dds.util.NsiConstants;
@@ -47,30 +46,44 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class RegistrationActor extends UntypedAbstractActor {
     private static final String NOTIFICATIONS_URL = "notifications";
-
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsLogger logger = DdsLogger.getLogger();
-
     private final ObjectFactory factory = new ObjectFactory();
     private final DdsConfiguration discoveryConfiguration;
     private final RemoteSubscriptionCache remoteSubscriptionCache;
     private final RestClient restClient;
 
+    /**
+     * Default constructor called by Spring to initialize the actor.
+     *
+     * @param discoveryConfiguration
+     * @param remoteSubscriptionCache
+     */
     public RegistrationActor(DdsConfiguration discoveryConfiguration, RemoteSubscriptionCache remoteSubscriptionCache) {
         this.discoveryConfiguration = discoveryConfiguration;
         this.remoteSubscriptionCache = remoteSubscriptionCache;
         this.restClient = RestClient.getInstance();
     }
 
+    /**
+     * Nothing to do for initialization.
+     */
     @Override
     public void preStart() {
     }
 
+    /**
+     * Process an incoming subscription message to the actor.
+     *
+     * @param msg
+     */
     @Override
     public void onReceive(Object msg) {
+        log.debug("[RegistrationActor] onReceive {}", Message.getDebug(msg));
+
         if (msg instanceof RegistrationEvent) {
             RegistrationEvent event = (RegistrationEvent) msg;
-            log.debug("RegistrationActor: event={}, url={}", event.getEvent().name(), event.getUrl());
+            log.debug("[RegistrationActor] event={}, url={}", event.getEvent().name(), event.getUrl());
 
             switch (event.getEvent()) {
                 case Register:
@@ -83,14 +96,25 @@ public class RegistrationActor extends UntypedAbstractActor {
                     delete(event);
                     break;
                 default:
+                    log.error("[RegistrationActor] onReceive unhandled event {} {} {}",
+                        event.getEvent(), this.getSender(), Message.getDebug(msg));
                     unhandled(msg);
                     break;
             }
         } else {
+            log.error("[RegistrationActor] onReceive unhandled message {} {}", this.getSender(), Message.getDebug(msg));
             unhandled(msg);
         }
+
+        log.debug("[RegistrationActor] onReceive done.");
     }
 
+    /**
+     * Build the base notification URL for this nsi-dds instance.
+     *
+     * @return
+     * @throws MalformedURLException
+     */
     private String getNotificationURL() throws MalformedURLException {
         String baseURL = discoveryConfiguration.getBaseURL();
         URL url;
@@ -187,7 +211,7 @@ public class RegistrationActor extends UntypedAbstractActor {
                 }
             }
         }
-        catch (JAXBException | IOException ex) {
+        catch (Exception ex) {
             log.error("RegistrationActor.register: error on endpoint {}", remoteDdsURL, ex);
             logger.error(DdsErrors.DDS_SUBSCRIPTION_ADD_FAILED, remoteDdsURL);
         }
@@ -198,6 +222,12 @@ public class RegistrationActor extends UntypedAbstractActor {
         }
     }
 
+    /**
+     * Delete a subscription on remote nsi-dds peer.
+     *
+     * @param remoteDdsURL
+     * @param id
+     */
     private void deleteOldSubscriptions(String remoteDdsURL, String id) {
         Client client = restClient.get();
 
@@ -247,6 +277,12 @@ public class RegistrationActor extends UntypedAbstractActor {
         }
     }
 
+    /**
+     * Update a subscription on a remote nsi-dds peer.
+     *
+     * @param event
+     * @throws IllegalArgumentException
+     */
     private void update(RegistrationEvent event) throws IllegalArgumentException {
         if (event.getEvent() != Event.Update) {
             throw new IllegalArgumentException("update: invalid event type " + event.getEvent());
@@ -275,8 +311,11 @@ public class RegistrationActor extends UntypedAbstractActor {
         remoteSubscription.setLastAudit(new Date());
         Response response = null;
         try {
-            log.debug("RegistrationActor.update: getting subscription {},lastModified=", absoluteURL, remoteSubscription.getLastModified());
-            response = webTarget.request(NsiConstants.NSI_DDS_V1_XML).header("If-Modified-Since", DateUtils.formatDate(remoteSubscription.getLastModified(), DateUtils.PATTERN_RFC1123)).get();
+            log.debug("RegistrationActor.update: getting subscription {},lastModified = {}",
+                absoluteURL, remoteSubscription.getLastModified());
+            response = webTarget.request(NsiConstants.NSI_DDS_V1_XML)
+                .header("If-Modified-Since",
+                    DateUtils.formatDate(remoteSubscription.getLastModified(), DateUtils.PATTERN_RFC1123)).get();
 
             // We found the subscription and it was not updated.
             if (response.getStatus() == Response.Status.NOT_MODIFIED.getStatusCode()) {
@@ -327,6 +366,12 @@ public class RegistrationActor extends UntypedAbstractActor {
         }
     }
 
+    /**
+     * Remove a peer subscription from the local subscription cache.
+     *
+     * @param event
+     * @throws IllegalArgumentException
+     */
     private void delete(RegistrationEvent event) throws IllegalArgumentException {
         if (event.getEvent() != Event.Delete) {
             throw new IllegalArgumentException("delete: invalid event type " + event.getEvent());
@@ -338,6 +383,13 @@ public class RegistrationActor extends UntypedAbstractActor {
         }
     }
 
+    /**
+     * Delete a subscription on the remote nsi-dds peer.
+     *
+     * @param remoteDdsURL
+     * @param remoteSubscriptionURL
+     * @return
+     */
     private boolean deleteSubscription(String remoteDdsURL, String remoteSubscriptionURL) {
         Client client = restClient.get();
 

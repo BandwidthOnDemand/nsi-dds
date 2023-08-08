@@ -4,19 +4,35 @@
  */
 package net.es.nsi.dds.messages;
 
+import akka.actor.ActorPath;
+import lombok.ToString;
+
 import java.io.Serializable;
 
 /**
  *
  * @author hacksaw
  */
-public class RegistrationEvent implements Serializable {
+@ToString(callSuper=true)
+public class RegistrationEvent extends Message implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public enum Event { Audit, Register, Update, Delete };
 
     private Event event;
     private String url;
+
+    public RegistrationEvent() {
+        super();
+    }
+
+    public RegistrationEvent(String initiator) {
+        super(initiator);
+    }
+
+    public RegistrationEvent(String initiator, ActorPath path) {
+        super(initiator, path);
+    }
 
     /**
      * @return the event

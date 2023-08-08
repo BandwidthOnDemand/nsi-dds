@@ -5,19 +5,35 @@
 package net.es.nsi.dds.messages;
 
 import java.io.Serializable;
+
+import akka.actor.ActorPath;
+import lombok.ToString;
 import net.es.nsi.dds.provider.Subscription;
 
 /**
  *
  * @author hacksaw
  */
-public class SubscriptionEvent implements Serializable {
+@ToString(callSuper=true)
+public class SubscriptionEvent extends Message implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public enum Event { New, Update, Delete };
 
     private Event event;
     private Subscription subscription;
+
+    public SubscriptionEvent() {
+        super();
+    }
+
+    public SubscriptionEvent(String initiator) {
+        super(initiator);
+    }
+
+    public SubscriptionEvent(String initiator, ActorPath path) {
+        super(initiator, path);
+    }
 
     /**
      * @return the event

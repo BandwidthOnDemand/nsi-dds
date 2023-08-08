@@ -23,6 +23,7 @@ import net.es.nsi.dds.jaxb.nsa.NsaType;
 import net.es.nsi.dds.jaxb.nsa.PeerRoleEnum;
 import net.es.nsi.dds.jaxb.nsa.PeersWithType;
 import net.es.nsi.dds.lib.DocHelper;
+import net.es.nsi.dds.messages.Message;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
 import org.springframework.context.annotation.Scope;
@@ -46,26 +47,33 @@ public class AgoleDiscoveryActor extends UntypedAbstractActor {
 
     @Override
     public void onReceive(Object msg) {
-        if (msg instanceof AgoleDiscoveryMsg) {
-            AgoleDiscoveryMsg message = (AgoleDiscoveryMsg) msg;
+        log.debug("[AgoleDiscoveryActor] onReceive {}", Message.getDebug(msg));
 
+        if (msg instanceof AgoleDiscoveryMsg) {
+            log.debug("[AgoleDiscoveryActor] received AgoleDiscoveryMsg.");
+
+            AgoleDiscoveryMsg message = (AgoleDiscoveryMsg) msg;
             try {
                 // Read the NML topology document.
-                if (discoverTopology(message) == false) {
+                if (!discoverTopology(message)) {
                     // No update so return.
+                    log.debug("[AgoleDiscoveryActor] no topology update {}", message.getTopologyURL());
                     return;
                 }
             }
             catch (Exception ex) {
-                log.error("onReceive: Caught exception", ex);
+                log.error("[AgoleDiscoveryActor] Caught exception", ex);
                 return;
             }
 
             // Send an updated discovery message back to the router.
             getSender().tell(message, getSelf());
         } else {
+            log.error("[AgoleDiscoveryActor] unhandled event = {}", Message.getDebug(msg));
             unhandled(msg);
         }
+
+        log.debug("[AgoleDiscoveryActor] onReceive done.");
     }
 
     private boolean discoverTopology(AgoleDiscoveryMsg message) {

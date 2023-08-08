@@ -6,6 +6,11 @@ package net.es.nsi.dds.messages;
 
 import java.io.Serializable;
 import java.util.Collection;
+
+import akka.actor.ActorPath;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import net.es.nsi.dds.jaxb.dds.DocumentEventType;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.provider.Subscription;
@@ -14,52 +19,25 @@ import net.es.nsi.dds.provider.Subscription;
  *
  * @author hacksaw
  */
-public class Notification implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper=true)
+@Data
+public class Notification extends Message implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private DocumentEventType event;
     private Subscription subscription;
     private Collection<Document> documents;
 
-    /**
-     * @return the event
-     */
-    public DocumentEventType getEvent() {
-        return event;
+    public Notification() {
+        super();
     }
 
-    /**
-     * @param event the event to set
-     */
-    public void setEvent(DocumentEventType event) {
-        this.event = event;
+    public Notification(String initiator) {
+        super(initiator);
     }
 
-    /**
-     * @return the subscription
-     */
-    public Subscription getSubscription() {
-        return subscription;
-    }
-
-    /**
-     * @param subscription the subscription to set
-     */
-    public void setSubscription(Subscription subscription) {
-        this.subscription = subscription;
-    }
-
-    /**
-     * @return the documents
-     */
-    public Collection<Document> getDocuments() {
-        return documents;
-    }
-
-    /**
-     * @param documents the documents to set
-     */
-    public void setDocuments(Collection<Document> documents) {
-        this.documents = documents;
+    public Notification(String initiator, ActorPath path) {
+        super(initiator, path);
     }
 }

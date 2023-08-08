@@ -5,6 +5,11 @@
 package net.es.nsi.dds.messages;
 
 import java.io.Serializable;
+
+import akka.actor.ActorPath;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import net.es.nsi.dds.jaxb.dds.DocumentEventType;
 import net.es.nsi.dds.provider.Document;
 
@@ -12,38 +17,24 @@ import net.es.nsi.dds.provider.Document;
  *
  * @author hacksaw
  */
-public class DocumentEvent implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper=true)
+@Data
+public class DocumentEvent extends Message implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private DocumentEventType event;
     private Document document;
 
-    /**
-     * @return the event
-     */
-    public DocumentEventType getEvent() {
-        return event;
+    public DocumentEvent() {
+        super();
     }
 
-    /**
-     * @param event the event to set
-     */
-    public void setEvent(DocumentEventType event) {
-        this.event = event;
+    public DocumentEvent(String initiator) {
+        super(initiator);
     }
 
-    /**
-     * @return the document
-     */
-    public Document getDocument() {
-        return document;
+    public DocumentEvent(String initiator, ActorPath path) {
+        super(initiator, path);
     }
-
-    /**
-     * @param document the document to set
-     */
-    public void setDocument(Document document) {
-        this.document = document;
-    }
-
 }

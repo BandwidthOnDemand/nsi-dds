@@ -9,6 +9,7 @@ import akka.actor.Terminated;
 import akka.actor.UntypedAbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import net.es.nsi.dds.messages.Message;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import scala.concurrent.Future;
@@ -31,6 +32,8 @@ public class Terminator extends UntypedAbstractActor {
 
     @Override
     public void onReceive(Object msg) throws InterruptedException {
+        log.debug("[Terminator] onReceive {}", Message.getDebug(msg));
+
         if (msg instanceof Terminated) {
             log.info("{} has terminated, shutting down system", ref.path());
             Future<Terminated> terminate = getContext().system().terminate();
@@ -39,7 +42,10 @@ public class Terminator extends UntypedAbstractActor {
                 Thread.sleep(1000);
             }
         } else {
+            log.error("[Terminator] unhandled message {}", Message.getDebug(msg));
             unhandled(msg);
         }
+
+        log.debug("[Terminator] onReceive done.");
     }
 }
