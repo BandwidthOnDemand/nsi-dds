@@ -21,7 +21,6 @@ import scala.concurrent.duration.Duration;
 @Component
 @Scope("prototype")
 public class ConfigurationActor extends UntypedAbstractActor {
-
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsActorSystem ddsActorSystem;
     private final DdsConfiguration discoveryConfiguration;
@@ -53,7 +52,7 @@ public class ConfigurationActor extends UntypedAbstractActor {
      * Process an incoming message to the actor.  This is typically a timer
      * message triggering a reload the DDS configuration file.
      *
-     * @param msg
+     * @param msg Can be one of a StartMsg or TimerMsg that triggers configuration file loading.
      */
     @Override
     public void onReceive(Object msg) {
@@ -81,7 +80,8 @@ public class ConfigurationActor extends UntypedAbstractActor {
                     this.getSelf(), event, ddsActorSystem.getActorSystem().dispatcher(), null);
 
         } else {
-            log.error("[ConfigurationActor] onReceive unhandled message {} {}", this.getSender(), Message.getDebug(msg));
+            log.error("[ConfigurationActor] onReceive unhandled message {} {}",
+                this.getSender(), Message.getDebug(msg));
             unhandled(msg);
         }
 

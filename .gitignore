@@ -7,7 +7,6 @@ nsi-pce.iml
 .idea
 *.iml
 config/cache/*.xml
-compose/nsi-dds-config/cache/
 config/repository/*.xml
 /src/test/resources/config/cache/
 /src/test/resources/config/repository/
@@ -18,4 +17,5 @@ src/main/resources/git.properties
 charts/nsi-dds/config
 /nbproject/
 .DS_Store
-
+/compose/nsi-dds-east-config/cache/
+/compose/nsi-dds-west-config/cache/

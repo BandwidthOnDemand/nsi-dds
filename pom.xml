@@ -330,8 +330,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <!-- Compatible down to java 11, and 15. -->
-          <release>11</release>
+          <!-- Compatible down to java 17. -->
+          <release>17</release>
           <compilerArgument>-Xlint:deprecation</compilerArgument>
         </configuration>
       </plugin>
@@ -358,6 +358,7 @@
               <value>file,http,all</value>
             </property>
           </properties>
+          <outputFile/>
         </configuration>
       </plugin>
 
@@ -479,21 +480,21 @@
           <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-xjc</artifactId>
-            <version>3.0.0</version>
+            <version>4.0.3</version>
             <scope>compile</scope>
           </dependency>
 
           <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-core</artifactId>
-            <version>3.0.0</version>
+            <version>4.0.3</version>
             <scope>compile</scope>
           </dependency>
 
           <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>3.0.0</version>
+            <version>4.0.3</version>
             <scope>compile</scope>
           </dependency>
         </dependencies>

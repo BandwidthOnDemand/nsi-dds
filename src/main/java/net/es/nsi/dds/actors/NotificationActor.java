@@ -103,8 +103,8 @@ public class NotificationActor extends UntypedAbstractActor {
         // Do not change this to specific Exceptions unless you keep the
         // generic catch due to underlying SSL exceptions from the SSL
         // provider.
-        log.error("[NotificationActor] failed notification = {} to client = {}, ex = {}",
-                list.getId(), callback, ex);
+        log.error(ex, "[NotificationActor] failed notification = {} to client = {}",
+                list.getId(), callback);
         error = true;
       } finally {
         log.debug("[NotificationActor] finally - requesterId = {}, id = {}, callback = {}",

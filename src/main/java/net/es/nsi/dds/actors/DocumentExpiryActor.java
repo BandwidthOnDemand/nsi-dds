@@ -9,6 +9,7 @@ import net.es.nsi.dds.dao.DocumentCache;
 import net.es.nsi.dds.messages.Message;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.messages.TimerMsg;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
@@ -20,7 +21,7 @@ import scala.concurrent.duration.Duration;
  * @author hacksaw
  */
 @Component
-@Scope("prototype")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DocumentExpiryActor extends UntypedAbstractActor {
   private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
   private final DdsActorSystem ddsActorSystem;
@@ -46,14 +47,14 @@ public class DocumentExpiryActor extends UntypedAbstractActor {
     TimerMsg message = new TimerMsg("DocumentExpiryActor", this.getSelf().path());
     ddsActorSystem.getActorSystem().scheduler()
         .scheduleOnce(Duration.create(getInterval(), TimeUnit.SECONDS), this.getSelf(), message,
-            ddsActorSystem.getActorSystem().dispatcher(), null);
+            ddsActorSystem.getActorSystem().dispatcher(), this.getSelf());
   }
 
   /**
    * Process an incoming message to the actor.  This is typically a timer
    * message triggering an audit for expired documents in the cache.
    *
-   * @param msg
+   * @param msg A TimerMsg triggering the action to expire documents.
    */
   @Override
   public void onReceive(Object msg) {
@@ -73,7 +74,7 @@ public class DocumentExpiryActor extends UntypedAbstractActor {
       message.setPath(this.getSelf().path());
       ddsActorSystem.getActorSystem().scheduler()
           .scheduleOnce(Duration.create(getInterval(), TimeUnit.SECONDS), this.getSelf(), message,
-              ddsActorSystem.getActorSystem().dispatcher(), null);
+              ddsActorSystem.getActorSystem().dispatcher(), this.getSelf());
 
     } else {
       log.error("[DocumentExpiryActor] onReceive unhandled message {} {}", this.getSender(), Message.getDebug(msg));

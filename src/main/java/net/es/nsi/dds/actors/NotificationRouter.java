@@ -234,7 +234,7 @@ public class NotificationRouter extends UntypedAbstractActor {
      * @param message
      */
     public void sendNotification(Object message) {
-        this.getSelf().tell(message, null);
+        this.getSelf().tell(message, ActorRef.noSender());
     }
 
     /**

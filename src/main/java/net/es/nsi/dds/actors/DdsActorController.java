@@ -117,7 +117,7 @@ public class DdsActorController implements ApplicationContextAware {
     /**
      * Send a notification message within the AKKA system.
      *
-     * @param message
+     * @param message The notification message to send.
      */
     public void sendNotification(Object message) {
         NotificationRouter notificationRouter = (NotificationRouter) applicationContext.getBean("notificationRouter");
@@ -126,14 +126,13 @@ public class DdsActorController implements ApplicationContextAware {
 
     /**
      * Start the discovery process within AKKA by sending a StartMsg to all actors.
-     *
      */
     public void start() {
         log.info("[DdsActorController] Starting discovery process...");
 
         StartMsg msg = new StartMsg("DdsActorController");
         startList.forEach((ref) -> {
-            ref.tell(msg, null);
+            ref.tell(msg, ActorRef.noSender());
         });
 
         log.debug("[DdsActorController] dead letters waiting {}",
@@ -143,7 +142,7 @@ public class DdsActorController implements ApplicationContextAware {
     /**
      * Shutdown the DDS actor system.
      *
-     * @throws InterruptedException
+     * @throws InterruptedException If the sleeping thread is interrupted.
      */
     public void shutdown() throws InterruptedException {
         log.info("DdsActorController: Shutting down actor system...");

@@ -224,8 +224,7 @@ public class Main extends ResourceConfig {
    * Processes the "pidFile" command line and system property option.
    *
    * @param cmd Commands entered by the user.
-   * @return The specified pidFile.
-   * @throws IOException
+   * @throws IOException If there is an issue creating the PID file.
    */
   private static void processPidFile(CommandLine cmd) throws IOException {
     // Get the application base directory.
@@ -248,8 +247,6 @@ public class Main extends ResourceConfig {
         out.close();
       }
     }
-
-    return;
   }
 
   /**

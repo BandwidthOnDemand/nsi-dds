@@ -9,9 +9,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
+ * This is timer event message.
  *
  * @author hacksaw
  */
@@ -19,6 +21,7 @@ import java.io.Serializable;
 @ToString(callSuper=true)
 @Data
 public class TimerMsg extends Message implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public TimerMsg() {
