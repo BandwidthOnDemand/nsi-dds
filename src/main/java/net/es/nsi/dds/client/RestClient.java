@@ -44,6 +44,7 @@ import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.RequestEntityProcessing;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.message.GZipEncoder;
+import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
 
 /**
@@ -224,7 +225,11 @@ public class RestClient {
         clientConfig.property(ApacheClientProperties.CONNECTION_MANAGER, connectionManager);
 
         clientConfig.register(GZipEncoder.class);
-        clientConfig.register(new MoxyXmlFeature());
+        //clientConfig.register(new MoxyXmlFeature());
+        //clientConfig.register(new MoxyJsonFeature());
+
+        clientConfig.register(net.es.nsi.dds.management.api.ManagementService.class);
+        clientConfig.register(net.es.nsi.dds.api.DiscoveryService.class);
         clientConfig.register(new LoggingFeature(java.util.logging.Logger.getGlobal(), Level.ALL,
                 LoggingFeature.Verbosity.PAYLOAD_ANY, 10000));
         clientConfig.property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.CHUNKED);

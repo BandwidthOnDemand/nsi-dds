@@ -38,7 +38,7 @@ public class LogsTest {
 
         log.debug("*************************************** LogsTest oneTimeSetUp ***********************************");
         testConfig = new TestConfig();
-        management = testConfig.getTarget().path("dds").path("management");
+        management = testConfig.getTarget().path("dds").path("management").path("v1");
         log.debug("*************************************** LogsTest oneTimeSetUp done ***********************************");
     }
 

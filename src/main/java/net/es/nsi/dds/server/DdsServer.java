@@ -11,6 +11,7 @@ import java.security.cert.CertificateException;
 import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.api.DiscoveryService;
 import net.es.nsi.dds.api.Portal;
+import net.es.nsi.dds.client.DdsNotificationCallback;
 import net.es.nsi.dds.config.http.HttpConfig;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.management.api.ManagementService;
@@ -90,6 +91,7 @@ public class DdsServer {
                       .addInterface(GZipEncoder.class)
                       .addInterface(DeflateEncoder.class)
                       .addInterface(DiscoveryService.class)
+                      .addInterface(DdsNotificationCallback.class)
                       .addInterface(Portal.class)
                       .addInterface(ManagementService.class)
                       .setPackages(http.getPackageName())

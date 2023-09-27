@@ -1,26 +1,10 @@
 package net.es.nsi.dds.provider;
 
 import akka.actor.Cancellable;
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.xml.bind.JAXBException;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.actors.DdsActorController;
 import net.es.nsi.dds.api.DiscoveryError;
@@ -28,17 +12,23 @@ import net.es.nsi.dds.api.Exceptions;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.dao.DocumentCache;
 import net.es.nsi.dds.jaxb.DdsParser;
-import net.es.nsi.dds.jaxb.dds.DocumentEventType;
-import net.es.nsi.dds.jaxb.dds.DocumentType;
-import net.es.nsi.dds.jaxb.dds.FilterType;
-import net.es.nsi.dds.jaxb.dds.NotificationType;
-import net.es.nsi.dds.jaxb.dds.ObjectFactory;
-import net.es.nsi.dds.jaxb.dds.SubscriptionRequestType;
-import net.es.nsi.dds.jaxb.dds.SubscriptionType;
+import net.es.nsi.dds.jaxb.dds.*;
 import net.es.nsi.dds.messages.DocumentEvent;
 import net.es.nsi.dds.messages.SubscriptionEvent;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.XmlUtilities;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -72,8 +62,7 @@ public class DdsProvider implements DiscoveryProvider {
   }
 
   public static DiscoveryProvider getInstance() {
-    DdsProvider ddsProvider = SpringApplicationContext.getBean("discoveryProvider", DdsProvider.class);
-    return ddsProvider;
+    return SpringApplicationContext.getBean("discoveryProvider", DdsProvider.class);
   }
 
   @Override
@@ -81,7 +70,7 @@ public class DdsProvider implements DiscoveryProvider {
     log.debug("Starting DDS Service with cached documents:");
     for (Document document : documentCache.values()) {
       try {
-        log.debug("id=" + URLDecoder.decode(document.getId(), "UTF-8"));
+        log.debug("id=" + URLDecoder.decode(document.getId(), StandardCharsets.UTF_8));
       } catch (Exception ex) {
         log.error("invalid id=" + document.getId());
       }
@@ -90,13 +79,13 @@ public class DdsProvider implements DiscoveryProvider {
     log.debug("Starting DDS Service with repository documents:");
     for (Document document : documentRepository.values()) {
       try {
-        log.debug("id=" + URLDecoder.decode(document.getId(), "UTF-8"));
+        log.debug("id=" + URLDecoder.decode(document.getId(), StandardCharsets.UTF_8));
       } catch (Exception ex) {
         log.error("invalid id=" + document.getId());
       }
     }
 
-    // Copy documents from permanet repository to cache before we start
+    // Copy documents from permanent repository to cache before we start
     // processing requests.
     documentCache.putAll(documentRepository);
 
@@ -146,7 +135,7 @@ public class DdsProvider implements DiscoveryProvider {
     Subscription subscription = subscriptions.remove(id);
     if (subscription == null) {
       log.debug("DdsProvider.deleteSubscription: id={} does not exist", id);
-      throw Exceptions.doesNotExistException(DiscoveryError.SUBCRIPTION_DOES_NOT_EXIST, "id", id);
+      throw Exceptions.doesNotExistException(DiscoveryError.SUBSCRIPTION_DOES_NOT_EXIST, "id", id);
     }
 
     log.debug("DdsProvider.deleteSubscription: requesterId={}, id={}, version={}",
@@ -173,7 +162,7 @@ public class DdsProvider implements DiscoveryProvider {
 
     Subscription subscription = subscriptions.get(id);
     if (subscription == null) {
-      throw Exceptions.doesNotExistException(DiscoveryError.SUBCRIPTION_DOES_NOT_EXIST, "id", id);
+      throw Exceptions.doesNotExistException(DiscoveryError.SUBSCRIPTION_DOES_NOT_EXIST, "id", id);
     }
 
     // Get the current time and remove milliseconds.
@@ -214,7 +203,7 @@ public class DdsProvider implements DiscoveryProvider {
     Subscription subscription = subscriptions.get(id);
     if (subscription == null) {
       log.debug("DdsProvider.getSubscription: id={} not found", id);
-      throw Exceptions.doesNotExistException(DiscoveryError.SUBCRIPTION_DOES_NOT_EXIST, "id", id);
+      throw Exceptions.doesNotExistException(DiscoveryError.SUBSCRIPTION_DOES_NOT_EXIST, "id", id);
     }
 
     // Check to see if the document was modified after provided date.
@@ -231,7 +220,6 @@ public class DdsProvider implements DiscoveryProvider {
 
   @Override
   public Collection<Subscription> getSubscriptions(String requesterId, Date lastModified) {
-
     Collection<Subscription> subs = new ArrayList<>();
     if (requesterId != null && !requesterId.isEmpty()) {
       subs = getSubscriptionByRequesterId(requesterId, getSubscriptions());
@@ -309,7 +297,7 @@ public class DdsProvider implements DiscoveryProvider {
     Document document = new Document(request, configReader.getBaseURL());
 
     // See if we already have a document under this id.
-    Optional<Document> get = Optional.fromNullable(documentCache.get(document.getId()));
+    Optional<Document> get = Optional.ofNullable(documentCache.get(document.getId()));
     if (get.isPresent()) {
       throw Exceptions.resourceExistsException(DiscoveryError.DOCUMENT_EXISTS, "document", document.getId());
     }
@@ -419,14 +407,15 @@ public class DdsProvider implements DiscoveryProvider {
   }
 
   @Override
-  public Document updateDocument(String nsa, String type, String id, DocumentType request, Source context) throws WebApplicationException, InvalidVersionException {
-    // Create a document identifier to look up in our documet table.
+  public Document updateDocument(String nsa, String type, String id, DocumentType request, Source context)
+      throws WebApplicationException, InvalidVersionException {
+    // Create a document identifier to look up in our document table.
     String documentId = Document.documentId(nsa, type, id);
 
     // See if we have a document under this id.
     Document document = documentCache.get(documentId);
     if (document == null) {
-      String error = DiscoveryError.getErrorString(DiscoveryError.DOCUMENT_DOES_NOT_EXIST, "document", documentId);
+      String error = DiscoveryError.getErrorXml(DiscoveryError.DOCUMENT_DOES_NOT_EXIST, "document", documentId);
       throw new NotFoundException(error);
     }
 
@@ -646,9 +635,7 @@ public class DdsProvider implements DiscoveryProvider {
   public Collection<Document> getDocumentsByDate(Date lastDiscovered, Collection<Document> input) {
     Collection<Document> output = new ArrayList<>();
     input.stream().filter((document) -> (document.getLastDiscovered().after(lastDiscovered)))
-            .forEach((document) -> {
-              output.add(document);
-            });
+            .forEach(output::add);
 
     return output;
   }
@@ -656,9 +643,7 @@ public class DdsProvider implements DiscoveryProvider {
   public Collection<Document> getDocumentsByNsa(String nsa, Collection<Document> input) {
     Collection<Document> output = new ArrayList<>();
     input.stream().filter((document) -> (document.getDocument().getNsa().equalsIgnoreCase(nsa)))
-            .forEach((document) -> {
-              output.add(document);
-            });
+            .forEach(output::add);
 
     return output;
   }
@@ -666,9 +651,7 @@ public class DdsProvider implements DiscoveryProvider {
   public Collection<Document> getDocumentsByType(String type, Collection<Document> input) {
     Collection<Document> output = new ArrayList<>();
     input.stream().filter((document) -> (document.getDocument().getType().equalsIgnoreCase(type)))
-            .forEach((document) -> {
-              output.add(document);
-            });
+            .forEach(output::add);
 
     return output;
   }
@@ -676,9 +659,7 @@ public class DdsProvider implements DiscoveryProvider {
   public Collection<Document> getDocumentsById(String id, Collection<Document> input) {
     Collection<Document> output = new ArrayList<>();
     input.stream().filter((document) -> (document.getDocument().getId().equalsIgnoreCase(id)))
-            .forEach((document) -> {
-              output.add(document);
-            });
+            .forEach(output::add);
 
     return output;
   }
@@ -736,7 +717,7 @@ public class DdsProvider implements DiscoveryProvider {
       }
 
       // We need to determine if this document is still valid
-      // before proceding.
+      // before proceeding.
       XMLGregorianCalendar expires = document.getExpires();
       if (expires != null) {
         Date expiresTime = expires.toGregorianCalendar().getTime();

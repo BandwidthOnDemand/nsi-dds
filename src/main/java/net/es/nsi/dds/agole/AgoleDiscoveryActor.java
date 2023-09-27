@@ -8,7 +8,6 @@ import jakarta.xml.bind.JAXBException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import net.es.nsi.dds.jaxb.nml.NmlLifeTimeType;
 import net.es.nsi.dds.jaxb.nml.NmlLocationType;
@@ -49,10 +48,9 @@ public class AgoleDiscoveryActor extends UntypedAbstractActor {
     public void onReceive(Object msg) {
         log.debug("[AgoleDiscoveryActor] onReceive {}", Message.getDebug(msg));
 
-        if (msg instanceof AgoleDiscoveryMsg) {
+        if (msg instanceof AgoleDiscoveryMsg message) {
             log.debug("[AgoleDiscoveryActor] received AgoleDiscoveryMsg.");
 
-            AgoleDiscoveryMsg message = (AgoleDiscoveryMsg) msg;
             try {
                 // Read the NML topology document.
                 if (!discoverTopology(message)) {
@@ -99,18 +97,12 @@ public class AgoleDiscoveryActor extends UntypedAbstractActor {
             return false;
         }
 
-        XMLGregorianCalendar lastDiscovered;
-        try {
-            lastDiscovered = XmlUtilities.xmlGregorianCalendar();
-        } catch (DatatypeConfigurationException ex) {
-            log.error("discoverTopology: Failed to create a lastDiscovered value, id={}", nsa.getId(), ex);
-            return false;
-        }
+        XMLGregorianCalendar lastDiscovered = XmlUtilities.xmlGregorianCalendar();
 
         // We need to create both the NSA Discovery and Topology documents from
         // the contents of this single document.
         NsaType nsaDocument = parseNsa(nsa);
-        if (nsaDocument == null || !DocHelper.addNsaDocument(nsaDocument, lastDiscovered)) {
+        if (!DocHelper.addNsaDocument(nsaDocument, lastDiscovered)) {
             return false;
         }
 
@@ -120,12 +112,13 @@ public class AgoleDiscoveryActor extends UntypedAbstractActor {
         message.setNsaId(nsa.getId());
 
         Collection<NmlTopologyType> nmlDocuments = parseTopology(nsa, nsaDocument);
-        nmlDocuments.stream().forEach((nmlDocument) -> {
+        nmlDocuments.forEach((nmlDocument) -> {
             try {
                 DocHelper.addTopologyDocument(nmlDocument, lastDiscovered, nsa.getId());
             }
             catch (Exception ex) {
-                log.error("discoverTopology: Failed to topology document, nsaId={}, networkId={}", nsa.getId(), nmlDocument.getId());
+                log.error("discoverTopology: Failed to topology document, nsaId={}, networkId={}",
+                    nsa.getId(), nmlDocument.getId());
             }
         });
 
@@ -185,7 +178,7 @@ public class AgoleDiscoveryActor extends UntypedAbstractActor {
 
         // We pull the networkId out of the <Topology> elements.
         List<String> networkId = nsaDocument.getNetworkId();
-        nsa.getTopology().stream().forEach((topology) -> {
+        nsa.getTopology().forEach((topology) -> {
             networkId.add(topology.getId().trim());
         });
 
@@ -194,11 +187,10 @@ public class AgoleDiscoveryActor extends UntypedAbstractActor {
 
     private Collection<NmlTopologyType> parseTopology(NmlNSAType nmlNsa, NsaType nsaDocument) {
         List<NmlTopologyType> topologies = nmlNsa.getTopology();
-        topologies.stream().map((topology) -> {
+        topologies.stream().peek((topology) -> {
             if (topology.getVersion() == null || !topology.getVersion().isValid()) {
                 topology.setVersion(nsaDocument.getVersion());
             }
-            return topology;
         }).filter((topology) -> (topology.getLifetime() == null || topology.getLifetime().getEnd() == null || !topology.getLifetime().getEnd().isValid())).forEach((topology) -> {
             NmlLifeTimeType lifetime = nmlFactory.createNmlLifeTimeType();
             lifetime.setEnd(nsaDocument.getExpires());
@@ -215,9 +207,7 @@ public class AgoleDiscoveryActor extends UntypedAbstractActor {
                 peersWith.setRole(PeerRoleEnum.PA);
                 peersWith.setValue(nsa.getId().trim());
                 return peersWith;
-            }).forEach((peersWith) -> {
-                peersWithList.add(peersWith);
-            });
+            }).forEach(peersWithList::add);
         });
 
         return peersWithList;
@@ -229,12 +219,7 @@ public class AgoleDiscoveryActor extends UntypedAbstractActor {
             InterfaceType aInterface = nsaFactory.createInterfaceType();
             aInterface.setHref(service.getLink().trim());
             return aInterface;
-        }).map((aInterface) -> {
-            aInterface.setType(NsiConstants.NSI_CS_PROVIDER_V2);
-            return aInterface;
-        }).forEach((aInterface) -> {
-            interfaceList.add(aInterface);
-        });
+        }).peek((aInterface) -> aInterface.setType(NsiConstants.NSI_CS_PROVIDER_V2)).forEach(interfaceList::add);
 
         return interfaceList;
     }

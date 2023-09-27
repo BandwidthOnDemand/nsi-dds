@@ -1,39 +1,35 @@
 package net.es.nsi.dds.management.api;
 
 import com.google.common.base.Strings;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.GenericEntity;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import jakarta.annotation.PostConstruct;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.Properties;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import lombok.extern.slf4j.Slf4j;
+import net.es.nsi.dds.api.DiscoveryError;
+import net.es.nsi.dds.api.Error;
+import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.jaxb.ManagementParser;
-import net.es.nsi.dds.jaxb.management.AttributeType;
-import net.es.nsi.dds.jaxb.management.LogEnumType;
-import net.es.nsi.dds.jaxb.management.LogListType;
-import net.es.nsi.dds.jaxb.management.LogType;
-import net.es.nsi.dds.jaxb.management.ObjectFactory;
-import net.es.nsi.dds.jaxb.management.VersionType;
+import net.es.nsi.dds.jaxb.dds.ErrorType;
+import net.es.nsi.dds.jaxb.management.*;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
 import net.es.nsi.dds.util.NsiConstants;
+import net.es.nsi.dds.util.UrlTransform;
+import net.es.nsi.dds.util.XmlUtilities;
 import org.apache.http.client.utils.DateUtils;
+import org.apache.http.client.utils.URIBuilder;
 
 /**
  * The implementation class for the REST-based management interface.
@@ -45,6 +41,115 @@ import org.apache.http.client.utils.DateUtils;
 public class ManagementService {
     private final DdsLogger ddsLogger = DdsLogger.getLogger();
     private final ObjectFactory managementFactory = new ObjectFactory();
+    private final net.es.nsi.dds.jaxb.dds.ObjectFactory ddsFactory = new net.es.nsi.dds.jaxb.dds.ObjectFactory();
+    private UrlTransform utilities;
+
+    @PostConstruct
+    public void init() throws Exception {
+        utilities = new UrlTransform(DdsConfiguration.getInstance().getUrlTransform());
+    }
+
+    /**
+     * Returns a list of available DDS service API resource URLs.
+     *
+     * Operation: GET /dds/management/v1
+     *
+     * @return A RESTful response.
+     * @throws DatatypeConfigurationException
+     */
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_JSON,
+        NsiConstants.NSI_DDS_V1_XML, NsiConstants.NSI_DDS_V1_JSON })
+    public Response getResources(@Context UriInfo info) {
+
+        String location = "";
+        try {
+            // We need the request URL (transformed) to build fully qualified resource URLs.
+            location = utilities.getPath(info.getAbsolutePath().toASCIIString()).build().toASCIIString();
+            log.info("[ManagementService] GET operation = {}", location);
+
+            // Build the results object.
+            ResourceListType resources = managementFactory.createResourceListType();
+
+            // Add a self entry.
+            ResourceType self = managementFactory.createResourceType();
+            self.setId("self");
+            self.setVersion("v1");
+            self.setDefault(true);
+            self.setHref(location);
+            resources.getResource().add(self);
+
+            // Now add all the resource annotated interfaces.
+            Method[] methods = ManagementService.class.getMethods();
+            for (Method m : methods) {
+                if (m.isAnnotationPresent(ResourceAnnotation.class)) {
+                    ResourceAnnotation ra = m.getAnnotation(ResourceAnnotation.class);
+                    Path pathAnnotation = m.getAnnotation(Path.class);
+                    if (ra == null || pathAnnotation == null) {
+                        continue;
+                    }
+
+                    // Add an entry for this annotated resource.
+                    ResourceType resource = managementFactory.createResourceType();
+                    resource.setId(ra.name());
+                    resource.setVersion(ra.version());
+                    resource.setDefault(ra._default());
+                    resource.setHref(concatPath(location, pathAnnotation.value()));
+                    resources.getResource().add(resource);
+                }
+            }
+            return Response
+                .ok(new GenericEntity<JAXBElement<ResourceListType>>(managementFactory.createResources(resources)){})
+                .header(HttpHeaders.CONTENT_LOCATION, location)
+                .header(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, max-age=0, must-revalidate")
+                .header("Pragma", "no-cache")
+                .build();
+        } catch (SecurityException | URISyntaxException ex) {
+            LogType logError = ddsLogger.error(DdsErrors.MANAGEMENT_INTERNAL_ERROR, location, ex.getMessage());
+            Error error = ddsLogger.logTypeToError(logError);
+            log.error("[ManagementService] getResources returning error:\n{}", error.toString());
+            return Response.serverError()
+                .entity(new GenericEntity<JAXBElement<ErrorType>>(error.getJAXBElement()) {}).build();
+        }
+    }
+
+    @GET
+    @Path("/v1/ping")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_JSON,
+        NsiConstants.NSI_DDS_V1_XML, NsiConstants.NSI_DDS_V1_JSON })
+    @ResourceAnnotation(name = "ping", version = "1.0", _default = true)
+    public Response ping(@Context UriInfo info) {
+        final URI location = info.getAbsolutePath();
+        log.info("[ManagementService] Ping! = {}", location);
+
+        PingType ping = managementFactory.createPingType();
+        ping.setTime(XmlUtilities.xmlGregorianCalendar());
+
+        return Response.ok(new GenericEntity<JAXBElement<PingType>>(managementFactory.createPing(ping)) {})
+            .header(HttpHeaders.CONTENT_LOCATION, location.toASCIIString())
+            .header(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, max-age=0, must-revalidate")
+            .header("Pragma", "no-cache")
+            .build();
+    }
+
+    @GET
+    @Path("/v1/health")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_JSON,
+        NsiConstants.NSI_DDS_V1_XML, NsiConstants.NSI_DDS_V1_JSON })
+    @ResourceAnnotation(name = "health", version = "1.0", _default = true)
+    public Response health(@Context UriInfo info) {
+        final URI location = info.getAbsolutePath();
+        log.info("[ManagementService] health check = {}", location);
+
+        HealthStatusType status = managementFactory.createHealthStatusType();
+        status.setStatus(HealthStatus.UP);
+
+        return Response.ok(new GenericEntity<JAXBElement<HealthStatusType>>(managementFactory.createHealth(status)) {})
+            .header(HttpHeaders.CONTENT_LOCATION, location.toASCIIString())
+            .header(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, max-age=0, must-revalidate")
+            .header("Pragma", "no-cache")
+            .build();
+    }
 
     /**
      * Get this DDS instance version information.
@@ -52,21 +157,26 @@ public class ManagementService {
      * @return
      */
     @GET
-    @Path("/version")
-    @Produces({ MediaType.APPLICATION_XML, NsiConstants.NSI_DDS_V1_XML })
-    public Response version() {
-        log.debug("ManagementService.version: PING!");
-
+    @Path("/v1/version")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_JSON,
+        NsiConstants.NSI_DDS_V1_XML, NsiConstants.NSI_DDS_V1_JSON })
+    @ResourceAnnotation(name = "version", version = "1.0", _default = true)
+    public Response version(@Context UriInfo info) throws DatatypeConfigurationException {
         final Properties properties = new Properties();
 
         // Load the properties file containing our $project.version from maven.
+        String location = "";
         try {
+            location = utilities.getPath(info.getAbsolutePath().toASCIIString()).build().toASCIIString();
+            log.info("[ManagementService] GET version = {}", location);
             properties.load(this.getClass().getClassLoader().getResourceAsStream("version.properties"));
             properties.load(this.getClass().getClassLoader().getResourceAsStream("git.properties"));
         }
-        catch (IllegalArgumentException | IOException | NullPointerException ex) {
-            log.error("version: Failed to load properties file", ex);
-            return Response.serverError().build();
+        catch (IllegalArgumentException | IOException | NullPointerException | URISyntaxException ex) {
+            LogType logError = ddsLogger.error(DdsErrors.MANAGEMENT_INTERNAL_ERROR, location, ex.getMessage());
+            Error error = ddsLogger.logTypeToError(logError);
+            return Response.serverError()
+                .entity(new GenericEntity<JAXBElement<ErrorType>>(error.getJAXBElement()) {}).build();
         }
 
         log.debug("ManagementService.version: loaded properties {}", properties.getProperty("git.commit.id"));
@@ -82,15 +192,20 @@ public class ManagementService {
             result.getAttribute().add(attribute);
         }
 
-      try {
-        log.debug("ManagementService.version: built response:\n{}",
-                ManagementParser.getInstance().xmlFormatter(result));
-      } catch (JAXBException ex) {
-        log.error("ManagementService.version: could not convert version information into XML", ex);
-        return Response.serverError().build();
-      }
-
-        return Response.ok().entity(new GenericEntity<JAXBElement<VersionType>>(managementFactory.createVersion(result)) {}).build();
+        try {
+            if (log.isDebugEnabled()) {
+                String s = ManagementParser.getInstance().xmlFormatter(result);
+                log.debug("ManagementService.version: built response:\n{}", s);
+            }
+            return Response.ok()
+                .entity(new GenericEntity<JAXBElement<VersionType>>(managementFactory.createVersion(result)) {})
+                .build();
+        } catch (JAXBException ex) {
+            LogType logError = ddsLogger.error(DdsErrors.MANAGEMENT_INTERNAL_ERROR, location, ex.getMessage());
+            Error error = ddsLogger.logTypeToError(logError);
+            return Response.serverError()
+                .entity(new GenericEntity<JAXBElement<ErrorType>>(error.getJAXBElement()) {}).build();
+        }
     }
 
     /**
@@ -106,8 +221,10 @@ public class ManagementService {
      * @throws Exception If there is an internal server error.
      */
     @GET
-    @Path("/logs")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "application/vnd.net.es.dds.v1+json", "application/vnd.net.es.dds.v1+xml" })
+    @Path("/v1/logs")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_JSON,
+                    NsiConstants.NSI_DDS_V1_XML, NsiConstants.NSI_DDS_V1_JSON })
+    @ResourceAnnotation(name = "logs", version = "1.0", _default = true)
     public Response getLogs(@HeaderParam("If-Modified-Since") String ifModifiedSince,
             @QueryParam("type") String type, /* One of "Log" or "Error". */
             @QueryParam("code") String code, /* Will convert to an integer. */
@@ -115,17 +232,19 @@ public class ManagementService {
             @QueryParam("audit") String audit) throws Exception {
 
         // Get the overall topology provider status.
-        LogListType topologylogs = managementFactory.createLogListType();
+        LogListType topologyLogs = managementFactory.createLogListType();
         Collection<LogType> logs = ddsLogger.getLogs();
-        topologylogs.getLog().addAll(logs);
+        topologyLogs.getLog().addAll(logs);
 
         // TODO: Linear searches through thousands of logs will get slow.  Fix
         // if it becomes a problem.
         if (!Strings.isNullOrEmpty(type)) {
             if (!LogEnumType.LOG.value().equalsIgnoreCase(type) &&
                     !LogEnumType.ERROR.value().equalsIgnoreCase(type)) {
-                LogType error = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, type, "Invalid log type");
-                return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
+                LogType logError = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, type, "Invalid log type");
+                Error error = ddsLogger.logTypeToError(logError);
+                return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new GenericEntity<JAXBElement<ErrorType>>(error.getJAXBElement()) {}).build();
             }
 
             int codeInt = -1;
@@ -134,12 +253,14 @@ public class ManagementService {
                     codeInt = Integer.parseInt(code);
                 }
                 catch (NumberFormatException ne) {
-                    LogType error = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, type, "Invalid code value");
-                    return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
+                    LogType logError = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, type, "Invalid code value");
+                    Error error = ddsLogger.logTypeToError(logError);
+                    return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new GenericEntity<JAXBElement<ErrorType>>(error.getJAXBElement()) {}).build();
                 }
             }
 
-            for (Iterator<LogType> iter = topologylogs.getLog().iterator(); iter.hasNext();) {
+            for (Iterator<LogType> iter = topologyLogs.getLog().iterator(); iter.hasNext();) {
                 LogType result = iter.next();
                 if (!result.getType().value().equalsIgnoreCase(type)) {
                     iter.remove();
@@ -150,21 +271,19 @@ public class ManagementService {
             }
         }
         else if (!Strings.isNullOrEmpty(code)) {
-            LogType error = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, code, "Code query parameter must be paired with a type parameter");
-            return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
+            LogType logError = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, code,
+                "Code query parameter must be paired with a type parameter");
+            Error error = ddsLogger.logTypeToError(logError);
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity(new GenericEntity<JAXBElement<ErrorType>>(error.getJAXBElement()) {}).build();
         }
 
         if (!Strings.isNullOrEmpty(label)) {
-            for (Iterator<LogType> iter = topologylogs.getLog().iterator(); iter.hasNext();) {
-                LogType result = iter.next();
-                if (!result.getLabel().equalsIgnoreCase(label)) {
-                    iter.remove();
-                }
-            }
+            topologyLogs.getLog().removeIf(result -> !result.getLabel().equalsIgnoreCase(label));
         }
 
         if (audit != null && !audit.isEmpty()) {
-            for (Iterator<LogType> iter = topologylogs.getLog().iterator(); iter.hasNext();) {
+            for (Iterator<LogType> iter = topologyLogs.getLog().iterator(); iter.hasNext();) {
                 LogType result = iter.next();
                 XMLGregorianCalendar auditDate = result.getAudit();
                 if (auditDate != null) {
@@ -183,21 +302,17 @@ public class ManagementService {
             cal.setTimeInMillis(DateUtils.parseDate(ifModifiedSince).getTime());
             XMLGregorianCalendar modified = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
 
-            for (Iterator<LogType> iter = topologylogs.getLog().iterator(); iter.hasNext();) {
-                LogType result = iter.next();
-                if (!(modified.compare(result.getDate()) == DatatypeConstants.LESSER)) {
-                    iter.remove();
-                }
-            }
+            topologyLogs.getLog().removeIf(result -> !(modified.compare(result.getDate()) == DatatypeConstants.LESSER));
 
             // If no serviceDomain then return a 304 to indicate no modifications.
-            if (topologylogs.getLog().isEmpty()) {
+            if (topologyLogs.getLog().isEmpty()) {
                 // Send back a 304
                 return Response.notModified().header("Last-Modified", date).build();
             }
         }
 
-        return Response.ok().header("Last-Modified", date).entity(new GenericEntity<JAXBElement<LogListType>>(managementFactory.createLogs(topologylogs)) {}).build();
+        return Response.ok().header("Last-Modified", date)
+            .entity(new GenericEntity<JAXBElement<LogListType>>(managementFactory.createLogs(topologyLogs)) {}).build();
     }
 
     /**
@@ -207,26 +322,48 @@ public class ManagementService {
      * @throws Exception If there is an internal server error.
      */
     @GET
-    @Path("/logs/{id}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "application/vnd.net.es.dds.v1+json", "application/vnd.net.es.dds.v1+xml" })
+    @Path("/v1/logs/{id}")
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_JSON,
+        NsiConstants.NSI_DDS_V1_XML, NsiConstants.NSI_DDS_V1_JSON })
+    @ResourceAnnotation(name = "log", version = "1.0", _default = true)
     public Response getLog(
             @PathParam("id") String id) throws Exception {
 
         // Verify we have the service Id from the request path.  Not sure if
         // this would ever happen.
         if (Strings.isNullOrEmpty(id)) {
-            LogType error = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, id, "Log identifier must be specified in path");
-            return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
+            LogType logError = ddsLogger.error(DdsErrors.MANAGEMENT_BAD_REQUEST, id,
+                "Log identifier must be specified in path");
+            Error error = ddsLogger.logTypeToError(logError);
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity(new GenericEntity<JAXBElement<ErrorType>>(error.getJAXBElement()) {}).build();
         }
 
         // Try to locate the requested Network.
         LogType result = ddsLogger.getLog(id);
         if (result == null) {
-            LogType error = ddsLogger.error(DdsErrors.MANAGEMENT_RESOURCE_NOT_FOUND, id);
-            return Response.status(Response.Status.NOT_FOUND).entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(error)) {}).build();
+            LogType logError = ddsLogger.error(DdsErrors.MANAGEMENT_RESOURCE_NOT_FOUND, id);
+            Error error = ddsLogger.logTypeToError(logError);
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity(new GenericEntity<JAXBElement<ErrorType>>(error.getJAXBElement()) {}).build();
         }
 
         // Just a 200 response.
-        return Response.ok().entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(result)) {}).build();
+        return Response.ok()
+            .entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(result)) {}).build();
+    }
+
+    private String concatPath(String root, String path) throws URISyntaxException {
+        URIBuilder uri = new URIBuilder(root);
+        List<String> pathSegments = uri.getPathSegments();
+        if (!Strings.isNullOrEmpty(path)) {
+            List<String> split = Arrays.stream(path.split("/"))
+                .dropWhile(""::equalsIgnoreCase).toList();
+            pathSegments.addAll(split);
+        }
+
+        uri.setPathSegments(pathSegments);
+
+        return uri.build().toASCIIString();
     }
 }

@@ -11,6 +11,7 @@ import net.es.nsi.dds.config.ConfigurationManager;
 import net.es.nsi.dds.config.Properties;
 import org.apache.commons.cli.*;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is the main execution thread for the NSI Document Distribution Service. The runtime configuration is loaded from
@@ -61,8 +62,12 @@ public class Main extends ResourceConfig {
       public void run() {
         System.out.println("Shutting down DDS...");
         DdsServer.getInstance().shutdown();
-        System.out.println("...Shutdown complete.");
         Main.setKeepRunning(false);
+        try {
+          ConfigurationManager.INSTANCE.shutdown();
+        } catch (InterruptedException ignore) {
+        }
+        System.out.println("...Shutdown complete.");
       }
     }
     );

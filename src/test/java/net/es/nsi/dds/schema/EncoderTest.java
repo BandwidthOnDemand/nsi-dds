@@ -30,7 +30,7 @@ public class EncoderTest {
 
   @Test
   public void encodeNsaDocument() throws DatatypeConfigurationException, IllegalArgumentException, IOException, JAXBException, ParserConfigurationException {
-    log.debug("encodeNsaDocument");
+    log.debug("encodeNsaDocument nsaId = {}", "urn:ogf:network:example.com:2013:nsa:vixen");
     NsaType nsa = nsaFactory.createNsaType();
     nsa.setId("urn:ogf:network:example.com:2013:nsa:vixen");
     nsa.setVersion(XmlUtilities.longToXMLGregorianCalendar(System.currentTimeMillis()));

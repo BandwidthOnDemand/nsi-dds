@@ -36,6 +36,18 @@ public class NmlParser extends JaxbParser {
             return ParserHolder.INSTANCE;
     }
 
+    /**
+     * Convert an topology XML document into JAXB objects.
+     *
+     * @param xml
+     * @return
+     * @throws JAXBException
+     * @throws IllegalArgumentException
+     */
+    public NmlTopologyType xml2Jaxb(String xml) throws JAXBException, IllegalArgumentException {
+        return this.xml2Jaxb(NmlTopologyType.class, xml);
+    }
+
     public NmlTopologyType readTopology(String filename) throws JAXBException, IOException {
         return this.parseFile(NmlTopologyType.class, filename);
     }

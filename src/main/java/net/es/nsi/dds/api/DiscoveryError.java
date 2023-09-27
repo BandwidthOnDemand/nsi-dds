@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.es.nsi.dds.jaxb.DdsParser;
 import net.es.nsi.dds.jaxb.dds.ErrorType;
 import net.es.nsi.dds.jaxb.dds.ObjectFactory;
+import net.es.nsi.dds.util.XmlUtilities;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * Defines the error values for the DDS logging system.
@@ -35,7 +38,7 @@ public enum DiscoveryError {
   DOCUMENT_VERSION(4005, "DOCUMENT_VERSION", "The document version was older than the current document (%s)."),
 
   // Subscription related errors.
-  SUBCRIPTION_DOES_NOT_EXIST(120, "SUBCRIPTION_DOES_NOT_EXIST", "Requested subscription identifier does not exist (%s)."),
+  SUBSCRIPTION_DOES_NOT_EXIST(120, "SUBCRIPTION_DOES_NOT_EXIST", "Requested subscription identifier does not exist (%s)."),
 
   // Implementation related issues.
   INTERNAL_SERVER_ERROR(500, "INTERNAL_SERVER_ERROR", "There was an internal server processing error (%s)."),
@@ -77,25 +80,29 @@ public enum DiscoveryError {
   }
 
   public static ErrorType getErrorType(DiscoveryError error, String resource, String info) {
-    ErrorType fp = factory.createErrorType();
-    fp.setCode(error.getCode());
-    fp.setLabel(error.getLabel());
-    fp.setResource(resource);
-    fp.setDescription(String.format(error.getDescription(), info));
-    return fp;
+    return new Error.Builder()
+        .code(error.getCode())
+        .label(error.getLabel())
+        .resource(resource)
+        .description(String.format(error.getDescription(), info))
+        .build().getErrorType();
+  }
+
+  public static Error getError(DiscoveryError error, String id, XMLGregorianCalendar date,
+                               String resource, String info) {
+    return new Error.Builder(error.getCode(), error.getLabel(), String.format(error.getDescription(), info),
+        resource, id, date).build();
   }
 
   public static ErrorType getErrorType(String xml) {
-    ErrorType error;
     try {
-      error = DdsParser.getInstance().xml2Error(xml);
+      return DdsParser.getInstance().xml2Error(xml);
     } catch (JAXBException ex) {
-      error = getErrorType(INTERNAL_SERVER_ERROR, "JAXB", xml);
+      return getErrorType(INTERNAL_SERVER_ERROR, "JAXB", xml);
     }
-    return error;
   }
 
-  public static String getErrorString(DiscoveryError error, String resource, String info) {
+  public static String getErrorXml(DiscoveryError error, String resource, String info) {
     try {
       ErrorType fp = getErrorType(error, resource, info);
       JAXBElement<ErrorType> errorElement = factory.createError(fp);
@@ -106,10 +113,9 @@ public enum DiscoveryError {
     }
   }
 
-  public static String getErrorString(ErrorType error) throws JAXBException {
+  public static String getErrorXml(ErrorType error) throws JAXBException {
     JAXBElement<ErrorType> errorElement = factory.createError(error);
-    String xml = DdsParser.getInstance().jaxb2Xml(errorElement);
-    return xml;
+    return DdsParser.getInstance().jaxb2Xml(errorElement);
   }
 
   public int getCode() {
@@ -127,7 +133,7 @@ public enum DiscoveryError {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-    sb.append("DisocveryError ");
+    sb.append("DiscoveryError ");
     sb.append("{ code=").append(code);
     sb.append(", label='").append(label).append('\'');
     sb.append(", description='").append(description).append('\'');

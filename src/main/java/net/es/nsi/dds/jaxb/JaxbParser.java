@@ -7,14 +7,11 @@ import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Optional;
@@ -225,7 +222,7 @@ public class JaxbParser {
      * @throws IOException InputStream could not be read.
      */
     public <T extends Object> T xml2Jaxb(Class<T> xmlClass, InputStream is) throws JAXBException, IOException {
-        JAXBElement<T> element = (JAXBElement<T>) unmarshaller().unmarshal(getReader(is));
+        JAXBElement<T> element = (JAXBElement<T>) unmarshaller().unmarshal(is);
         if (element == null) {
             throw new IllegalArgumentException("Unable to convert stream to JAXB, class=" + xmlClass.getName());
         }
@@ -253,58 +250,5 @@ public class JaxbParser {
         }
 
         throw new JAXBException("Expected XML for class " + xmlClass.getCanonicalName() + " but found " + element.getDeclaredType().getCanonicalName());
-    }
-
-    // Size of the lookahead buffer for reader.
-    private final static int LOOKAHEAD = 1024;
-
-    /**
-     * The InputStream reader is a workaround to a Grizzly bug on chunked POST
-     * operations that leaves the first chunked length in the character stream.
-     * This reader will parse out the length value if present and return a
-     * Reader with the stream set to the first occurrence of the characters
-     * "<?" within the stream.  Will no longer be needed in Jersey 2.19 that
-     * now contains the fix.
-     *
-     * @param is InputStream to parse for XML document.
-     * @return A Reader for the InputStream.
-     * @throws IOException Could not read the stream.
-     */
-    private Reader getReader(InputStream is) throws IOException {
-        StringBuilder garbage = new StringBuilder();
-
-        Reader reader = new BufferedReader(new InputStreamReader(is));
-        char c[] = "<?".toCharArray();
-        int pos = 0;
-        reader.mark(LOOKAHEAD);
-        while (true) {
-            int value = reader.read();
-            garbage.append((char) value);
-
-            // Check to see if we hit the end of the stream.
-            if (value == -1) {
-                throw new IOException("Encounter end of stream before start of XML.");
-            }
-            else if (value == c[pos]) {
-                pos++;
-            }
-            else {
-                if (pos > 0) {
-                    pos = 0;
-                }
-                reader.mark(LOOKAHEAD);
-            }
-
-            if (pos == c.length) {
-                // We found the character set we were looking for.
-                reader.reset();
-                break;
-            }
-        }
-
-        if (garbage.length() > c.length) {
-            log.debug("getReader: Dropping characters " + garbage.substring(0, garbage.length() - c.length));
-        }
-        return reader;
     }
 }

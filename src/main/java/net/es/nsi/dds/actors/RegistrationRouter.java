@@ -23,6 +23,7 @@ import net.es.nsi.dds.messages.RegistrationEvent;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.NsiConstants;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
@@ -34,7 +35,7 @@ import scala.concurrent.duration.Duration;
  * @author hacksaw
  */
 @Component
-@Scope("prototype")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class RegistrationRouter extends UntypedAbstractActor {
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsActorSystem ddsActorSystem;
@@ -86,16 +87,15 @@ public class RegistrationRouter extends UntypedAbstractActor {
     /**
      * Process an incoming registration messages and distribute to actor pool.
      *
-     * @param msg
+     * @param msg The message to process.
      */
     @Override
     public void onReceive(Object msg) {
         log.debug("[RegistrationRouter] onReceive {}", Message.getDebug(msg));
 
         // Check to see if we got the go ahead to start registering.
-        if (msg instanceof StartMsg) {
+        if (msg instanceof StartMsg message) {
             log.debug("[RegistrationRouter] start timer so convert to registration event.");
-            StartMsg message = (StartMsg) msg;
 
             // Create a Register event to start us off.
             RegistrationEvent event = new RegistrationEvent(message.getInitiator(), message.getPath());
@@ -104,8 +104,7 @@ public class RegistrationRouter extends UntypedAbstractActor {
         }
 
         // Process the registration event types.
-        if (msg instanceof RegistrationEvent) {
-            RegistrationEvent re = (RegistrationEvent) msg;
+        if (msg instanceof RegistrationEvent re) {
             if (re.getEvent() == RegistrationEvent.Event.Register) {
                 // This is our first time through after initialization.
                 log.debug("[RegistrationRouter] routeRegister");
@@ -122,8 +121,7 @@ public class RegistrationRouter extends UntypedAbstractActor {
                 routeShutdown();
             }
         }
-        else if (msg instanceof Terminated) {
-            Terminated terminated = ((Terminated) msg);
+        else if (msg instanceof Terminated terminated) {
             log.error("[RegistrationRouter] terminate event for {}", terminated.actor().path());
             router = router.removeRoutee(terminated.actor());
             ActorRef r = getContext().actorOf(Props.create(RegistrationActor.class, discoveryConfiguration));

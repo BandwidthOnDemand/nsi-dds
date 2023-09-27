@@ -11,9 +11,12 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import lombok.extern.slf4j.Slf4j;
+import net.es.nsi.dds.api.DiscoveryError;
+import net.es.nsi.dds.api.Error;
 import net.es.nsi.dds.jaxb.management.LogEnumType;
 import net.es.nsi.dds.jaxb.management.LogType;
 import net.es.nsi.dds.jaxb.management.ObjectFactory;
+import net.es.nsi.dds.util.SequenceGenerator;
 import net.es.nsi.dds.util.XmlUtilities;
 
 /**
@@ -27,9 +30,6 @@ public class DdsLogger {
 
     private final ObjectFactory logFactory = new ObjectFactory();
 
-    private long logId = 0;
-    private long subLogId = 0;
-
     private long lastlogTime = 0;
 
     private XMLGregorianCalendar auditTimeStamp = null;
@@ -41,12 +41,7 @@ public class DdsLogger {
      * Private constructor prevents instantiation from other classes.
      */
     private DdsLogger() {
-        try {
-            auditTimeStamp = XmlUtilities.longToXMLGregorianCalendar(System.currentTimeMillis());
-        }
-        catch (DatatypeConfigurationException ex) {
-            // Ignore for now.
-        }
+        auditTimeStamp = XmlUtilities.xmlGregorianCalendar();
     }
 
     /**
@@ -85,19 +80,8 @@ public class DdsLogger {
     /**
      * Allocate a new unique log identifier.
      */
-    private synchronized String createId() {
-        long newErrorId = System.currentTimeMillis();
-        if (newErrorId != logId) {
-            logId = newErrorId;
-            subLogId = 0;
-        }
-        else {
-            subLogId++;
-        }
-
-        String id = String.format("%d%02d", logId, subLogId);
-
-        return id;
+    public synchronized String createId() {
+        return Long.toString(SequenceGenerator.INSTANCE.getNext());
     }
 
     public void setAuditTimeStamp() {
@@ -141,7 +125,7 @@ public class DdsLogger {
 
         try {
             entry.setDate(XmlUtilities.longToXMLGregorianCalendar(time));
-        } catch (DatatypeConfigurationException ex) {
+        } catch (DatatypeConfigurationException ignore) {
             // Ignore for now.
         }
 
@@ -161,7 +145,7 @@ public class DdsLogger {
     /**
      * Create a topology error with the provided error information.
      *
-     * @param tError The type of error being generated.
+     * @param tLog The type of error being generated.
      * @param resource The resource the error is impacting.
      * @param description A description of the log.
      * @return new error fully populated.
@@ -181,7 +165,7 @@ public class DdsLogger {
     /**
      * Create a topology error with the provided error information.
      *
-     * @param tError The type of error being generated.
+     * @param tLog The type of error being generated.
      * @param resource The resource the error is impacting.
      * @return new error fully populated.
      * @throws DatatypeConfigurationException if there is an error converting data.
@@ -217,6 +201,11 @@ public class DdsLogger {
         error.setResource(primaryResource);
         log.error(createLog(error));
         return error;
+    }
+
+    public Error logTypeToError(LogType lt) {
+        return new Error.Builder(lt.getCode(), lt.getLabel(), lt.getDescription(),
+            lt.getResource(), lt.getId(), lt.getDate()).build();
     }
 
     private DdsErrors lastError;

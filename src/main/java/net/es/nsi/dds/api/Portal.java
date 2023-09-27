@@ -63,7 +63,7 @@ public class Portal {
             "<h1>Document Distribution Service</h1>\n";
 
         final String serverInformationOpen =
-                "<h2>Server Configuation</h2>\n" +
+                "<h2>Server Configuration</h2>\n" +
                 "<p>";
 
         final String peerTableOpen =
@@ -78,7 +78,7 @@ public class Portal {
         final String serverInformationClose =
                 "</p>";
 
-        final String subcriptionTableOpen =
+        final String subscriptionTableOpen =
             "<h2>Subscriptions</h2>\n" +
             "<p>" +
             "<table border=\"1\" style=\"width:100%\">\n" +
@@ -88,10 +88,10 @@ public class Portal {
             "    <th>requesterId</th>\n" +
             "    <th>Callback</th>\n" +
             "  </tr>";
-        final String subcriptionTableClose = "</table></p>\n";
+        final String subscriptionTableClose = "</table></p>\n";
 
 
-        final String remoteSubcriptionTableOpen =
+        final String remoteSubscriptionTableOpen =
             "<h2>My Subscriptions</h2>\n" +
             "<p>" +
             "<table border=\"1\" style=\"width:100%\">\n" +
@@ -102,7 +102,7 @@ public class Portal {
             "    <th>LastSuccessfulAudit</th>\n" +
             "    <th>Remote DDS URL</th>\n" +
             "  </tr>";
-        final String remoteSubcriptionTableClose = "</table></p>\n";
+        final String remoteSubscriptionTableClose = "</table></p>\n";
 
         final String documentTableOpen =
             "<h2>Documents</h2>\n" +
@@ -122,9 +122,12 @@ public class Portal {
             "</html>";
 
         // Get a handle to the DDS configuration information.
-        DdsConfiguration config = (DdsConfiguration) ConfigurationManager.INSTANCE.getApplicationContext().getBean("ddsConfiguration");
-        RemoteSubscriptionCache cache = (RemoteSubscriptionCache) ConfigurationManager.INSTANCE.getApplicationContext().getBean("remoteSubscriptionCache");
-        DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
+        DdsConfiguration config = (DdsConfiguration) ConfigurationManager.INSTANCE
+            .getApplicationContext().getBean("ddsConfiguration");
+        RemoteSubscriptionCache cache = (RemoteSubscriptionCache) ConfigurationManager.INSTANCE
+            .getApplicationContext().getBean("remoteSubscriptionCache");
+        DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE
+            .getDiscoveryProvider();
 
         // Include the page header.
         StringBuilder sb = new StringBuilder(header);
@@ -144,7 +147,7 @@ public class Portal {
         sb.append(serverInformationClose);
 
         // Now for the dynamic subscriptions.
-        sb.append(subcriptionTableOpen);
+        sb.append(subscriptionTableOpen);
         for (Subscription subscription : discoveryProvider.getSubscriptions()) {
             sb.append("<tr>\n");
             sb.append("<td><a href=\"");
@@ -157,10 +160,10 @@ public class Portal {
             sb.append("<td>"); sb.append(subscription.getSubscription().getCallback()); sb.append("</td>");
             sb.append("<tr>\n");
         }
-        sb.append(subcriptionTableClose);
+        sb.append(subscriptionTableClose);
 
         if (cache != null) {
-          sb.append(remoteSubcriptionTableOpen);
+          sb.append(remoteSubscriptionTableOpen);
           for (RemoteSubscription rm : cache.values()) {
             sb.append("<tr>\n");
             sb.append("<td><a href=\"");
@@ -175,7 +178,7 @@ public class Portal {
             sb.append("<tr>\n");
 
           }
-          sb.append(remoteSubcriptionTableClose);
+          sb.append(remoteSubscriptionTableClose);
         }
 
         // Finally we add the document information held within DDS.
@@ -219,9 +222,10 @@ public class Portal {
 
         try {
             String xml = DdsParser.getInstance().xmlFormatter(document.getDocument());
+            log.debug("[Portal] metadata returned:\n{}", xml);
             return Response.ok().header("Content-Type", MediaType.APPLICATION_XML).entity(xml).build();
         } catch (JAXBException ex) {
-            return Response.serverError().entity("An internal error has occured: " + ex.getLocalizedMessage()).build();
+            return Response.serverError().entity("An internal error has occurred: " + ex.getLocalizedMessage()).build();
         }
     }
 
@@ -261,9 +265,13 @@ public class Portal {
                 encoding = MediaType.TEXT_PLAIN;
             }
 
-            return Response.ok().header("Content-Type", encoding).entity(result).build();
+            log.debug("[Portal] contents returned:\n{}", result);
+
+            //return Response.ok().header("Content-Type", encoding).entity(result).build();
+            return Response.ok().header("Content-Type", encoding)
+                .entity(result).build();
         } catch (IOException | TransformerException ex) {
-            return Response.serverError().entity("An internal error has occured: " + ex.getLocalizedMessage()).build();
+            return Response.serverError().entity("An internal error has occurred: " + ex.getLocalizedMessage()).build();
         }
     }
 

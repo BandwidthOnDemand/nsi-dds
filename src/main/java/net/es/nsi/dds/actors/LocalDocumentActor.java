@@ -9,6 +9,7 @@ import net.es.nsi.dds.messages.Message;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.messages.TimerMsg;
 import net.es.nsi.dds.provider.DdsProvider;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
@@ -22,7 +23,7 @@ import scala.concurrent.duration.Duration;
  * @author hacksaw
  */
 @Component
-@Scope("prototype")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class LocalDocumentActor extends UntypedAbstractActor {
   private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
   private final DdsActorSystem ddsActorSystem;
@@ -45,6 +46,7 @@ public class LocalDocumentActor extends UntypedAbstractActor {
    */
   @Override
   public void preStart() {
+    log.debug("[LocalDocumentActor] preStart().");
     if (!discoveryConfiguration.isDocumentsConfigured()) {
       log.info("[LocalDocumentActor] Disabling local document audit, local directory not configured.");
       return;
@@ -72,7 +74,7 @@ public class LocalDocumentActor extends UntypedAbstractActor {
     // We can ignore the broadcast start message.
     if (msg instanceof StartMsg) {
       log.debug("[LocalDocumentActor] ignoring unimplemented StartMsg.");
-    } else if (msg instanceof TimerMsg) {
+    } else if (msg instanceof TimerMsg message) {
       log.debug("[LocalDocumentActor] processing timer message.");
 
       if (!discoveryConfiguration.isDocumentsConfigured()) {
@@ -84,8 +86,6 @@ public class LocalDocumentActor extends UntypedAbstractActor {
       DdsProvider.getInstance().loadDocuments();
 
       log.info("[LocalDocumentActor] Scheduling next audit for {} seconds.", getInterval());
-
-      TimerMsg message = (TimerMsg) msg;
       message.setInitiator("LocalDocumentActor");
       message.setPath(this.getSelf().path());
       ddsActorSystem.getActorSystem().scheduler()

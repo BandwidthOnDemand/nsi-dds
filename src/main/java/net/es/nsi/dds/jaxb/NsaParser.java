@@ -36,6 +36,18 @@ public class NsaParser extends JaxbParser {
             return ParserHolder.INSTANCE;
     }
 
+    /**
+     * Convert an NSA XML document into JAXB objects.
+     *
+     * @param xml
+     * @return
+     * @throws JAXBException
+     * @throws IllegalArgumentException
+     */
+    public NsaType xml2Jaxb(String xml) throws JAXBException, IllegalArgumentException {
+        return this.xml2Jaxb(NsaType.class, xml);
+    }
+
     public NsaType readTopology(String filename) throws JAXBException, IOException {
         return this.parseFile(NsaType.class, filename);
     }

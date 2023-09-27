@@ -29,7 +29,7 @@ public class TimersTest {
             NoSuchProviderException, KeyStoreException, CertificateException, UnrecoverableKeyException {
         log.debug("*************************************** TimersTest oneTimeSetUp ***********************************");
         testConfig = new TestConfig();
-        management = testConfig.getTarget().path("dds").path("management");
+        management = testConfig.getTarget().path("dds").path("management").path("v1");
         log.debug("*************************************** TimersTest oneTimeSetUp done ***********************************");
     }
 

@@ -46,13 +46,14 @@ public enum DdsErrors {
     MANAGEMENT_RESOURCE_NOT_FOUND(5001, "MANAGEMENT_RESOURCE_NOT_FOUND", "The requested resource was not found."),
     MANAGEMENT_BAD_REQUEST(5002, "MANAGEMENT_BAD_REQUEST", "The request was invalid (%s)."),
     MANAGEMENT_TIMER_MODIFICATION(5003, "MANAGEMENT_TIMER_MODIFICATION", "The requested timer could not be modified (%s)."),
+    MANAGEMENT_INTERNAL_ERROR(5004, "MANAGEMENT_INTERNAL_ERROR", "Internal server error encountered (%s)."),
 
     // Mark the end.
     END(9000, "", "");
 
-    private int code;
-    private String label;
-    private String description;
+    private final int code;
+    private final String label;
+    private final String description;
 
     /**
      * A mapping between the integer code and its corresponding Status to facilitate lookup by code.

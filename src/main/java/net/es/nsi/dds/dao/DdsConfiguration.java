@@ -68,6 +68,7 @@ public class DdsConfiguration {
     private long lastModified = 0;
     private String nsaId = null;
     private String baseURL = null;
+    private String urlTransform = null;
     private String documents = null;
     private String cache = null;
     private String repository = null;
@@ -144,6 +145,7 @@ public class DdsConfiguration {
         }
 
         setBaseURL(config.getBaseURL());
+        setUrlTransform(config.getUrlTransform());
 
         // Local document directory option from which we dynamically load files.
         if (!Strings.isNullOrEmpty(config.getDocuments())) {
@@ -378,6 +380,20 @@ public class DdsConfiguration {
      */
     public void setBaseURL(String baseURL) {
         this.baseURL = baseURL;
+    }
+
+    /**
+     * @return the urlTransform
+     */
+    public String getUrlTransform() {
+        return urlTransform;
+    }
+
+    /**
+     * @param urlTransform the urlTransform to set
+     */
+    public void setUrlTransform(String urlTransform) {
+        this.urlTransform = urlTransform;
     }
 
     /**

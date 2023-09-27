@@ -55,21 +55,22 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
-            <xsd:element name="nsaId"           type="xsd:anyURI"/>
-            <xsd:element name="documents"       type="xsd:string" minOccurs="0"/>
-            <xsd:element name="cache"           type="xsd:string" minOccurs="0"/>
-            <xsd:element name="repository"      type="xsd:string" minOccurs="0"/>
-            <xsd:element name="auditInterval"   type="xsd:long" minOccurs="0" />
-            <xsd:element name="expiryInterval"  type="xsd:long" default="86400" />
-            <xsd:element name="actorPool"       type="xsd:int" minOccurs="0" />
-            <xsd:element name="baseURL"         type="xsd:anyURI"/>
+            <xsd:element name="nsaId"            type="xsd:anyURI"/>
+            <xsd:element name="documents"        type="xsd:string" minOccurs="0"/>
+            <xsd:element name="cache"            type="xsd:string" minOccurs="0"/>
+            <xsd:element name="repository"       type="xsd:string" minOccurs="0"/>
+            <xsd:element name="auditInterval"    type="xsd:long" minOccurs="0" />
+            <xsd:element name="expiryInterval"   type="xsd:long" default="86400" />
+            <xsd:element name="actorPool"        type="xsd:int" minOccurs="0" />
+            <xsd:element name="baseURL"          type="xsd:anyURI"/>
+            <xsd:element name="urlTransform"     type="xsd:string"/>
             <xsd:element name="notificationSize" type="xsd:int" default="10" />
-            <xsd:element name="server"          type="tns:ServerType" minOccurs="0" />
-            <xsd:element name="client"          type="tns:ClientType" minOccurs="0" />
-            <xsd:element name="secure"          type="tns:SecureType" minOccurs="0"/>
-            <xsd:element name="signature"       type="tns:SignatureStoreType" minOccurs="0" />
-            <xsd:element name="accessControl"   type="tns:AccessControlType" minOccurs="0" />
-            <xsd:element name="peerURL"         type="tns:PeerURLType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="server"           type="tns:ServerType" minOccurs="0" />
+            <xsd:element name="client"           type="tns:ClientType" minOccurs="0" />
+            <xsd:element name="secure"           type="tns:SecureType" minOccurs="0"/>
+            <xsd:element name="signature"        type="tns:SignatureStoreType" minOccurs="0" />
+            <xsd:element name="accessControl"    type="tns:AccessControlType" minOccurs="0" />
+            <xsd:element name="peerURL"          type="tns:PeerURLType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
 

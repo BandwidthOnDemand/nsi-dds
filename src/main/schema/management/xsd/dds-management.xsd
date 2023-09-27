@@ -3,6 +3,82 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:tns="http://schemas.es.net/nsi/2013/07/management/types">
 
+    <xsd:element name="health" type="tns:HealthStatusType" />
+
+    <xsd:complexType name="HealthStatusType">
+        <xsd:sequence>
+            <xsd:element name="status" type="tns:HealthStatus" />
+            <xsd:element ref="tns:components" minOccurs="0" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="HealthStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="UP" />               <!-- The component or subsystem is working as expected. -->
+            <xsd:enumeration value="DOWN" />             <!-- The component is not working. -->
+            <xsd:enumeration value="WARNING" />          <!-- The component is in a troubled state. -->
+            <xsd:enumeration value="OUT_OF_SERVICE" />   <!-- The component is out of service temporarily. -->
+            <xsd:enumeration value="UNKNOWN" />          <!-- The component state is unknown -->
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:element name="components" type="tns:ComponentsType" />
+
+    <xsd:complexType name="ComponentsType">
+        <xsd:sequence>
+            <xsd:element ref="tns:component" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="component" type="tns:ComponentType" />
+
+    <xsd:complexType name="ComponentType">
+        <xsd:sequence>
+            <xsd:element name="status" type="tns:HealthStatus" />
+            <xsd:element ref="tns:details" minOccurs="0" />
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required" />
+    </xsd:complexType>
+
+    <xsd:element name="details" type="tns:DetailsType" />
+
+    <xsd:complexType name="DetailsType">
+        <xsd:sequence>
+            <xsd:element ref="tns:detail" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="detail" type="tns:DetailType" />
+
+    <xsd:complexType name="DetailType">
+        <xsd:attribute name="name" type="xsd:string" use="required" />
+        <xsd:attribute name="value"   type="xsd:string" />
+    </xsd:complexType>
+
+    <xsd:element name="ping"    type="tns:PingType" />
+
+    <xsd:complexType name="PingType">
+        <xsd:attribute name="time" type="xsd:dateTime" />
+    </xsd:complexType>
+
+    <!-- Log elements and type definitions. -->
+    <xsd:element name="resources" type="tns:ResourceListType" />
+
+    <xsd:complexType name="ResourceListType">
+        <xsd:sequence>
+            <xsd:element ref="tns:resource" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="resource" type="tns:ResourceType" />
+
+    <xsd:complexType name="ResourceType">
+        <xsd:attribute name="id"   type="xsd:string" use="required" />
+        <xsd:attribute name="href" type="xsd:anyURI" use="required" />
+        <xsd:attribute name="version" type="xsd:string" use="required" />
+        <xsd:attribute name="default" type="xsd:boolean" default="false" />
+    </xsd:complexType>
+
     <!-- DDS server load version information. -->
     <xsd:element name="version"  type="tns:VersionType" />
 
@@ -20,7 +96,7 @@
         </xsd:simpleContent>
     </xsd:complexType>
 
-    <!-- OAM relatated elements and types. -->
+    <!-- OAM related elements and types. -->
     <xsd:element name="status"  type="tns:StatusType" />
 
     <xsd:complexType name="StatusType">
@@ -71,7 +147,7 @@
             <xsd:enumeration  value="Unknown"/>
             <xsd:enumeration  value="Scheduled"/>
             <xsd:enumeration  value="Running"/>
-            <xsd:enumeration  value="Haulted"/>
+            <xsd:enumeration  value="Halted"/>
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -96,7 +172,7 @@
         <xsd:attribute name="id"   type="xsd:string" use="required" />
         <xsd:attribute name="type" type="tns:LogEnumType" use="required" />
         <xsd:attribute name="href" type="xsd:anyURI" use="required" />
-        <xsd:attribute name="audit" type="xsd:dateTime" use="optional" />
+        <xsd:attribute name="audit" type="xsd:dateTime" />
         <xsd:attribute name="date" type="xsd:dateTime" use="required" />
     </xsd:complexType>
 

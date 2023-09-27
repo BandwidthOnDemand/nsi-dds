@@ -1097,7 +1097,7 @@ public class DiscoveryService {
         if (!RegistrationRouter.getInstance().isSubscription(notifications.getHref())) {
             log.error("notifications: Notification does not exist - provider={}, subscriptionId={}, href={}", notifications.getProviderId(), notifications.getId(), notifications.getHref());
             DdsLogger.getInstance().error(DdsErrors.DDS_NOTIFICATION_SUBSCRIPTION_NOT_FOUND, "id", notifications.getId());
-            throw Exceptions.doesNotExistException(DiscoveryError.SUBCRIPTION_DOES_NOT_EXIST, "id", notifications.getId());
+            throw Exceptions.doesNotExistException(DiscoveryError.SUBSCRIPTION_DOES_NOT_EXIST, "id", notifications.getId());
         }
 
         log.debug("notifications: provider={}, subscriptionId={}, href={}", notifications.getProviderId(), notifications.getId(), notifications.getHref());

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns2:Topology xmlns:ns2="http://schemas.ogf.org/nml/2013/05/base#" xmlns:ns3="http://schemas.ogf.org/nml/2012/10/ethernet" xmlns:ns4="http://schemas.ogf.org/nsi/2013/12/services/definition" id="urn:ogf:network:es.net:2013:" version="2018-07-30T10:15:17.822Z">
+<ns2:Topology xmlns:ns2="http://schemas.ogf.org/nml/2013/05/base#" 
+    xmlns:ns3="http://schemas.ogf.org/nml/2012/10/ethernet" 
+    xmlns:ns4="http://schemas.ogf.org/nsi/2013/12/services/definition" 
+    id="urn:ogf:network:es.net:2013:" version="2018-07-30T10:15:17.822Z">
     <ns2:name>es.net</ns2:name>
     <ns2:Lifetime>
         <ns2:start>2018-07-30T10:15:17.822Z</ns2:start>
@@ -190,7 +193,9 @@
         <serviceType>http://services.ogf.org/nsi/2013/12/descriptions/EVTS.A-GOLE</serviceType>
     </ns4:serviceDefinition>
     <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasService">
-        <ns2:SwitchingService encoding="http://schemas.ogf.org/nml/2012/10/ethernet" id="urn:ogf:network:es.net:2013::ServiceDomain:EVTS.A-GOLE" labelSwapping="true" labelType="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">
+        <ns2:SwitchingService encoding="http://schemas.ogf.org/nml/2012/10/ethernet" 
+            id="urn:ogf:network:es.net:2013::ServiceDomain:EVTS.A-GOLE" 
+            labelSwapping="true" labelType="http://schemas.ogf.org/nml/2012/10/ethernet#vlan">
             <ns2:Relation type="http://schemas.ogf.org/nml/2013/05/base#hasInboundPort">
                 <ns2:PortGroup id="urn:ogf:network:es.net:2013::chic-cr5:3_2_1:+:in"/>
                 <ns2:PortGroup id="urn:ogf:network:es.net:2013::star-cr5:3_1_1:+:in"/>

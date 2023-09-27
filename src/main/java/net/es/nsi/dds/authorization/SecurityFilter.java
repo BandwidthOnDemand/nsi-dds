@@ -69,11 +69,11 @@ public class SecurityFilter implements ContainerRequestFilter {
         boolean result = AuthorizationProvider.getInstance().authorize(dn.get(), operation, resource);
 
         if (!result) {
-          log.error("SecurityFilter: failed {}, {} {}", dn, operation, resource);
+          log.error("SecurityFilter: failed {}, {} {}", dn.get(), operation, resource);
           throw Exceptions.unauthorizedException("dn", dn.get());
         }
 
-        log.debug("SecurityFilter: authorized {}, {} {}", dn, operation, resource);
+        log.debug("SecurityFilter: authorized {}, {} {}", dn.get(), operation, resource);
       } else {
         // We have no authorization information so reject this request but log for now.
         log.error("SecurityFilter: authorization enabled but no DN provided {} {}", operation, resource);

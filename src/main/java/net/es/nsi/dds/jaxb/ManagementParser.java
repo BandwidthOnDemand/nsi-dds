@@ -4,6 +4,7 @@ import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import net.es.nsi.dds.jaxb.management.ObjectFactory;
+import net.es.nsi.dds.jaxb.management.ResourceListType;
 import net.es.nsi.dds.jaxb.management.VersionType;
 
 /**
@@ -47,5 +48,9 @@ public class ManagementParser extends JaxbParser {
 
     public String xmlFormatter(VersionType version) throws JAXBException {
         return this.jaxb2XmlFormatter(factory.createVersion(version));
+    }
+
+    public String xmlFormatter(ResourceListType list) throws JAXBException {
+        return this.jaxb2XmlFormatter(factory.createResources(list));
     }
 }

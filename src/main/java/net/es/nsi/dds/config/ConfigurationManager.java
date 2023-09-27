@@ -15,6 +15,7 @@ import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.server.DdsServer;
 import net.es.nsi.dds.spring.SpringContext;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * The Document Discovery Service's Configuration Manager loads initial
@@ -58,7 +59,9 @@ public enum ConfigurationManager {
      * @throws UnrecoverableKeyException
      * @throws IOException If there is an error loading bean configuration file.
      */
-    public synchronized void initialize() throws IOException, IllegalStateException, KeyManagementException, NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, CertificateException, UnrecoverableKeyException {
+    public synchronized void initialize() throws IOException, IllegalStateException, KeyManagementException,
+            NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, CertificateException,
+            UnrecoverableKeyException {
         String configPath = System.getProperty(Properties.SYSTEM_PROPERTY_CONFIGDIR);
 
         if (!isInitialized()) {
@@ -80,7 +83,9 @@ public enum ConfigurationManager {
 
             try {
               ddsServer.start();
-            } catch (IOException | IllegalStateException | KeyManagementException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException | CertificateException | UnrecoverableKeyException ex) {
+            } catch (IOException | IllegalStateException | KeyManagementException | NoSuchAlgorithmException |
+                     NoSuchProviderException | KeyStoreException | CertificateException |
+                     UnrecoverableKeyException ex) {
               log.error("[ConfigurationManager] initialize() failed to start DDS server", ex);
               throw ex;
             }
@@ -121,5 +126,7 @@ public enum ConfigurationManager {
             ddsServer.shutdown();
         }
         initialized = false;
+
+        ((ConfigurableApplicationContext) context).close();
     }
 }

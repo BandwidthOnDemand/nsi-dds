@@ -6,12 +6,11 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import java.io.BufferedReader;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ import javax.xml.namespace.QName;
  *
  * @author hacksaw
  */
+@Slf4j
 public class XmlUtilities {
     public final static long ONE_YEAR = 31536000000L;
     public final static long ONE_DAY = 86400000L;
@@ -45,7 +45,7 @@ public class XmlUtilities {
 	 * @param xmlObject	The JAXB object to marshal.
 	 * @return		String containing the XML encoded object.
 	 */
-	public static String jaxbToString(Class<?> xmlClass, Object xmlObject) {
+	public static String jaxbToXml(Class<?> xmlClass, Object xmlObject) {
 
             // Make sure we are given the correct input.
             if (xmlClass == null || xmlObject == null) {
@@ -55,10 +55,10 @@ public class XmlUtilities {
             @SuppressWarnings("unchecked")
             JAXBElement<?> jaxbElement = new JAXBElement(new QName("uri", "local"), xmlClass, xmlObject);
 
-            return jaxbToString(xmlClass, jaxbElement);
+            return jaxbToXml(xmlClass, jaxbElement);
 	}
 
-    public static String jaxbToString(Class<?> xmlClass, JAXBElement<?> jaxbElement) {
+    public static String jaxbToXml(Class<?> xmlClass, JAXBElement<?> jaxbElement) {
 
             // Make sure we are given the correct input.
             if (xmlClass == null || jaxbElement == null) {
@@ -82,7 +82,7 @@ public class XmlUtilities {
                 return null;
             }
             finally {
-                try { writer.close(); } catch (IOException ex) {}
+                try { writer.close(); } catch (IOException ignored) {}
             }
 
             // Return the XML string.
@@ -102,43 +102,9 @@ public class XmlUtilities {
     public static Object xmlToJaxb(Class<?> xmlClass, InputStream is) throws JAXBException, IOException {
         JAXBContext jaxbContext = JAXBContext.newInstance(xmlClass);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        JAXBElement<?> element = (JAXBElement<?>) unmarshaller.unmarshal(getReader(is));
+        JAXBElement<?> element = (JAXBElement<?>) unmarshaller.unmarshal(is);
         is.close();
         return element.getValue();
-    }
-
-    private final static int LOOKAHEAD = 1024;
-
-    private static Reader getReader(InputStream is) throws IOException {
-        Reader reader = new BufferedReader(new InputStreamReader(is));
-        char[] c = "<?".toCharArray();
-        int pos = 0;
-        reader.mark(LOOKAHEAD);
-        while (true) {
-            int value = reader.read();
-
-            // Check to see if we hit the end of the stream.
-            if (value == -1) {
-                throw new IOException("Encounter end of stream before start of XML.");
-            }
-            else if (value == c[pos]) {
-                pos++;
-            }
-            else {
-                if (pos > 0) {
-                    pos = 0;
-                }
-                reader.mark(LOOKAHEAD);
-            }
-
-            if (pos == c.length) {
-                // We found the character set we were looking for.
-                reader.reset();
-                break;
-            }
-        }
-
-        return reader;
     }
 
     public static XMLGregorianCalendar longToXMLGregorianCalendar(long time) throws DatatypeConfigurationException {
@@ -148,13 +114,17 @@ public class XmlUtilities {
 
         GregorianCalendar cal = new GregorianCalendar();
         cal.setTimeInMillis(time);
-        XMLGregorianCalendar newXMLGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
-        return newXMLGregorianCalendar;
+        return DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
     }
 
-    public static XMLGregorianCalendar xmlGregorianCalendar() throws DatatypeConfigurationException {
+    public static XMLGregorianCalendar xmlGregorianCalendar() {
+      try {
         GregorianCalendar cal = new GregorianCalendar();
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+      } catch (DatatypeConfigurationException ex) {
+        log.error("[XmlUtilities] xmlGregorianCalendar failed", ex);
+        return null;
+      }
     }
 
     public static XMLGregorianCalendar xmlGregorianCalendar(Date date) throws DatatypeConfigurationException {
@@ -179,12 +149,12 @@ public class XmlUtilities {
             for (int i = 0; i < listOfFiles.length; i++) {
                 if (listOfFiles[i].isFile()) {
                     file = listOfFiles[i].getAbsolutePath();
-                    if (file.endsWith(".xml") || file.endsWith(".xml")) {
+                    if (file.endsWith(".xml")) {
                         results.add(file);
                     }
                 }
             }
         }
-        return new CopyOnWriteArrayList(results);
+        return new CopyOnWriteArrayList<>(results);
     }
 }

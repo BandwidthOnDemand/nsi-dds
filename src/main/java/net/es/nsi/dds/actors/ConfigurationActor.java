@@ -8,6 +8,7 @@ import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.messages.Message;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.messages.TimerMsg;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import scala.concurrent.duration.Duration;
@@ -19,7 +20,7 @@ import scala.concurrent.duration.Duration;
  * @author hacksaw
  */
 @Component
-@Scope("prototype")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ConfigurationActor extends UntypedAbstractActor {
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
     private final DdsActorSystem ddsActorSystem;

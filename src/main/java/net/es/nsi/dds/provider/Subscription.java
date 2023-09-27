@@ -2,6 +2,8 @@ package net.es.nsi.dds.provider;
 
 import akka.actor.Cancellable;
 import jakarta.ws.rs.WebApplicationException;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,6 +24,7 @@ import net.es.nsi.dds.util.XmlUtilities;
  * @author hacksaw
  */
 public class Subscription implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(Subscription.class);
     private static final String SUBSCRIPTIONS_URL = "subscriptions";
@@ -48,12 +51,7 @@ public class Subscription implements Serializable {
         subscription.setHref(getSubscriptionURL(baseURL));
 
         // We manage the version of subscription resources.
-        try {
-            subscription.setVersion(XmlUtilities.xmlGregorianCalendar());
-        } catch (DatatypeConfigurationException ex) {
-            // Log and eat the error.
-            log.error("addSubscription: failed to set version");
-        }
+        subscription.setVersion(XmlUtilities.xmlGregorianCalendar());
 
         // Validate the callback parameter was provided.
         if (request.getCallback() == null || request.getCallback().isEmpty()) {
@@ -176,7 +174,7 @@ public class Subscription implements Serializable {
         }
 
         if (encoding == null) {
-            String error = DiscoveryError.getErrorString(DiscoveryError.MISSING_PARAMETER, "PUT", "encoding");
+            String error = DiscoveryError.getErrorXml(DiscoveryError.MISSING_PARAMETER, "PUT", "encoding");
             throw Exceptions.missingParameterException("PUT", "encoding");
         }
 
@@ -187,11 +185,6 @@ public class Subscription implements Serializable {
         subscription.setCallback(request.getCallback());
         subscription.getAny().addAll(request.getAny());
         subscription.getOtherAttributes().putAll(request.getOtherAttributes());
-        try {
-            subscription.setVersion(XmlUtilities.xmlGregorianCalendar());
-        } catch (DatatypeConfigurationException ex) {
-            // Log and eat the error.
-            log.error("addSubscription: failed to set version", ex);
-        }
+        subscription.setVersion(XmlUtilities.xmlGregorianCalendar());
     }
 }

@@ -122,13 +122,11 @@ public class AgoleDiscoveryRouter extends UntypedAbstractActor {
                 .scheduleOnce(Duration.create(getInterval(), TimeUnit.SECONDS), this.self(), message,
                     ddsActorSystem.getActorSystem().dispatcher(), null);
         }
-        else if (msg instanceof AgoleDiscoveryMsg) {
-            AgoleDiscoveryMsg incoming = (AgoleDiscoveryMsg) msg;
+        else if (msg instanceof AgoleDiscoveryMsg incoming) {
             log.debug("[AgoleDiscoveryRouter] discovery update for nsaId={}", incoming.getNsaId());
             discovery.put(incoming.getTopologyURL(), incoming);
         }
-        else if (msg instanceof Terminated) {
-            Terminated terminated = ((Terminated) msg);
+        else if (msg instanceof Terminated terminated) {
             log.error("[AgoleDiscoveryRouter] terminate event for {}", terminated.actor().path());
             if (router != null) {
                 router = router.removeRoutee(((Terminated) msg).actor());
@@ -188,7 +186,7 @@ public class AgoleDiscoveryRouter extends UntypedAbstractActor {
         });
 
         // Clean up the entries no longer in the configuration.
-        notSent.stream().forEach((url) -> {
+        notSent.forEach((url) -> {
             log.debug("routeTimerEvent: entry no longer needed, url={}", url);
             discovery.remove(url);
         });
@@ -201,11 +199,8 @@ public class AgoleDiscoveryRouter extends UntypedAbstractActor {
 
         if (manifestStatus == null) {
             manifestStatus = new ProviderStatus();
-
-            if (manifestReader != null) {
-                manifestStatus.setId(manifestReader.getId());
-                manifestStatus.setHref(manifestReader.getTarget());
-            }
+            manifestStatus.setId(manifestReader.getId());
+            manifestStatus.setHref(manifestReader.getTarget());
         }
         else {
             manifestStatus.setStatus(TopologyStatusType.AUDITING);

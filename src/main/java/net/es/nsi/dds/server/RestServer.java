@@ -11,6 +11,7 @@ import org.glassfish.grizzly.ssl.SSLEngineConfigurator;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
+import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import javax.net.ssl.SSLContext;
@@ -93,15 +94,22 @@ public class RestServer {
             rs.packages(packages);
         }
 
+        // This will register any interfaces added to the web server.
         for (Class<?> intf : this.getInterfaces()) {
             log.debug("RestServer: adding interface " + intf.getCanonicalName());
             rs.register(intf);
         }
 
-      java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RestServer.class.getName());
-      return rs.registerClasses(SecurityFilter.class)
-          .register(new MoxyXmlFeature())
-          .register(new LoggingFeature(logger, Level.FINE, LoggingFeature.Verbosity.PAYLOAD_ANY, 10000));
+        // Add Moxy support for XML and JSON.
+        //rs.register(new MoxyXmlFeature());
+        //rs.register(new MoxyJsonFeature());
+
+        // Register the loggers for container tracing.
+        java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RestServer.class.getName());
+        rs.register(new LoggingFeature(logger, Level.FINE, LoggingFeature.Verbosity.PAYLOAD_ANY, 10000));
+
+        // Register the security filter.
+        return rs.registerClasses(SecurityFilter.class);
     }
 
     private URI getServerURI() {
