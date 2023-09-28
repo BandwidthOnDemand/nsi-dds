@@ -4,7 +4,7 @@
 
 ethernet    ps      -                           vlan:1780-1787      1000        em0         -
 ethernet    eth     -                           -                   1000        em8         -
-ethernet    port1   NetworkA#portX(-in|-out)    vlan:1781-1787      1000        em1         -
-ethernet    port2   NetworkB#portY(-in|-out)    vlan:1782-1787      1000        em2         -
-ethernet    sp      NetworkP#portZ(-in|-out)    mpls:10-20          1000        em4         -
+ethernet    port1   opennsa-west.net:2021:topology#port1(-in|-out)    vlan:1781-1787      1000        em1         -
+ethernet    port2   opennsa-west.net:2021:topology#port2(-in|-out)    vlan:1782-1787      1000        em2         -
+ethernet    sp      opennsa-west.net:2021:topology#sp(-in|-out)    mpls:10-20          1000        em4         -
 
