@@ -26,6 +26,6 @@
     <!-- Old AutoGOLE github discovery mechanism. -->
     <!-- <peerURL type="application/vnd.ogf.nsi.topology.v1+xml">https://raw.githubusercontent.com/jeroenh/AutoGOLE-Topologies/master/master.xml</peerURL> -->
 
-    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://opennsa:9080/NSI/discovery.xml</peerURL>
-    <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">http://nsi-dds-west:8402/dds</peerURL>
+    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://opennsa-east:9080/NSI/discovery.xml</peerURL>
+    <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">http://nsi-dds-west:8401/dds</peerURL>
 </tns:dds>

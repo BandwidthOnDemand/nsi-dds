@@ -3,9 +3,9 @@
 #########################################
 version: '3.8'
 services:
-  opennsa-db:
+  db-east:
     image: postgres:14.1-alpine
-    container_name: opennsa-db
+    container_name: db-east
     restart: always
     environment:
       - POSTGRES_USER=opennsa
@@ -15,22 +15,22 @@ services:
       - '5432:5432'
     volumes: 
       - ./compose/02-schema.sql:/docker-entrypoint-initdb.d/02-schema.sql:ro
-      - opennsa-db:/var/lib/postgresql/data
+      - db-east:/var/lib/postgresql/data
 
-  opennsa:
+  opennsa-east:
     image: opennsa:latest
-    container_name: opennsa
+    container_name: opennsa-east
     build:
       context: github.com/jmacauley/opennsa
       dockerfile: docker/Dockerfile
-    env_file: ./compose/opennsa-config/opennsa.env
+    env_file: compose/opennsa-east-config/opennsa.env
     depends_on:
-      - opennsa-db
+      - db-east
     ports:
-      - 9080:9080
+      - '9080:9080'
     volumes:
-      - ./compose/opennsa-config/opennsa.conf:/home/opennsa/opennsa/config/opennsa.conf:ro
-      - ./compose/opennsa-config/opennsa.nrm:/home/opennsa/opennsa/config/opennsa.nrm:ro
+      - ./compose/opennsa-east-config/opennsa.conf:/home/opennsa/opennsa/config/opennsa.conf:ro
+      - ./compose/opennsa-east-config/opennsa.nrm:/home/opennsa/opennsa/config/opennsa.nrm:ro
 
   nsi-dds-east:
     image: nsi-dds:latest
@@ -41,12 +41,41 @@ services:
       args:
         BUILDKIT_CONTEXT_KEEP_GIT_DIR: 1
     depends_on:
-      - opennsa
+      - opennsa-east
     ports:
-      - 8401:8401
+      - '8401:8401'
     volumes:
       - ./compose/nsi-dds-east-config:/nsi-dds/config
       - /tmp:/nsi-dds/var/log
+
+  db-west:
+    image: postgres:14.1-alpine
+    container_name: db-west
+    restart: always
+    environment:
+      - POSTGRES_USER=opennsa
+      - POSTGRES_PASSWORD=opennsa
+      - POSTGRES_DB=opennsa
+    ports:
+      - '5433:5432'
+    volumes:
+      - ./compose/02-schema.sql:/docker-entrypoint-initdb.d/02-schema.sql:ro
+      - db-west:/var/lib/postgresql/data
+
+  opennsa-west:
+    image: opennsa:latest
+    container_name: opennsa-west
+    build:
+      context: github.com/jmacauley/opennsa
+      dockerfile: docker/Dockerfile
+    env_file: compose/opennsa-west-config/opennsa.env
+    depends_on:
+      - db-west
+    ports:
+      - '9081:9080'
+    volumes:
+      - ./compose/opennsa-west-config/opennsa.conf:/home/opennsa/opennsa/config/opennsa.conf:ro
+      - ./compose/opennsa-west-config/opennsa.nrm:/home/opennsa/opennsa/config/opennsa.nrm:ro
 
   nsi-dds-west:
     image: nsi-dds:latest
@@ -57,15 +86,15 @@ services:
       args:
         BUILDKIT_CONTEXT_KEEP_GIT_DIR: 1
     depends_on:
-      - nsi-dds-east
+      - db-west
     ports:
-      - 8402:8402
+      - '8402:8402'
     volumes:
       - ./compose/nsi-dds-west-config:/nsi-dds/config
       - /tmp:/nsi-dds/var/log
 
 volumes:
-  opennsa-db:
+  db-east:
     driver: local
-  sense-db:
+  db-west:
     driver: local

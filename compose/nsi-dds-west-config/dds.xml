@@ -27,5 +27,5 @@
     <!-- <peerURL type="application/vnd.ogf.nsi.topology.v1+xml">https://raw.githubusercontent.com/jeroenh/AutoGOLE-Topologies/master/master.xml</peerURL> -->
 
     <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">http://nsi-dds-east:8401/dds</peerURL>
-
+    <peerURL type="application/vnd.ogf.nsi.nsa.v1+xml">http://opennsa-west:9080/NSI/discovery.xml</peerURL>
 </tns:dds>

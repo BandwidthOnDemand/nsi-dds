@@ -50,7 +50,7 @@ public class SecurityFilter implements ContainerRequestFilter {
       // If this is a secure security context then we want to validate the client access.
       Optional<String> dn = Optional.empty();
       if (ctx.getSecurityContext().isSecure()) {
-        // Extract what we need to do basic autherization enfocement from the client certificate.
+        // Extract what we need to do basic authorization enforcement from the client certificate.
         dn = Optional.ofNullable(ctx.getSecurityContext().getUserPrincipal().getName());
       } else {
         // The security context is not secure so see if DN is provided in HTTP header via a proxy.
