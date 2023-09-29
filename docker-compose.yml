@@ -88,7 +88,7 @@ services:
     depends_on:
       - db-west
     ports:
-      - '8402:8402'
+      - '8402:8401'
     volumes:
       - ./compose/nsi-dds-west-config:/nsi-dds/config
       - /tmp:/nsi-dds/var/log

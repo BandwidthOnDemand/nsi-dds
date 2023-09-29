@@ -6,9 +6,9 @@
     <cache>/nsi-dds/config/cache</cache>
     <repository>/nsi-dds/config/repository</repository>
     <expiryInterval>600</expiryInterval>
-    <baseURL>http://nsi-dds-west:8402/dds</baseURL>
+    <baseURL>http://nsi-dds-west:8401/dds</baseURL>
 
-    <server address="nsi-dds-west" port="8402" packageName="net.es.nsi.dds" />
+    <server address="nsi-dds-west" port="8401" packageName="net.es.nsi.dds" />
 
     <!-- DDS service interfaces. -->
     <!-- <peerURL type="application/vnd.ogf.nsi.dds.v1+xml">https://agg.netherlight.net/dds</peerURL> -->

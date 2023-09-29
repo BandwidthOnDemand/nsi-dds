@@ -212,7 +212,7 @@ public class RegistrationActor extends UntypedAbstractActor {
             }
         }
         catch (Exception ex) {
-            log.error("RegistrationActor.register: error on endpoint {}", remoteDdsURL, ex);
+            log.error(ex, "RegistrationActor.register: error on endpoint {}", remoteDdsURL);
             logger.error(DdsErrors.DDS_SUBSCRIPTION_ADD_FAILED, remoteDdsURL);
         }
         finally {
@@ -267,7 +267,7 @@ public class RegistrationActor extends UntypedAbstractActor {
             }
         }
         catch (Exception ex) {
-            log.error("GET failed for {}", webTarget.getUri().toASCIIString(), ex);
+            log.error(ex,"GET failed for {}", webTarget.getUri().toASCIIString());
             logger.error(DdsErrors.DDS_SUBSCRIPTION_GET_FAILED, webTarget.getUri().toASCIIString());
         }
         finally {
@@ -356,7 +356,7 @@ public class RegistrationActor extends UntypedAbstractActor {
             }
         }
         catch (Exception ex) {
-            log.error("GET failed for {}", absoluteURL, ex);
+            log.error(ex,"GET failed for {}", absoluteURL);
             logger.error(DdsErrors.DDS_SUBSCRIPTION_GET_FAILED, absoluteURL);
         }
         finally {
@@ -428,7 +428,7 @@ public class RegistrationActor extends UntypedAbstractActor {
 
         }
         catch (Exception ex) {
-            log.error("Failed to delete subscription {}", absoluteURL, ex);
+            log.error(ex,"Failed to delete subscription {}", absoluteURL);
             logger.error(DdsErrors.DDS_SUBSCRIPTION_DELETE_FAILED, absoluteURL);
             result = false;
         }

@@ -62,17 +62,16 @@ public class ConfigurationActor extends UntypedAbstractActor {
         // We can ignore the broadcast start message.
         if (msg instanceof StartMsg) {
             log.debug("[ConfigurationActor] ignoring unimplemented StartMsg.");
-        } else if (msg instanceof TimerMsg) {
+        } else if (msg instanceof TimerMsg event) {
             log.debug("[ConfigurationActor] onReceive TimerMsg.");
 
             try {
                 discoveryConfiguration.load();
             }
             catch (Exception ex) {
-                log.error("[ConfigurationActor] onReceive: Configuration load failed.", ex);
+                log.error(ex, "[ConfigurationActor] onReceive: Configuration load failed.");
             }
 
-            TimerMsg event = (TimerMsg) msg;
             event.setInitiator("ConfigurationActor");
             event.setPath(this.getSelf().path());
 
