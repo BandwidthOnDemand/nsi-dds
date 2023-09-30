@@ -16,8 +16,6 @@ COPY --from=MAVEN_BUILD $HOME/target/nsi-dds-1.3.0-RELEASE.jar ./dds.jar
 COPY --from=MAVEN_BUILD $HOME/target/lib ./lib
 COPY --from=MAVEN_BUILD $HOME/config ./config
 
-HEALTHCHECK  --interval=5m --timeout=3s CMD wget --no-verbose --tries=1 http://localhost:8401/dds/management/v1/health || exit 1
-
 EXPOSE 8401/tcp
 CMD java \
     -Xmx1024m -Djava.net.preferIPv4Stack=true  \
