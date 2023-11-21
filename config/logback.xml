@@ -13,7 +13,7 @@
         <file>/nsi-dds/log/nsi-dds.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>/nsi-dds/log/nsi-dds.%d{yyyy-MM-dd-HH:mm:ss}.log.gz</fileNamePattern>
+            <fileNamePattern>/nsi-dds/log/nsi-dds.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>5</maxHistory>
             <totalSizeCap>1GB</totalSizeCap>
             <cleanHistoryOnStart>true</cleanHistoryOnStart>
