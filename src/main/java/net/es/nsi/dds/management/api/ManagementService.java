@@ -17,7 +17,6 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import lombok.extern.slf4j.Slf4j;
-import net.es.nsi.dds.api.DiscoveryError;
 import net.es.nsi.dds.api.Error;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.jaxb.ManagementParser;
@@ -225,11 +224,15 @@ public class ManagementService {
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_JSON,
                     NsiConstants.NSI_DDS_V1_XML, NsiConstants.NSI_DDS_V1_JSON })
     @ResourceAnnotation(name = "logs", version = "1.0", _default = true)
-    public Response getLogs(@HeaderParam("If-Modified-Since") String ifModifiedSince,
+    public Response getLogs(@Context UriInfo info,
+            @HeaderParam("If-Modified-Since") String ifModifiedSince,
             @QueryParam("type") String type, /* One of "Log" or "Error". */
             @QueryParam("code") String code, /* Will convert to an integer. */
             @QueryParam("label") String label,
             @QueryParam("audit") String audit) throws Exception {
+
+        String location = utilities.getPath(info.getAbsolutePath().toASCIIString()).build().toASCIIString();
+        log.info("[ManagementService] GET logs = {}", location);
 
         // Get the overall topology provider status.
         LogListType topologyLogs = managementFactory.createLogListType();
@@ -326,8 +329,11 @@ public class ManagementService {
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_JSON,
         NsiConstants.NSI_DDS_V1_XML, NsiConstants.NSI_DDS_V1_JSON })
     @ResourceAnnotation(name = "log", version = "1.0", _default = true)
-    public Response getLog(
+    public Response getLog(@Context UriInfo info,
             @PathParam("id") String id) throws Exception {
+
+        String location = utilities.getPath(info.getAbsolutePath().toASCIIString()).build().toASCIIString();
+        log.info("[ManagementService] GET log = {}", location);
 
         // Verify we have the service Id from the request path.  Not sure if
         // this would ever happen.
