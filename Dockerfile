@@ -10,7 +10,9 @@ RUN mvn clean install -Dmaven.test.skip=true -Ddocker.nocache
 FROM openjdk:17
 
 ENV HOME /nsi-dds
+#DEBUG_OPTS: "-Djavax.net.debug=ssl:handshake:verbose:keymanager:trustmanager -Djava.security.debug=access:stack:certpath"
 ENV DEBUG_OPTS ""
+ENV LOGBACK "/nsi-dds/config/logback.xml"
 
 USER 1000:1000
 WORKDIR $HOME
@@ -23,7 +25,8 @@ CMD java \
     -Xmx1024m -Djava.net.preferIPv4Stack=true  \
     -Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true \
     -Djava.util.logging.config.file=/nsi-dds/config/logging.properties \
-    -Dlogging.config=/nsi-dds/config/logback.xml \
+    -Dlogging.config=$LOGBACK \
+    -Dlogback.configurationFile=$LOGBACK \
     $DEBUG_OPTS \
     -cp /nsi-dds/lib \
     -Dbasedir=/nsi-dds \

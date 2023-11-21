@@ -545,8 +545,9 @@
           <argLine>-Xmx1024m -Djava.net.preferIPv4Stack=true</argLine>
           <argLine>-Djersey.config.test.container.port=8801</argLine>
           <argLine>-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true</argLine>
-          <argLine>-Dlogback.configurationFile=./src/test/resources/config/logback.xml</argLine>
           <argLine>-Djava.util.logging.config.file=./src/test/resources/config/logging.properties</argLine>
+          <argLine>-D-Dlogging.config=./src/test/resources/config/logback-test.xml</argLine>
+          <argLine>-Dlogback.configurationFile=./src/test/resources/config/logback-test.xml</argLine>
         </configuration>
       </plugin>
 
