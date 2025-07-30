@@ -68,8 +68,11 @@ ingress:
     kubernetes.io/tls-acme: "true"
   hosts:
     - host: front.example.domain
-      paths: 
-        - path: "/nsi-dds/(.*)"
+      paths:
+        - path: /dds
+          pathType: ImplementationSpecific
+          serviceName: nsi-dds"
+          servicePort: 80
   tls:
     - secretName: tls-secret-api
       hosts:
