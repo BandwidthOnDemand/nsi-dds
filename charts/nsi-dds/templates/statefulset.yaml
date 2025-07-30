@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        automation.surf.net/config-checksum: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -81,7 +81,7 @@ spec:
       volumes:
         - name: {{ .Values.config.name }}
           configMap:
-            name: {{ include "nsi-dds.fullname" . }}-{{ .Values.config.name }}
+            name: {{ .Release.Name }}-{{ .Values.config.name }}
         - name: {{ .Values.cache.name }}
           persistentVolumeClaim:
             claimName: {{ include "nsi-dds.fullname" . }}-{{ .Values.cache.name }}

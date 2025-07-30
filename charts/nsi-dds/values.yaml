@@ -89,10 +89,17 @@ tolerations: []
 
 affinity: {}
 
+# read configuration from filesystem using configFilesGlog or specify inlineData and/or inlineBinaryData
+# note that configFilesGlob takes precedence over inlineData and/or inlineBinaryData
 config:
   name: "nsi-dds-config"
   mountPath: "/config"
-  configFilesGlob: "config/*"
+  #configFilesGlob: "config/*"
+  inlineData: |-
+    file1.ext: |-
+      file content 1
+    file2.ext: |-
+      file content 2
 
 cache:
   name: "nsi-dds-cache"
