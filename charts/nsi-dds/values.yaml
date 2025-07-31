@@ -78,6 +78,24 @@ ingress:
       hosts:
         - front.example.domain
 
+# if you do not want to use ingress annotations to generate the Certificate manifest
+certificate:
+  enabled: false
+  name: chart-example-tls
+  dnsName: example.domain.toplevel
+  issuerRef:
+    name: letsencrypt
+  secretName: chart-example-tls
+  privateKey:
+    rotationPolicy: Always
+  keystores:
+    jks:
+      create: false
+      password: "secret"
+    pkcs12:
+      create: false
+      password: "secret"
+
 resources:
   requests:
     memory: 0.5Gi
