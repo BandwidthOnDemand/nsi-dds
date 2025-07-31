@@ -43,11 +43,21 @@ spec:
                  "-jar", {{ printf "%s/dds.jar" .Values.image.home | quote }},
                  "-ddsConfigFile", {{ printf "%s/dds.xml" .Values.config.mountPath | quote }}]
           volumeMounts:
-            - name: {{ .Values.config.name }}
+            - name: cache
+              mountPath: {{ .Values.cache.mountPath }}
+            - name: config
               mountPath: {{ .Values.config.mountPath }}
               readOnly: true
-            - name: {{ .Values.cache.name }}
-              mountPath: {{ .Values.cache.mountPath }}
+          {{- if (((.Values.config).keystore).secretName) }}
+            - name: keystore
+              mountPath: "{{ .Values.config.mountPath }}/key"
+              readOnly: true
+          {{- end }}
+          {{- if (((.Values.config).truststore).secretName) }}
+            - name: truststore
+              mountPath: "{{ .Values.config.mountPath }}/trust"
+              readOnly: true
+          {{- end }}
           ports:
             - name: internal
               containerPort: {{ .Values.service.containerPort }}
@@ -79,12 +89,49 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
       volumes:
-        - name: {{ .Values.config.name }}
+        - name: config
           configMap:
-            name: {{ .Release.Name }}-{{ .Values.config.name }}
-        - name: {{ .Values.cache.name }}
+            {{- if .Values.config.configMapName }}
+            name: {{ .Values.config.configMapName }}
+            {{- else }}
+            name: {{ .Release.Name }}-config
+            {{- end }}
+            items:
+            - key: "dds.xml"
+              path: "dds.xml"
+            - key: "logging.properties"
+              path: "logging.properties"
+            - key: "log4j.xml"
+              path: "log4j.xml"
+            {{- if (((.Values.config).keystore).secretName) }}
+            {{- else }}
+            - key: "nsi-dds-keystore.jks"
+              path: "key/nsi-dds-keystore.jks"
+            {{- end }}
+            {{- if (((.Values.config).truststore).secretName) }}
+            {{- else }}
+            - key: "nsi-dds-truststore.jks"
+              path: "trust/nsi-dds-truststore.jks"
+            {{- end }}
+        {{- if (((.Values.config).keystore).secretName) }}
+        - name: keystore
+          secret:
+            secretName: {{ .Values.config.keystore.secretName }}
+            items:
+            - key: {{ .Values.config.keystore.key }}
+              path: nsi-dds-keystore.jks
+        {{- end }}
+        {{- if (((.Values.config).truststore).secretName) }}
+        - name: truststore
+          secret:
+            secretName: {{ .Values.config.truststore.secretName }}
+            items:
+            - key: {{ .Values.config.truststore.key }}
+              path: nsi-dds-truststore.jks
+        {{- end }}
+        - name: cache
           persistentVolumeClaim:
-            claimName: {{ include "nsi-dds.fullname" . }}-{{ .Values.cache.name }}
+            claimName: {{ .Release.Name }}-cache
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

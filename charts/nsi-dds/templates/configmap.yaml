@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/name: {{ .Release.Name }}-environment
     app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-  name: {{ .Release.Name }}-{{ .Values.config.name }}
+  name: {{ .Release.Name }}-config
   namespace: {{ .Release.Namespace }}
 {{- if  .Values.config.configFilesGlob}}
 binaryData:

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "nsi-dds.fullname" . }}-{{ .Values.cache.name }}
+  name: {{ .Release.Name }}-cache
 spec:
   accessModes:
     - ReadWriteOnce
