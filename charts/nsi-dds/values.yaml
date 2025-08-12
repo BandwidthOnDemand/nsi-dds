@@ -3,12 +3,13 @@
 # Declare variables to be passed into your templates.
 
 image:
-  registry: docker.io
-  repository: hnstrmprt/nsi-dds
+  #registry: docker.io
+  repository: ghcr.io/bandwidthondemand/nsi-dds
   pullPolicy: IfNotPresent
   # tag overrides the image tag whose default is the chart appVersion
-  # tag: "1.0.4.1"
+  tag: "1.2.0-1"
   home: "/nsi-dds"
+
 
 startupProbe:
   enabled: false
@@ -247,3 +248,5 @@ config:
   truststore:
     #secretName: my-nsi-dds-truststore
     #key: truststore.jks
+  # Create /config/trust/nsi-safnari-truststore.jks from ca.crt from caSecretName mounted under /ca
+  caSecretName: ""
