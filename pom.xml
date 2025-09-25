@@ -4,7 +4,7 @@
 
   <groupId>net.es.nsi</groupId>
   <artifactId>nsi-dds</artifactId>
-  <version>1.3.0-RELEASE</version>
+  <version>1.4.0-RELEASE</version>
   <packaging>jar</packaging>
   <scm>
     <developerConnection>scm:git:https://github.com/BandwidthOnDemand/nsi-dds.git</developerConnection>

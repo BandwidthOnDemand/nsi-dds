@@ -25,5 +25,5 @@ java -Xmx1024m -Djava.net.preferIPv4Stack=true  \
 	-Djava.util.logging.config.file="$BASEDIR/config/logging.properties" \
 	-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true \
   -Dlogback.configurationFile="$BASEDIR/config/logback.xml" \
-	-jar target/nsi-dds-1.3.0-RELEASE.jar \
+	-jar target/nsi-dds-1.4.0-RELEASE.jar \
 	$*
