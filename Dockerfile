@@ -17,10 +17,10 @@ ENV JAVA_HEAP="-Xmx1024m"
 
 USER 1000:1000
 WORKDIR $BASEDIR
-COPY --from=maven-build $BASEDIR/target/nsi-dds*.jar ./dds.jar
-COPY --from=maven-build $BASEDIR/target/lib ./lib
-COPY --from=maven-build $BASEDIR/config ./config
-COPY --from=maven-build $BASEDIR/scripts/entrypoint.sh ./entrypoint.sh
+COPY --chown=1000:1000 --from=maven-build $BASEDIR/target/nsi-dds*.jar ./dds.jar
+COPY --chown=1000:1000 --from=maven-build $BASEDIR/target/lib ./lib
+COPY --chown=1000:1000 --from=maven-build $BASEDIR/config ./config
+COPY --chown=1000:1000 --from=maven-build $BASEDIR/scripts/entrypoint.sh ./entrypoint.sh
 
 EXPOSE 8401/tcp
 ENTRYPOINT ["/nsi-dds/entrypoint.sh"]
