@@ -60,16 +60,16 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["java"]
-          args: ["-Xmx1536m",
-                 "-Djava.net.preferIPv4Stack=true",
-                 "-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true",
-                 "-Djdk.tls.client.enableSessionTicketExtension=false",
-                 {{ printf "-Djava.util.logging.config.file=%s/logging.properties" .Values.config.mountPath | quote }},
-                 {{ printf "-Dlogback.configurationFile=%s/logback.xml" .Values.config.mountPath | quote }},
-                 {{ printf "-Dbasedir=%s" .Values.image.home | quote }},
-                 "-jar", {{ printf "%s/dds.jar" .Values.image.home | quote }},
-                 "-ddsConfigFile", {{ printf "%s/dds.xml" .Values.config.mountPath | quote }}]
+          env:
+            - name: BASEDIR
+              value: {{ .Values.image.home | quote }}
+            - name: CONFIG_DIR
+              value: {{ .Values.config.mountPath | quote }}
+            - name: JAVA_HEAP
+              value: "-Xmx1536m"
+          args:
+            - "-ddsConfigFile"
+            - {{ printf "%s/dds.xml" .Values.config.mountPath | quote }}
           volumeMounts:
             - name: cache
               mountPath: {{ .Values.cache.mountPath }}
