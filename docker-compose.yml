@@ -46,7 +46,6 @@ services:
       - '8401:8401'
     volumes:
       - ./compose/nsi-dds-east-config:/nsi-dds/config
-      - /tmp:/nsi-dds/var/log
 
   db-west:
     image: postgres:14.1-alpine
@@ -91,7 +90,6 @@ services:
       - '8402:8401'
     volumes:
       - ./compose/nsi-dds-west-config:/nsi-dds/config
-      - /tmp:/nsi-dds/var/log
 
 volumes:
   db-east:
