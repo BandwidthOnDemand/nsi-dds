@@ -79,6 +79,22 @@ ingress:
       hosts:
         - front.example.domain
 
+# Expose the service via gateway-api HTTPRoute instead of an Ingress.
+# Requires Gateway API CRDs and a suitable controller (e.g. Envoy Gateway).
+httpRoute:
+  enabled: false
+  annotations: {}
+  parentRefs:
+    - name: gateway
+      sectionName: http
+  hostnames:
+    - chart-example.local
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /dds
+
 # if you do not want to use ingress annotations to generate the Certificate manifest
 certificate:
   enabled: false
