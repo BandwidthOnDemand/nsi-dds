@@ -113,6 +113,11 @@ certificate:
       create: false
       password: "secret"
 
+# Maximum JVM heap size (-Xmx). Keep this well below resources.limits.memory: metaspace, code
+# cache, thread stacks and direct buffers live outside the heap, and overrunning the container
+# limit is an OOMKill rather than a garbage collection.
+maxHeapSize: "1024m"
+
 resources:
   requests:
     memory: 0.5Gi
