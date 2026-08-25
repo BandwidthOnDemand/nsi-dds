@@ -10,6 +10,7 @@ set -euo pipefail
 IMAGE_TAG="${IMAGE_TAG:-nsi-dds:smoke}"
 CONTAINER_NAME="${CONTAINER_NAME:-nsi-dds-smoke}"
 WAIT_SECONDS="${WAIT_SECONDS:-10}"
+VERSION="${VERSION:-$(git describe --tags --always)}"
 
 cleanup() {
   docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
@@ -17,8 +18,8 @@ cleanup() {
 trap cleanup EXIT
 cleanup
 
-echo ">> Building image $IMAGE_TAG"
-docker build -t "$IMAGE_TAG" .
+echo ">> Building image $IMAGE_TAG (version $VERSION)"
+docker build --build-arg VERSION="$VERSION" -t "$IMAGE_TAG" .
 
 echo ">> Starting container $CONTAINER_NAME"
 docker run -d --name "$CONTAINER_NAME" "$IMAGE_TAG" >/dev/null
