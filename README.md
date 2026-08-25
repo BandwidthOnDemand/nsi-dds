@@ -90,6 +90,19 @@ $ cp -R config target/dds.jar /home/safnari/nsi-dds
 ```
 Now you are ready to configure the `nsi-dds` runtime.
 
+## Versioning
+The release git tag is the only place a version is written by hand. The `pom.xml` version is the
+placeholder `0.0.0-SNAPSHOT`; `.github/workflows/build-push-container.yml` checks out with
+`fetch-depth: 0`, resolves the version with `git describe --tags --always`, and passes it as
+`--build-arg VERSION=...`. The `Dockerfile` then runs `mvn versions:set` before packaging, so a tag
+builds `1.5.1` and any other commit builds `1.5.1-3-g1a2b3c4`.
+
+A container build without the argument fails rather than producing a mislabelled image:
+
+```
+$ docker build --build-arg VERSION="$(git describe --tags --always)" -t nsi-dds .
+```
+
 ## Configuring the nsi-dds
 Before begining the configuration of your `nsi-dds` instance make sure you have the following information available:
 

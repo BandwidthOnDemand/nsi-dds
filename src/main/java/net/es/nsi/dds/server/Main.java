@@ -20,6 +20,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  *
  * @author hacksaw
  */
+@Slf4j
 public class Main extends ResourceConfig {
   // Command line arguments.
 
@@ -43,6 +44,10 @@ public class Main extends ResourceConfig {
    * @throws Exception If anything fails during initialization.
    */
   public static void main(String[] args) throws Exception {
+    log.info("Starting nsi-dds {} on Java {}",
+            Main.class.getPackage().getImplementationVersion(),
+            System.getProperty("java.version"));
+
     // Load the command line options into appropriate system properties.
     try {
       processOptions(args);

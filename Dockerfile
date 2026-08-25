@@ -1,9 +1,11 @@
 FROM maven:3-eclipse-temurin-17 AS maven-build
 
+ARG VERSION
 ENV HOME=/nsi-dds
 WORKDIR $HOME
 COPY . .
-RUN mvn clean install -Dmaven.test.skip=true -Ddocker.nocache
+RUN mvn versions:set -DnewVersion="${VERSION:?VERSION build argument is required}" -DgenerateBackupPoms=false \
+    && mvn clean install -Dmaven.test.skip=true -Ddocker.nocache
 
 FROM eclipse-temurin:17-jre
 
