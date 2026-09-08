@@ -152,12 +152,6 @@
       <version>1.70</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bctls-jdk15on</artifactId>
-      <version>1.70</version>
-    </dependency>
-
     <!-- The agent messaging infrastructure for internal communications. -->
     <dependency>
       <groupId>com.typesafe.akka</groupId>

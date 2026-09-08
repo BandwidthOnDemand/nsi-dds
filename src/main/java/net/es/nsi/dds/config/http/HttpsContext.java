@@ -29,7 +29,6 @@ import net.es.nsi.dds.jaxb.configuration.KeyStoreType;
 import net.es.nsi.dds.jaxb.configuration.ObjectFactory;
 import net.es.nsi.dds.jaxb.configuration.SecureType;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import org.glassfish.jersey.SslConfigurator;
 
 /**
@@ -53,16 +52,11 @@ public enum HttpsContext {
   HttpsContext() {
     log.debug("[HttpsContext]: constructor invoked");
 
-    // If the BouncyCastle provider is not register add it in.
+    // If the BouncyCastle provider is not register add it in.  This is the crypto provider only;
+    // TLS itself is served by the JDK's SunJSSE.
     if (Security.getProvider("BC") == null) {
       log.debug("Adding BouncyCastleProvider provider");
       Security.addProvider(new BouncyCastleProvider());
-    }
-
-    // If the BouncyCastle JSSE provider is not register add it in.
-    if (Security.getProvider("BCJSSE") == null) {
-      log.debug("Adding BouncyCastleJsseProvider provider");
-      Security.addProvider(new BouncyCastleJsseProvider());
     }
 
     log.debug("[HttpsContext]: constructor complete");
