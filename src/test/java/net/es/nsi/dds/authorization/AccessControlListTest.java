@@ -19,6 +19,13 @@ import org.junit.Test;
  */
 @Slf4j
 public class AccessControlListTest {
+  /** Reserved example domain (RFC 2606), used by the DN canonicalization cases below. */
+  private static final String CANONICAL_DN = "CN=dds.example.net, OU=Domain Control Validated";
+
+  /** The resource CANONICAL_DN's ADMIN rule covers. */
+  private static final String CANONICAL_RESOURCE = "/dds/documents/urn%3Aogf%3Anetwork%3Aexample.net%3A2013%3Ansa"
+          + "/vnd.ogf.nsi.topology.v2%2Bxml/urn%3Aogf%3Anetwork%3Aexample.net%3A2013%3A";
+
   private final ObjectFactory factory = new ObjectFactory();
   private AccessControlType acl_enabled;
   private AccessControlType acl_disabled;
@@ -65,6 +72,12 @@ public class AccessControlListTest {
     }
   };
 
+  private static final DistinguishedNameType DN8 = new DistinguishedNameType() {
+    {
+      setValue(CANONICAL_DN);
+    }
+  };
+
   @BeforeClass
   public static void initialize() {
   }
@@ -101,6 +114,13 @@ public class AccessControlListTest {
     rule.setDn(DN4);
     rule.setAccess(AccessControlPermission.ADMIN);
     rule.getNsaId().add("urn:ogf:network:es.net:2013:nsa");
+    acl_enabled.getRule().add(rule);
+
+    // Build a rule for DN8, used by the DN canonicalization cases.
+    rule = factory.createRuleType();
+    rule.setDn(DN8);
+    rule.setAccess(AccessControlPermission.ADMIN);
+    rule.getNsaId().add("urn:ogf:network:example.net:2013:nsa");
     acl_enabled.getRule().add(rule);
 
     rule = factory.createRuleType();
@@ -165,5 +185,48 @@ public class AccessControlListTest {
     assertTrue(accessControlList.isAuthorized("", "", ""));
     assertTrue(accessControlList.isAuthorized(null, null, null));
     log.debug("AccessControlListTest.disabledAuthorizeTest done");
+  }
+
+  /**
+   * Authorization is a map lookup keyed on the BouncyCastle canonical form of the DN, so a
+   * BouncyCastle upgrade that changed canonicalization would silently lock out every peer.  These
+   * cases pin the equivalences the rules rely on: attribute names and separator whitespace do not
+   * matter, attribute values do.
+   */
+  @Test
+  public void dnCanonicalizationTest() throws Exception {
+    log.debug("AccessControlListTest.dnCanonicalizationTest start");
+    AccessControlList accessControlList = new AccessControlList(acl_enabled);
+
+    assertTrue("the DN as configured must authorize",
+            accessControlList.isAuthorized(CANONICAL_DN, "DELETE", CANONICAL_RESOURCE));
+    assertTrue("attribute name case must not matter",
+            accessControlList.isAuthorized("cn=dds.example.net, ou=Domain Control Validated",
+                    "DELETE", CANONICAL_RESOURCE));
+    assertTrue("separator whitespace must not matter",
+            accessControlList.isAuthorized("CN=dds.example.net,OU=Domain Control Validated",
+                    "DELETE", CANONICAL_RESOURCE));
+    assertFalse("attribute value case must matter",
+            accessControlList.isAuthorized("CN=DDS.EXAMPLE.NET, OU=Domain Control Validated",
+                    "DELETE", CANONICAL_RESOURCE));
+
+    log.debug("AccessControlListTest.dnCanonicalizationTest done");
+  }
+
+  /**
+   * A wildcard in a presented DN is matched literally, never expanded, so it authorizes nothing.
+   */
+  @Test
+  public void dnWildcardIsNotAMatcherTest() throws Exception {
+    log.debug("AccessControlListTest.dnWildcardIsNotAMatcherTest start");
+    AccessControlList accessControlList = new AccessControlList(acl_enabled);
+
+    assertFalse(accessControlList.isAuthorized("CN=*, OU=Domain Control Validated",
+            "DELETE", CANONICAL_RESOURCE));
+    assertFalse(accessControlList.isAuthorized("CN=*.example.net, OU=Domain Control Validated",
+            "DELETE", CANONICAL_RESOURCE));
+    assertFalse(accessControlList.isAuthorized("CN=*, OU=*", "DELETE", CANONICAL_RESOURCE));
+
+    log.debug("AccessControlListTest.dnWildcardIsNotAMatcherTest done");
   }
 }

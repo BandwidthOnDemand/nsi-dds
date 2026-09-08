@@ -140,6 +140,21 @@ public class HttpsContextTest {
   }
 
   /**
+   * The jdk15on line ended at 1.70 and carries unpatched certificate-parsing CVEs, most notably
+   * CVE-2024-29857, which is reachable through client certificates on the mTLS path.  Fail if
+   * anything drags the provider back below the 1.78 fix.
+   */
+  @Test
+  public void testBouncyCastleVersionFloor() throws Exception {
+    HttpsContext.getInstance().load(getConfigJKS());
+
+    double version = Security.getProvider("BC").getVersionStr() == null ? 0
+            : Double.parseDouble(Security.getProvider("BC").getVersionStr().replaceFirst("^(\\d+\\.\\d+).*", "$1"));
+    log.debug("HttpsContextTest: BouncyCastle version {}", version);
+    assertTrue("BouncyCastle must be 1.78 or later, found " + version, version >= 1.78);
+  }
+
+  /**
    * TLS must be served by the JDK provider now that BCJSSE is gone.
    */
   @Test

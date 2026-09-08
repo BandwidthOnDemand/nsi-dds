@@ -139,17 +139,12 @@
       </exclusions>
     </dependency>
 
-    <!-- Needed for certificate DN manipulation. -->
+    <!-- Needed for certificate DN manipulation.  The jdk15on line ended at 1.70; all fixes ship
+         in jdk18on, which targets Java 8 and later. -->
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.70</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15on</artifactId>
-      <version>1.70</version>
+      <artifactId>bcprov-jdk18on</artifactId>
+      <version>1.85.2</version>
     </dependency>
 
     <!-- The agent messaging infrastructure for internal communications. -->
