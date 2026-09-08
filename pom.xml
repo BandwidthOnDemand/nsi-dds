@@ -16,6 +16,7 @@
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <spring.version>6.2.19</spring.version>
   </properties>
 
   <dependencies>
@@ -118,13 +119,13 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>6.0.11</version>
+      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>6.0.11</version>
+      <version>${spring.version}</version>
     </dependency>
 
     <!-- Needed for certificate DN manipulation.  The jdk15on line ended at 1.70; all fixes ship
