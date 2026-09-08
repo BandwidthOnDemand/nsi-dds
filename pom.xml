@@ -127,18 +127,6 @@
       <version>6.0.11</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.httpcomponents.client5</groupId>
-      <artifactId>httpclient5</artifactId>
-      <version>5.2.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
     <!-- Needed for certificate DN manipulation.  The jdk15on line ended at 1.70; all fixes ship
          in jdk18on, which targets Java 8 and later. -->
     <dependency>
