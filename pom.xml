@@ -363,7 +363,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jaxb2-maven-plugin</artifactId>
-        <version>2.4</version>
+        <version>4.2.0</version>
         <executions>
 
           <!-- Here we build the DDS Configuration schema. -->
