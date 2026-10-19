@@ -1,0 +1,33 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices"
+  ],
+  "minimumReleaseAge": "8 days",
+  "internalChecksFilter": "strict",
+  "rebaseWhen": "behind-base-branch",
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["pin", "digest", "pinDigest"],
+      "minimumReleaseAge": "0 days",
+      "automerge": true
+    },
+    {
+      "matchManagers": ["helm-values"],
+      "matchPackageNames": ["ghcr.io/bandwidthondemand/nsi-dds"],
+      "pinDigests": false
+    },
+    {
+      "description": "CI tests the Java the Dockerfile ships; move both to a new major together",
+      "matchPackageNames": ["java-jdk", "eclipse-temurin"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    }
+  ]
+}
