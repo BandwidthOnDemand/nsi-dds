@@ -4,7 +4,7 @@
 version: '3.8'
 services:
   db-east:
-    image: postgres:14.1-alpine@sha256:578ca5c8452c08a4e0f5e65b55dce5e1812fe63c8fee40ea837641031598e51e
+    image: postgres:14.24-alpine@sha256:4ea9e5ed06591da7ea23eb65465e8d3187fe79f4d5ec3ae976d29a33b013e77a
     container_name: db-east
     restart: always
     environment:
@@ -48,7 +48,7 @@ services:
       - ./compose/nsi-dds-east-config:/nsi-dds/config
 
   db-west:
-    image: postgres:14.1-alpine@sha256:578ca5c8452c08a4e0f5e65b55dce5e1812fe63c8fee40ea837641031598e51e
+    image: postgres:14.24-alpine@sha256:4ea9e5ed06591da7ea23eb65465e8d3187fe79f4d5ec3ae976d29a33b013e77a
     container_name: db-west
     restart: always
     environment:
