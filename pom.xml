@@ -24,13 +24,13 @@
     <dependency>
       <groupId>org.glassfish.jersey.containers</groupId>
       <artifactId>jersey-container-grizzly2-servlet</artifactId>
-      <version>3.1.12</version>
+      <version>4.0.3</version>
     </dependency>
 
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>
       <artifactId>jersey-server</artifactId>
-      <version>3.1.12</version>
+      <version>4.0.3</version>
     </dependency>
 <!--
     <dependency>
@@ -42,7 +42,7 @@
     <dependency>
       <groupId>org.glassfish.jersey.media</groupId>
       <artifactId>jersey-media-moxy</artifactId>
-      <version>3.1.12</version>
+      <version>4.0.3</version>
     </dependency>
 
     <dependency>
@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.glassfish.jersey.inject</groupId>
       <artifactId>jersey-hk2</artifactId>
-      <version>3.1.12</version>
+      <version>4.0.3</version>
             <exclusions>
         <exclusion>
           <groupId>org.glassfish.hk2.external</groupId>
@@ -84,7 +84,7 @@
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>
       <artifactId>jersey-common</artifactId>
-      <version>3.1.12</version>
+      <version>4.0.3</version>
     </dependency>
 
     <!-- Needed for our use of JAXB API bindings. -->
@@ -253,7 +253,7 @@
     <dependency>
       <groupId>org.glassfish.jersey.test-framework.providers</groupId>
       <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
-      <version>3.1.12</version>
+      <version>4.0.3</version>
       <scope>test</scope>
     </dependency>
 
