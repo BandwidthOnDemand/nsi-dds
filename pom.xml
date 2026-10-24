@@ -16,7 +16,7 @@
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <spring.version>6.2.19</spring.version>
+    <spring.version>7.0.9</spring.version>
   </properties>
 
   <dependencies>
