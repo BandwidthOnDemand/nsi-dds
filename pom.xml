@@ -525,21 +525,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.6.0</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.maven.surefire</groupId>
-            <artifactId>surefire-junit47</artifactId>
-            <version>2.22.2</version>
-          </dependency>
-        </dependencies>
         <configuration>
-          <argLine>--illegal-access=permit</argLine>
-          <argLine>-Xmx1024m -Djava.net.preferIPv4Stack=true</argLine>
-          <argLine>-Djersey.config.test.container.port=8801</argLine>
-          <argLine>-Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true</argLine>
-          <argLine>-Djava.util.logging.config.file=./src/test/resources/config/logging.properties</argLine>
-          <argLine>-D-Dlogging.config=./src/test/resources/config/logback-test.xml</argLine>
-          <argLine>-Dlogback.configurationFile=./src/test/resources/config/logback-test.xml</argLine>
+          <argLine>
+            -Xmx1024m -Djava.net.preferIPv4Stack=true
+            -Djersey.config.test.container.port=8801
+            -Dcom.sun.xml.bind.v2.runtime.JAXBContextImpl.fastBoot=true
+            -Djava.util.logging.config.file=./src/test/resources/config/logging.properties
+            -Dlogback.configurationFile=./src/test/resources/config/logback-test.xml
+          </argLine>
         </configuration>
       </plugin>
 
