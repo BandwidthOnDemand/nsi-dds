@@ -1,10 +1,10 @@
 package net.es.nsi.dds.messages;
 
-import akka.actor.ActorPath;
+import org.apache.pekko.actor.ActorPath;
 import lombok.Data;
 
 /**
- * This is the superclass of all AKKA messages sent internally.
+ * This is the superclass of all Pekko messages sent internally.
  */
 @Data
 public class Message {
@@ -18,7 +18,7 @@ public class Message {
   }
 
   /**
-   * Message constructor for a non-AKKA thread to initiate a message.
+   * Message constructor for a non-Pekko thread to initiate a message.
    *
    * @param initiator A string identifying the class initiating the message.
    */
@@ -27,10 +27,10 @@ public class Message {
   }
 
   /**
-   * Message constructor for an AKKA thread to initiate a message.
+   * Message constructor for an Pekko thread to initiate a message.
    *
    * @param initiator A string identifying the class initiating the message.
-   * @param path The AKKA agent path name.
+   * @param path The Pekko agent path name.
    */
   public Message(String initiator, ActorPath path) {
     this.initiator = initiator;

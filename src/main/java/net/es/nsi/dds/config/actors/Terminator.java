@@ -4,11 +4,11 @@
  */
 package net.es.nsi.dds.config.actors;
 
-import akka.actor.ActorRef;
-import akka.actor.Terminated;
-import akka.actor.UntypedAbstractActor;
-import akka.event.Logging;
-import akka.event.LoggingAdapter;
+import org.apache.pekko.actor.ActorRef;
+import org.apache.pekko.actor.Terminated;
+import org.apache.pekko.actor.UntypedAbstractActor;
+import org.apache.pekko.event.Logging;
+import org.apache.pekko.event.LoggingAdapter;
 import net.es.nsi.dds.messages.Message;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

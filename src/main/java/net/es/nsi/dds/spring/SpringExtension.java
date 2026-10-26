@@ -1,13 +1,13 @@
 package net.es.nsi.dds.spring;
 
-import akka.actor.AbstractExtensionId;
-import akka.actor.ExtendedActorSystem;
-import akka.actor.Extension;
-import akka.actor.Props;
+import org.apache.pekko.actor.AbstractExtensionId;
+import org.apache.pekko.actor.ExtendedActorSystem;
+import org.apache.pekko.actor.Extension;
+import org.apache.pekko.actor.Props;
 import org.springframework.context.ApplicationContext;
 
 /**
- * An Akka Extension to provide access to Spring managed Actor Beans.
+ * An Pekko Extension to provide access to Spring managed Actor Beans.
  */
 public class SpringExtension extends
   AbstractExtensionId<SpringExtension.SpringExt> {
@@ -18,7 +18,7 @@ public class SpringExtension extends
   public final static SpringExtension SpringExtProvider = new SpringExtension();
 
   /**
-   * Is used by Akka to instantiate the Extension identified by this
+   * Is used by Pekko to instantiate the Extension identified by this
    * ExtensionId, internal use only.
      * @param system
      * @return

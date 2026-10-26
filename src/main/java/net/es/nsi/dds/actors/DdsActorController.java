@@ -1,9 +1,9 @@
 package net.es.nsi.dds.actors;
 
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Cancellable;
-import akka.actor.Terminated;
+import org.apache.pekko.actor.ActorRef;
+import org.apache.pekko.actor.ActorSystem;
+import org.apache.pekko.actor.Cancellable;
+import org.apache.pekko.actor.Terminated;
 import jakarta.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class DdsActorController implements ApplicationContextAware {
     }
 
     /**
-     * Initialize the DDS Actor system by initializing the AKKA context and create all actors.
+     * Initialize the DDS Actor system by initializing the Pekko context and create all actors.
      *
      * @throws IllegalArgumentException
      * @throws JAXBException
@@ -84,7 +84,7 @@ public class DdsActorController implements ApplicationContextAware {
     }
 
     /**
-     * Returns the AKKA actor system.
+     * Returns the Pekko actor system.
      *
      * @return
      */
@@ -102,7 +102,7 @@ public class DdsActorController implements ApplicationContextAware {
     }
 
     /**
-     * Schedule the delivery of a notification message within the AKKA system.
+     * Schedule the delivery of a notification message within the Pekko system.
      *
      * @param message
      * @param delay
@@ -115,7 +115,7 @@ public class DdsActorController implements ApplicationContextAware {
     }
 
     /**
-     * Send a notification message within the AKKA system.
+     * Send a notification message within the Pekko system.
      *
      * @param message The notification message to send.
      */
@@ -125,7 +125,7 @@ public class DdsActorController implements ApplicationContextAware {
     }
 
     /**
-     * Start the discovery process within AKKA by sending a StartMsg to all actors.
+     * Start the discovery process within Pekko by sending a StartMsg to all actors.
      */
     public void start() {
         log.info("[DdsActorController] Starting discovery process...");

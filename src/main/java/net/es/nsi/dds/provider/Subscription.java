@@ -1,6 +1,6 @@
 package net.es.nsi.dds.provider;
 
-import akka.actor.Cancellable;
+import org.apache.pekko.actor.Cancellable;
 import jakarta.ws.rs.WebApplicationException;
 
 import java.io.Serial;

@@ -1,6 +1,6 @@
 package net.es.nsi.dds.actors;
 
-import akka.actor.ActorSystem;
+import org.apache.pekko.actor.ActorSystem;
 import static net.es.nsi.dds.spring.SpringExtension.SpringExtProvider;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +18,9 @@ public class DdsActorSystem implements ApplicationContextAware {
   private ApplicationContext applicationContext;
 
   public DdsActorSystem() {
-    // Initialize the AKKA actor system for the PCE and subsystems.
+    // Initialize the Pekko actor system for the PCE and subsystems.
     log.info("DdsActorSystem: Initializing actor framework...");
-    actorSystem = akka.actor.ActorSystem.create("NSI-DISCOVERY");
+    actorSystem = ActorSystem.create("NSI-DISCOVERY");
     SpringExtProvider.get(actorSystem).initialize(applicationContext);
     log.info("DdsActorSystem: ... Actor framework initialized.");
   }
@@ -37,14 +37,14 @@ public class DdsActorSystem implements ApplicationContextAware {
   /**
    * @return the actorSystem
    */
-  public akka.actor.ActorSystem getActorSystem() {
+  public ActorSystem getActorSystem() {
     return actorSystem;
   }
 
   /**
    * @param actorSystem the actorSystem to set
    */
-  public void setActorSystem(akka.actor.ActorSystem actorSystem) {
+  public void setActorSystem(ActorSystem actorSystem) {
     this.actorSystem = actorSystem;
   }
 }

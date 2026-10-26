@@ -145,15 +145,15 @@
 
     <!-- The agent messaging infrastructure for internal communications. -->
     <dependency>
-      <groupId>com.typesafe.akka</groupId>
-      <artifactId>akka-actor_2.12</artifactId>
-      <version>2.8.8</version>
+      <groupId>org.apache.pekko</groupId>
+      <artifactId>pekko-actor_2.13</artifactId>
+      <version>1.7.1</version>
     </dependency>
 
     <dependency>
-      <groupId>com.typesafe.akka</groupId>
-      <artifactId>akka-slf4j_2.12</artifactId>
-      <version>2.8.8</version>
+      <groupId>org.apache.pekko</groupId>
+      <artifactId>pekko-slf4j_2.13</artifactId>
+      <version>1.7.1</version>
     </dependency>
 
     <dependency>

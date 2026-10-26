@@ -6,7 +6,7 @@ package net.es.nsi.dds.messages;
 
 import java.io.Serializable;
 
-import akka.actor.ActorPath;
+import org.apache.pekko.actor.ActorPath;
 import lombok.ToString;
 import net.es.nsi.dds.provider.Subscription;
 

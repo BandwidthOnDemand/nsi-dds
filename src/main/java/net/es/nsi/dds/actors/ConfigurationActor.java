@@ -1,8 +1,8 @@
 package net.es.nsi.dds.actors;
 
-import akka.actor.UntypedAbstractActor;
-import akka.event.Logging;
-import akka.event.LoggingAdapter;
+import org.apache.pekko.actor.UntypedAbstractActor;
+import org.apache.pekko.event.Logging;
+import org.apache.pekko.event.LoggingAdapter;
 import java.util.concurrent.TimeUnit;
 import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.messages.Message;

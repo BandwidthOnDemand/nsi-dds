@@ -7,7 +7,7 @@ package net.es.nsi.dds.messages;
 import java.io.Serializable;
 import java.util.Collection;
 
-import akka.actor.ActorPath;
+import org.apache.pekko.actor.ActorPath;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

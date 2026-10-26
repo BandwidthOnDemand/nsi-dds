@@ -4,7 +4,7 @@
  */
 package net.es.nsi.dds.messages;
 
-import akka.actor.ActorPath;
+import org.apache.pekko.actor.ActorPath;
 import lombok.ToString;
 
 import java.io.Serializable;

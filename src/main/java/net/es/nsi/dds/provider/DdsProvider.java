@@ -1,6 +1,6 @@
 package net.es.nsi.dds.provider;
 
-import akka.actor.Cancellable;
+import org.apache.pekko.actor.Cancellable;
 import com.google.common.base.Strings;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
