@@ -24,6 +24,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static net.es.nsi.dds.test.DdsTestSupport.VIXEN_NSA;
+import static net.es.nsi.dds.test.DdsTestSupport.delete;
 import static net.es.nsi.dds.test.DdsTestSupport.encode;
 import static net.es.nsi.dds.test.DdsTestSupport.entity;
 import static net.es.nsi.dds.test.DdsTestSupport.freshDocument;
@@ -41,16 +42,19 @@ import static org.junit.Assert.assertTrue;
 public class DateHeaderAndLinkTest {
     private static TestConfig testConfig;
     private static WebTarget dds;
+    private static DocumentType vixen;
 
     @BeforeClass
     public static void oneTimeSetUp() throws Exception {
         testConfig = new TestConfig();
         dds = testConfig.getTarget().path("dds");
-        post(dds.path("documents"), freshDocument("discovery_vixen_nsa.xml"));
+        vixen = freshDocument("discovery_vixen_nsa.xml");
+        post(dds.path("documents"), vixen);
     }
 
     @AfterClass
     public static void oneTimeTearDown() throws InterruptedException {
+        delete(dds, vixen);
         testConfig.shutdown();
     }
 

@@ -22,6 +22,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import static net.es.nsi.dds.test.DdsTestSupport.VIXEN_NSA;
+import static net.es.nsi.dds.test.DdsTestSupport.delete;
 import static net.es.nsi.dds.test.DdsTestSupport.encode;
 import static net.es.nsi.dds.test.DdsTestSupport.freshDocument;
 import static net.es.nsi.dds.test.DdsTestSupport.post;
@@ -44,6 +45,8 @@ public class ConditionalRequestTest {
 
     private static TestConfig testConfig;
     private static WebTarget dds;
+    private static DocumentType remote;
+    private static DocumentType local;
     private static String localType;
     private static String localId;
     private static String subscriptionId;
@@ -86,9 +89,10 @@ public class ConditionalRequestTest {
         dds = testConfig.getTarget().path("dds");
 
         // A remote document, and a second one under the local NSA id.
-        post(dds.path("documents"), freshDocument("discovery_vixen_nsa.xml"));
+        remote = freshDocument("discovery_vixen_nsa.xml");
+        post(dds.path("documents"), remote);
 
-        DocumentType local = freshDocument("vixen-status.xml");
+        local = freshDocument("vixen-status.xml");
         local.setNsa(DdsConfiguration.getInstance().getNsaId());
         localType = local.getType();
         localId = local.getId();
@@ -102,6 +106,8 @@ public class ConditionalRequestTest {
         try (Response response = dds.path("subscriptions").path(subscriptionId).request(NsiConstants.NSI_DDS_V1_XML).delete()) {
             assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         }
+        delete(dds, remote);
+        delete(dds, local);
         testConfig.shutdown();
     }
 

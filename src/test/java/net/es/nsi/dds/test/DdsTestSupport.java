@@ -57,6 +57,17 @@ public final class DdsTestSupport {
         }
     }
 
+    /**
+     * DELETEs a document. Tests must do this for what they POST: the server persists documents to
+     * config/cache, and later test classes reload any that expire after the expiry interval.
+     */
+    public static void delete(WebTarget dds, DocumentType document) {
+        try (Response response = dds.path("documents").path(encode(document.getNsa())).path(encode(document.getType()))
+                .path(encode(document.getId())).request(NsiConstants.NSI_DDS_V1_XML).delete()) {
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        }
+    }
+
     public static SubscriptionRequestType subscriptionRequest() {
         SubscriptionRequestType request = factory.createSubscriptionRequestType();
         request.setRequesterId("urn:ogf:network:es.net:2013:nsa");
