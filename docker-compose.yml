@@ -1,7 +1,6 @@
 #########################################
 # NSI-DDS test configuration.           #
 #########################################
-version: '3.8'
 services:
   db-east:
     image: postgres:14.24-alpine@sha256:50fce0c9c54c43d8b02ce16cb9daff75eb94c09c4ee3d41c157852ebd9700c80
@@ -15,7 +14,7 @@ services:
       - '5432:5432'
     volumes: 
       - ./compose/02-schema.sql:/docker-entrypoint-initdb.d/02-schema.sql:ro
-      - db-east:/var/lib/postgresql/data
+      - db-east:/var/lib/postgresql
 
   opennsa-east:
     image: opennsa:latest
@@ -59,7 +58,7 @@ services:
       - '5433:5432'
     volumes:
       - ./compose/02-schema.sql:/docker-entrypoint-initdb.d/02-schema.sql:ro
-      - db-west:/var/lib/postgresql/data
+      - db-west:/var/lib/postgresql
 
   opennsa-west:
     image: opennsa:latest
