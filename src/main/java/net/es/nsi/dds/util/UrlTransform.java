@@ -22,9 +22,11 @@ package net.es.nsi.dds.util;
 
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,6 +84,28 @@ public class UrlTransform {
     }
 
     return new URIBuilder(uri);
+  }
+
+  /**
+   * Append a "/"-separated path to root as encoded path segments.
+   *
+   * @param root Absolute URL to append to.
+   * @param path Path to append; leading "/" is ignored.
+   * @return The combined URL.
+   * @throws URISyntaxException
+   */
+  public static String concatPath(String root, String path) throws URISyntaxException {
+    URIBuilder uri = new URIBuilder(root);
+    List<String> pathSegments = uri.getPathSegments();
+    if (!Strings.isNullOrEmpty(path)) {
+      List<String> split = Arrays.stream(path.split("/"))
+          .dropWhile(""::equalsIgnoreCase).toList();
+      pathSegments.addAll(split);
+    }
+
+    uri.setPathSegments(pathSegments);
+
+    return uri.build().toASCIIString();
   }
 
   /**

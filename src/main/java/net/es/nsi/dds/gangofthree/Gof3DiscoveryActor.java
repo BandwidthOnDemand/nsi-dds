@@ -24,9 +24,9 @@ import net.es.nsi.dds.lib.DocHelper;
 import net.es.nsi.dds.messages.Message;
 import net.es.nsi.dds.messages.StartMsg;
 import net.es.nsi.dds.messages.TimerMsg;
+import net.es.nsi.dds.util.HttpDate;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.http.client.utils.DateUtils;
 import org.glassfish.jersey.client.ChunkedInput;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -102,12 +102,13 @@ public class Gof3DiscoveryActor extends UntypedAbstractActor {
     try {
       WebTarget nsaTarget = client.target(message.getNsaURL());
 
-      log.debug("discoverNSA: querying with If-Modified-Since: " + DateUtils.formatDate(new Date(time)));
+      String ifModifiedSince = HttpDate.format(time);
+      log.debug("discoverNSA: querying with If-Modified-Since: {}", ifModifiedSince);
 
       // Some NSA do not support the NSI_NSA_V1 application string so
       // accept any encoding for the document.
       response = nsaTarget.request("*/*") // NsiConstants.NSI_NSA_V1
-              .header("If-Modified-Since", DateUtils.formatDate(new Date(time), DateUtils.PATTERN_RFC1123))
+              .header("If-Modified-Since", ifModifiedSince)
               .get();
 
       Date lastModified = response.getLastModified();
@@ -223,7 +224,7 @@ public class Gof3DiscoveryActor extends UntypedAbstractActor {
     try {
       WebTarget topologyTarget = client.target(url);
       response = topologyTarget.request("*/*") // MediaTypes.NSI_TOPOLOGY_V2
-              .header("If-Modified-Since", DateUtils.formatDate(new Date(time), DateUtils.PATTERN_RFC1123))
+              .header("If-Modified-Since", HttpDate.format(time))
               .get();
 
       log.debug("discoverNSA: response status " + response.getStatus());

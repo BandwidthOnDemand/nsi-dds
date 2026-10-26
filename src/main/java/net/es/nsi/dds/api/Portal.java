@@ -29,7 +29,7 @@ import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.provider.Subscription;
 import net.es.nsi.dds.util.NsiConstants;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 
 /**
  * This is an absolute hack.  I couldn't get the Jersey JSP configuration to

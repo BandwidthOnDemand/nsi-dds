@@ -24,13 +24,13 @@
     <dependency>
       <groupId>org.glassfish.jersey.containers</groupId>
       <artifactId>jersey-container-grizzly2-servlet</artifactId>
-      <version>3.1.12</version>
+      <version>4.0.3</version>
     </dependency>
 
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>
       <artifactId>jersey-server</artifactId>
-      <version>3.1.12</version>
+      <version>4.0.3</version>
     </dependency>
 <!--
     <dependency>
@@ -42,25 +42,26 @@
     <dependency>
       <groupId>org.glassfish.jersey.media</groupId>
       <artifactId>jersey-media-moxy</artifactId>
-      <version>3.1.12</version>
+      <version>4.0.3</version>
     </dependency>
 
     <dependency>
       <groupId>org.glassfish.jersey.connectors</groupId>
-      <artifactId>jersey-apache-connector</artifactId>
-      <version>3.1.12</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
+      <artifactId>jersey-apache5-connector</artifactId>
+      <version>4.0.3</version>
+    </dependency>
+
+    <!-- Used directly by RestClient and HttpDate; 5.6+ for ConnectionConfig idle timeout. -->
+    <dependency>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <artifactId>httpclient5</artifactId>
+      <version>5.6.4</version>
     </dependency>
 
     <dependency>
       <groupId>org.glassfish.jersey.inject</groupId>
       <artifactId>jersey-hk2</artifactId>
-      <version>3.1.12</version>
+      <version>4.0.3</version>
             <exclusions>
         <exclusion>
           <groupId>org.glassfish.hk2.external</groupId>
@@ -72,7 +73,7 @@
     <dependency>
       <groupId>org.glassfish.hk2</groupId>
       <artifactId>hk2-metadata-generator</artifactId>
-      <version>3.1.1</version>
+      <version>4.0.3</version>
       <exclusions>
         <exclusion>
           <groupId>org.glassfish.hk2.external</groupId>
@@ -84,7 +85,7 @@
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>
       <artifactId>jersey-common</artifactId>
-      <version>3.1.12</version>
+      <version>4.0.3</version>
     </dependency>
 
     <!-- Needed for our use of JAXB API bindings. -->
@@ -98,7 +99,7 @@
     <dependency>
       <groupId>jakarta.ws.rs</groupId>
       <artifactId>jakarta.ws.rs-api</artifactId>
-      <version>3.1.0</version>
+      <version>4.0.0</version>
     </dependency>
 
     <!-- For content encoding types. -->
@@ -253,7 +254,7 @@
     <dependency>
       <groupId>org.glassfish.jersey.test-framework.providers</groupId>
       <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
-      <version>3.1.12</version>
+      <version>4.0.3</version>
       <scope>test</scope>
     </dependency>
 

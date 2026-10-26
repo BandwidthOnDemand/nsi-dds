@@ -19,7 +19,7 @@ import net.es.nsi.dds.jaxb.nml.NmlNetworkObject;
 import net.es.nsi.dds.jaxb.nml.NmlTopologyType;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
-import org.apache.http.client.utils.DateUtils;
+import net.es.nsi.dds.util.HttpDate;
 
 /**
  * This class reads a remote XML formatted NML topology containing the list of
@@ -119,7 +119,7 @@ public class AgoleManifestReader {
 
         Response response = null;
         try {
-            response = webGet.request(MediaType.APPLICATION_XML) .header("If-Modified-Since", DateUtils.formatDate(new Date(getLastModified()), DateUtils.PATTERN_RFC1123)).get();
+            response = webGet.request(MediaType.APPLICATION_XML) .header("If-Modified-Since", HttpDate.format(getLastModified())).get();
 
             // A 304 Not Modified indicates we already have a up-to-date document.
             if (response.getStatus() == Status.NOT_MODIFIED.getStatusCode()) {
@@ -131,7 +131,7 @@ public class AgoleManifestReader {
                 // We want to store the last modified date as viewed from the HTTP server.
                 Date lastMod = response.getLastModified();
                 if (lastMod != null) {
-                    log.debug("readManifest: Updating last modified time {}", DateUtils.formatDate(lastMod, DateUtils.PATTERN_RFC1123));
+                    log.debug("readManifest: Updating last modified time {}", lastMod);
                     setLastModified(lastMod.getTime());
                 }
 

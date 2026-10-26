@@ -2,7 +2,6 @@ package net.es.nsi.dds.gangofthree;
 
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import jakarta.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
@@ -89,8 +88,8 @@ public class StressTest {
     log.debug("*************************************** errorTest ***********************************");
     // Simple ping to determine if interface is available.
     for (int i = 0; i < 2000; i++) {
-      Response response = discovery.path("error").request(MediaType.APPLICATION_XML).get();
-      //assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+      // Close each response: the Apache 5 connector holds the connection until then.
+      discovery.path("error").request(MediaType.APPLICATION_XML).get().close();
     }
   }
 }

@@ -24,11 +24,10 @@ import net.es.nsi.dds.jaxb.dds.ErrorType;
 import net.es.nsi.dds.jaxb.management.*;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
+import net.es.nsi.dds.util.HttpDate;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.UrlTransform;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.http.client.utils.DateUtils;
-import org.apache.http.client.utils.URIBuilder;
 
 /**
  * The implementation class for the REST-based management interface.
@@ -93,7 +92,7 @@ public class ManagementService {
                     resource.setId(ra.name());
                     resource.setVersion(ra.version());
                     resource.setDefault(ra._default());
-                    resource.setHref(concatPath(location, pathAnnotation.value()));
+                    resource.setHref(UrlTransform.concatPath(location, pathAnnotation.value()));
                     resources.getResource().add(resource);
                 }
             }
@@ -297,12 +296,13 @@ public class ManagementService {
             }
         }
 
-        String date = DateUtils.formatDate(new Date(ddsLogger.getLastlogTime()), DateUtils.PATTERN_RFC1123);
+        String date = HttpDate.format(ddsLogger.getLastlogTime());
 
         // Now filter by the If-Modified-Since header.
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
+        Date since = HttpDate.parse(ifModifiedSince);
+        if (since != null) {
             GregorianCalendar cal = new GregorianCalendar();
-            cal.setTimeInMillis(DateUtils.parseDate(ifModifiedSince).getTime());
+            cal.setTime(since);
             XMLGregorianCalendar modified = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
 
             topologyLogs.getLog().removeIf(result -> !(modified.compare(result.getDate()) == DatatypeConstants.LESSER));
@@ -357,19 +357,5 @@ public class ManagementService {
         // Just a 200 response.
         return Response.ok()
             .entity(new GenericEntity<JAXBElement<LogType>>(managementFactory.createLog(result)) {}).build();
-    }
-
-    private String concatPath(String root, String path) throws URISyntaxException {
-        URIBuilder uri = new URIBuilder(root);
-        List<String> pathSegments = uri.getPathSegments();
-        if (!Strings.isNullOrEmpty(path)) {
-            List<String> split = Arrays.stream(path.split("/"))
-                .dropWhile(""::equalsIgnoreCase).toList();
-            pathSegments.addAll(split);
-        }
-
-        uri.setPathSegments(pathSegments);
-
-        return uri.build().toASCIIString();
     }
 }

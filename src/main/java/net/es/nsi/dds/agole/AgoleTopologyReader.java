@@ -15,7 +15,7 @@ import net.es.nsi.dds.jaxb.NmlParser;
 import net.es.nsi.dds.jaxb.nml.NmlNSAType;
 import net.es.nsi.dds.management.logs.DdsErrors;
 import net.es.nsi.dds.management.logs.DdsLogger;
-import org.apache.http.client.utils.DateUtils;
+import net.es.nsi.dds.util.HttpDate;
 import org.glassfish.jersey.client.ChunkedInput;
 
 /**
@@ -66,7 +66,7 @@ public class AgoleTopologyReader {
         Response response = null;
         NmlNSAType topology = null;
         try {
-            response = webGet.request(MediaType.APPLICATION_XML).header("If-Modified-Since", DateUtils.formatDate(new Date(getLastModifiedTime()), DateUtils.PATTERN_RFC1123)).get();
+            response = webGet.request(MediaType.APPLICATION_XML).header("If-Modified-Since", HttpDate.format(getLastModifiedTime())).get();
 
             // A 304 Not Modified indicates we already have a up-to-date document.
             if (response.getStatus() == Response.Status.NOT_MODIFIED.getStatusCode()) {

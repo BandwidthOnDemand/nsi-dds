@@ -1,6 +1,5 @@
 package net.es.nsi.dds.api;
 
-import com.google.common.base.Strings;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
@@ -44,9 +43,9 @@ import net.es.nsi.dds.provider.DiscoveryProvider;
 import net.es.nsi.dds.provider.Document;
 import net.es.nsi.dds.provider.Source;
 import net.es.nsi.dds.provider.Subscription;
+import net.es.nsi.dds.util.HttpDate;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.XmlUtilities;
-import org.apache.http.client.utils.DateUtils;
 
 /**
  *
@@ -109,10 +108,7 @@ public class DiscoveryService {
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
-        Date lastDiscovered = null;
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            lastDiscovered = DateUtils.parseDate(ifModifiedSince);
-        }
+        Date lastDiscovered = HttpDate.parse(ifModifiedSince);
 
         // Get all the applicable documents.
         Collection<Document> documents = discoveryProvider.getDocuments(null, null, null, lastDiscovered);
@@ -196,7 +192,7 @@ public class DiscoveryService {
         all.setSubscriptions(subscriptionsResults);
 
         try {
-            String date = DateUtils.formatDate(discovered, DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(discovered);
             String encoded = DdsParser.getInstance().collection2Xml(all);
             return Response.ok().header("Last-Modified", date).entity(encoded).build();
         } catch (JAXBException | IOException ex) {
@@ -230,10 +226,7 @@ public class DiscoveryService {
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
-        Date lastDiscovered = null;
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            lastDiscovered = DateUtils.parseDate(ifModifiedSince);
-        }
+        Date lastDiscovered = HttpDate.parse(ifModifiedSince);
 
         Collection<Document> documents = discoveryProvider.getDocuments(nsa, type, id, lastDiscovered);
 
@@ -262,7 +255,7 @@ public class DiscoveryService {
         // Now we need to determine what "Last-Modified" date we send back.
         Response.ResponseBuilder header;
         if (results.getDocument().size() > 0) {
-            String date = DateUtils.formatDate(discovered, DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(discovered);
             header = Response.ok().header("Last-Modified", date);
         }
         else {
@@ -305,10 +298,7 @@ public class DiscoveryService {
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
-        Date lastDiscovered = null;
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            lastDiscovered = DateUtils.parseDate(ifModifiedSince);
-        }
+        Date lastDiscovered = HttpDate.parse(ifModifiedSince);
 
         Collection<Document> documents = discoveryProvider.getDocumentsByNsa(nsa.trim(), type, id, lastDiscovered);
 
@@ -332,7 +322,7 @@ public class DiscoveryService {
         // Now we need to determine what "Last-Modified" date we send back.
         Response.ResponseBuilder header;
         if (results.getDocument().size() > 0) {
-            String date = DateUtils.formatDate(discovered, DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(discovered);
             header = Response.ok().header("Last-Modified", date);
         }
         else {
@@ -375,10 +365,7 @@ public class DiscoveryService {
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
-        Date lastDiscovered = null;
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            lastDiscovered = DateUtils.parseDate(ifModifiedSince);
-        }
+        Date lastDiscovered = HttpDate.parse(ifModifiedSince);
 
         Collection<Document> documents;
         documents = discoveryProvider.getDocumentsByNsaAndType(nsa.trim(), type.trim(), id, lastDiscovered);
@@ -403,7 +390,7 @@ public class DiscoveryService {
         // Now we need to determine what "Last-Modified" date we send back.
         Response.ResponseBuilder header;
         if (results.getDocument().size() > 0) {
-            String date = DateUtils.formatDate(discovered, DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(discovered);
             header = Response.ok().header("Last-Modified", date);
         }
         else {
@@ -448,7 +435,7 @@ public class DiscoveryService {
         Document document = discoveryProvider.addDocument(newDocument, Source.LOCAL);
 
         try {
-            String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(document.getLastDiscovered());
             String encoded = DdsParser.getInstance().document2Xml(document.getDocument());
             return Response.created(URI.create(document.getDocument().getHref())).header("Last-Modified", date).entity(encoded).build();
         } catch (JAXBException | IOException ex) {
@@ -484,7 +471,7 @@ public class DiscoveryService {
         document = discoveryProvider.deleteDocument(nsa, type, id);
 
         try {
-            String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(document.getLastDiscovered());
             String encoded = DdsParser.getInstance().document2Xml(document.getDocument());
             return Response.ok().header("Last-Modified", date).entity(encoded).build();
         } catch (JAXBException | IOException ex) {
@@ -533,10 +520,7 @@ public class DiscoveryService {
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
-        Date lastDiscovered = null;
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            lastDiscovered = DateUtils.parseDate(ifModifiedSince);
-        }
+        Date lastDiscovered = HttpDate.parse(ifModifiedSince);
 
         Collection<Document> documents = discoveryProvider.getLocalDocuments(type, id, lastDiscovered);
 
@@ -560,7 +544,7 @@ public class DiscoveryService {
         // Now we need to determine what "Last-Modified" date we send back.
         Response.ResponseBuilder header;
         if (results.getDocument().size() > 0) {
-            String date = DateUtils.formatDate(discovered, DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(discovered);
             header = Response.ok().header("Last-Modified", date);
         }
         else {
@@ -600,10 +584,7 @@ public class DiscoveryService {
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
-        Date lastDiscovered = null;
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            lastDiscovered = DateUtils.parseDate(ifModifiedSince);
-        }
+        Date lastDiscovered = HttpDate.parse(ifModifiedSince);
 
         Collection<Document> documents;
         documents = discoveryProvider.getLocalDocumentsByType(type.trim(), id, lastDiscovered);
@@ -630,7 +611,7 @@ public class DiscoveryService {
         // Now we need to determine what "Last-Modified" date we send back.
         Response.ResponseBuilder header;
         if (results.getDocument().size() > 0) {
-            String date = DateUtils.formatDate(discovered, DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(discovered);
             header = Response.ok().header("Last-Modified", date);
         }
         else {
@@ -670,10 +651,7 @@ public class DiscoveryService {
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
-        Date lastDiscovered = null;
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            lastDiscovered = DateUtils.parseDate(ifModifiedSince);
-        }
+        Date lastDiscovered = HttpDate.parse(ifModifiedSince);
 
         Document document;
         document = discoveryProvider.getLocalDocument(type, id, lastDiscovered);
@@ -692,7 +670,7 @@ public class DiscoveryService {
         }
 
         try {
-            String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(document.getLastDiscovered());
             String encoded = DdsParser.getInstance().document2Xml(result);
             return Response.ok().header("Last-Modified", date).entity(encoded).build();
         } catch (JAXBException | IOException ex) {
@@ -727,10 +705,7 @@ public class DiscoveryService {
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
-        Date lastDiscovered = null;
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            lastDiscovered = DateUtils.parseDate(ifModifiedSince);
-        }
+        Date lastDiscovered = HttpDate.parse(ifModifiedSince);
 
         Document document = discoveryProvider.getDocument(nsa, type, id, lastDiscovered);
 
@@ -748,7 +723,7 @@ public class DiscoveryService {
         }
 
         try {
-            String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(document.getLastDiscovered());
             String encoded = DdsParser.getInstance().document2Xml(result);
             return Response.ok().header("Last-Modified", date).entity(encoded).build();
         } catch (JAXBException | IOException ex) {
@@ -802,7 +777,7 @@ public class DiscoveryService {
         Document document = discoveryProvider.updateDocument(nsa, type, id, updateRequest, Source.LOCAL);
 
         try {
-            String date = DateUtils.formatDate(document.getLastDiscovered(), DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(document.getLastDiscovered());
             String encoded = DdsParser.getInstance().document2Xml(document.getDocument());
             return Response.ok().header("Last-Modified", date).entity(encoded).build();
         } catch (JAXBException | IOException ex) {
@@ -831,10 +806,7 @@ public class DiscoveryService {
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
-        Date lastModified = null;
-        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
-            lastModified = DateUtils.parseDate(ifModifiedSince);
-        }
+        Date lastModified = HttpDate.parse(ifModifiedSince);
 
         Collection<Subscription> subscriptions;
         subscriptions = discoveryProvider.getSubscriptions(requesterId, lastModified);
@@ -855,7 +827,7 @@ public class DiscoveryService {
         // Now we need to determine what "Last-Modified" date we send back.
         Response.ResponseBuilder header;
         if (results.getSubscription().size() > 0) {
-            String date = DateUtils.formatDate(modified, DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(modified);
             header = Response.ok().header("Last-Modified", date);
         }
         else {
@@ -914,7 +886,7 @@ public class DiscoveryService {
         log.debug("addSubscription: requesterId={}, subscriptionId={}", subscriptionRequest.getRequesterId(), subscription.getId());
 
         try {
-            String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(subscription.getLastModified());
             String encoded = DdsParser.getInstance().subscription2Xml(subscription.getSubscription());
             log.debug("addSubscription: response\n{}", encoded);
             return Response.created(URI.create(subscription.getSubscription().getHref())).header("Last-Modified", date).entity(encoded).build();
@@ -950,10 +922,7 @@ public class DiscoveryService {
 
         DiscoveryProvider discoveryProvider = ConfigurationManager.INSTANCE.getDiscoveryProvider();
 
-        Date lastDiscovered = null;
-        if (!Strings.isNullOrEmpty(ifModifiedSince)) {
-            lastDiscovered = DateUtils.parseDate(ifModifiedSince);
-        }
+        Date lastDiscovered = HttpDate.parse(ifModifiedSince);
 
         Subscription subscription;
         subscription = discoveryProvider.getSubscription(id, lastDiscovered);
@@ -967,7 +936,7 @@ public class DiscoveryService {
         log.debug("getSubscriptions: found id={}, requesterId={}", id, subscription.getSubscription().getRequesterId());
 
         try {
-            String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(subscription.getLastModified());
             String encoded = DdsParser.getInstance().subscription2Xml(subscription.getSubscription());
             return Response.ok().header("Last-Modified", date).entity(encoded).build();
         } catch (JAXBException | IOException ex) {
@@ -1020,7 +989,7 @@ public class DiscoveryService {
         Subscription subscription = discoveryProvider.editSubscription(id, subscriptionRequest, accept);
 
         try {
-            String date = DateUtils.formatDate(subscription.getLastModified(), DateUtils.PATTERN_RFC1123);
+            String date = HttpDate.format(subscription.getLastModified());
             String encoded = DdsParser.getInstance().subscription2Xml(subscription.getSubscription());
             return Response.ok(URI.create(subscription.getSubscription().getHref())).header("Last-Modified", date).entity(encoded).build();
         } catch (JAXBException | IOException ex) {

@@ -18,7 +18,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.net.ssl.HostnameVerifier;
 
@@ -28,21 +27,23 @@ import net.es.nsi.dds.dao.DdsConfiguration;
 import net.es.nsi.dds.jaxb.configuration.ClientType;
 import net.es.nsi.dds.spring.SpringApplicationContext;
 import net.es.nsi.dds.util.NsiConstants;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.glassfish.jersey.apache.connector.ApacheClientProperties;
-import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
+import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
+import org.apache.hc.client5.http.ssl.HostnameVerificationPolicy;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.core5.util.Timeout;
+import org.glassfish.jersey.apache5.connector.Apache5ClientProperties;
+import org.glassfish.jersey.apache5.connector.Apache5ConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.RequestEntityProcessing;
+import org.glassfish.jersey.client.filter.EncodingFilter;
 import org.glassfish.jersey.logging.LoggingFeature;
+import org.glassfish.jersey.message.DeflateEncoder;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
@@ -150,12 +151,11 @@ public class RestClient {
         //String[] supportedCipherSuites = { };
         //supportedProtocols, supportedCipherSuites,
 
-        final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", new PlainConnectionSocketFactory())
-                .register("https", new SSLConnectionSocketFactory(context.getSSLContext(), hostnameVerifier))
+        // CLIENT policy: only hostnameVerifier checks the host, so NoopHostnameVerifier still disables it.
+        PoolingHttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+                .setTlsSocketStrategy(new DefaultClientTlsStrategy(context.getSSLContext(),
+                        HostnameVerificationPolicy.CLIENT, hostnameVerifier))
                 .build();
-
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(registry);
         return getClientConfig(connectionManager, config.getMaxConnPerRoute(), config.getMaxConnTotal());
     }
 
@@ -218,13 +218,22 @@ public class RestClient {
         ClientConfig clientConfig = new ClientConfig();
 
         // We want to use the Apache connector for chunk POST support.
-        clientConfig.connectorProvider(new ApacheConnectorProvider());
+        clientConfig.connectorProvider(new Apache5ConnectorProvider());
         connectionManager.setDefaultMaxPerRoute(maxPerRoute);
         connectionManager.setMaxTotal(maxTotal);
-        connectionManager.closeIdleConnections(30, TimeUnit.SECONDS);
-        clientConfig.property(ApacheClientProperties.CONNECTION_MANAGER, connectionManager);
 
+        // HttpClient 5 sets socket and connect timeouts per connection, not per request.
+        connectionManager.setDefaultConnectionConfig(ConnectionConfig.custom()
+                .setSocketTimeout(getTimeout(TCP_SO_TIMEOUT, SO_TIMEOUT))
+                .setConnectTimeout(getTimeout(TCP_CONNECT_TIMEOUT, CONNECT_TIMEOUT))
+                .setIdleTimeout(Timeout.ofSeconds(30))
+                .build());
+        clientConfig.property(Apache5ClientProperties.CONNECTION_MANAGER, connectionManager);
+
+        // Jersey, not HttpClient, sends Accept-Encoding and decodes the response.
+        clientConfig.register(EncodingFilter.class);
         clientConfig.register(GZipEncoder.class);
+        clientConfig.register(DeflateEncoder.class);
         //clientConfig.register(new MoxyXmlFeature());
         //clientConfig.register(new MoxyJsonFeature());
 
@@ -234,17 +243,20 @@ public class RestClient {
                 LoggingFeature.Verbosity.PAYLOAD_ANY, 10000));
         clientConfig.property(ClientProperties.REQUEST_ENTITY_PROCESSING, RequestEntityProcessing.CHUNKED);
 
-        // Apache specific configuration.
+        // Apache specific configuration; HttpClient 5 always allows relative redirects.
+        // Compression is off so HttpClient does not decode what GZipEncoder decodes again.
         RequestConfig.Builder custom = RequestConfig.custom();
+        custom.setContentCompressionEnabled(false);
         custom.setExpectContinueEnabled(true);
-        custom.setRelativeRedirectsAllowed(true);
         custom.setRedirectsEnabled(true);
-        custom.setSocketTimeout(Integer.parseInt(System.getProperty(TCP_SO_TIMEOUT, Integer.toString(SO_TIMEOUT))));
-        custom.setConnectTimeout(Integer.parseInt(System.getProperty(TCP_CONNECT_TIMEOUT, Integer.toString(CONNECT_TIMEOUT))));
-        custom.setConnectionRequestTimeout(Integer.parseInt(System.getProperty(TCP_CONNECT_REQUEST_TIMEOUT, Integer.toString(CONNECT_REQUEST_TIMEOUT))));
-        clientConfig.property(ApacheClientProperties.REQUEST_CONFIG, custom.build());
+        custom.setConnectionRequestTimeout(getTimeout(TCP_CONNECT_REQUEST_TIMEOUT, CONNECT_REQUEST_TIMEOUT));
+        clientConfig.property(Apache5ClientProperties.REQUEST_CONFIG, custom.build());
 
         return clientConfig;
+    }
+
+    private static Timeout getTimeout(String property, int defaultMillis) {
+        return Timeout.ofMilliseconds(Integer.getInteger(property, defaultMillis));
     }
 
     /**

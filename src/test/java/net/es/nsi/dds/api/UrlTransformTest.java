@@ -19,38 +19,60 @@
  */
 package net.es.nsi.dds.api;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Arrays;
+import java.util.Collection;
+
 import net.es.nsi.dds.util.UrlTransform;
-import org.apache.http.client.utils.URIBuilder;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
  * @author hacksaw
  */
-@Slf4j
+@RunWith(Parameterized.class)
 public class UrlTransformTest {
+  private static final String LOCAL = "http://localhost:8401/dds/management";
+  private static final String PUBLIC = "https://nsi0.snvaca.pacificwave.net/nsi-dds";
 
-  @Test
-  public void testTransform() throws Exception {
-    UrlTransform utilities = new UrlTransform("(http://localhost:8401|https://nsi0.snvaca.pacificwave.net/nsi-dds)");
-    URIBuilder path = utilities.getPath("http://localhost:8401/dds/management/v1");
-    log.debug("[UrlTransformTest] testTransform path = {}", path.build().toASCIIString());
-    assertEquals(path.build().toASCIIString(), "https://nsi0.snvaca.pacificwave.net/nsi-dds/dds/management/v1");
+  @Parameters(name = "{0}")
+  public static Collection<Object[]> cases() {
+    return Arrays.asList(new Object[][] {
+      { "no transform", null, LOCAL, LOCAL, LOCAL + "/v1/a%20b" },
+      { "empty transform", "", LOCAL, LOCAL, LOCAL + "/v1/a%20b" },
+      { "prefix replaced", "(http://localhost:8401|" + PUBLIC + ")", LOCAL, PUBLIC + "/dds/management", PUBLIC + "/dds/management/v1/a%20b" },
+      { "prefix not matched", "(http://other:8401|" + PUBLIC + ")", LOCAL, LOCAL, LOCAL + "/v1/a%20b" },
+      { "prefix added only", "(|" + PUBLIC + ")", "/dds/ping", PUBLIC + "/dds/ping", PUBLIC + "/dds/ping/v1/a%20b" },
+      // HttpClient 4 decoded %3A to ':' when segments were rebuilt; HttpClient 5 keeps it.
+      { "encoded path kept", "", LOCAL + "/urn%3Aogf", LOCAL + "/urn%3Aogf", LOCAL + "/urn%3Aogf/v1/a%20b" },
+      { "query kept", "", LOCAL + "?type=a%2Bb", LOCAL + "?type=a%2Bb", LOCAL + "/v1/a%20b?type=a%2Bb" },
+    });
+  }
+
+  private final String transform;
+  private final String input;
+  private final String transformed;
+  private final String concatenated;
+
+  public UrlTransformTest(String name, String transform, String input, String transformed, String concatenated) {
+    this.transform = transform;
+    this.input = input;
+    this.transformed = transformed;
+    this.concatenated = concatenated;
   }
 
   @Test
-  public void testBuilder() throws Exception {
-    UrlTransform utilities = new UrlTransform("");
-    URIBuilder path = utilities.getPath("http://localhost:8401/dds/management/v1");
-    List<String> pathSegments = path.getPathSegments();
-    URIBuilder append = new URIBuilder("/ping");
-    pathSegments.addAll(append.getPathSegments());
-    path.setPathSegments(pathSegments);
-    log.debug("[UrlTransformTest] testBuilder path = {}", path.build().toASCIIString());
+  public void transformsPath() throws Exception {
+    assertEquals(transformed, new UrlTransform(transform).getPath(input).build().toASCIIString());
+  }
+
+  @Test
+  public void concatPathAppendsSegments() throws Exception {
+    // How ManagementService builds resource links: leading "/" dropped, each segment encoded.
+    assertEquals(concatenated, UrlTransform.concatPath(transformed, "/v1/a b"));
   }
 }

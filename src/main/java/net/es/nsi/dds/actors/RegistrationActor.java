@@ -30,9 +30,9 @@ import net.es.nsi.dds.management.logs.DdsLogs;
 import net.es.nsi.dds.messages.Message;
 import net.es.nsi.dds.messages.RegistrationEvent;
 import net.es.nsi.dds.messages.RegistrationEvent.Event;
+import net.es.nsi.dds.util.HttpDate;
 import net.es.nsi.dds.util.NsiConstants;
 import net.es.nsi.dds.util.UrlHelper;
-import org.apache.http.client.utils.DateUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -315,7 +315,7 @@ public class RegistrationActor extends UntypedAbstractActor {
                 absoluteURL, remoteSubscription.getLastModified());
             response = webTarget.request(NsiConstants.NSI_DDS_V1_XML)
                 .header("If-Modified-Since",
-                    DateUtils.formatDate(remoteSubscription.getLastModified(), DateUtils.PATTERN_RFC1123)).get();
+                    HttpDate.format(remoteSubscription.getLastModified())).get();
 
             // We found the subscription and it was not updated.
             if (response.getStatus() == Response.Status.NOT_MODIFIED.getStatusCode()) {
