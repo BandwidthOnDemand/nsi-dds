@@ -1,4 +1,4 @@
-FROM maven:3-eclipse-temurin-17@sha256:bec7efd9938efefcf02de53581a19f6816fb6066169a8ea45f52763222ffeb48 AS maven-build
+FROM maven:3-eclipse-temurin-17@sha256:0362bf77ae7b21e3e0a0f4b211e85eb973e2cf9a680b2d36210e580336bb2255 AS maven-build
 
 ARG VERSION
 ENV HOME=/nsi-dds
