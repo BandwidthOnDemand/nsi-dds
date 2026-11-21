@@ -7,7 +7,7 @@ COPY . .
 RUN mvn versions:set -DnewVersion="${VERSION:?VERSION build argument is required}" -DgenerateBackupPoms=false \
     && mvn clean install -Dmaven.test.skip=true -Ddocker.nocache
 
-FROM eclipse-temurin:17-jre@sha256:fb2cec8da84e3f086b59e29bf432d372e396fe0c247adcfb89303a28c2e313c0
+FROM eclipse-temurin:17-jre@sha256:541b08fc7f494edf14e436ff6bfb55767e4a115c87bfc547b8c5de957b58737f
 
 ENV BASEDIR=/nsi-dds
 ENV CONFIG_DIR=$BASEDIR/config
