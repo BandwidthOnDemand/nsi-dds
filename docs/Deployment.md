@@ -33,7 +33,7 @@ The second supported deployment model is direct SSL communications exposed from 
 
 
 ## Software prerequisites
-The `nsi-dds` has a runtime dependency on Java ([Oracle-JDK](https://jdk8.java.net/download.html) or OpenJDK), with versions 1.8 through 15 supported.  If the system does not contain the correct version of Java then a supported version needs to be installed. 
+The `nsi-dds` has a runtime dependency on Java ([Oracle-JDK](https://jdk8.java.net/download.html) or OpenJDK), with version 17 or newer required.  If the system does not contain the correct version of Java then a supported version needs to be installed. 
 
 Maven is also required to build the `nsi-dds` module so install if not available on the system.
 

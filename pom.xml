@@ -17,6 +17,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <spring.version>7.0.10</spring.version>
+    <!-- All Pekko modules must share one version; Pekko refuses to start otherwise. -->
+    <pekko.version>2.0.0</pekko.version>
   </properties>
 
   <dependencies>
@@ -147,13 +149,13 @@
     <dependency>
       <groupId>org.apache.pekko</groupId>
       <artifactId>pekko-actor_2.13</artifactId>
-      <version>1.7.1</version>
+      <version>${pekko.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.pekko</groupId>
       <artifactId>pekko-slf4j_2.13</artifactId>
-      <version>1.7.1</version>
+      <version>${pekko.version}</version>
     </dependency>
 
     <dependency>

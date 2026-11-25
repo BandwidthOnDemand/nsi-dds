@@ -14,6 +14,13 @@
       "automerge": true
     },
     {
+      "description": "Pekko refuses to start with mixed module versions; bump them in one PR",
+      "matchPackageNames": ["org.apache.pekko:*"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "pekko",
+      "groupSlug": "pekko"
+    },
+    {
       "matchUpdateTypes": ["pin", "digest", "pinDigest"],
       "minimumReleaseAge": "0 days",
       "automerge": true

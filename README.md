@@ -43,7 +43,7 @@ On the front-end we have Apache httpd with mod_proxy configured to terminate HTT
 The second supported deployment model is direct SSL communications exposed from the DDS Server.  The DDS server's SSL/TLS will be configured using the Java keystore, and authentication of the client is established using the Java truststore.  Authorization of the client is done using an internal mechanism specified in the configuration file (\<accessControl\> XML element).  This mechanism is described below, but in summary will allow an access control role of read, write, peer, or admin to be assigned for each client accessing the DDS server.
 
 ## Software prerequisites
-The `nsi-dds` has a runtime dependency on Java ([Oracle-JDK](https://jdk8.java.net/download.html) or OpenJDK), with versions 1.8 through 15 supported.  If the system does not contain the correct version of Java then a supported version needs to be installed. 
+The `nsi-dds` has a runtime dependency on Java ([Oracle-JDK](https://jdk8.java.net/download.html) or OpenJDK), with version 17 or newer required.  If the system does not contain the correct version of Java then a supported version needs to be installed. 
 
 Maven is also required to build the `nsi-dds` module so install if not available on the system.
 
