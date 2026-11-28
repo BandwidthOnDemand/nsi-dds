@@ -16,7 +16,7 @@
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <spring.version>7.0.10</spring.version>
+    <spring.version>7.1.0</spring.version>
     <!-- All Pekko modules must share one version; Pekko refuses to start otherwise. -->
     <pekko.version>2.0.0</pekko.version>
   </properties>
@@ -167,7 +167,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.6.7</version>
+      <version>1.6.8</version>
     </dependency>
 
     <!-- Google JSON parsers for reading configuration data from files. -->
